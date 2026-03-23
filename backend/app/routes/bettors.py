@@ -3,7 +3,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from app.auth import get_current_user
+from app.auth import get_current_user_optional
 from app.models import User
 from app.services.polymarket import get_bettor_profile, get_leaderboard, get_recent_bets
 
@@ -18,7 +18,7 @@ CACHE_TTL = 600  # 10 minutes
 async def list_bettors(
     sort: str = Query("profit", enum=["profit", "accuracy", "volume"]),
     limit: int = Query(50, ge=1, le=100),
-    current_user: Optional[User] = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_current_user_optional),
 ):
     now = time.time()
     cache_key = f"{sort}_{limit}"
@@ -39,7 +39,7 @@ async def list_bettors(
 @router.get("/{address}")
 async def bettor_detail(
     address: str,
-    current_user: Optional[User] = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_current_user_optional),
 ):
     now = time.time()
     cache_entry = _profile_cache.get(address)
