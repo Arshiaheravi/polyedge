@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 15:00 — META/AUDIT (Session 45)
+DONE: Code quality audit (sessions 39-44) — found and fixed 3 issues: (1) register duplicate-email returned 400 instead of 409 (PROJECT.md spec) — fixed route + updated 3 test assertions; (2) test_follows.py had 2 duplicate /follows/live tests already covered in test_follows_live.py — removed; (3) test_notifications.py mid-file module imports moved to top. Also resolved 3 backlog tasks: sms/verify and telegram/verify full response contracts added to test_alerts.py; user.name added to test_register_success assertion. 281 tests stable.
+IMPACT: Fixed a real API spec violation (400 vs 409 for duplicate registration) that could confuse API consumers. Removed test noise from duplicate tests. Cleaned up import hygiene. All 3 HIGH PRIORITY backlog tasks cleared.
+FILES: backend/app/routes/auth.py, backend/tests/test_auth.py, backend/tests/test_follows.py, backend/tests/test_notifications.py, backend/tests/test_alerts.py
+
 ## 2026-03-24 14:00 — TESTING (Session 44)
 DONE: Added 3 branch-coverage tests — (1) test_login_empty_password_returns_401: empty "" passes LoginRequest Pydantic validation (no min_length) but verify_password("", hash) returns False → 401, not 500 or 422; (2) test_follows_live_all_bettors_raise_returns_three_entries_with_empty_positions: VIP with 3 follows where all get_active_positions calls raise — asyncio.gather error path must still return 3 bettor entries each with active_positions=[], not crash or empty list; (3) test_put_alerts_settings_invalid_push_subscription_returns_422: "not_valid_json" string hits json.loads() guard in PUT /alerts/settings route → 422, confirms the validation gate added in session 5 still works. 278→281 tests.
 IMPACT: Three previously untested defensive paths locked in — the login empty-password path is a symmetry gap vs RegisterRequest (which enforces min_length=1); the all-fail gather test is the multi-failure case that wasn't exercised by the existing single-failure test; the PUT JSON validation guard prevents a re-introduction of the session 5 crash where invalid push_subscription would later crash GET /alerts/settings.

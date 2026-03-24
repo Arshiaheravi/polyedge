@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **281 passed** (as of 2026-03-24, session 44 — 3 branch-coverage tests added)
+- Test count: **281 passed** (as of 2026-03-24, session 45 — audit: 2 duplicates removed, 2 new tests added, 1 test assertion updated)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #45 Reflexion — 2026-03-24
+ACCOMPLISHED: META code quality audit (sessions 39-44). Found and fixed 3 issues: (1) routes/auth.py register duplicate-email returned 400 instead of 409 (PROJECT.md spec) — fixed route + 3 test assertions; (2) test_follows.py had 2 duplicate /follows/live tests already covered by test_follows_live.py (added in session 42 without checking existing dedicated file) — removed duplicates (-2 tests); (3) test_notifications.py had module-level `import app.services.notifications as notif_mod` and `from app.services.notifications import send_web_push` in the middle of the file — moved to top-level imports block. Also resolved 3 backlog tasks: sms/verify response includes "message" field, telegram/verify response includes "message" field, register response includes user.name. Net: 281→281 (2 removed + 2 added; name test modified existing test).
+FAILED: Nothing failed.
+RULE: [2026-03-24] When writing tests for error paths, always verify the expected status code against PROJECT.md spec first — do NOT write the test to match the current code. Tests written to match code (not spec) lock in wrong behavior and mask spec violations. Specific case: duplicate email register should be 409, not 400.
+RULE: [2026-03-24] When adding /follows/live tests to test_follows.py, the dedicated file test_follows_live.py already exists with comprehensive coverage. Before adding any test to a file, grep for similar test names in other test files — especially when the endpoint has its own dedicated test file.
 
 ### Session #44 Reflexion — 2026-03-24
 ACCOMPLISHED: (1) Added test_login_empty_password_returns_401 — empty "" passes LoginRequest Pydantic (no min_length) but verify_password returns False → 401. Registers a real user first so the lookup hits a DB row. (2) Added test_follows_live_all_bettors_raise_returns_three_entries_with_empty_positions — VIP + 3 follows + all get_active_positions raise → 3 entries with active_positions=[] confirmed. The autouse clear_activity_cache fixture handles cache isolation. (3) Added test_put_alerts_settings_invalid_push_subscription_returns_422 — "not_valid_json" hits json.loads() guard → 422. All 3 passed first run; full suite 281/281. Added 3 new backlog tasks (sms/verify response shape, telegram/verify response shape, register response user.name).
