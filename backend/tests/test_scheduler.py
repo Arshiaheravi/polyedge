@@ -590,3 +590,31 @@ def test_poll_bets_dispatches_web_push_only_when_telegram_disabled(sched_db):
     call_kwargs = mock_dispatch.call_args[1]
     assert call_kwargs["telegram_chat_id"] is None
     assert call_kwargs["push_subscription_json"] == push_sub
+
+
+def test_poll_bets_dispatch_exception_does_not_crash_poll_loop(sched_db):
+    """If dispatch_bet_notification raises, the exception is caught, the poll continues,
+    and event.notified is still set to True (the bet was seen, just not notified)."""
+    session, Session = sched_db
+
+    user = User(
+        email="u@x.com", hashed_password=hash_password("p"),
+        name="U", subscription_tier="basic",
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xabc", bettor_name="whale"))
+    session.commit()
+
+    failing_dispatch = AsyncMock(side_effect=RuntimeError("simulated dispatch failure"))
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=failing_dispatch):
+        run(_poll_bets())  # must not raise
+
+    verify = Session()
+    events = verify.query(BetEvent).all()
+    verify.close()
+
+    assert len(events) == 1
+    assert events[0].notified is True  # event marked notified even though dispatch failed

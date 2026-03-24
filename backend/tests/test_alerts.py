@@ -515,3 +515,49 @@ def test_put_alert_settings_empty_body_returns_200_no_changes(client, auth_heade
     assert data["web_push_enabled"] is False
     assert data["telegram_enabled"] is False
     assert data["sms_enabled"] is False
+
+
+def test_telegram_start_response_includes_instructions_and_bot_link(client, db, auth_headers, registered_user):
+    """POST /alerts/telegram/start response must include code, instructions, and bot_link."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
+    resp = client.post("/alerts/telegram/start", headers=auth_headers)
+
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "code" in data
+    assert "instructions" in data
+    assert "bot_link" in data
+
+
+def test_telegram_verify_lowercase_code_is_accepted(client, db, auth_headers, registered_user):
+    """POST /alerts/telegram/verify accepts lowercase code — route normalises with .upper()."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    user.telegram_verify_code = "ABCD1234"
+    db.commit()
+
+    resp = client.post(
+        "/alerts/telegram/verify",
+        json={"code": "abcd1234"},  # lowercase submission
+        headers=auth_headers,
+    )
+
+    assert resp.status_code == 200
+    assert resp.json()["verified"] is True
+
+
+def test_put_alert_settings_response_includes_telegram_and_phone_verified(client, auth_headers):
+    """PUT /alerts/settings response body must include telegram_verified and phone_verified fields."""
+    resp = client.put("/alerts/settings", json={"web_push_enabled": True}, headers=auth_headers)
+
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "telegram_verified" in data
+    assert "phone_verified" in data

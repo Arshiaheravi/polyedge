@@ -317,3 +317,19 @@ async def test_send_web_push_http_exception_returns_false():
     with patch.object(notif_mod.httpx, "AsyncClient", return_value=mock_instance):
         result = await send_web_push(sub_json, {"title": "test"})
     assert result is False
+
+
+@pytest.mark.asyncio
+async def test_send_telegram_returns_true_when_http_succeeds():
+    """send_telegram returns True when bot_token and chat_id are set and HTTP call succeeds."""
+    mock_resp = MagicMock()
+    mock_resp.raise_for_status = MagicMock()  # does not raise
+    mock_instance = AsyncMock()
+    mock_instance.post = AsyncMock(return_value=mock_resp)
+    mock_instance.__aenter__ = AsyncMock(return_value=mock_instance)
+    mock_instance.__aexit__ = AsyncMock(return_value=False)
+
+    with patch.object(notif_mod.httpx, "AsyncClient", return_value=mock_instance):
+        result = await send_telegram(chat_id="999", message="hello", bot_token="bot_abc")
+
+    assert result is True
