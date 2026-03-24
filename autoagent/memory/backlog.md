@@ -6,9 +6,9 @@
 
 *(replenish when empty — see DEBUG MODE rules in PROMPT.md)*
 
-- [ ] POST /auth/register with mismatched password field — RegisterRequest has no password_confirm field so no mismatch check exists; verify that sending {"email":"x@x.com","name":"X","password":"abc"} succeeds with 201 (no server-side confirm validation to break)
-- [ ] GET /bettors sort=accuracy returns sorted results — parametrize the sort param; mock get_leaderboard to return a fixed list; assert response always returns {"bettors": [...], "cached": bool}; completes the sort param triplet (profit already tested in session 23)
-- [ ] DELETE /follows/{address} for address with URL-special characters (e.g. "0x/test") — verify FastAPI path decoding doesn't 404 or crash; assert the route either matches correctly or returns 404 "Follow not found" (not 500 or 422)
+- [ ] GET /auth/me with valid JWT for a user deleted from DB returns 401 — `get_current_user` has `if user is None` → 401 "User not found"; create user, craft a token with their ID, delete the user row, then call GET /auth/me; verify 401 not 500
+- [ ] GET /auth/me with valid JWT for is_active=False user returns 401 — same code path `if user is None or not user.is_active`; create user, set is_active=False, call GET /auth/me; verify 401 "User not found"
+- [ ] POST /follows without bettor_name field uses address fallback — `bettor_name: str = ""` default in FollowRequest; route code `bettor_name=payload.bettor_name or payload.bettor_address[:12] + "..."` generates name from address when bettor_name is omitted; verify POST without bettor_name returns 201 and follow has bettor_name == address[:12]+"..."
 
 
 ---

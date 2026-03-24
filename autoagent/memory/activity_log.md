@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-20 archived — see activity_log_archive.md)*
 
+## 2026-03-24 23:00 — TESTING (Session 54)
+DONE: Added 3 backlog tests — (1) test_register_with_extra_password_confirm_field_succeeds: Pydantic v2 ignores extra fields, password_confirm alongside valid payload returns 201 (not 422); (2) test_delete_follow_url_encoded_slash_in_address_returns_404: %2F decoded to '/' in path param, no follow found → 404; (3) test_delete_follow_unencoded_slash_in_path_returns_404: extra path segment from unencoded slash doesn't match route → 404. Also cleared sort=accuracy backlog item (already covered by test_leaderboard_sort_accuracy). 296→299 tests.
+IMPACT: Confirms Pydantic v2 extra-field behavior (guards against adding password_confirm validation accidentally breaking existing clients); locks in that URL-special chars in bettor addresses never cause 500s or 422s. Generated 3 new HIGH PRIORITY backlog tasks (get_current_user deleted/inactive user paths, bettor_name fallback).
+FILES: backend/tests/test_auth.py, backend/tests/test_follows.py
+
 ## 2026-03-24 22:00 — TESTING (Session 53)
 DONE: Added 2 backlog tests — test_poll_bets_outer_exception_leaves_last_check_unchanged (db.commit() raises → outer except fires → _last_check stays at pre-poll value, so bets aren't skipped next run); test_put_alerts_settings_valid_push_subscription_stores_and_get_retrieves (PUT valid JSON string → GET returns parsed dict with endpoint key). Task 1 (basic tier GET /follows limit=5) found already covered by test_hypothesis_invariants.py parametrize. 294→296 tests.
 IMPACT: Scheduler outer exception path was the last untested defensive branch — a regression where _last_check advances despite a failed commit would silently skip all bets on the next poll. Push subscription PUT roundtrip locks in the json.loads() store/retrieve path so a breakage can't hide behind the existing direct-DB test.

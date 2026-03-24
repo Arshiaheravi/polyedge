@@ -1204,5 +1204,27 @@
       "failures": 0,
       "notes": "no UI changes"
     }
+  },
+  {
+    "session": 54,
+    "date": "2026-03-24",
+    "time": "23:00",
+    "type": "work",
+    "summary": "Added 3 tests confirming Pydantic ignores extra fields on register, and URL-special chars in DELETE /follows path return 404 not 500 — both verify existing defensive behavior isn't accidentally broken by future changes.",
+    "files": [
+      "backend/tests/test_auth.py",
+      "backend/tests/test_follows.py"
+    ],
+    "tests": {
+      "before": 296,
+      "after": 299,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no UI changes"
+    }
   }
 ]

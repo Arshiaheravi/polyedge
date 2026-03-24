@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #54] 3 backlog tests — register extra field, DELETE URL-special chars — 296→299** — Confirms Pydantic v2 ignores extra fields (password_confirm); URL-encoded slash and unencoded slash in bettor address both return 404 not 500/422; sort=accuracy was already covered so cleared that backlog item too.
 - **[SESSION #53] 2 backlog tests — scheduler outer exception + push subscription roundtrip — 294→296** — Scheduler commit failure now verified to leave _last_check unchanged; PUT→GET push_subscription roundtrip confirms json.loads() store/retrieve path works end-to-end.
 - **[SESSION #52] META audit sessions 46-50 — removed dead code and duplicate test — 295→294** — Removed unused ADMIN_PW constant + _admin_headers() helper from test_admin.py; removed test_vip_can_add_more_than_5_follows from test_security.py (fully subsumed by test_follows.py's equivalent).
 - **[SESSION #50] 2 backlog tests — scheduler _last_check update + delete-only-correct-follow — 293→295** — _poll_bets() now verified to update _last_check after a successful poll; DELETE /follows with 2 follows now verified to remove only the targeted address and leave the other intact.

@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **296 passed** (as of 2026-03-24, session 53 — added scheduler outer exception + push subscription roundtrip tests)
+- Test count: **299 passed** (as of 2026-03-24, session 54 — added register extra field, DELETE URL-special chars tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +44,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #54 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 3 backlog tests — Pydantic v2 extra fields ignored (register with password_confirm → 201), URL-encoded slash in DELETE path decoded to '/' → 404 "Follow not found", unencoded slash creates extra path segment → 404 from router. Also cleared sort=accuracy backlog item (already covered in test_bettors.py from a prior session). 296→299 tests.
+FAILED: Nothing failed. All 3 passed on first run.
+RULE: [2026-03-24] When testing "URL-special chars in path parameter", test BOTH the URL-encoded variant (e.g. `%2F`) AND the unencoded variant (e.g. literal `/`). They hit different failure modes: encoded → path param decoded to special char (route matches, handler returns 404); unencoded → extra path segment (route doesn't match, router returns 404). Both must be 404/not-500.
 
 ### Session #52 Reflexion — 2026-03-24
 ACCOMPLISHED: META code quality audit of sessions 46-50 changed test files. Found 2 issues: (1) Dead code in test_admin.py — `ADMIN_PW = "testadmin"` and `_admin_headers()` helper defined but never called (all tests use `get_settings().admin_password` directly); (2) Duplicate test in test_security.py — `test_vip_can_add_more_than_5_follows` fully subsumed by `test_follows.py::test_vip_tier_can_add_six_plus_follows` which tests the same 6 VIP follows plus GET response. Both removed. 295→294 tests.
