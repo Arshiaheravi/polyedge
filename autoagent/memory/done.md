@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #50] 2 backlog tests — scheduler _last_check update + delete-only-correct-follow — 293→295** — _poll_bets() now verified to update _last_check after a successful poll; DELETE /follows with 2 follows now verified to remove only the targeted address and leave the other intact.
 - **[SESSION #49] Fixed flaky JWT tamper test + 3 backlog tests — 290→293** — _tamper_token was changing only base64url padding bits (A↔B on last char = same decoded HMAC bytes); fixed to tamper sig[0]; added scheduler multi-bet loop test, GET /follows unknown tier limit=0 test, checkout 502 no-price-ID test.
 - **[SESSION #48] 3 edge-case tests — non-list positions response, unknown tier 403, admin stats nested type contract — 287→290** — get_active_positions returns [] when API returns dict; unknown subscription tier (e.g. "enterprise") correctly blocked with 403 via TIER_LIMITS.get fallback; /admin/stats isinstance checks on all nested fields.
 - **[SESSION #45] Meta code quality audit — fixed 409 status code bug, removed duplicate tests, added 2 response contracts, cleaned imports** — register duplicate-email was returning 400 (wrong) vs 409 (spec); 2 /follows/live tests in test_follows.py were duplicates of test_follows_live.py; sms/verify and telegram/verify response message fields now contract-tested; 281 tests stable.

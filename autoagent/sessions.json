@@ -1101,5 +1101,18 @@
     ],
     "tests": {"before": 290, "after": 293, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend code changed"}
+  },
+  {
+    "session": 50,
+    "date": "2026-03-24",
+    "time": "19:00",
+    "type": "work",
+    "summary": "Added 2 tests: verified the scheduler updates its internal checkpoint after a successful poll (so bets don't get missed on retry), and verified that deleting one follow doesn't accidentally remove other follows",
+    "files": [
+      "backend/tests/test_scheduler.py",
+      "backend/tests/test_follows.py"
+    ],
+    "tests": {"before": 293, "after": 295, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend code changed"}
   }
 ]

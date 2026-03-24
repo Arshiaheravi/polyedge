@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 19:00 — TESTING (Session 50)
+DONE: Added 2 backlog tests — test_poll_bets_last_check_updated_after_poll (verifies _last_check is set to check_time after a successful poll); test_delete_follow_with_multiple_follows_removes_only_correct_one (2 follows, delete one, verify other remains). Also discovered sort=accuracy and sort=volume tests already existed, so backlog item was already covered. 293→295 tests stable. Added META audit task + 3 new HIGH PRIORITY tasks to backlog.
+IMPACT: _last_check update path is now locked in — a regression where the checkpoint isn't advanced would cause all bets to be re-processed on every poll. Selective delete is verified — a cascade delete regression would be caught immediately.
+FILES: backend/tests/test_scheduler.py, backend/tests/test_follows.py
+
 ## 2026-03-24 18:00 — TESTING (Session 49)
 DONE: Fixed flaky JWT tamper test (_tamper_token was changing padding-only bits A↔B on last base64url char, leaving HMAC identical → token verified as valid non-deterministically); added 3 backlog tests: scheduler multi-bet loop (2 bets per address → 2 BetEvents), GET /follows unknown tier returns limit=0, checkout 502 when Stripe price ID unconfigured. 290→293 tests stable.
 IMPACT: Eliminates a test that randomly passed/failed depending on wall-clock time (last sig char in A-P range = same decoded bytes when flipped). Closes all 3 remaining HIGH PRIORITY backlog items.

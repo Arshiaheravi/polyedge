@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **293 passed** (as of 2026-03-24, session 49 — flaky tamper fix + 3 backlog tests added)
+- Test count: **295 passed** (as of 2026-03-24, session 50 — _last_check update + delete-only-correct-follow tests added)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #50 Reflexion — 2026-03-24
+ACCOMPLISHED: Added test_poll_bets_last_check_updated_after_poll — captures a `before_poll` timestamp, runs _poll_bets() with an empty get_recent_bets return (no BetEvents needed), asserts `scheduler_module._last_check >= before_poll`. Added test_delete_follow_with_multiple_follows_removes_only_correct_one — upgrades to basic tier, creates 2 follows, deletes one, verifies the other remains in GET /follows. Also discovered the sort=accuracy/volume backlog task was already covered (tests existed at test_bettors.py:29-40). 293→295 stable.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When a scheduler _last_check test needs empty-poll behavior (no bets returned), mock get_recent_bets to return [] — the poll still sets _last_check = check_time at the end of the try block even when bets is empty, as long as there is at least one BettorFollow row. The `if not addresses: return` early exit is the only path that skips the update.
+RULE: [2026-03-24] Before implementing a backlog task, grep the relevant test file for the function/param name first. "sort=accuracy and sort=volume untested" was already covered by test_leaderboard_sort_accuracy/test_leaderboard_sort_volume added in a prior session. 60-second check saves a wasted implementation slot.
 
 ### Session #49 Reflexion — 2026-03-24
 ACCOMPLISHED: Fixed flaky test `test_tampered_token_blocked_on_follows` — root cause was `_tamper_token` flipping between 'A' (000000) and 'B' (000001) on the last character of the JWT signature. For HMAC-SHA256 (32 bytes = 43 base64url chars), the last character has 2 unused padding bits; 'A' and 'B' differ only in those padding bits and decode to identical byte sequences. So the "tampered" token still passed JWT verification. Fix: tamper `sig[0]` (first character, all 6 bits significant). Added 3 backlog tests: scheduler multi-bet, GET /follows unknown tier, checkout no-price-id 502. 290→293 stable.
