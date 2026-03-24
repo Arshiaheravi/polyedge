@@ -618,3 +618,40 @@ def test_poll_bets_dispatch_exception_does_not_crash_poll_loop(sched_db):
 
     assert len(events) == 1
     assert events[0].notified is True  # event marked notified even though dispatch failed
+
+
+def test_poll_bets_dispatches_sms_for_vip_user(sched_db):
+    """Scheduler passes phone_number and sms_enabled=True to dispatch when
+    the user is VIP tier with phone_verified=True and alert.sms_enabled=True."""
+    from app.models import AlertSetting
+
+    session, Session = sched_db
+
+    user = User(
+        email="vipsms@x.com", hashed_password=hash_password("p"),
+        name="VipSms", subscription_tier="vip",
+        phone_number="+14155559999",
+        phone_verified=True,
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xvipsms", bettor_name="smswhale"))
+    alert = AlertSetting(
+        user_id=user.id,
+        telegram_enabled=False,
+        web_push_enabled=False,
+        sms_enabled=True,
+    )
+    session.add(alert)
+    session.commit()
+
+    mock_dispatch = AsyncMock()
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=mock_dispatch):
+        run(_poll_bets())
+
+    mock_dispatch.assert_called_once()
+    call_kwargs = mock_dispatch.call_args[1]
+    assert call_kwargs["phone_number"] == "+14155559999"
+    assert call_kwargs["sms_enabled"] is True

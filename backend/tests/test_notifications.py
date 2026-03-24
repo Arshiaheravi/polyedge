@@ -7,6 +7,7 @@ from app.services.notifications import (
     format_sms_message,
     dispatch_bet_notification,
     send_telegram,
+    send_sms,
 )
 
 
@@ -333,3 +334,86 @@ async def test_send_telegram_returns_true_when_http_succeeds():
         result = await send_telegram(chat_id="999", message="hello", bot_token="bot_abc")
 
     assert result is True
+
+
+# ── send_sms unit tests ───────────────────────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_send_sms_returns_false_when_credentials_missing():
+    """send_sms returns False immediately when any credential is empty."""
+    result = await send_sms(
+        to_number="+14155552671",
+        message="test",
+        account_sid="",  # missing
+        auth_token="token",
+        from_number="+15005550006",
+    )
+    assert result is False
+
+
+@pytest.mark.asyncio
+async def test_send_sms_returns_true_on_http_success():
+    """send_sms returns True when Twilio HTTP call succeeds (raise_for_status does not raise)."""
+    import app.services.notifications as notif_mod
+
+    mock_resp = MagicMock()
+    mock_resp.raise_for_status = MagicMock()  # does not raise
+    mock_instance = AsyncMock()
+    mock_instance.post = AsyncMock(return_value=mock_resp)
+    mock_instance.__aenter__ = AsyncMock(return_value=mock_instance)
+    mock_instance.__aexit__ = AsyncMock(return_value=False)
+
+    with patch.object(notif_mod.httpx, "AsyncClient", return_value=mock_instance):
+        result = await send_sms(
+            to_number="+14155552671",
+            message="test",
+            account_sid="ACtest",
+            auth_token="authtoken",
+            from_number="+15005550006",
+        )
+
+    assert result is True
+
+
+@pytest.mark.asyncio
+async def test_send_sms_returns_false_on_http_exception():
+    """send_sms returns False and does not raise when an httpx error occurs."""
+    import app.services.notifications as notif_mod
+
+    mock_instance = AsyncMock()
+    mock_instance.post = AsyncMock(side_effect=Exception("Connection refused"))
+    mock_instance.__aenter__ = AsyncMock(return_value=mock_instance)
+    mock_instance.__aexit__ = AsyncMock(return_value=False)
+
+    with patch.object(notif_mod.httpx, "AsyncClient", return_value=mock_instance):
+        result = await send_sms(
+            to_number="+14155552671",
+            message="test",
+            account_sid="ACtest",
+            auth_token="authtoken",
+            from_number="+15005550006",
+        )
+
+    assert result is False
+
+
+@pytest.mark.asyncio
+async def test_dispatch_vip_sms_enabled_but_no_phone_number_skips_sms():
+    """dispatch_bet_notification does not call send_sms when phone_number is None,
+    even if sms_enabled=True and user_tier='vip'."""
+    with patch("app.services.notifications.send_sms", new=AsyncMock(return_value=True)) as mock_sms:
+        results = await dispatch_bet_notification(
+            bettor_name="Alice",
+            market="Test market",
+            outcome="Yes",
+            amount=100.0,
+            telegram_chat_id=None,
+            telegram_bot_token="",
+            push_subscription_json=None,
+            phone_number=None,  # no phone despite sms_enabled=True
+            sms_enabled=True,
+            user_tier="vip",
+        )
+    assert "sms" not in results
+    mock_sms.assert_not_called()
