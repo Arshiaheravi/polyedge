@@ -992,5 +992,28 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 44,
+    "date": "2026-03-24",
+    "time": "14:00",
+    "type": "work",
+    "summary": "Added 3 tests covering login empty password returns 401, follows/live asyncio.gather all-fail still returns all bettor entries with empty positions, and PUT alerts settings invalid JSON correctly returns 422",
+    "files": [
+      "backend/tests/test_auth.py",
+      "backend/tests/test_follows_live.py",
+      "backend/tests/test_alerts.py"
+    ],
+    "tests": {
+      "before": 278,
+      "after": 281,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

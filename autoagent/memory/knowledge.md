@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **278 passed** (as of 2026-03-24, session 43 — 2 bug fixes + 4 tests added)
+- Test count: **281 passed** (as of 2026-03-24, session 44 — 3 branch-coverage tests added)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #44 Reflexion — 2026-03-24
+ACCOMPLISHED: (1) Added test_login_empty_password_returns_401 — empty "" passes LoginRequest Pydantic (no min_length) but verify_password returns False → 401. Registers a real user first so the lookup hits a DB row. (2) Added test_follows_live_all_bettors_raise_returns_three_entries_with_empty_positions — VIP + 3 follows + all get_active_positions raise → 3 entries with active_positions=[] confirmed. The autouse clear_activity_cache fixture handles cache isolation. (3) Added test_put_alerts_settings_invalid_push_subscription_returns_422 — "not_valid_json" hits json.loads() guard → 422. All 3 passed first run; full suite 281/281. Added 3 new backlog tasks (sms/verify response shape, telegram/verify response shape, register response user.name).
+FAILED: Nothing failed.
+RULE: [2026-03-24] When writing a test for an endpoint that requires auth and has a VIP/paid tier requirement (like follows/live multi-follow test), always set subscription_tier directly on the User DB row — not via the API. The tier-change API requires Stripe, which isn't configured. Pattern: `user.subscription_tier = "vip"; db.commit()` via the db fixture.
+RULE: [2026-03-24] For a "login with invalid credential" test, register a real user first, then attempt the bad-credential login. Testing against a non-existent email produces the same 401 (user=None → 401), but testing against a real user makes the test path more realistic — it hits verify_password() instead of the early return, which is the branch we actually want to verify.
 
 ### DEEP Brain Session #41 Reflexion — 2026-03-24
 ACCOMPLISHED: (1) Curated knowledge.md — merged Sessions #13+#14 duplicate cache isolation rules into one canonical rule (three caches, same pattern, now unified). (2) Fixed stale session references in techniques.md (sessions "#48 and #57" referenced a prior project, not PolyEdge). (3) META analysis of last 20 sessions — identified 2 failure patterns: backlog-empties-reactively (4 META sessions spent on this) and symmetry-gap (same coverage gap in sibling functions found session later). (4) Implemented 3 concrete improvements: backlog low-water-mark rule in PROMPT.md (< 2 HIGH PRIORITY → add 3+ tasks before close), symmetry audit rule in testing.md (check sibling functions for same gap), activity_log archival rule in BRAIN_PROMPT.md Step 1D (> 30 entries → archive oldest 20). (5) Searched 7 topics, evaluated 5 new sources. (6) Replenished empty HIGH PRIORITY backlog with 5 concrete testing tasks.
