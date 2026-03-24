@@ -84,6 +84,38 @@ Unit tests passing ≠ feature working. Always verify the full flow at least onc
 - A missing attribute on a stub is often silently swallowed by `except` blocks in services, producing 0 rows instead of an error — very hard to debug
 - Add the new field (with a safe default like `""` or `0`) to every stub found
 
+## POLYEDGE-SPECIFIC PATTERNS (read before writing any PolyEdge tests)
+
+### Module-level cache isolation
+`bettors.py` and `follows.py` have module-level cache dicts (`_leaderboard_cache`, `_trades_cache`, `_profile_cache`) that persist across tests in the same pytest session. If you test an error path AFTER a success path, the cache serves the success response and your mock is never called.
+
+**Fix**: At the start of any test that exercises an uncached code path, reset the cache directly:
+```python
+import app.routes.bettors as bettors_mod
+bettors_mod._trades_cache = {"data": None, "ts": 0}
+bettors_mod._profile_cache.clear()
+bettors_mod._leaderboard_cache = {"data": None, "ts": 0}
+```
+Or use a unique query-param combo not seen by earlier tests (e.g. `time_period=day` instead of `month`).
+
+### Module-level settings monkeypatching
+`alerts.py` (and similar files) do `settings = get_settings()` at module import time — the `settings` object is bound once and never re-fetched. `monkeypatch.setattr` on `get_settings` won't work. Patch the attribute directly on the already-bound object:
+```python
+import app.routes.alerts as alerts_mod
+original = alerts_mod.settings.twilio_account_sid
+try:
+    alerts_mod.settings.twilio_account_sid = "ACtest"
+    # ... test body ...
+finally:
+    alerts_mod.settings.twilio_account_sid = original
+```
+
+### PolyEdge test command
+```
+cd backend && py -m pytest tests/ -v
+```
+(Use `-v` not `-q` for this project — matches PROJECT.md and gives clearer failure output.)
+
 ## WHAT "TESTS PASS" MEANS
 - Zero failures in `tests/` (excluding test_e2e.py)
 - No collection errors
