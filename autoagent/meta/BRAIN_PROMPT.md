@@ -26,7 +26,13 @@ If yes → merge them into one canonical rule (keep the most recent date, merge 
 Ask: "Is any rule superseded or contradicted by a newer rule?"
 If yes → remove the older one (it is stale; keeping it causes confusion).
 **Prevent bloat**: knowledge.md should be a compact, authoritative rulebook — not a history log. History belongs in sessions.json and activity_log.md. Merged rules should NOT lose any information — keep the most concrete wording and the most recent date.
-(Source: ACE ICLR 2026 — Curator step in Generate→Reflect→Curate loop prevents context collapse from redundant entries)
+**5-factor admission check** (apply when deciding whether to keep a rule or drop it):
+1. **Future utility**: Will this rule prevent a failure in a future session? If the rule is too specific to ever recur, drop it.
+2. **Factual confidence**: Is the rule proven by at least one real session failure or test fix? Speculative rules add noise.
+3. **Semantic novelty**: Is this rule distinct from all other rules in the file? Partial overlaps should be merged, not kept separate.
+4. **Temporal recency**: If a rule is from >20 sessions ago and has not been referenced or triggered since, consider dropping it — the codebase may have changed.
+5. **Content type priority**: Rules about recurring test patterns or auth/tier invariants rank highest. Rules about one-time fixes rank lowest.
+(Source: ACE ICLR 2026 — Curator step; arxiv 2603.04549 A-MAC — five-factor memory admission control: future utility, factual confidence, semantic novelty, temporal recency, content type prior)
 
 ## STEP 1D — ARCHIVE activity_log.md (every BRAIN session, if > 30 entries)
 Count the session entries in `autoagent/memory/activity_log.md`. If there are more than 30 entries:

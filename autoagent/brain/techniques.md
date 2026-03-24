@@ -276,6 +276,12 @@ Where: autoagent/skills/testing.md (BRANCH AUDIT WORKFLOW — checklist, SYMMETR
 Source: Session #39-40 pattern — send_telegram had missing True-return path; same gap existed in send_sms but wasn't caught in the same session
 Expected impact: Prevents spending a full additional session finding the same gap in a sibling function
 
+## A-MAC five-factor memory admission control — implemented 2026-03-24
+What: Added 5-factor checklist to BRAIN_PROMPT.md Step 1C (curation step): future utility, factual confidence, semantic novelty, temporal recency, content type priority. BRAIN sessions now score each rule against these 5 factors to decide keep/merge/drop — not just "check for duplicates."
+Where: meta/BRAIN_PROMPT.md (Step 1C, added 5-factor block after existing merge/supersede checks)
+Source: arxiv 2603.04549 (A-MAC, ICLR 2026 Workshop MemAgent)
+Expected impact: knowledge.md stays compact and signal-dense; old one-time-fix rules get aged out instead of accumulating indefinitely
+
 ## pytest.param() named IDs for parametrized tests — implemented 2026-03-24
 What: Use `pytest.param("free", 1, id="tier_free")` instead of bare tuples in @pytest.mark.parametrize. Named IDs appear in failure output as "FAILED test_follows[tier_free]" instead of unreadable "FAILED test_follows[0]". Makes parametrize-heavy test suites 3x faster to debug.
 Where: skills/testing.md (PARAMETRIZE BEST PRACTICES section, added before IMPORT CHECK)
