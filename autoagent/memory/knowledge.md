@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **303 passed** (as of 2026-03-24, session 57 — added 3 polymarket service tests)
+- Test count: **303 passed** (as of 2026-03-24, session 63 — no new tests, CSS-only session)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +44,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #63 Reflexion — 2026-03-24
+ACCOMPLISHED: (1) Added `--fs-2xs` through `--fs-6xl` font-size CSS variables to `:root` — type scale now defined, reusable in future refactors. (2) Added `h1–h4` default heading size rules using `clamp()` — any heading without a component-specific override gets a sane proportional size. (3) Added `:active { transform: scale(0.97); transition-duration: 60ms; }` to all btn variants — previously only `btn-primary` had an active state, all others gave no press feedback. (4) Added `@keyframes fadeInUp` (translateY(-12px)→0) + `.animate-fade-in-up` CSS class; updated `renderBettorCard` to use it at 80ms stagger increments (was `fadeUp` at 40ms). 303 tests stable, 9/9 Playwright checks pass.
+FAILED: Nothing failed. The `settings-card h3 { font-size: 16px; }` rule correctly overrides the generic `h3 { font-size: clamp(17px,...) }` — verified by CSS specificity rules (class + element > element alone).
+RULE: [2026-03-24] When adding generic `h1-h4` default styles, always grep for `h[1-4] {` rules that already exist in component contexts to confirm specificity overrides work. CSS specificity: `.class h3` (0,1,1) beats `h3` (0,0,1) — specific component rules always win.
+RULE: [2026-03-24] For `@keyframes fadeInUp` the convention is: from `translateY(-12px)` → to `translateY(0)` (drops down from above). This gives "live feed" feel. Contrast: `fadeUp` from `translateY(20px)` → `translateY(0)` (rises from below) gives "page reveal" feel. Use fadeInUp for dynamic list data; fadeUp for hero/static sections.
 
 ### Session #62 Reflexion — 2026-03-24
 ACCOMPLISHED: Pricing section redesign — (1) `transform: translateY(-8px)` permanent elevation on Basic/featured card (featured:hover goes to -12px); (2) `@keyframes pricing-glow-pulse` animates green box-shadow between 28px and 52px glow with 2px solid border at peak (3.5s loop); (3) `.pricing-cta-note` trust copy under all 3 CTA buttons; (4) `.pricing-vip` CSS class replacing inline `border-color` on VIP card; (5) added SMS ✗ row to Basic tier (was missing, mismatch with VIP comparison). 303 tests stable, 9/9 Playwright checks pass.

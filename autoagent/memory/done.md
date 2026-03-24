@@ -59,3 +59,5 @@
 
 ## 2026-03-24
 - **[SESSION #60] Hero section redesign** — Added "Bets Detected Today" live counter, CTA shimmer animation, social proof line, fixed XSS in live ticker buildTickerItem
+
+- **[SESSION #63] CSS type scale + typography + button press states + staggered lb-card animation** — Added --fs-* font-size CSS vars, h1-h4 heading scale, universal button :active feedback, and fadeInUp staggered entrance for leaderboard cards

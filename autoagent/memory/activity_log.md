@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 63)
+DONE: CSS type scale + heading rules + button press states + staggered lb-card fadeInUp animation — added --fs-2xs through --fs-6xl font-size CSS variables to :root; added h1-h4 default heading size rules (clamp-based, overridden by component selectors); added :active scale(0.97) press states to all btn variants; added @keyframes fadeInUp (translateY -12px→0) with .animate-fade-in-up class; lb-cards now use fadeInUp at 80ms stagger increments.
+IMPACT: Defines a consistent type scale for future use; h1-h4 headings have sane defaults on any screen without a component-specific size; all buttons now give tactile press feedback (not just primary); leaderboard cards animate in from above giving "live feed" feel at 80ms stagger instead of flat 40ms from below.
+FILES: frontend/index.html
+
 ## 2026-03-24 — UI/UX (Session 62)
 DONE: Pricing section redesign — Basic card elevated 8px with animated pulse glow border; trust copy "No credit card required" / "Cancel anytime · Billed monthly" added under all 3 CTA buttons; VIP card refactored to CSS class; SMS cross-mark added to Basic tier for accurate comparison.
 IMPACT: Basic "Most Popular" card now visually dominates the pricing grid — permanent elevation + animated green glow makes it impossible to miss, expected to increase Basic tier conversion 20-30% per pricing research.
