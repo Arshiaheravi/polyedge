@@ -1,0 +1,61 @@
+"""Tests for /auth endpoints: register, login, /me."""
+
+
+def test_register_success(client):
+    resp = client.post("/auth/register", json={
+        "email": "user@example.com",
+        "password": "password123",
+        "name": "Alice",
+    })
+    assert resp.status_code == 201
+    data = resp.json()
+    assert "access_token" in data
+    assert data["user"]["email"] == "user@example.com"
+    assert data["user"]["subscription_tier"] == "free"
+
+
+def test_register_duplicate_email(client):
+    payload = {"email": "dup@example.com", "password": "pass", "name": "Bob"}
+    client.post("/auth/register", json=payload)
+    resp = client.post("/auth/register", json=payload)
+    assert resp.status_code == 400
+    assert "already registered" in resp.json()["detail"].lower()
+
+
+def test_login_success(client):
+    client.post("/auth/register", json={
+        "email": "login@example.com", "password": "mypass", "name": "Carol"
+    })
+    resp = client.post("/auth/login", json={
+        "email": "login@example.com", "password": "mypass"
+    })
+    assert resp.status_code == 200
+    assert "access_token" in resp.json()
+
+
+def test_login_wrong_password(client):
+    client.post("/auth/register", json={
+        "email": "wrong@example.com", "password": "correct", "name": "Dan"
+    })
+    resp = client.post("/auth/login", json={
+        "email": "wrong@example.com", "password": "incorrect"
+    })
+    assert resp.status_code == 401
+
+
+def test_login_unknown_email(client):
+    resp = client.post("/auth/login", json={
+        "email": "nobody@example.com", "password": "pass"
+    })
+    assert resp.status_code == 401
+
+
+def test_get_me_authenticated(client, auth_headers):
+    resp = client.get("/auth/me", headers=auth_headers)
+    assert resp.status_code == 200
+    assert resp.json()["user"]["email"] == "test@example.com"
+
+
+def test_get_me_unauthenticated(client):
+    resp = client.get("/auth/me")
+    assert resp.status_code == 403
