@@ -99,7 +99,7 @@ The backend auto-creates the SQLite database (`polyedge.db`) on first startup.
 
 | Tier | Price | Follow Limit | Notifications |
 |------|-------|-------------|---------------|
-| Free | $0 | 0 follows | None |
+| Free | $0 | 1 follow | None |
 | Basic | $4.99/mo | 5 bettors | Web push + Telegram |
 | VIP | $14.99/mo | Unlimited | Web push + Telegram + SMS + Priority speed |
 
