@@ -90,3 +90,19 @@ def test_follows_live_multiple_bettors(client, db, auth_headers, registered_user
 
     assert resp.status_code == 200
     assert len(resp.json()["bettors"]) == 3
+
+
+def test_follows_live_serves_cached_response(client, auth_headers):
+    """Second call within TTL returns cached data — Polymarket API called only once."""
+    client.post("/follows", json={"bettor_address": "0xcache", "bettor_name": "CacheWhale"},
+                headers=auth_headers)
+
+    mock_api = AsyncMock(return_value=MOCK_POSITIONS)
+    with patch("app.routes.follows.get_active_positions", new=mock_api):
+        resp1 = client.get("/follows/live", headers=auth_headers)
+        resp2 = client.get("/follows/live", headers=auth_headers)
+
+    assert resp1.status_code == 200
+    assert resp2.status_code == 200
+    assert resp1.json() == resp2.json()
+    assert mock_api.call_count == 1

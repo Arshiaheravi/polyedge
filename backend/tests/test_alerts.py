@@ -236,3 +236,94 @@ def test_telegram_already_verified_can_start_again(client, db, auth_headers, reg
     resp = client.post("/alerts/telegram/start", headers=auth_headers)
     assert resp.status_code == 200
     assert "code" in resp.json()
+
+
+# ── GET /alerts/settings with stored push_subscription ──────────────────────
+
+
+def test_get_alert_settings_returns_parsed_push_subscription(client, db, auth_headers, registered_user):
+    """GET /alerts/settings returns push_subscription as a parsed dict, not a raw string."""
+    from app.models import AlertSetting, User
+    import json as _json
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    sub_dict = {"endpoint": "https://push.example.com/sub/abc", "keys": {"p256dh": "AAAA", "auth": "BBBB"}}
+    alert = db.query(AlertSetting).filter(AlertSetting.user_id == user.id).first()
+    if not alert:
+        alert = AlertSetting(user_id=user.id)
+        db.add(alert)
+    alert.push_subscription = _json.dumps(sub_dict)
+    db.commit()
+
+    resp = client.get("/alerts/settings", headers=auth_headers)
+    assert resp.status_code == 200
+    result = resp.json()["push_subscription"]
+    assert isinstance(result, dict)
+    assert result["endpoint"] == "https://push.example.com/sub/abc"
+
+
+# ── SMS /sms/start edge cases ────────────────────────────────────────────────
+
+
+def _make_vip(db, registered_user):
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "vip"
+    db.commit()
+
+
+def test_sms_start_twilio_not_configured_returns_503(client, db, auth_headers, registered_user):
+    """If Twilio credentials are not set, /sms/start returns 503."""
+    _make_vip(db, registered_user)
+    import app.routes.alerts as alerts_module
+    original_sid = alerts_module.settings.twilio_account_sid
+    original_tok = alerts_module.settings.twilio_auth_token
+    alerts_module.settings.twilio_account_sid = ""
+    alerts_module.settings.twilio_auth_token = ""
+    try:
+        resp = client.post("/alerts/sms/start", json={"phone_number": "+14155552671"},
+                           headers=auth_headers)
+    finally:
+        alerts_module.settings.twilio_account_sid = original_sid
+        alerts_module.settings.twilio_auth_token = original_tok
+    assert resp.status_code == 503
+    assert "SMS service not configured" in resp.json()["detail"]
+
+
+def test_sms_start_invalid_phone_format_returns_400(client, db, auth_headers, registered_user):
+    """Phone number without leading '+' returns 400."""
+    _make_vip(db, registered_user)
+    import app.routes.alerts as alerts_module
+    original_sid = alerts_module.settings.twilio_account_sid
+    original_tok = alerts_module.settings.twilio_auth_token
+    alerts_module.settings.twilio_account_sid = "ACtest"
+    alerts_module.settings.twilio_auth_token = "testtoken"
+    try:
+        resp = client.post("/alerts/sms/start", json={"phone_number": "14155552671"},
+                           headers=auth_headers)
+    finally:
+        alerts_module.settings.twilio_account_sid = original_sid
+        alerts_module.settings.twilio_auth_token = original_tok
+    assert resp.status_code == 400
+    assert "E.164" in resp.json()["detail"]
+
+
+def test_sms_start_send_fails_returns_502(client, db, auth_headers, registered_user):
+    """If send_sms returns False (Twilio rejects), /sms/start returns 502."""
+    from unittest.mock import AsyncMock, patch
+    _make_vip(db, registered_user)
+    import app.routes.alerts as alerts_module
+    original_sid = alerts_module.settings.twilio_account_sid
+    original_tok = alerts_module.settings.twilio_auth_token
+    alerts_module.settings.twilio_account_sid = "ACtest"
+    alerts_module.settings.twilio_auth_token = "testtoken"
+    try:
+        with patch("app.routes.alerts.send_sms", new=AsyncMock(return_value=False)):
+            resp = client.post("/alerts/sms/start", json={"phone_number": "+14155552671"},
+                               headers=auth_headers)
+    finally:
+        alerts_module.settings.twilio_account_sid = original_sid
+        alerts_module.settings.twilio_auth_token = original_tok
+    assert resp.status_code == 502
+    assert "Failed to send SMS" in resp.json()["detail"]
