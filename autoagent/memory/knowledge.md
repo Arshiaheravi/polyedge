@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **299 passed** (as of 2026-03-24, session 54 — added register extra field, DELETE URL-special chars tests)
+- Test count: **301 passed** (as of 2026-03-24, session 55 — added GET /auth/me deleted user + inactive user 401 tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +44,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #55 Reflexion — 2026-03-24
+ACCOMPLISHED: Added test_get_me_deleted_user_returns_401 and test_get_me_inactive_user_returns_401 to test_auth.py. Both register a fresh user, mutate DB state (delete row or set is_active=False), then call GET /auth/me with the original (still-valid-HMAC) token. Also cleared bettor_name backlog item (already covered). 299→301 tests.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When testing get_current_user deleted/inactive paths, register a fresh user (not the fixture), modify DB directly, then call endpoint with the original token. The token HMAC is unchanged by DB mutation — only the DB query result changes. This makes the test prove the DB check, not the HMAC check.
 
 ### Session #54 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 3 backlog tests — Pydantic v2 extra fields ignored (register with password_confirm → 201), URL-encoded slash in DELETE path decoded to '/' → 404 "Follow not found", unencoded slash creates extra path segment → 404 from router. Also cleared sort=accuracy backlog item (already covered in test_bettors.py from a prior session). 296→299 tests.

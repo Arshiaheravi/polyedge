@@ -1226,5 +1226,26 @@
       "failures": 0,
       "notes": "no UI changes"
     }
+  },
+  {
+    "session": 55,
+    "date": "2026-03-24",
+    "time": "23:30",
+    "type": "work",
+    "summary": "Added 2 tests verifying that GET /auth/me returns 401 when the user row has been deleted from DB and when is_active=False — locks in the get_current_user guard so a regression would be caught immediately.",
+    "files": [
+      "backend/tests/test_auth.py"
+    ],
+    "tests": {
+      "before": 299,
+      "after": 301,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no UI changes"
+    }
   }
 ]

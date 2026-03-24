@@ -48,3 +48,6 @@
 - **[SESSION #42] 6 branch-coverage tests** — password max_length DoS guard (added max_length=128, 2 tests), /follows/live shape contract (2 tests), VIP follow cap, admin zero-users; 268→274 tests
 - **[SESSION #43] Login DoS guard + unfollow cache eviction** — Fixed missing max_length=128 on LoginRequest and missing _activity_cache eviction on unfollow, added 4 tests
 - **[SESSION #47] 6 response-contract and edge-case tests** — login/register 7-field user contract, bettor null-profile 200, leaderboard limit passthrough, portal subscription_id handling, webhook unknown-event 200; 281→287 tests
+
+## 2026-03-24
+- **[SESSION #55] GET /auth/me deleted + inactive user 401 tests** — verified get_current_user guards (user is None / is_active=False) return 401; 299→301 tests

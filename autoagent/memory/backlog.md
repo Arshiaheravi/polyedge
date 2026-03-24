@@ -6,9 +6,10 @@
 
 *(replenish when empty — see DEBUG MODE rules in PROMPT.md)*
 
-- [ ] GET /auth/me with valid JWT for a user deleted from DB returns 401 — `get_current_user` has `if user is None` → 401 "User not found"; create user, craft a token with their ID, delete the user row, then call GET /auth/me; verify 401 not 500
-- [ ] GET /auth/me with valid JWT for is_active=False user returns 401 — same code path `if user is None or not user.is_active`; create user, set is_active=False, call GET /auth/me; verify 401 "User not found"
-- [ ] POST /follows without bettor_name field uses address fallback — `bettor_name: str = ""` default in FollowRequest; route code `bettor_name=payload.bettor_name or payload.bettor_address[:12] + "..."` generates name from address when bettor_name is omitted; verify POST without bettor_name returns 201 and follow has bettor_name == address[:12]+"..."
+- [ ] `_normalise_bet` type field defaults to "BUY" when side absent — `test_normalise_bet_missing_fields` passes `{}` but doesn't assert `result["type"] == "BUY"`; the `raw.get("side") or "BUY"` guard is untested; add assertion to existing test or add new test to `test_polymarket_service.py`
+- [ ] `get_live_trades` generates "anon" name when proxyWallet is empty and no name/pseudonym — the `addr[:8] + "..." if addr else "anon"` branch is untested; mock a trade with `{"proxyWallet": "", "usdcSize": "10"}` and assert name == "anon"; add to `test_polymarket_service.py`
+- [ ] `get_leaderboard` returns empty list when first API page is `[]` — the `len(page) == 0` break condition on the first call is untested (only pagination with full first page is tested); mock response returning `[]` and assert `get_leaderboard()` returns `[]` without a second API call; add to `test_polymarket_service.py`
+
 
 
 ---

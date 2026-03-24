@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-20 archived — see activity_log_archive.md)*
 
+## 2026-03-24 23:30 — TESTING (Session 55)
+DONE: Added 2 tests — test_get_me_deleted_user_returns_401 (register user, delete DB row, call GET /auth/me with old token → 401) and test_get_me_inactive_user_returns_401 (register user, set is_active=False, call GET /auth/me → 401). Also cleared the bettor_name fallback backlog item (already covered by test_follow_bettor_name_defaults_to_truncated_address in test_follows.py). Generated 3 new HIGH PRIORITY tasks: _normalise_bet type default, get_live_trades anon name, get_leaderboard empty first page. 299→301 tests.
+IMPACT: Locks in the `if user is None or not user.is_active` guard in get_current_user — a regression that skips the None check or active check would now be caught. Previously untested despite being a critical auth path.
+FILES: backend/tests/test_auth.py
+
 ## 2026-03-24 23:00 — TESTING (Session 54)
 DONE: Added 3 backlog tests — (1) test_register_with_extra_password_confirm_field_succeeds: Pydantic v2 ignores extra fields, password_confirm alongside valid payload returns 201 (not 422); (2) test_delete_follow_url_encoded_slash_in_address_returns_404: %2F decoded to '/' in path param, no follow found → 404; (3) test_delete_follow_unencoded_slash_in_path_returns_404: extra path segment from unencoded slash doesn't match route → 404. Also cleared sort=accuracy backlog item (already covered by test_leaderboard_sort_accuracy). 296→299 tests.
 IMPACT: Confirms Pydantic v2 extra-field behavior (guards against adding password_confirm validation accidentally breaking existing clients); locks in that URL-special chars in bettor addresses never cause 500s or 422s. Generated 3 new HIGH PRIORITY backlog tasks (get_current_user deleted/inactive user paths, bettor_name fallback).
