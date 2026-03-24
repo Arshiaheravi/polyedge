@@ -223,3 +223,35 @@ def test_bettor_detail_cache_hit_returns_cached_data(client):
     assert resp1.json()["profile"]["name"] == "CacheHitter"
     assert resp2.json()["profile"]["name"] == "CacheHitter"
     assert mock_fn.call_count == 1  # API called only once
+
+
+def test_bettor_detail_none_profile_returns_200(client):
+    """GET /bettors/{address} returns 200 with profile=null when Polymarket returns None.
+    PROJECT.md spec says 'bad address = 404 or empty' — actual behavior is empty (null profile)."""
+    import app.routes.bettors as bettors_mod
+    addr = "0xNONEXISTENT"
+    bettors_mod._profile_cache.pop(addr, None)
+
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=None)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=[])):
+        resp = client.get(f"/bettors/{addr}")
+
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["profile"] is None
+    assert data["recent_bets"] == []
+
+
+def test_leaderboard_limit_param_passed_to_service(client):
+    """GET /bettors?limit=5 must call get_leaderboard with limit=5."""
+    import app.routes.bettors as bettors_mod
+    bettors_mod._leaderboard_cache.pop("profit_month_5", None)
+
+    mock_fn = AsyncMock(return_value=MOCK_LEADERBOARD[:1])
+    with patch("app.routes.bettors.get_leaderboard", new=mock_fn):
+        resp = client.get("/bettors?sort=profit&time_period=month&limit=5")
+
+    assert resp.status_code == 200
+    mock_fn.assert_called_once()
+    call_kwargs = mock_fn.call_args.kwargs
+    assert call_kwargs.get("limit") == 5, f"expected limit=5 but got {call_kwargs}"

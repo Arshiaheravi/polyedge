@@ -197,3 +197,36 @@ def test_checkout_response_shape_is_checkout_url_only(client, auth_headers):
     body = resp.json()
     assert set(body.keys()) == {"checkout_url"}
     assert body["checkout_url"] == mock_url
+
+
+def test_portal_customer_with_no_subscription_id_still_works(client, db, auth_headers, registered_user):
+    """A user who has a stripe_customer_id but no stripe_subscription_id can still access the portal.
+    The portal route only requires stripe_customer_id — stripe_subscription_id is not checked."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.stripe_customer_id = "cus_nosub"
+    user.stripe_subscription_id = None
+    db.commit()
+
+    mock_url = "https://billing.stripe.com/session/nosub_test"
+    with patch("app.routes.payments.create_billing_portal_session",
+               new=AsyncMock(return_value=mock_url)):
+        resp = client.get("/payments/portal", headers=auth_headers)
+
+    assert resp.status_code == 200
+    assert resp.json()["portal_url"] == mock_url
+
+
+def test_webhook_unknown_event_returns_200(client):
+    """POST /payments/webhook with an unknown event type must return 200 {'status': 'ok'}.
+    The webhook handler ignores unknown event types without raising — route must not 502."""
+    with patch("app.routes.payments.handle_webhook_event", new=AsyncMock(return_value=None)):
+        resp = client.post(
+            "/payments/webhook",
+            content=json.dumps({"type": "payment_intent.created", "data": {}}).encode(),
+            headers={"Content-Type": "application/json"},
+        )
+
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "ok"}

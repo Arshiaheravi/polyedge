@@ -298,3 +298,30 @@ def test_login_empty_password_returns_401(client):
         "password": "",
     })
     assert resp.status_code == 401
+
+
+def test_login_response_has_all_7_fields(client):
+    """POST /auth/login user dict must include all 7 fields from user_to_dict."""
+    client.post("/auth/register", json={
+        "email": "contract7@example.com", "password": "pass123", "name": "Contract"
+    })
+    resp = client.post("/auth/login", json={
+        "email": "contract7@example.com", "password": "pass123"
+    })
+    assert resp.status_code == 200
+    user = resp.json()["user"]
+    for field in ("id", "email", "name", "subscription_tier",
+                  "telegram_verified", "telegram_chat_id", "created_at"):
+        assert field in user, f"login response missing field: {field}"
+
+
+def test_register_response_has_all_7_fields(client):
+    """POST /auth/register user dict must include all 7 fields from user_to_dict."""
+    resp = client.post("/auth/register", json={
+        "email": "regcontract7@example.com", "password": "pass123", "name": "RegContract"
+    })
+    assert resp.status_code == 201
+    user = resp.json()["user"]
+    for field in ("id", "email", "name", "subscription_tier",
+                  "telegram_verified", "telegram_chat_id", "created_at"):
+        assert field in user, f"register response missing field: {field}"
