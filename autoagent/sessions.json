@@ -354,5 +354,15 @@
     "files": ["autoagent/PROMPT.md", "autoagent/memory/backlog.md", "autoagent/memory/knowledge.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md"],
     "tests": {"before": 239, "after": 239, "status": "skip"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "brain session — no code changed"}
+  },
+  {
+    "session": 32,
+    "date": "2026-03-24",
+    "time": "03:05",
+    "type": "work",
+    "summary": "Fixed 2 bugs (empty bettor_address silently stored in DB; whitespace email bypassed duplicate check with 500 crash) and added 6 tests covering those fixes plus MRR decimal precision, web_push independence, and telegram/start regeneration",
+    "files": ["backend/app/routes/follows.py", "backend/app/routes/auth.py", "backend/tests/test_follows.py", "backend/tests/test_admin.py", "backend/tests/test_auth.py", "backend/tests/test_alerts.py"],
+    "tests": {"before": 239, "after": 245, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
   }
 ]

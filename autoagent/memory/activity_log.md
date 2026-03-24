@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 03:05 — TESTING + BUG FIX (Session 32)
+DONE: Fixed 2 bugs and added 6 tests — (1) FollowRequest.bettor_address now has min_length=1 (empty string was silently stored in DB), (2) /auth/register duplicate check now strips whitespace (padded email bypassed check and crashed with 500 on second attempt), (3-6) tests: empty address → 422, MRR 3 basic + 2 VIP decimal precision (not integer-rounded), whitespace email strips + deduplicates, login works after whitespace-padded registration, web_push_enabled independent of push_subscription, telegram/start second call overwrites code (old code invalid). 239→245 tests.
+IMPACT: Two silent data-corruption/crash paths closed — empty bettor_address would create garbage rows; whitespace email would cause a 500 on duplicate registration attempts. All 5 backlog edge-case tasks completed.
+FILES: backend/app/routes/follows.py, backend/app/routes/auth.py, backend/tests/test_follows.py, backend/tests/test_admin.py, backend/tests/test_auth.py, backend/tests/test_alerts.py
+
 ## 2026-03-24 — BRAIN SESSION (Session 31)
 RESEARCHED: autonomous AI agent planning 2026 (arxiv), LLM memory management 2026, FastAPI testing patterns 2026, Polymarket copy-trading competitor features (HolyPoly), everything-claude-code new skills (autonomous-loops, eval-harness), agentic coding multi-file reliability (MSR 2026 arxiv 2511.04427)
 DOWNLOADED: autonomous-loops/SKILL.md and eval-harness/SKILL.md from everything-claude-code (evaluated, De-Sloppify concept extracted)

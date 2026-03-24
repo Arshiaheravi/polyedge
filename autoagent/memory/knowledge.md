@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **239 passed** (as of 2026-03-24, session 30 added 5 tests — cross-user unfollow security, register dup email uppercase, /me fields contract, admin follows.total, scheduler telegram args)
+- Test count: **245 passed** (as of 2026-03-24, session 32 added 6 tests — empty bettor_address, MRR precision, whitespace email, web_push independence, telegram regen)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #32 Reflexion — 2026-03-24
+ACCOMPLISHED: Fixed 2 input-validation bugs and added 6 tests. Bug 1: `FollowRequest.bettor_address: str` had no min_length — empty string was silently stored in DB; fixed with `Field(..., min_length=1)`. Bug 2: `/auth/register` duplicate check used `.lower()` but not `.strip()` — registering with `" user@example.com "` would bypass the check and crash with 500 (DB unique constraint) on a second attempt; fixed by adding `.strip()` to the check. All 6 new tests passed first run (after fixing a test isolation issue where extra assertions from a prior test leaked into mine due to imprecise old_string in Edit call). 239→245.
+FAILED: First run of `test_telegram_start_called_twice_overwrites_code` failed — `assert user.telegram_verified is True` at line 265. Cause: my Edit `old_string` ended at `assert resp.json()["verified"] is True` but the actual file had 3 more lines (`db.refresh(user)`, two asserts) belonging to the original test. My new test insertion placed those lines inside the new test body. Fix: used another Edit to remove the 3 leaked lines. Passed on re-run.
+RULE: [2026-03-24] When inserting a new function block after another function using Edit, always verify the `old_string` extends to the END of the target function (including any trailing `db.refresh` or assertion lines), not just the last obvious assertion. Imprecise `old_string` boundaries cause following-test code to leak into the new test body, producing confusing false failures.
 
 ### Session #30 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 tests covering gaps found by systematic cross-file audit. (1) Cross-user DELETE /follows security — verified user B cannot delete user A's follow (route filters by user_id, returns 404); (2) Register uppercase email duplicate — `email.lower()` at register/login means `USER@EXAMPLE.COM` collides with `user@example.com`; (3) GET /auth/me all 7 user_to_dict fields asserted; (4) admin/stats follows.total with actual DB rows; (5) scheduler passes correct telegram_chat_id to dispatch when alert.telegram_enabled=True and user.telegram_verified=True — this required adding an AlertSetting row to the sched_db fixture alongside the user. All 5 passed first run. 234→239.
