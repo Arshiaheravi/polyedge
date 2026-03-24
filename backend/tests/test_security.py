@@ -96,17 +96,6 @@ class TestVIPUnlimitedFollows:
         user.subscription_tier = "vip"
         db.commit()
 
-    def test_vip_can_add_more_than_5_follows(self, client, db, auth_headers, registered_user):
-        self._upgrade_to_vip(db, registered_user)
-        addresses = [f"0x{i:040x}" for i in range(6)]
-        for addr in addresses:
-            resp = client.post(
-                "/follows",
-                json={"bettor_address": addr},
-                headers=auth_headers,
-            )
-            assert resp.status_code == 201, f"VIP follow #{addresses.index(addr)+1} failed: {resp.json()}"
-
     def test_vip_can_add_10_follows(self, client, db, auth_headers, registered_user):
         self._upgrade_to_vip(db, registered_user)
         for i in range(10):

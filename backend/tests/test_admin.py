@@ -1,13 +1,6 @@
 """Tests for /admin endpoints."""
 
 
-ADMIN_PW = "testadmin"
-
-
-def _admin_headers(password=ADMIN_PW):
-    return {"x-admin-password": password}
-
-
 def test_admin_stats_no_header(client):
     resp = client.get("/admin/stats")
     assert resp.status_code == 422  # missing required header
