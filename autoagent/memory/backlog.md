@@ -4,7 +4,6 @@
 
 ## HIGH PRIORITY — UI/UX Tasks
 
-- [ ] Pricing section redesign — 3 cards (Free / Basic / VIP), highlight Basic as "Most Popular" with a badge, show feature checklist per tier, add a subtle animated border on the recommended plan, make upgrade CTA buttons prominent
 - [ ] Global CSS variables & typography overhaul — define consistent color palette (:root CSS vars), upgrade font stack to Inter or similar system font, set heading scale (h1-h4), ensure 8px spacing grid is consistent across all sections
 - [ ] Animations & micro-interactions — add smooth fade-in on page load, hover lift on all cards, button press feedback (scale down), smooth section transitions; use CSS transitions only (no heavy JS animation libs)
 - [ ] Generate hero background image using Nano Banana API and wire into hero section with CSS fallback gradient
@@ -16,7 +15,6 @@
 - [ ] Staggered leaderboard card entrance animations — apply `animation-delay` in 150ms increments to `.lb-card` elements (`nth-child` CSS selector), use `@keyframes fadeInUp` (translateY(-12px)→0 + opacity 0→1); creates "live feed" feel; use CSS only, no JS libs
 - [ ] Bet activity feed enhancements — add probability pill (YES 72¢ green / NO 28¢ red) to each bet row in bettor profile; add market status badge (Open/Closed/Resolved) using CSS date comparison; helps user judge if trade is still copyable
 - [ ] Toast notification stack — vanilla JS custom event dispatcher; push trade alert toasts from bottom-right; stack with 8px gap, auto-dismiss after 5s; use for "New bet detected" events on follows page
-- [ ] Pricing page: Most Popular elevation + trust signals — add `transform: translateY(-8px)` + `box-shadow: 0 0 0 2px var(--accent)` to Basic card; add "Most Popular" badge (position: absolute, top: -12px); add "Cancel anytime · No credit card for Free" under each CTA button; (+20-30% conversion on middle tier per research)
 
 ---
 

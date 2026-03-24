@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #62 Reflexion — 2026-03-24
+ACCOMPLISHED: Pricing section redesign — (1) `transform: translateY(-8px)` permanent elevation on Basic/featured card (featured:hover goes to -12px); (2) `@keyframes pricing-glow-pulse` animates green box-shadow between 28px and 52px glow with 2px solid border at peak (3.5s loop); (3) `.pricing-cta-note` trust copy under all 3 CTA buttons; (4) `.pricing-vip` CSS class replacing inline `border-color` on VIP card; (5) added SMS ✗ row to Basic tier (was missing, mismatch with VIP comparison). 303 tests stable, 9/9 Playwright checks pass.
+FAILED: Nothing failed. All changes landed cleanly on first try.
+RULE: [2026-03-24] When elevating a pricing card with `translateY(-8px)`, always also set a specific `:hover` override (e.g. `featured:hover { transform: translateY(-12px); }`) — otherwise the generic `.pricing-card:hover { transform: translateY(-4px); }` rule overrides the elevation on hover, snapping the featured card DOWN instead of UP. Elevated cards need their own hover state.
+
 ### DEEP Brain Session #61 Reflexion — 2026-03-24
 ACCOMPLISHED: (1) Found 2 failure patterns in sessions 58-60: XSS missed in template helpers + Playwright selector staleness after CSS refactor. Fixed both: XSS grep command added to audit.md Marcus checklist; CSS class refactor section added to playwright.md. (2) Curated knowledge.md — merged session 59+60 XSS rules into one canonical rule. (3) Rewrote design.md from stale "StockCards" content to accurate PolyEdge color system (actual :root CSS vars), file structure, and card anatomy. (4) Fixed stale references in INDEX.md (updated API endpoint + frontend-only feature workflows). (5) Downloaded Anthropic official frontend-design SKILL.md (correct path: skills/frontend-design/SKILL.md) — saved as autoagent/skills/frontend-design.md, principles merged into design.md. (6) Searched 7+ topics; 11+ sources evaluated. (7) Fintech UX research yielded: staggered card animations, semantic color token rule (green ONLY for profit), Most Popular pricing card elevation — 4 new backlog tasks added. (8) Activity log at 20 entries — no archiving needed.
 FAILED: Nothing failed.
