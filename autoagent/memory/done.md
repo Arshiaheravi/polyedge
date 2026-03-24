@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #25] 6 coverage-gap tests — poly_url branches, live_trades non-list, activity key, send_telegram empty creds** — two untested poly_url branches in get_active_positions, live_trades non-list defense, get_recent_bets activity-key fallback, send_telegram empty-creds early returns; 199→205 tests.
 - **[SESSION #23] 5 coverage-gap tests — polymarket async service functions + auth email case** — first direct unit tests for get_bettor_profile, get_recent_bets, get_live_trades, get_leaderboard pagination; plus login email case-insensitivity; 189→194 tests.
 - **[SESSION #22] 5 coverage-gap tests — bettor cache hit, past_due downgrade, sub.updated basic, bet_events admin count, POST /follows body** — closed last untested branches in bettors profile cache, stripe webhook downgrade/upgrade paths, admin bet_events count, and follows response shape; 184→189 tests.
 - **[SESSION #19] 5 coverage-gap tests — auth gaps, VIP telegram, cache hit, alert fields** — PUT /alerts and POST /follows auth tested (403), VIP telegram/start confirmed, leaderboard cached=True second call verified, alert settings phone/telegram fields checked; 174→179 tests.

@@ -284,5 +284,15 @@
     "files": ["backend/tests/test_follows.py", "backend/tests/test_follows_live.py", "backend/tests/test_polymarket_service.py", "backend/tests/test_bettors.py"],
     "tests": {"before": 194, "after": 199, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+  },
+  {
+    "session": 25,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 6 coverage-gap tests closing the two untested poly_url branches in get_active_positions (slug-only and no-slug fallback), get_live_trades non-list API response, get_recent_bets activity-key dict fallback, and send_telegram empty bot_token and empty chat_id guards — 199 to 205 tests",
+    "files": ["backend/tests/test_polymarket_service.py", "backend/tests/test_notifications.py"],
+    "tests": {"before": 199, "after": 205, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]

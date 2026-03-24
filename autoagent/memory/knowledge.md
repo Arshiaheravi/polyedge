@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **199 passed** (as of 2026-03-24, session 24 added 5 coverage-gap tests)
+- Test count: **205 passed** (as of 2026-03-24, session 25 added 6 coverage-gap tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #25 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 6 coverage-gap tests found by auditing every branch in polymarket.py and notifications.py. Gaps: (1) get_active_positions poly_url has 3 branches (eventSlug / slug / fallback) — only eventSlug was tested; (2) get_live_trades non-list response branch untested; (3) get_recent_bets "activity" key fallback untested (only "data" key was); (4) send_telegram empty-creds early-return had no unit test despite being a real defensive branch. All 6 passed first run. 199→205.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When a function has a multi-branch conditional for URL/string construction (if A: url=...; elif B: url=...; else: url=default), each branch needs its own test. Testing only the first branch (e.g. eventSlug) does NOT cover the slug-only or no-slug fallback — these are independent code paths that can be wrong independently. Count the branches, write one test per branch.
 
 ### Session #24 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 coverage-gap tests found by systematic audit: VIP tier follows limit (completes free/basic/VIP triplet), get_bettor_profile empty-activity path, follows/live followed_at response field, get_recent_bets dict-response defensive branch, /bettors limit=0 boundary. All 5 passed first run. 194→199.

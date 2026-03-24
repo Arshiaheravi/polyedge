@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 25)
+DONE: Added 6 coverage-gap tests — get_active_positions slug-only poly_url branch (no eventSlug, uses slug), get_active_positions no-slug fallback ("https://polymarket.com"), get_live_trades non-list API response returns [], get_recent_bets dict response with "activity" key, send_telegram returns False when bot_token empty, send_telegram returns False when chat_id empty. 199→205 tests.
+IMPACT: Closes the two untested poly_url construction branches in get_active_positions (the eventSlug path was already tested; slug-only and no-slug weren't); confirms get_live_trades defensive non-list handling; confirms get_recent_bets "activity" key fallback; and locks in the early-return guards in send_telegram that prevent sending to unconfigured/invalid recipients.
+FILES: backend/tests/test_polymarket_service.py, backend/tests/test_notifications.py
+
 ## 2026-03-24 — TESTING (Session 24)
 DONE: Added 5 coverage-gap tests — VIP tier GET /follows limit=999999 (completes tier triplet), get_bettor_profile empty-activity returns address-only profile with zeros, GET /follows/live response includes followed_at field, get_recent_bets dict response with data key extracts bets correctly, GET /bettors limit=0 returns 422 at minimum boundary. 194→199 tests.
 IMPACT: Closes the last uncovered tier slot in follows tier/limit tests (free/basic were done, VIP wasn't); verifies the empty-activity defensive path in the bettor profile service; locks in the follows/live response shape contract; confirms the get_recent_bets dict-response fallback that prevents data loss on unexpected API format changes.
