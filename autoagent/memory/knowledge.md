@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **287 passed** (as of 2026-03-24, session 47 — 6 new contract/edge-case tests added)
+- Test count: **290 passed** (as of 2026-03-24, session 48 — 3 edge-case tests added)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #48 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 3 targeted edge-case tests: (1) `get_active_positions` with a dict API response returns `[]` (the `if not isinstance(raw, list)` branch); (2) unknown subscription tier "enterprise" blocked with 403 via TIER_LIMITS.get fallback; (3) `/admin/stats` full nested shape contract with `isinstance` checks on all nested fields. 287→290 tests stable.
+FAILED: Nothing failed. All 3 tests passed on first run.
+RULE: [2026-03-24] When adding edge-case tests for "fallback returns []" paths, always check if `isinstance(raw, list)` is the guard or if `except Exception` catches it — the mock must return a non-exception (a dict) to hit the isinstance path, not `side_effect=Exception`. These are different code paths.
 
 ### Session #47 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 6 response-contract and edge-case tests across test_auth.py, test_bettors.py, test_payments.py. All 6 passed first run; full suite 281→287 stable. Backlog replenished with 3 new HIGH PRIORITY tasks.

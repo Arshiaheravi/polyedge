@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #48] 3 edge-case tests — non-list positions response, unknown tier 403, admin stats nested type contract — 287→290** — get_active_positions returns [] when API returns dict; unknown subscription tier (e.g. "enterprise") correctly blocked with 403 via TIER_LIMITS.get fallback; /admin/stats isinstance checks on all nested fields.
 - **[SESSION #45] Meta code quality audit — fixed 409 status code bug, removed duplicate tests, added 2 response contracts, cleaned imports** — register duplicate-email was returning 400 (wrong) vs 409 (spec); 2 /follows/live tests in test_follows.py were duplicates of test_follows_live.py; sms/verify and telegram/verify response message fields now contract-tested; 281 tests stable.
 - **[SESSION #44] 3 branch-coverage tests — login empty password 401, follows/live all-fail gather, alerts invalid JSON 422 — 278→281** — login empty "" passes Pydantic (no min_length on LoginRequest) but returns 401 not 500; follows/live asyncio.gather with all 3 raises still returns 3 bettor entries with []; PUT alerts/settings invalid push_subscription string correctly returns 422 (json.loads validation gate).
 - **[SESSION #43] 5 branch-coverage tests — send_sms unit (3 paths), scheduler SMS dispatch for VIP, dispatch phone guard — 263→268** — locked in send_sms missing-credentials early return, HTTP success path, and exception handler; scheduler now tested for VIP+phone_verified+sms_enabled dispatching with correct phone args; dispatch phone_number=None guard verified.

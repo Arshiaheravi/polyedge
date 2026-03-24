@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 10:00 — TESTING (Session 48)
+DONE: Added 3 edge-case tests — get_active_positions dict response returns [], unknown subscription tier gets 403, /admin/stats full nested type contract (users/follows/bet_events/mrr_estimate types). 287→290 tests stable.
+IMPACT: Closes last 3 backlog HIGH PRIORITY testing gaps. Any regression where non-list API responses crash, unknown tiers bypass the follow limit, or /admin/stats drops a nested field will now be caught immediately.
+FILES: backend/tests/test_polymarket_service.py, backend/tests/test_follows.py, backend/tests/test_admin.py
+
 ## 2026-03-24 17:00 — TESTING (Session 47)
 DONE: Added 6 response-contract and edge-case tests — 281→287 tests stable. Tests: login/register 7-field user_to_dict contract; bettor detail null-profile returns 200 not 404; leaderboard limit param is forwarded to service; portal works when stripe_subscription_id=None (only customer_id matters); webhook unknown event returns 200 not 502. Replenished backlog with 3 new HIGH PRIORITY tasks.
 IMPACT: Locks in the full auth response contract (all 7 user fields) across register AND login, preventing silent regressions. Documents that bettor detail returns null profile (not 404) for unknown addresses. Confirms portal route only requires customer_id.
