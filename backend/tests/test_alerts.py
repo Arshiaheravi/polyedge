@@ -17,6 +17,14 @@ def test_enable_web_push(client, auth_headers):
     assert resp.json()["web_push_enabled"] is True
 
 
+def test_disable_web_push_returns_false(client, auth_headers):
+    """Disabling web_push after it was enabled returns web_push_enabled=False."""
+    client.put("/alerts/settings", json={"web_push_enabled": True}, headers=auth_headers)
+    resp = client.put("/alerts/settings", json={"web_push_enabled": False}, headers=auth_headers)
+    assert resp.status_code == 200
+    assert resp.json()["web_push_enabled"] is False
+
+
 def test_telegram_requires_paid_tier(client, auth_headers):
     resp = client.put("/alerts/settings", json={"telegram_enabled": True}, headers=auth_headers)
     assert resp.status_code == 403

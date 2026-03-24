@@ -124,3 +124,17 @@ def test_bettor_detail_public(client):
     assert resp.status_code == 200
     data = resp.json()
     assert data["profile"]["name"] == "beachboy"
+
+
+def test_leaderboard_response_includes_cached_field(client):
+    """GET /bettors response always includes a 'cached' boolean field."""
+    import app.routes.bettors as bettors_mod
+    # Use a unique combo (volume_week_20) to guarantee uncached first call
+    bettors_mod._leaderboard_cache.pop("volume_week_20", None)
+    with patch("app.routes.bettors.get_leaderboard", new=AsyncMock(return_value=MOCK_LEADERBOARD)):
+        resp = client.get("/bettors?sort=volume&time_period=week&limit=20")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "cached" in data
+    assert isinstance(data["cached"], bool)
+    assert data["cached"] is False  # First call to this combo — not cached

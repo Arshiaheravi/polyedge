@@ -114,3 +114,24 @@ def test_follows_list_contains_bettor_fields(client, auth_headers):
     assert follows[0]["bettor_address"] == BETTOR_A
     assert follows[0]["bettor_name"] == "Alpha Trader"
     assert "created_at" in follows[0]
+
+
+def test_list_follows_basic_tier_reports_tier_and_limit(client, db, auth_headers, registered_user):
+    """GET /follows for a basic-tier user returns tier='basic' and limit=5."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
+    resp = client.get("/follows", headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["tier"] == "basic"
+    assert data["limit"] == 5
+
+
+def test_delete_follows_requires_auth(client):
+    """DELETE /follows/{address} without a token returns 403, not 500."""
+    resp = client.delete("/follows/0xsomeaddress")
+    assert resp.status_code == 403

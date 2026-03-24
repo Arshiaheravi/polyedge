@@ -49,6 +49,24 @@ def test_admin_stats_counts_users(client, monkeypatch):
     assert resp.json()["users"]["free"] == 2
 
 
+def test_admin_stats_basic_and_vip_user_counts(client, db):
+    """admin/stats reports correct users.basic and users.vip counts."""
+    from app.config import get_settings
+    from app.models import User
+    from app.auth import hash_password
+
+    pw = get_settings().admin_password
+    db.add(User(email="ba2@x.com", hashed_password=hash_password("p"), name="Ba", subscription_tier="basic"))
+    db.add(User(email="vi2@x.com", hashed_password=hash_password("p"), name="Vi", subscription_tier="vip"))
+    db.commit()
+
+    resp = client.get("/admin/stats", headers={"x-admin-password": pw})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["users"]["basic"] == 1
+    assert data["users"]["vip"] == 1
+
+
 def test_admin_stats_mrr_calculation(client, db):
     """MRR = basic * 4.99 + vip * 9.99."""
     from app.config import get_settings
