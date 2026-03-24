@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 03:35 — BUG FIX + TESTING (Session 34)
+DONE: Fixed 2 input-validation bugs and added 5 tests — (1) POST /auth/register accepted empty email (field was `str`, no validation) — changed to `EmailStr`; (2) POST /auth/register accepted whitespace-only name (stored as "" after `.strip()`) — added `field_validator` that strips then rejects blank; (3) fixed Hypothesis `test_bettor_address_never_causes_500` deadline failure (340ms > 200ms default) by adding `deadline=None`; (4) added ordering test for free-tier duplicate: count check fires before duplicate check → 403 not 409; (5) added bettor detail response shape contract: both `profile` and `recent_bets` keys always present. 246→250 tests.
+IMPACT: Two silent data-corruption paths closed — registering with empty email or blank name created garbage User rows with no error. Hypothesis test now stable (was flaky on slow machines). Two invariants locked in by contract tests.
+FILES: backend/app/routes/auth.py, backend/tests/test_auth.py, backend/tests/test_bettors.py, backend/tests/test_follows.py, backend/tests/test_hypothesis_invariants.py
+
 ## 2026-03-24 — DE-SLOPPIFY AUDIT (Session 33)
 DONE: Audited last 5 work sessions' changed files for coupling, test specificity, and agent smells — found 1 real bug, 1 dead code, 1 doc inconsistency. Fixed login email strip bug (auth.py line 73 was .lower() only, not .lower().strip()); removed dead @given(st.nothing()) _placeholder from test_hypothesis_invariants.py; added test_login_with_whitespace_padded_email_works. 245→246 tests.
 IMPACT: Login with whitespace-padded email now works correctly (was returning 401). Dead placeholder test removed. VIP price mismatch (CLAUDE.md=$14.99 vs code=$9.99) logged to tech_debt.md.

@@ -374,5 +374,15 @@
     "files": ["backend/app/routes/auth.py", "backend/tests/test_auth.py", "backend/tests/test_hypothesis_invariants.py"],
     "tests": {"before": 245, "after": 246, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+  },
+  {
+    "session": 34,
+    "date": "2026-03-24",
+    "time": "03:35",
+    "type": "work",
+    "summary": "Fixed 2 input-validation bugs in register (empty email accepted, whitespace-only name stored as empty string), fixed flaky Hypothesis deadline, and added 4 tests locking in the fixes and two business-rule contracts",
+    "files": ["backend/app/routes/auth.py", "backend/tests/test_auth.py", "backend/tests/test_bettors.py", "backend/tests/test_follows.py", "backend/tests/test_hypothesis_invariants.py"],
+    "tests": {"before": 246, "after": 250, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
   }
 ]

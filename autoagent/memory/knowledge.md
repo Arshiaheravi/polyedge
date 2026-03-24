@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **246 passed** (as of 2026-03-24, session 33 — De-Sloppify audit fixed login strip bug + 1 new test)
+- Test count: **250 passed** (as of 2026-03-24, session 34 — 2 register validation bugs fixed + 5 new tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #34 Reflexion — 2026-03-24
+ACCOMPLISHED: Found 2 input-validation bugs by auditing RegisterRequest model — email was `str` (no format check, accepted `""`), name had no validator (whitespace-only stored as `""`). Fixed both: `EmailStr` for email, `field_validator` for name. Fixed flaky Hypothesis deadline (test makes real HTTP calls, 200ms default is too tight). Added 4 tests: empty email 422, whitespace name 422, free-tier duplicate ordering (403 not 409), bettor detail shape contract. 246→250.
+FAILED: Nothing failed.
+RULE: [2026-03-24] After adding any `.strip()` call in a route handler, audit the Pydantic model — if the field is bare `str` with no min_length or validator, a blank or whitespace-only value will pass FastAPI validation and reach the route as `""` after strip. The fix is at the model level: `EmailStr` for emails, `field_validator` that strips-then-checks for string fields where blank is invalid. Never rely on route-level `.strip()` alone as the only defense.
+RULE: [2026-03-24] Hypothesis @settings deadline=None is required for any test that touches the real network (even with mocks on the route, if the test infrastructure startup involves real connections). The 200ms default deadline is calibrated for pure CPU logic, not I/O. Check for DeadlineExceeded in Hypothesis test failures before investigating logic bugs.
 
 ### Session #33 Reflexion — 2026-03-24 (De-Sloppify Audit)
 ACCOMPLISHED: Ran the De-Sloppify audit across the last 5 work sessions' changed files. Found 1 real bug: `auth.py` login used `.lower()` but not `.strip()` — registration strips emails before storing, so a user who typed `" user@example.com "` in the login form would get 401. Fixed with `.lower().strip()`. Found 1 dead code: `@given(st.nothing())` `_placeholder` function in test_hypothesis_invariants.py (agent draft artifact). Found 1 doc inconsistency: CLAUDE.md shows VIP at $14.99 but code/tests use $9.99 — logged to tech_debt.md. Added test_login_with_whitespace_padded_email_works. 245→246.

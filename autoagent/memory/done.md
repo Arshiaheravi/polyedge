@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #34] 2 bug fixes + 5 tests — empty email/blank name validation, Hypothesis deadline fix, ordering test, shape contract** — changed email field to EmailStr (was bare str), added field_validator for name (blank name stored as ""); Hypothesis test stabilized with deadline=None; free-tier duplicate ordering test; bettor detail shape contract; 246→250 tests.
 - **[SESSION #33] De-Sloppify audit — login strip fix + dead code removal** — found login email wasn't stripped (.lower() only, not .lower().strip()); fixed, added test; removed dead @given(st.nothing()) placeholder; logged VIP price doc mismatch to tech_debt.md; 245→246 tests.
 - **[SESSION #32] 2 bug fixes + 6 tests — empty bettor_address, whitespace email, MRR precision, web_push independence, telegram regen** — fixed empty address stored in DB (min_length=1) and whitespace email bypassing duplicate check (500 crash); 6 tests verify all fixes and behaviors; 239→245 tests.
 - **[SESSION #31] BRAIN — De-Sloppify trigger + testing backlog replenishment** — added periodic 5-session tech-debt audit rule to PROMPT.md; replenished empty testing backlog with 5 edge-case tests; logged 9 new research sources covering agentic reliability and Polymarket competitor features.
