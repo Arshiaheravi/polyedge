@@ -40,6 +40,20 @@
       --font-display: 'Space Grotesk', system-ui, sans-serif;
       --font-body:    'DM Sans', system-ui, sans-serif;
 
+      /* Font-size scale */
+      --fs-2xs:  10px;
+      --fs-xs:   11px;
+      --fs-sm:   12px;
+      --fs-base: 13px;
+      --fs-md:   14px;
+      --fs-lg:   15px;
+      --fs-xl:   16px;
+      --fs-2xl:  18px;
+      --fs-3xl:  20px;
+      --fs-4xl:  24px;
+      --fs-5xl:  28px;
+      --fs-6xl:  32px;
+
       /* Radius */
       --radius:    14px;
       --radius-sm: 9px;
@@ -82,6 +96,12 @@
       font-family: var(--font-display);
     }
 
+    /* Heading size scale — overridden by component-specific rules */
+    h1 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 800; letter-spacing: -0.5px; line-height: 1.1; }
+    h2 { font-size: clamp(20px, 2.5vw, 28px); font-weight: 700; letter-spacing: -0.3px; line-height: 1.2; }
+    h3 { font-size: clamp(17px, 2vw, 20px);   font-weight: 700; letter-spacing: -0.2px; line-height: 1.3; }
+    h4 { font-size: clamp(15px, 1.5vw, 17px); font-weight: 600; line-height: 1.4; }
+
     a { color: var(--accent2); text-decoration: none; }
     a:hover { text-decoration: underline; }
     button { cursor: pointer; border: none; outline: none; font-family: inherit; transition: all 0.18s ease; }
@@ -109,14 +129,16 @@
 
     /* ── Motion — reduced-motion safe ── */
     @keyframes shimmer  { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    @keyframes fadeUp   { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeUp    { from { opacity: 0; transform: translateY(20px); }  to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp  { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
     @keyframes scaleIn  { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     @keyframes countUp  { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-    .animate-fade-up  { animation: fadeUp  0.5s var(--ease-out) both; }
-    .animate-fade-in  { animation: fadeIn  0.4s var(--ease-out) both; }
-    .animate-scale-in { animation: scaleIn 0.3s var(--ease-out) both; }
+    .animate-fade-up    { animation: fadeUp    0.5s var(--ease-out) both; }
+    .animate-fade-in-up { animation: fadeInUp  0.45s var(--ease-out) both; }
+    .animate-fade-in    { animation: fadeIn    0.4s var(--ease-out) both; }
+    .animate-scale-in   { animation: scaleIn   0.3s var(--ease-out) both; }
 
     /* Stagger delays */
     .delay-1 { animation-delay: 80ms; }
@@ -164,7 +186,10 @@
     }
     .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent3)); color: #000; font-weight: 700; box-shadow: 0 0 20px rgba(0,201,122,0.3); }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 32px rgba(0,201,122,0.5); filter: brightness(1.08); }
-    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:active { transform: scale(0.97); transition-duration: 60ms; }
+    .btn-gold:active    { transform: scale(0.97); transition-duration: 60ms; }
+    .btn-secondary:active, .btn-outline:active,
+    .btn-ghost:active, .btn-danger:active { transform: scale(0.97); opacity: 0.88; transition-duration: 60ms; }
     .btn-gold { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 700; box-shadow: 0 0 20px rgba(245,158,11,0.25); }
     .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 0 32px rgba(245,158,11,0.45); filter: brightness(1.08); }
     .btn-secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
@@ -1754,7 +1779,7 @@ function renderBettorRow(b, i) {
   const safeAddr = escapeHtml(addr);
   const isFollowing = followedAddresses.has(addr);
   const avatarUrl = b.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${addr}`;
-  const delay = Math.min(i, 8) * 40;
+  const delay = Math.min(i, 9) * 80;
   const pnl = b.pnl_usd ?? null;
   const pnlCell = pnl !== null
     ? `<td style="color:${pnlColor(pnl)};font-weight:800;font-size:15px;">${fmtPnl(pnl)}</td>`
@@ -1797,7 +1822,7 @@ function renderBettorCard(b, i) {
   const name = b.name || shortAddr(addr);
   const isFollowing = followedAddresses.has(addr);
   const avatarUrl = b.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${addr}`;
-  const delay = Math.min(i, 8) * 40;
+  const delay = Math.min(i, 9) * 80;
   const pnl = b.pnl_usd ?? null;
   const vol = b.volume_usd || 0;
   const rank = b.rank ? b.rank - 1 : i;
@@ -1816,7 +1841,7 @@ function renderBettorCard(b, i) {
 
   const eName = escapeHtml(name);
   const safeAddr = escapeHtml(addr);
-  return `<div class="lb-card animate-fade-up" style="animation-delay:${delay}ms"
+  return `<div class="lb-card animate-fade-in-up" style="animation-delay:${delay}ms"
     role="listitem" data-name="${escapeHtml(name.toLowerCase())}" data-addr="${escapeHtml(addr.toLowerCase())}">
     ${rankBadgeEl}
     <div class="lb-card-header">
