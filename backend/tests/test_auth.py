@@ -337,3 +337,37 @@ def test_register_with_extra_password_confirm_field_succeeds(client):
         "password_confirm": "pass123",
     })
     assert resp.status_code == 201
+
+
+def test_get_me_deleted_user_returns_401(client, db):
+    """Valid JWT for a user row deleted from DB returns 401 — get_current_user checks user is None."""
+    from app.models import User
+
+    resp = client.post("/auth/register", json={
+        "email": "willbedeleted@example.com", "password": "pass123", "name": "DeleteMe"
+    })
+    token = resp.json()["access_token"]
+
+    user = db.query(User).filter(User.email == "willbedeleted@example.com").first()
+    db.delete(user)
+    db.commit()
+
+    resp = client.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
+    assert resp.status_code == 401
+
+
+def test_get_me_inactive_user_returns_401(client, db):
+    """Valid JWT for a user with is_active=False returns 401 — get_current_user checks not user.is_active."""
+    from app.models import User
+
+    resp = client.post("/auth/register", json={
+        "email": "inactive@example.com", "password": "pass123", "name": "InactiveUser"
+    })
+    token = resp.json()["access_token"]
+
+    user = db.query(User).filter(User.email == "inactive@example.com").first()
+    user.is_active = False
+    db.commit()
+
+    resp = client.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
+    assert resp.status_code == 401
