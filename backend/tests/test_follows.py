@@ -141,3 +141,16 @@ def test_post_follows_requires_auth(client):
     """POST /follows without an auth token returns 403, not 201 or 500."""
     resp = client.post("/follows", json={"bettor_address": "0xtest"})
     assert resp.status_code == 403
+
+
+def test_post_follows_response_body_includes_all_fields(client, auth_headers):
+    """POST /follows response body includes id, bettor_address, bettor_name, and created_at."""
+    resp = client.post("/follows",
+                       json={"bettor_address": BETTOR_A, "bettor_name": "AlphaTrader"},
+                       headers=auth_headers)
+    assert resp.status_code == 201
+    data = resp.json()
+    assert "id" in data
+    assert data["bettor_address"] == BETTOR_A
+    assert data["bettor_name"] == "AlphaTrader"
+    assert "created_at" in data

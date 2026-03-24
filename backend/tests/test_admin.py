@@ -86,3 +86,27 @@ def test_admin_stats_mrr_calculation(client, db):
     assert resp.status_code == 200
     expected_mrr = 1 * 4.99 + 1 * 9.99
     assert abs(resp.json()["mrr_estimate"] - expected_mrr) < 0.01
+
+
+def test_admin_stats_bet_events_count(client, db):
+    """admin/stats bet_events.total and bet_events.notified reflect actual BetEvent rows."""
+    from app.config import get_settings
+    from app.models import BetEvent
+
+    pw = get_settings().admin_password
+
+    import datetime
+    now = datetime.datetime.utcnow()
+    db.add(BetEvent(bettor_address="0xaaa", market_question="Q1", outcome="Yes",
+                    amount_usd=10.0, timestamp=now, notified=True))
+    db.add(BetEvent(bettor_address="0xbbb", market_question="Q2", outcome="No",
+                    amount_usd=20.0, timestamp=now, notified=True))
+    db.add(BetEvent(bettor_address="0xccc", market_question="Q3", outcome="Yes",
+                    amount_usd=30.0, timestamp=now, notified=False))
+    db.commit()
+
+    resp = client.get("/admin/stats", headers={"x-admin-password": pw})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["bet_events"]["total"] == 3
+    assert data["bet_events"]["notified"] == 2

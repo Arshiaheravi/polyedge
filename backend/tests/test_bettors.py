@@ -175,3 +175,27 @@ def test_leaderboard_cached_field_is_true_on_second_call(client):
     assert resp1.json()["cached"] is False  # First call — live
     assert resp2.json()["cached"] is True   # Second call — served from cache
     assert mock_lb.call_count == 1          # API called only once
+
+
+def test_bettor_detail_cache_hit_returns_cached_data(client):
+    """Second call to GET /bettors/{address} within TTL returns cached data without re-calling API."""
+    import app.routes.bettors as bettors_mod
+    addr = "0xCACHEHIT"
+    bettors_mod._profile_cache.pop(addr, None)
+
+    mock_profile = {"address": addr, "name": "CacheHitter", "volume_usd": 500.0,
+                    "total_bets": 5, "avg_bet_usd": 100.0, "avatar_url": ""}
+    mock_fn = AsyncMock(return_value=mock_profile)
+
+    with patch("app.routes.bettors.get_bettor_profile", new=mock_fn), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=[])):
+        resp1 = client.get(f"/bettors/{addr}")
+
+    # Second call — no mock active; should be served from _profile_cache
+    resp2 = client.get(f"/bettors/{addr}")
+
+    assert resp1.status_code == 200
+    assert resp2.status_code == 200
+    assert resp1.json()["profile"]["name"] == "CacheHitter"
+    assert resp2.json()["profile"]["name"] == "CacheHitter"
+    assert mock_fn.call_count == 1  # API called only once

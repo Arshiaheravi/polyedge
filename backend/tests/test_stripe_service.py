@@ -245,3 +245,59 @@ async def test_downgraded_user_blocked_from_adding_new_follow(client, db):
                        headers=headers)
     assert resp.status_code == 403
     assert "Basic" in resp.json()["detail"] or "basic" in resp.json()["detail"].lower()
+
+
+@pytest.mark.asyncio
+async def test_webhook_subscription_past_due_downgrades_user(db):
+    """customer.subscription.updated with status=past_due sets user back to free."""
+    from app.models import User
+    from app.auth import hash_password
+    from app.services.stripe_service import handle_webhook_event
+
+    user = User(email="pastdue@x.com", hashed_password=hash_password("p"),
+                name="PastDue", subscription_tier="vip", stripe_customer_id="cus_pastdue")
+    db.add(user)
+    db.commit()
+
+    event = json.dumps({
+        "type": "customer.subscription.updated",
+        "data": {"object": {
+            "customer": "cus_pastdue",
+            "status": "past_due",
+        }}
+    }).encode()
+
+    await handle_webhook_event(payload=event, sig_header="", db=db)
+    db.refresh(user)
+    assert user.subscription_tier == "free"
+
+
+@pytest.mark.asyncio
+async def test_webhook_subscription_active_upgrades_to_basic(db):
+    """customer.subscription.updated with active status and basic price ID sets basic tier."""
+    from app.models import User
+    from app.auth import hash_password
+    from app.services.stripe_service import handle_webhook_event
+
+    user = User(email="basicupgrade@x.com", hashed_password=hash_password("p"),
+                name="BasicUpgrade", subscription_tier="free", stripe_customer_id="cus_basicup")
+    db.add(user)
+    db.commit()
+
+    event = json.dumps({
+        "type": "customer.subscription.updated",
+        "data": {"object": {
+            "customer": "cus_basicup",
+            "status": "active",
+            "items": {"data": [{"price": {"id": "price_basic_test"}}]},
+        }}
+    }).encode()
+
+    with patch("app.services.stripe_service.settings") as mock_settings:
+        mock_settings.stripe_webhook_secret = ""
+        mock_settings.stripe_basic_price_id = "price_basic_test"
+        mock_settings.stripe_vip_price_id = "price_vip_test"
+        await handle_webhook_event(payload=event, sig_header="", db=db)
+
+    db.refresh(user)
+    assert user.subscription_tier == "basic"
