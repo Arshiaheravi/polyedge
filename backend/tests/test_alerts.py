@@ -449,3 +449,69 @@ def test_sms_start_send_fails_returns_502(client, db, auth_headers, registered_u
         alerts_module.settings.twilio_auth_token = original_tok
     assert resp.status_code == 502
     assert "Failed to send SMS" in resp.json()["detail"]
+
+
+# ── AlertSetting auto-create branches ────────────────────────────────────────
+
+
+def test_get_alert_settings_autocreates_when_no_row_exists(client, db):
+    """GET /alerts/settings auto-creates an AlertSetting row when the user
+    was created directly in the DB (bypassing registration which normally creates one).
+    Returns 200 with default values."""
+    from app.auth import hash_password, create_access_token
+    from app.models import User
+
+    user = User(
+        email="noalert_get@x.com",
+        hashed_password=hash_password("pass"),
+        name="NoAlert",
+        subscription_tier="free",
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    token = create_access_token({"sub": str(user.id)})
+    headers = {"Authorization": f"Bearer {token}"}
+
+    resp = client.get("/alerts/settings", headers=headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["web_push_enabled"] is False
+    assert data["telegram_enabled"] is False
+    assert data["sms_enabled"] is False
+
+
+def test_put_alert_settings_autocreates_when_no_row_exists(client, db):
+    """PUT /alerts/settings auto-creates an AlertSetting row when the user
+    has no existing AlertSetting, then applies the update.
+    Returns 200 with the updated value."""
+    from app.auth import hash_password, create_access_token
+    from app.models import User
+
+    user = User(
+        email="noalert_put@x.com",
+        hashed_password=hash_password("pass"),
+        name="NoAlertPut",
+        subscription_tier="free",
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    token = create_access_token({"sub": str(user.id)})
+    headers = {"Authorization": f"Bearer {token}"}
+
+    resp = client.put("/alerts/settings", json={"web_push_enabled": True}, headers=headers)
+    assert resp.status_code == 200
+    assert resp.json()["web_push_enabled"] is True
+
+
+def test_put_alert_settings_empty_body_returns_200_no_changes(client, auth_headers):
+    """PUT /alerts/settings with an empty body {} (all Optional fields = None)
+    executes none of the field-update branches and returns the current settings unchanged."""
+    resp = client.put("/alerts/settings", json={}, headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    # Default values unchanged
+    assert data["web_push_enabled"] is False
+    assert data["telegram_enabled"] is False
+    assert data["sms_enabled"] is False

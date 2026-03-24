@@ -199,3 +199,35 @@ def test_get_me_reflects_updated_subscription_tier(client, db, auth_headers, reg
     resp = client.get("/auth/me", headers=auth_headers)
     assert resp.status_code == 200
     assert resp.json()["user"]["subscription_tier"] == "basic"
+
+
+def test_register_empty_password_returns_422(client):
+    """POST /auth/register with empty password string must return 422.
+    Without min_length=1 on password field, empty string would be accepted and
+    stored as a valid bcrypt hash — letting anyone log in with ''.  """
+    resp = client.post("/auth/register", json={
+        "email": "emptypass@example.com",
+        "password": "",
+        "name": "EmptyPass",
+    })
+    assert resp.status_code == 422
+
+
+def test_register_name_with_whitespace_is_stripped(client):
+    """Name with surrounding whitespace '  Alice  ' is stored as 'Alice'.
+    The field_validator returns the original v (not stripped), but the route
+    does name=payload.name.strip() before saving to DB."""
+    resp = client.post("/auth/register", json={
+        "email": "stripname@example.com",
+        "password": "pass123",
+        "name": "  Alice  ",
+    })
+    assert resp.status_code == 201
+    # Login and check /me to verify the stored name
+    login_resp = client.post("/auth/login", json={
+        "email": "stripname@example.com",
+        "password": "pass123",
+    })
+    token = login_resp.json()["access_token"]
+    me_resp = client.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
+    assert me_resp.json()["user"]["name"] == "Alice"
