@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 29)
+DONE: Added 5 branch-coverage tests found by systematic branch audit — (1) scheduler skips inactive users (is_active=False), (2) _parse_timestamp returns None for too-large int (OverflowError), (3) scheduler skips orphaned BettorFollow where user_id has no matching User row, (4) /follows/live returns addr[:12]+"..." when bettor_name is None in DB, (5) PUT /alerts/settings telegram_enabled=False (disable path) for basic user. 229→234 tests.
+IMPACT: Closes 5 untested defensive branches — inactive user, parse_ts overflow, orphaned follow, and name fallback were all silent skip/fallback paths that could mask regressions; telegram disable is a real user action (enable→disable toggle) not previously verified.
+FILES: backend/tests/test_scheduler.py, backend/tests/test_follows_live.py, backend/tests/test_alerts.py
+
 ## 2026-03-24 — TESTING (Session 28)
 DONE: Added 19 tests — 5 direct send_web_push unit tests (JSON string 201, dict 200, no endpoint, HTTP 410, connection exception), 1 scheduler test (API returns None handled gracefully), 13 Hypothesis/parametrize invariant tests (GET /follows tier+limit for all 3 tiers, POST /follows tier enforcement for free/basic, 7 protected endpoints reject missing auth, adversarial bettor address strings never cause 500). Installed hypothesis and added to requirements.txt. 210→229 tests.
 IMPACT: send_web_push was previously only mocked at dispatch level — all 5 branches now covered directly. Scheduler None-return path was a latent crash risk. Hypothesis invariants now guard the 3 hardest-to-break business rules against adversarial inputs automatically.

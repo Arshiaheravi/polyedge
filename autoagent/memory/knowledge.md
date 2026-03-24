@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **229 passed** (as of 2026-03-24, session 28 added 19 tests — send_web_push unit tests, scheduler API-None, Hypothesis invariants)
+- Test count: **234 passed** (as of 2026-03-24, session 29 added 5 tests — inactive user, parse_ts overflow, orphaned follow, name fallback, telegram disable)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #29 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 5 tests covering untested defensive branches: (1) scheduler `is_active=False` user skip — the `if not user or not user.is_active or subscription_tier == "free"` condition had its middle sub-condition untested; (2) `_parse_timestamp` OverflowError for `10**20` — the `except (OSError, OverflowError, ValueError): return None` path was never hit; (3) scheduler orphaned follow (user_id with no matching User) — `if not user: continue` was untested; (4) `/follows/live` name fallback — `follow.bettor_name or addr[:12]+"..."` only reachable when bettor_name is manually set to None in DB; (5) telegram disable for basic — `telegram_enabled=False` PUT path confirmed working after enable. All 5 passed first run. 229→234.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When auditing scheduler.py `if not user or not user.is_active or subscription_tier == "free"` guard: all three sub-conditions must be tested independently. Free-tier is the easiest to remember; is_active=False and user=None are often forgotten. Check each sub-condition has its own test case.
 
 ### Session #28 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 19 tests covering 3 areas: (1) 5 direct `send_web_push` unit tests — happy-path JSON string (201), happy-path dict (200), missing endpoint, HTTP 410, connection exception. `send_web_push` was previously only ever mocked at dispatch level, never tested directly. (2) 1 scheduler test — `get_recent_bets` returns `None` (no exception) causes `for bet in None` TypeError, caught by outer except, no crash, no BetEvent, no dispatch. (3) 13 Hypothesis/parametrize invariant tests — GET /follows tier+limit presence for all 3 tiers, POST /follows tier limit enforcement for free/basic, 7 protected endpoints always reject missing auth, adversarial bettor address strings never cause 500. Installed hypothesis and added to requirements.txt. Checkout response shape and DELETE /follows 404 backlog items turned out to be already covered. 210 → 229.

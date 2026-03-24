@@ -324,5 +324,15 @@
     "files": ["backend/tests/test_notifications.py", "backend/tests/test_scheduler.py", "backend/tests/test_hypothesis_invariants.py", "backend/requirements.txt"],
     "tests": {"before": 210, "after": 229, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+  },
+  {
+    "session": 29,
+    "date": "2026-03-24",
+    "time": "02:30",
+    "type": "work",
+    "summary": "Added 5 tests covering untested defensive branches found by branch audit: inactive user skipped by scheduler, parse_ts overflow integer returns None, orphaned follow (missing user) skipped gracefully, follows/live name fallback when bettor_name is None in DB, and telegram disable path for basic user",
+    "files": ["backend/tests/test_scheduler.py", "backend/tests/test_follows_live.py", "backend/tests/test_alerts.py"],
+    "tests": {"before": 229, "after": 234, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]
