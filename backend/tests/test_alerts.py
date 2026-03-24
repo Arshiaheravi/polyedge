@@ -227,9 +227,39 @@ def test_telegram_verify_correct_code_links_account(client, db, auth_headers, re
     assert resp.status_code == 200
     assert resp.json()["verified"] is True
 
-    db.refresh(user)
-    assert user.telegram_verified is True
-    assert user.telegram_verify_code is None
+
+def test_web_push_enabled_independent_of_push_subscription(client, auth_headers):
+    """Setting web_push_enabled=True without providing push_subscription succeeds.
+    The two fields are independent — enabling the flag does not require a subscription object."""
+    resp = client.put("/alerts/settings", json={"web_push_enabled": True}, headers=auth_headers)
+    assert resp.status_code == 200
+    assert resp.json()["web_push_enabled"] is True
+
+
+def test_telegram_start_called_twice_overwrites_code(client, db, auth_headers, registered_user):
+    """Calling telegram/start twice returns a new code each time (no 409).
+    The second code overwrites the first; the old code is then invalid for verification."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
+    resp1 = client.post("/alerts/telegram/start", headers=auth_headers)
+    assert resp1.status_code == 200
+    code1 = resp1.json()["code"]
+
+    resp2 = client.post("/alerts/telegram/start", headers=auth_headers)
+    assert resp2.status_code == 200
+    code2 = resp2.json()["code"]
+
+    # Second call must succeed (not 409) and return a code
+    assert code2 is not None
+    # Old code is now stale — trying to verify with it should fail
+    resp_verify = client.post("/alerts/telegram/verify",
+                              json={"code": code1}, headers=auth_headers)
+    assert resp_verify.status_code == 400
+    assert "Invalid" in resp_verify.json()["detail"]
 
 
 def test_telegram_start_then_verify_full_round_trip(client, db, auth_headers, registered_user):

@@ -171,6 +171,12 @@ def test_post_follows_response_body_includes_all_fields(client, auth_headers):
     assert "created_at" in data
 
 
+def test_post_follows_empty_bettor_address_rejected(client, auth_headers):
+    """POST /follows with empty bettor_address string must return 422 (not create a follow)."""
+    resp = client.post("/follows", json={"bettor_address": ""}, headers=auth_headers)
+    assert resp.status_code == 422
+
+
 def test_delete_follow_by_different_user_returns_404(client, db):
     """User B cannot delete User A's follow — the route filters by current_user.id."""
     from app.auth import hash_password, create_access_token

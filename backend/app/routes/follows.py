@@ -2,7 +2,7 @@ import asyncio
 import time
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
@@ -23,7 +23,7 @@ TIER_LIMITS = {
 
 
 class FollowRequest(BaseModel):
-    bettor_address: str
+    bettor_address: str = Field(..., min_length=1)
     bettor_name: str = ""
 
 

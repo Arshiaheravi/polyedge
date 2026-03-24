@@ -45,7 +45,7 @@ def user_to_dict(user: User) -> dict:
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 def register(payload: RegisterRequest, db: Session = Depends(get_db)):
-    existing = db.query(User).filter(User.email == payload.email.lower()).first()
+    existing = db.query(User).filter(User.email == payload.email.lower().strip()).first()
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
 

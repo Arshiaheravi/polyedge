@@ -129,3 +129,29 @@ def test_admin_stats_bet_events_count(client, db):
     data = resp.json()
     assert data["bet_events"]["total"] == 3
     assert data["bet_events"]["notified"] == 2
+
+
+def test_admin_stats_mrr_multi_user_decimal_precision(client, db):
+    """MRR with 3 basic + 2 VIP uses float arithmetic (not integer rounding).
+    3*4.99 + 2*9.99 = 14.97 + 19.98 = 34.95 — must not be rounded to an integer."""
+    from app.config import get_settings
+    from app.models import User
+    from app.auth import hash_password
+
+    pw = get_settings().admin_password
+
+    for i in range(3):
+        db.add(User(email=f"basic_multi{i}@x.com", hashed_password=hash_password("p"),
+                    name=f"B{i}", subscription_tier="basic"))
+    for i in range(2):
+        db.add(User(email=f"vip_multi{i}@x.com", hashed_password=hash_password("p"),
+                    name=f"V{i}", subscription_tier="vip"))
+    db.commit()
+
+    resp = client.get("/admin/stats", headers={"x-admin-password": pw})
+    assert resp.status_code == 200
+    mrr = resp.json()["mrr_estimate"]
+    expected = 3 * 4.99 + 2 * 9.99  # 34.95
+    assert abs(mrr - expected) < 0.001, f"MRR {mrr} != expected {expected} (integer rounding?)"
+    # Confirm it's NOT rounded to an integer (34.95 != 35)
+    assert mrr != round(mrr), f"MRR appears to be integer-rounded: {mrr}"

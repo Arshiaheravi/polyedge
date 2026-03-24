@@ -133,6 +133,36 @@ def test_get_me_returns_all_user_fields(client, auth_headers):
     assert "created_at" in user
 
 
+def test_register_whitespace_padded_email_strips_and_deduplicates(client):
+    """Email with surrounding whitespace ' user@example.com ' is stored stripped.
+    A second register with the same padded email must return 400 (not 500 from DB constraint)."""
+    # First registration with padded email — stored as stripped "ws@example.com"
+    resp1 = client.post("/auth/register", json={
+        "email": " ws@example.com ", "password": "pass", "name": "WS"
+    })
+    assert resp1.status_code == 201
+    assert resp1.json()["user"]["email"] == "ws@example.com"
+
+    # Second registration with same padded email — duplicate check must catch it (400, not 500)
+    resp2 = client.post("/auth/register", json={
+        "email": " ws@example.com ", "password": "pass2", "name": "WS2"
+    })
+    assert resp2.status_code == 400
+    assert "already registered" in resp2.json()["detail"].lower()
+
+
+def test_login_with_stripped_email_after_whitespace_register(client):
+    """After registering with padded email, login with the clean (unpadded) email works."""
+    client.post("/auth/register", json={
+        "email": " clean@example.com ", "password": "pass", "name": "Clean"
+    })
+    resp = client.post("/auth/login", json={
+        "email": "clean@example.com", "password": "pass"
+    })
+    assert resp.status_code == 200
+    assert "access_token" in resp.json()
+
+
 def test_get_me_reflects_updated_subscription_tier(client, db, auth_headers, registered_user):
     """GET /auth/me returns the current subscription_tier after a Stripe webhook upgrades the user."""
     from app.models import User
