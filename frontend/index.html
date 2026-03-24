@@ -1455,6 +1455,11 @@ function shortAddr(addr) {
   return addr.length > 14 ? addr.slice(0, 6) + '...' + addr.slice(-4) : addr;
 }
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function rankBadge(i) {
   if (i === 0) return `<span class="rank-badge rank-1">1</span>`;
   if (i === 1) return `<span class="rank-badge rank-2">2</span>`;
@@ -1637,7 +1642,8 @@ function filterLeaderboard(containerId, query) {
         noResultsEl = document.createElement('div');
         noResultsEl.id = noResultsId;
         noResultsEl.style.gridColumn = '1 / -1';
-        noResultsEl.innerHTML = `<div class="search-no-results">No bettors match "<strong>${query}</strong>"</div>`;
+        noResultsEl.innerHTML = '<div class="search-no-results">No bettors match "<strong></strong>"</div>';
+        noResultsEl.querySelector('strong').textContent = query;
         container.appendChild(noResultsEl);
       } else {
         noResultsEl.querySelector('strong').textContent = query;
@@ -1647,31 +1653,6 @@ function filterLeaderboard(containerId, query) {
       noResultsEl.classList.add('lb-card-hidden');
     }
     return;
-  }
-
-  // Legacy table row fallback
-  const rows = container.querySelectorAll('tr');
-  let visibleCount = 0;
-  rows.forEach(row => {
-    if (row.querySelector('.empty-state') || row.querySelector('.skeleton')) return;
-    const text = row.textContent.toLowerCase();
-    const match = !q || text.includes(q);
-    row.classList.toggle('lb-row-hidden', !match);
-    if (match) visibleCount++;
-  });
-  let noResultsRow = document.getElementById(noResultsId);
-  if (q && visibleCount === 0) {
-    if (!noResultsRow) {
-      noResultsRow = document.createElement('tr');
-      noResultsRow.id = noResultsId;
-      noResultsRow.innerHTML = `<td colspan="5"><div class="search-no-results">No bettors match "<strong>${query}</strong>"</div></td>`;
-      container.appendChild(noResultsRow);
-    } else {
-      noResultsRow.querySelector('strong').textContent = query;
-      noResultsRow.classList.remove('lb-row-hidden');
-    }
-  } else if (noResultsRow) {
-    noResultsRow.classList.add('lb-row-hidden');
   }
 }
 
@@ -1714,7 +1695,8 @@ async function loadLeaderboard(sort = currentSort, period = currentPeriod) {
     }
     container.innerHTML = bettors.map((b, i) => renderBettorCard(b, i)).join('');
   } catch (e) {
-    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p>${e.message}</p></div>`;
+    container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p></p></div>';
+    container.querySelector('.empty-state p').textContent = e.message;
   }
 }
 
@@ -1733,6 +1715,8 @@ function fmtPnl(pnl) {
 function renderBettorRow(b, i) {
   const addr = b.address || '';
   const name = b.name || shortAddr(addr);
+  const eName = escapeHtml(name);
+  const safeAddr = escapeHtml(addr);
   const isFollowing = followedAddresses.has(addr);
   const avatarUrl = b.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${addr}`;
   const delay = Math.min(i, 8) * 40;
@@ -1745,10 +1729,10 @@ function renderBettorRow(b, i) {
       <td>${rankBadge(b.rank ? b.rank - 1 : i)}</td>
       <td>
         <div class="bettor-row">
-          <img class="avatar" src="${avatarUrl}" alt="${name} avatar" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${addr}'" />
+          <img class="avatar" src="${avatarUrl}" alt="${eName} avatar" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${safeAddr}'" />
           <div>
-            <div class="bettor-name truncate" style="max-width:160px;" title="${name}">${name}</div>
-            <div class="bettor-addr">${shortAddr(addr)}</div>
+            <div class="bettor-name truncate" style="max-width:160px;" title="${eName}">${eName}</div>
+            <div class="bettor-addr">${escapeHtml(shortAddr(addr))}</div>
           </div>
         </div>
       </td>
@@ -1756,8 +1740,8 @@ function renderBettorRow(b, i) {
       <td style="color:var(--text2);">${fmtUSD(b.volume_usd || 0)}</td>
       <td>
         <button class="follow-btn ${isFollowing ? 'following' : ''}"
-                onclick="toggleFollow('${addr}', '${name.replace(/'/g, "\\'")}', this)"
-                aria-label="${isFollowing ? 'Unfollow' : 'Follow'} ${name}"
+                onclick="toggleFollow('${safeAddr}', '${eName}', this)"
+                aria-label="${isFollowing ? 'Unfollow' : 'Follow'} ${eName}"
                 aria-pressed="${isFollowing}">
           ${isFollowing ? '&#10003; Following' : '+ Follow'}
         </button>
@@ -1795,16 +1779,17 @@ function renderBettorCard(b, i) {
   else if (rank === 2) rankBadgeEl = `<div class="lb-rank-badge rank-3">3</div>`;
   else                 rankBadgeEl = `<div class="lb-rank-badge rank-n">${rank + 1}</div>`;
 
-  const safeName = name.replace(/'/g, "\\'");
+  const eName = escapeHtml(name);
+  const safeAddr = escapeHtml(addr);
   return `<div class="lb-card animate-fade-up" style="animation-delay:${delay}ms"
-    role="listitem" data-name="${name.toLowerCase()}" data-addr="${addr.toLowerCase()}">
+    role="listitem" data-name="${escapeHtml(name.toLowerCase())}" data-addr="${escapeHtml(addr.toLowerCase())}">
     ${rankBadgeEl}
     <div class="lb-card-header">
-      <img class="lb-card-avatar" src="${avatarUrl}" alt="${name}"
-           onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${addr}'" />
+      <img class="lb-card-avatar" src="${avatarUrl}" alt="${eName}"
+           onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${safeAddr}'" />
       <div class="lb-card-identity">
-        <div class="lb-card-name" title="${name}">${name}</div>
-        <div class="lb-card-addr">${shortAddr(addr)}</div>
+        <div class="lb-card-name" title="${eName}">${eName}</div>
+        <div class="lb-card-addr">${escapeHtml(shortAddr(addr))}</div>
       </div>
     </div>
     <div class="lb-card-stats">
@@ -1822,8 +1807,8 @@ function renderBettorCard(b, i) {
       </div>
     </div>
     <button class="follow-btn w-full ${isFollowing ? 'following' : ''}"
-            onclick="toggleFollow('${addr}', '${safeName}', this)"
-            aria-label="${isFollowing ? 'Unfollow' : 'Follow'} ${name}"
+            onclick="toggleFollow('${safeAddr}', '${eName}', this)"
+            aria-label="${isFollowing ? 'Unfollow' : 'Follow'} ${eName}"
             aria-pressed="${isFollowing}">
       ${isFollowing ? '&#10003; Following' : '+ Follow'}
     </button>
@@ -1884,7 +1869,8 @@ async function loadBrowseLeaderboard(sort = browseSort, period = browsePeriod) {
     }
     container.innerHTML = bettors.map((b, i) => renderBettorCard(b, i)).join('');
   } catch (e) {
-    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p>${e.message}</p></div>`;
+    container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p></p></div>';
+    container.querySelector('.empty-state p').textContent = e.message;
   }
 }
 
@@ -2000,15 +1986,17 @@ async function loadMyFollows() {
   <div class="follows-grid">${follows.map(f => {
     const name = f.bettor_name || shortAddr(f.bettor_address);
     const avatarUrl = `https://api.dicebear.com/7.x/identicon/svg?seed=${f.bettor_address}`;
+    const eName = escapeHtml(name);
+    const safeAddr = escapeHtml(f.bettor_address);
     return `<div class="follow-card">
       <div class="follow-card-head">
         <img class="avatar" style="width:44px;height:44px;" src="${avatarUrl}" alt="avatar" />
         <div style="flex:1;overflow:hidden;">
-          <div class="font-semibold truncate" title="${name}">${name}</div>
-          <div class="bettor-addr">${shortAddr(f.bettor_address)}</div>
+          <div class="font-semibold truncate" title="${eName}">${eName}</div>
+          <div class="bettor-addr">${escapeHtml(shortAddr(f.bettor_address))}</div>
         </div>
       </div>
-      <button class="btn btn-danger btn-sm w-full" onclick="unfollowFromFollowsTab('${f.bettor_address}', this)">Unfollow</button>
+      <button class="btn btn-danger btn-sm w-full" onclick="unfollowFromFollowsTab('${safeAddr}', this)">Unfollow</button>
     </div>`;
   }).join('')}</div>`;
 
