@@ -115,6 +115,14 @@ Before writing any CSS/JS for a new section, answer:
 - Research: elevating middle tier increases that tier's conversion 20-30%
 - Add inline under CTA buttons: "Cancel anytime · No credit card for Free tier"
 
+## EXTERNAL ASSET APIS (NovaBanana, Unsplash, etc.)
+Before calling any third-party media/image API:
+1. Check `backend/.env` — verify the key is present and non-placeholder (not `REPLACE_ME` / `xxx`)
+2. If key is missing or placeholder: add a row to `autoagent/ASSETS_NEEDED.md` immediately, then skip the API call and implement the fallback (CSS gradient / inline SVG)
+3. Do NOT spend turns attempting the API call if the key is unconfigured — it will always fail
+
+(Source: Session 64 — NovaBanana returned 401 because key was not configured; turned into a wasted turn + ASSETS_NEEDED.md doc)
+
 ## AFTER FRONTEND CHANGES
 1. Check layout at 375px (mobile), 768px (tablet), 1280px (desktop) mentally
 2. Run `grep -n 'innerHTML.*\${' frontend/index.html` — verify all API-sourced data uses `escapeHtml()`

@@ -47,6 +47,31 @@ py -m pip install playwright -q && py -m playwright install chromium --quiet
 
 ## STEP 3 — Run the check script
 
+**IMPORTANT — use the registry as your base, not the template below.**
+
+Check if `autoagent/playwright_registry.py` exists:
+```bash
+ls autoagent/playwright_registry.py 2>/dev/null && echo EXISTS || echo MISSING
+```
+
+If it EXISTS:
+```bash
+cp autoagent/playwright_registry.py autoagent/tmp_check.py
+# Then ADD your session-specific checks to tmp_check.py (insert before the final close/return)
+# Do NOT remove existing checks — only add new ones
+```
+
+If MISSING: use the generic template below to create `autoagent/tmp_check.py`.
+
+After a **successful** run (0 failures), save back to registry:
+```bash
+cp autoagent/tmp_check.py autoagent/playwright_registry.py
+```
+
+Then delete tmp_check.py as normal. This keeps coverage cumulative across sessions.
+
+**Rule**: The check count in sessions.json must be >= the check count in the previous session's sessions.json entry. If it decreases, document why (e.g., "removed stale market-toggle check — element was renamed").
+
 Save as `autoagent/tmp_check.py`, run it, delete it after.
 
 ```python
