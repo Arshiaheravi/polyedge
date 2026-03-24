@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 30)
+DONE: Added 5 branch-coverage tests found by systematic audit — (1) DELETE /follows/{address} by a different user returns 404 (cross-user security invariant), (2) POST /auth/register with uppercase duplicate email returns 400 (email normalization), (3) GET /auth/me returns all 7 expected fields from user_to_dict (response contract), (4) admin/stats follows.total reflects actual BettorFollow count (data accuracy), (5) scheduler dispatches with correct telegram_chat_id when user has telegram_enabled=True and telegram_verified=True (notification arg passing). 234→239 tests.
+IMPACT: Closes a cross-user security gap (users cannot delete each other's follows), confirms email normalization is consistent between register and login, locks in the /auth/me response shape contract, verifies admin observability data is correct for follows, and confirms the scheduler correctly passes Telegram credentials to the notification dispatcher.
+FILES: backend/tests/test_follows.py, backend/tests/test_auth.py, backend/tests/test_admin.py, backend/tests/test_scheduler.py
+
 ## 2026-03-24 — TESTING (Session 29)
 DONE: Added 5 branch-coverage tests found by systematic branch audit — (1) scheduler skips inactive users (is_active=False), (2) _parse_timestamp returns None for too-large int (OverflowError), (3) scheduler skips orphaned BettorFollow where user_id has no matching User row, (4) /follows/live returns addr[:12]+"..." when bettor_name is None in DB, (5) PUT /alerts/settings telegram_enabled=False (disable path) for basic user. 229→234 tests.
 IMPACT: Closes 5 untested defensive branches — inactive user, parse_ts overflow, orphaned follow, and name fallback were all silent skip/fallback paths that could mask regressions; telegram disable is a real user action (enable→disable toggle) not previously verified.

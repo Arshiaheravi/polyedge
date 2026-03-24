@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **234 passed** (as of 2026-03-24, session 29 added 5 tests — inactive user, parse_ts overflow, orphaned follow, name fallback, telegram disable)
+- Test count: **239 passed** (as of 2026-03-24, session 30 added 5 tests — cross-user unfollow security, register dup email uppercase, /me fields contract, admin follows.total, scheduler telegram args)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #30 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 5 tests covering gaps found by systematic cross-file audit. (1) Cross-user DELETE /follows security — verified user B cannot delete user A's follow (route filters by user_id, returns 404); (2) Register uppercase email duplicate — `email.lower()` at register/login means `USER@EXAMPLE.COM` collides with `user@example.com`; (3) GET /auth/me all 7 user_to_dict fields asserted; (4) admin/stats follows.total with actual DB rows; (5) scheduler passes correct telegram_chat_id to dispatch when alert.telegram_enabled=True and user.telegram_verified=True — this required adding an AlertSetting row to the sched_db fixture alongside the user. All 5 passed first run. 234→239.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When writing scheduler integration tests that test alert-condition branching (telegram_enabled, sms_enabled, web_push_enabled), always create an AlertSetting row in the test DB — the scheduler queries AlertSetting for each follower. Without the row, `alert` is None and the conditional expressions all produce None, hiding whether the logic is right. Use `session.add(AlertSetting(user_id=user.id, telegram_enabled=True, ...))` before committing.
 
 ### Session #29 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 tests covering untested defensive branches: (1) scheduler `is_active=False` user skip — the `if not user or not user.is_active or subscription_tier == "free"` condition had its middle sub-condition untested; (2) `_parse_timestamp` OverflowError for `10**20` — the `except (OSError, OverflowError, ValueError): return None` path was never hit; (3) scheduler orphaned follow (user_id with no matching User) — `if not user: continue` was untested; (4) `/follows/live` name fallback — `follow.bettor_name or addr[:12]+"..."` only reachable when bettor_name is manually set to None in DB; (5) telegram disable for basic — `telegram_enabled=False` PUT path confirmed working after enable. All 5 passed first run. 229→234.

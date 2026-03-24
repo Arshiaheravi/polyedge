@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #30] 5 branch-coverage tests — cross-user unfollow blocked, register dup email uppercase, /auth/me fields, admin follows.total, scheduler telegram args** — closes 5 gaps: security invariant (cross-user delete), email normalization on register, response contract for /me, data accuracy for admin, and scheduler arg-passing for Telegram; 234→239 tests.
 - **[SESSION #29] 5 branch-coverage tests — inactive user skip, parse_ts overflow, orphaned follow, name fallback, telegram disable** — closes 5 untested defensive branches in scheduler, follows/live, and alerts; 229→234 tests.
 - **[SESSION #28] 19 new tests — send_web_push direct unit tests, scheduler API-None path, Hypothesis invariants** — first direct coverage of send_web_push (5 branches); scheduler graceful handling when API returns None; 13 invariant tests (tier/limit, tier enforcement, auth rejection, adversarial addresses); 210→229 tests.
 - **[SESSION #27] stripe_service.py branch audit — 5 gap tests: missing checkout metadata, subscription_id save, unknown customer, unrecognized price_id, portal unit test** — closes all untested branches in stripe_service; 205→210 tests.

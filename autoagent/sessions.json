@@ -334,5 +334,15 @@
     "files": ["backend/tests/test_scheduler.py", "backend/tests/test_follows_live.py", "backend/tests/test_alerts.py"],
     "tests": {"before": 229, "after": 234, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+  },
+  {
+    "session": 30,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 5 branch-coverage tests: cross-user unfollow blocked (security), uppercase email duplicate detection on register, /auth/me response shape contract, admin follows.total count accuracy, and scheduler dispatches with correct telegram_chat_id when user has telegram enabled and verified",
+    "files": ["backend/tests/test_follows.py", "backend/tests/test_auth.py", "backend/tests/test_admin.py", "backend/tests/test_scheduler.py"],
+    "tests": {"before": 234, "after": 239, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]
