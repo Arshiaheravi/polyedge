@@ -273,6 +273,105 @@ async def test_webhook_subscription_past_due_downgrades_user(db):
 
 
 @pytest.mark.asyncio
+async def test_create_billing_portal_session_returns_url():
+    """create_billing_portal_session returns the URL from Stripe."""
+    from app.services.stripe_service import create_billing_portal_session
+
+    mock_stripe = MagicMock()
+    mock_stripe.billing_portal.Session.create.return_value = {"url": "https://billing.stripe.com/portal/test"}
+
+    with patch("app.services.stripe_service._get_stripe_client", return_value=mock_stripe):
+        url = await create_billing_portal_session(customer_id="cus_test123")
+
+    assert url == "https://billing.stripe.com/portal/test"
+    call_kwargs = mock_stripe.billing_portal.Session.create.call_args[1]
+    assert call_kwargs["customer"] == "cus_test123"
+
+
+@pytest.mark.asyncio
+async def test_webhook_checkout_missing_metadata_is_ignored(db):
+    """checkout.session.completed with missing user_id/plan returns early without error."""
+    from app.services.stripe_service import handle_webhook_event
+
+    event = json.dumps({
+        "type": "checkout.session.completed",
+        "data": {"object": {"metadata": {}, "subscription": None}}
+    }).encode()
+    # Should not raise
+    await handle_webhook_event(payload=event, sig_header="", db=db)
+
+
+@pytest.mark.asyncio
+async def test_webhook_checkout_saves_subscription_id(db):
+    """checkout.session.completed with a subscription_id saves it to user.stripe_subscription_id."""
+    from app.models import User
+    from app.auth import hash_password
+    from app.services.stripe_service import handle_webhook_event
+
+    user = User(email="checksub@x.com", hashed_password=hash_password("p"),
+                name="CheckSub", subscription_tier="free")
+    db.add(user)
+    db.commit()
+
+    event = json.dumps({
+        "type": "checkout.session.completed",
+        "data": {"object": {
+            "metadata": {"user_id": str(user.id), "plan": "basic"},
+            "subscription": "sub_saved123"
+        }}
+    }).encode()
+    await handle_webhook_event(payload=event, sig_header="", db=db)
+
+    db.refresh(user)
+    assert user.stripe_subscription_id == "sub_saved123"
+    assert user.subscription_tier == "basic"
+
+
+@pytest.mark.asyncio
+async def test_webhook_subscription_unknown_customer_is_ignored(db):
+    """subscription event with unknown customer_id returns early without error."""
+    from app.services.stripe_service import handle_webhook_event
+
+    event = json.dumps({
+        "type": "customer.subscription.deleted",
+        "data": {"object": {"customer": "cus_nobody", "status": "canceled"}}
+    }).encode()
+    # Should not raise
+    await handle_webhook_event(payload=event, sig_header="", db=db)
+
+
+@pytest.mark.asyncio
+async def test_webhook_subscription_active_unrecognized_price_leaves_tier_unchanged(db):
+    """active subscription with unrecognized price_id leaves user's tier unchanged."""
+    from app.models import User
+    from app.auth import hash_password
+    from app.services.stripe_service import handle_webhook_event
+
+    user = User(email="unknownprice@x.com", hashed_password=hash_password("p"),
+                name="UnknownPrice", subscription_tier="free", stripe_customer_id="cus_ukprice")
+    db.add(user)
+    db.commit()
+
+    event = json.dumps({
+        "type": "customer.subscription.updated",
+        "data": {"object": {
+            "customer": "cus_ukprice",
+            "status": "active",
+            "items": {"data": [{"price": {"id": "price_unknown_xyz"}}]},
+        }}
+    }).encode()
+
+    with patch("app.services.stripe_service.settings") as mock_settings:
+        mock_settings.stripe_webhook_secret = ""
+        mock_settings.stripe_basic_price_id = "price_basic_real"
+        mock_settings.stripe_vip_price_id = "price_vip_real"
+        await handle_webhook_event(payload=event, sig_header="", db=db)
+
+    db.refresh(user)
+    assert user.subscription_tier == "free"  # unchanged
+
+
+@pytest.mark.asyncio
 async def test_webhook_subscription_active_upgrades_to_basic(db):
     """customer.subscription.updated with active status and basic price ID sets basic tier."""
     from app.models import User
