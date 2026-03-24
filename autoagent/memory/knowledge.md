@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **255 passed** (as of 2026-03-24, session 35 — empty password bug fixed + 5 new tests)
+- Test count: **260 passed** (as of 2026-03-24, session 37 — DELETE shape, checkout shape, dual-channel dispatch)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,17 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #37 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 5 tests. Found that 2 of 5 HIGH PRIORITY backlog items (invoice.payment_failed, sort=volume) were already covered — grepped and skipped per knowledge.md rule. Real gaps found: DELETE /follows 204 had no `resp.content == b""` assertion; DELETE 404 had no detail message check; POST /payments/checkout response key set had no complete contract assertion; scheduler had no test for both channels enabled simultaneously; scheduler had no test for web_push-only (telegram_enabled=False) path. All 5 passed first run. 255→260.
+FAILED: Nothing failed.
+RULE: [2026-03-24] Scheduler notification channel tests require three independent test cases: (1) telegram-only (web_push_enabled=False), (2) web_push-only (telegram_enabled=False), (3) both channels simultaneously. Testing only one combination does NOT cover the others — the conditional expressions `if (alert and alert.telegram_enabled and user.telegram_verified)` and `if (alert and alert.web_push_enabled)` are evaluated independently and can be wrong independently.
+RULE: [2026-03-24] A 204 response shape contract test must assert BOTH `resp.status_code == 204` AND `resp.content == b""` — the status code alone does not prove the body is empty. Similarly, a 404 contract test should assert both `resp.status_code == 404` and the exact `resp.json()["detail"]` message — the status alone doesn't prevent wording regressions.
+
+### Session #36 Reflexion — 2026-03-24 (META)
+ACCOMPLISHED: Fixed stale "stockcards" project references in testing.md PATCHING section; replenished empty testing backlog with 5 concrete tasks. Session 26 fixed the IMPORT CHECK in testing.md but left the PATCHING section with wrong module paths — partial fix that this session caught.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When a META session fixes a stale project reference in a skill file (e.g. wrong import check), audit ALL other examples in the same section for the same staleness — fixes are often partial. Session 26 fixed one example but left the PATCHING section unchanged; this session found it 10 sessions later.
 
 ### Session #35 Reflexion — 2026-03-24
 ACCOMPLISHED: Found 1 security bug: RegisterRequest.password had bare `str` with no min_length — empty string "" was accepted, hashed by bcrypt, and stored as a valid credential. Fixed with `Field(..., min_length=1)`. Added 5 tests: empty password → 422; GET /alerts/settings auto-creates AlertSetting for user without one; PUT /alerts/settings auto-creates; PUT empty body `{}` → 200 no changes; name whitespace stripped on register. 250→255.

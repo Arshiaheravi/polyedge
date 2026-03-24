@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #37] 5 tests — DELETE shape, checkout shape, dual-channel dispatch — 255→260** — tested DELETE /follows 204 body is empty and 404 exact detail; checkout response key set is exactly {"checkout_url"}; scheduler dispatches both Telegram+web_push simultaneously; scheduler dispatches web_push-only correctly (telegram_chat_id=None). Two backlog tasks (invoice.payment_failed, sort=volume) were already covered by prior sessions and skipped.
 - **[SESSION #35] 1 bug fix + 5 tests — empty password rejected, AlertSetting auto-create branches, empty body 200, name strip** — added min_length=1 to RegisterRequest.password (security bug: empty password was silently accepted and hashed); tested 3 untested alert branches (GET/PUT auto-create AlertSetting for users without one, PUT empty body returns 200); verified name whitespace strip; 250→255 tests.
 - **[SESSION #34] 2 bug fixes + 5 tests — empty email/blank name validation, Hypothesis deadline fix, ordering test, shape contract** — changed email field to EmailStr (was bare str), added field_validator for name (blank name stored as ""); Hypothesis test stabilized with deadline=None; free-tier duplicate ordering test; bettor detail shape contract; 246→250 tests.
 - **[SESSION #33] De-Sloppify audit — login strip fix + dead code removal** — found login email wasn't stripped (.lower() only, not .lower().strip()); fixed, added test; removed dead @given(st.nothing()) placeholder; logged VIP price doc mismatch to tech_debt.md; 245→246 tests.

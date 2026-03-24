@@ -807,5 +807,41 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 36,
+    "date": "2026-03-24",
+    "time": "06:00",
+    "type": "meta",
+    "summary": "Fixed stale 'stockcards' project references in testing.md patching section and replenished empty testing backlog with 5 concrete tasks so the next work session starts with ready work instead of spending turns on task discovery",
+    "files": [
+      "autoagent/skills/testing.md",
+      "autoagent/memory/backlog.md"
+    ],
+    "tests": {
+      "before": 255,
+      "after": 255,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "meta session — no code changes"
+    }
+  },
+  {
+    "session": 37,
+    "date": "2026-03-24",
+    "time": "07:00",
+    "type": "work",
+    "summary": "Added 5 tests locking in response shape contracts and dual-channel notification dispatch — DELETE /follows 204 has no body, 404 returns exact 'Follow not found' detail, checkout response key is exactly 'checkout_url', scheduler fires both Telegram and web push simultaneously when both are enabled",
+    "files": [
+      "backend/tests/test_follows.py",
+      "backend/tests/test_payments.py",
+      "backend/tests/test_scheduler.py"
+    ],
+    "tests": {"before": 255, "after": 260, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "server not running"}
   }
 ]

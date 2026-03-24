@@ -1,5 +1,17 @@
 # Activity Log
 
+## 2026-03-24 07:00 — TESTING (Session 37)
+DONE: Added 5 contract and dispatch tests — (1) DELETE /follows 204 response body is empty bytes; (2) DELETE /follows 404 detail is exactly "Follow not found"; (3) POST /payments/checkout response key set is exactly {"checkout_url"}; (4) Scheduler: user with BOTH telegram_enabled AND web_push_enabled fires both channels simultaneously (dispatch gets both telegram_chat_id and push_subscription_json set); (5) Scheduler: web_push-only path (telegram_enabled=False) sets push_subscription_json but telegram_chat_id=None. Two backlog items (invoice.payment_failed, sort=volume) were already covered by prior sessions — grepped and skipped. 255→260 tests.
+IMPACT: Response shape contracts for DELETE and checkout are now locked in — any future change that adds unexpected keys or returns wrong body will be caught. Dual-channel scheduler dispatch was the only remaining untested notification path; now all single and combined channel combinations are covered.
+FILES: backend/tests/test_follows.py, backend/tests/test_payments.py, backend/tests/test_scheduler.py
+
+## 2026-03-24 06:00 — META SESSION (Session 36)
+IMPROVED: (1) Fixed stale "stockcards" project references in skills/testing.md PATCHING section — replaced with PolyEdge-specific app.* module paths; any WORK agent following the old examples literally would use wrong patch targets and waste turns diagnosing failures. (2) Replenished empty HIGH PRIORITY testing backlog with 5 concrete tasks: Stripe invoice.payment_failed event, GET /bettors sort=volume, DELETE /follows response shape, POST /payments/checkout response shape, scheduler dual-channel dispatch (telegram + web_push simultaneously).
+PATTERNS FOUND: (1) Session 26 fixed the IMPORT CHECK in testing.md but left the PATCHING section with stale stockcards.* references — partial fix pattern. (2) Backlog HIGH PRIORITY section is empty after sessions 32-35 cleared all prior tasks — same replenishment pattern as sessions 6, 16, and 26.
+PREDICTED IMPACT: Next WORK session starts with 5 ready testing tasks instead of spending turns on task discovery. Any agent following the patching section will now use correct PolyEdge module paths.
+
+
+
 ## 2026-03-24 05:00 — BUG FIX + TESTING (Session 35)
 DONE: Fixed empty password security bug and added 5 tests — (1) RegisterRequest.password had no min_length: empty string "" was accepted, hashed, and stored, allowing anyone to log in with an empty password; fixed with Field(min_length=1); (2) GET /alerts/settings auto-creates AlertSetting for user with no row (path untested since registration always creates one); (3) PUT /alerts/settings auto-creates AlertSetting for user with no row; (4) PUT /alerts/settings with empty body {} returns 200 with no field changes (all Optional fields stay None); (5) POST /auth/register with name "  Alice  " stores as "Alice" (verifies route-level name.strip() works). 250→255 tests.
 IMPACT: Empty password was a real security hole — bcrypt hash of "" is a valid credential anyone could use. Three previously untested defensive branches in alerts.py now locked in.
