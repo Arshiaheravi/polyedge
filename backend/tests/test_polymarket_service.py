@@ -340,3 +340,121 @@ async def test_get_leaderboard_paginates_when_first_page_full():
 
     assert mock_client.get.call_count == 2
     assert len(result) == 60
+
+
+# ── get_active_positions poly_url branches ────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_active_positions_uses_slug_when_no_event_slug():
+    """When eventSlug is absent but slug is present, poly_url uses slug."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    mock_response_data = [
+        {
+            "redeemable": False,
+            "title": "Slug Market",
+            "outcome": "Yes",
+            "slug": "slug-only-market",
+            # no eventSlug key
+        }
+    ]
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = mock_response_data
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest")
+
+    assert len(result) == 1
+    assert result[0]["poly_url"] == "https://polymarket.com/event/slug-only-market"
+
+
+@pytest.mark.asyncio
+async def test_get_active_positions_uses_default_url_when_no_slugs():
+    """When neither eventSlug nor slug is present, poly_url falls back to 'https://polymarket.com'."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    mock_response_data = [
+        {
+            "redeemable": False,
+            "title": "No Slug Market",
+            "outcome": "No",
+            # no eventSlug, no slug
+        }
+    ]
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = mock_response_data
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest")
+
+    assert len(result) == 1
+    assert result[0]["poly_url"] == "https://polymarket.com"
+
+
+# ── get_live_trades non-list response ─────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_live_trades_non_list_response_returns_empty():
+    """When API returns a non-list (e.g. dict), get_live_trades returns empty list."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {"error": "unexpected format"}
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_live_trades
+        result = await get_live_trades(limit=10)
+
+    assert result == []
+
+
+# ── get_recent_bets "activity" key fallback ───────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_recent_bets_dict_response_with_activity_key_returns_bets():
+    """When API returns a dict with an 'activity' key, get_recent_bets uses that list."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    bet = {
+        "conditionId": "cond_activity",
+        "title": "Activity Key Market",
+        "outcome": "Yes",
+        "usdcSize": "55.0",
+        "side": "BUY",
+    }
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {"activity": [bet]}
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_recent_bets
+        result = await get_recent_bets("0xwhale", limit=20)
+
+    assert len(result) == 1
+    assert result[0]["market_id"] == "cond_activity"
+    assert result[0]["amount_usd"] == 55.0

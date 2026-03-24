@@ -6,6 +6,7 @@ from app.services.notifications import (
     format_bet_message,
     format_sms_message,
     dispatch_bet_notification,
+    send_telegram,
 )
 
 
@@ -231,3 +232,17 @@ async def test_dispatch_telegram_failure_does_not_prevent_web_push():
     assert results.get("telegram") is False
     assert results.get("web_push") is True
     mock_push.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_send_telegram_returns_false_when_bot_token_empty():
+    """send_telegram returns False immediately when bot_token is empty — no HTTP call made."""
+    result = await send_telegram(chat_id="12345", message="hello", bot_token="")
+    assert result is False
+
+
+@pytest.mark.asyncio
+async def test_send_telegram_returns_false_when_chat_id_empty():
+    """send_telegram returns False immediately when chat_id is empty — no HTTP call made."""
+    result = await send_telegram(chat_id="", message="hello", bot_token="bottoken123")
+    assert result is False
