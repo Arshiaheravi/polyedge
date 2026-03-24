@@ -28,6 +28,15 @@ If yes → remove the older one (it is stale; keeping it causes confusion).
 **Prevent bloat**: knowledge.md should be a compact, authoritative rulebook — not a history log. History belongs in sessions.json and activity_log.md. Merged rules should NOT lose any information — keep the most concrete wording and the most recent date.
 (Source: ACE ICLR 2026 — Curator step in Generate→Reflect→Curate loop prevents context collapse from redundant entries)
 
+## STEP 1D — ARCHIVE activity_log.md (every BRAIN session, if > 30 entries)
+Count the session entries in `autoagent/memory/activity_log.md`. If there are more than 30 entries:
+1. Move the oldest 20 entries to `autoagent/memory/activity_log_archive.md` (append, do not overwrite)
+2. Keep only the most recent 10+ entries in activity_log.md
+3. Add a header line to activity_log.md: `*(Sessions 1-N archived — see activity_log_archive.md)*`
+
+This prevents activity_log.md from growing into a multi-thousand-line file that exceeds context window limits when loaded. The archive is preserved for history but not auto-loaded.
+(Source: arxiv 2601.07190 Active Context Compression — agents accumulate 22.7% fewer tokens with active pruning of raw interaction history while maintaining identical accuracy)
+
 ---
 
 ## STEP 2 — SEARCH FOR IMPROVEMENTS

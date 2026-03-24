@@ -42,6 +42,12 @@
 
 ## Session Reflexions
 
+### DEEP Brain Session #41 Reflexion — 2026-03-24
+ACCOMPLISHED: (1) Curated knowledge.md — merged Sessions #13+#14 duplicate cache isolation rules into one canonical rule (three caches, same pattern, now unified). (2) Fixed stale session references in techniques.md (sessions "#48 and #57" referenced a prior project, not PolyEdge). (3) META analysis of last 20 sessions — identified 2 failure patterns: backlog-empties-reactively (4 META sessions spent on this) and symmetry-gap (same coverage gap in sibling functions found session later). (4) Implemented 3 concrete improvements: backlog low-water-mark rule in PROMPT.md (< 2 HIGH PRIORITY → add 3+ tasks before close), symmetry audit rule in testing.md (check sibling functions for same gap), activity_log archival rule in BRAIN_PROMPT.md Step 1D (> 30 entries → archive oldest 20). (5) Searched 7 topics, evaluated 5 new sources. (6) Replenished empty HIGH PRIORITY backlog with 5 concrete testing tasks.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When a BRAIN/META session identifies a failure pattern caused by a MISSING RULE (e.g. backlog empties reactively), the fix must be implemented in the file that gets read at the exact point the failure occurs — not in knowledge.md. Backlog empties at end of WORK session → add the low-water-mark rule to PROMPT.md STEP 3 (where backlog cleanup happens). Symmetry audit fails during testing → add it to testing.md BRANCH AUDIT WORKFLOW. Rules placed in the right file at the right moment are followed; rules in knowledge.md are often forgotten.
+RULE: [2026-03-24] activity_log.md is auto-loaded into context. Archive when > 30 entries to prevent context bloat. Use BRAIN_PROMPT.md Step 1D trigger. The archive format is: move oldest 20 to activity_log_archive.md (append), add a header line to the active file noting the archive range.
+
 ### Session #40 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 branch-coverage tests. Gaps found: (1) send_sms had the same gap as send_telegram from session 39 — only the False paths (missing credentials) were tested; HTTP success and exception handler were untested; (2) Scheduler VIP SMS dispatch path was completely untested — the only untested notification channel combination remaining; (3) dispatch_bet_notification phone_number=None guard (sms skipped even with sms_enabled=True when no phone) was untested. All 5 passed first run. 263→268.
 FAILED: Nothing failed.
@@ -176,12 +182,12 @@ RULE: [2026-03-24] Module-level settings objects (settings = get_settings() at t
 ### Session #14 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 4 tests covering previously untested branches: is_active=False login guard (403), GET /bettors/{address} exception handler (502), basic-tier cap error message (VIP upsell), and bettor_name truncated-address fallback. 158 → 162 tests.
 FAILED: Nothing failed. All 4 tests passed first run.
-RULE: [2026-03-24] GET /bettors/{address} has a module-level _profile_cache dict — must call `_profile_cache.clear()` at test start to force the uncached code path, same pattern as _trades_cache. Missing this causes the mock to never be called.
+*(cache isolation rule merged into Session #13 canonical entry below)*
 
 ### Session #13 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 tests covering previously untested error paths: portal Stripe 502, leaderboard API 502, recent trades API 502, and recent trades limit boundaries (422 for limit<5 and limit>50). 153 → 158 tests.
 FAILED: Nothing failed. Cache isolation concern was caught in self-critique: trades_cache (30s TTL) would have served a cached 200 to the error test if run after test_recent_trades_public. Fixed by resetting _trades_cache to {data: None, ts: 0} at test start. Leaderboard error test uses time_period=day to avoid key collision with existing profit_month_50 cache entry.
-RULE: [2026-03-24] Module-level caches in bettors.py (_leaderboard_cache, _trades_cache) persist across tests in the same pytest session. Tests that need to exercise the uncached path must either (a) use a unique query param combo not seen by earlier tests, or (b) directly reset the cache dict to {data: None, ts: 0} at the start of the test. Missing this causes the mock to never be called and the test to return 200 instead of the expected error.
+RULE: [2026-03-24] Three module-level caches in bettors.py (_leaderboard_cache, _trades_cache, _profile_cache) persist across tests in the same pytest session. Tests that need to exercise the uncached code path must reset each relevant cache at test start: call `_profile_cache.clear()` for the profile cache; set `_leaderboard_cache` or `_trades_cache` to `{data: None, ts: 0}` (or use a unique query param combo not seen by earlier tests). Missing this causes the mock to never be called and the test to silently return a cached 200 instead of the expected error.
 
 ### Session #12 Reflexion — 2026-03-24
 ACCOMPLISHED: Ran 9-check Playwright E2E suite. Sort tabs (profit/volume), period tabs (week/month), account tier label, and browse view (unauthenticated) all pass. Discovered the "bettor profile click-through" backlog task assumes a feature that was never built — no onclick on leaderboard rows navigates to a profile view.

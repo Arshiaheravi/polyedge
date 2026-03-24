@@ -182,6 +182,7 @@ Use git commands as configured. For two-repo projects, check `autoagent/PROJECT.
    Then append one line to `autoagent/memory/done.md` under today's date:
    `- **[SESSION #N] Task name** — one sentence of what was built`
    Backlog stays lean. done.md is the permanent record.
+   **LOW-WATER-MARK CHECK**: After removing the completed task, count remaining HIGH PRIORITY items. If < 2 remain, immediately generate 3+ new testing tasks from the PROJECT.md endpoint table (branch audit approach: pick 3 endpoints and check for uncovered branches). Add them to backlog HIGH PRIORITY before closing. This prevents the next session from wasting turns on task discovery. (Source: Observed pattern — backlog empties and needs META session to replenish; 4 META sessions spent on this in sessions 6/16/26/36)
 
 ### STEP 4 — Log the session
 6. Append to `autoagent/sessions.json` — one entry per session:

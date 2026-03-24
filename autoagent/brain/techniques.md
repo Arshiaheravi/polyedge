@@ -111,7 +111,7 @@ Expected impact: Prevents silent propagation of bad tool outputs through multi-s
 ## Intra-function import patching rule (expanded) — implemented 2026-03-20
 What: When ANY function (not just routes, also scheduler/service) uses `from module import func` inside the body, patch at `module.func`. The calling module never holds a reference to `func`.
 Where: skills/testing.md (PATCHING section — added "Intra-function imports" subsection)
-Source: Recurring failures sessions #48 and #57 — same bug, different call sites (polymarket_service vs scheduler)
+Source: Recurring pattern in scheduler and service tests — same bug hits different call sites (polymarket_service vs scheduler)
 Expected impact: Eliminates the most repeated test failure class across 2+ sessions
 
 ## Float formatting assertion safety — implemented 2026-03-20
@@ -257,6 +257,24 @@ What: Every 5 work sessions, automatically add a META code-quality audit task to
 Where: PROMPT.md (EVERY SESSION — WHAT TO DO, step 3 — PERIODIC TECH-DEBT CHECK block)
 Source: arxiv 2511.04427 (MSR 2026) + everything-claude-code autonomous-loops De-Sloppify pattern
 Expected impact: Prevents technical debt accumulation that empirically reverses velocity gains after 6-8 weeks; ensures each 5-session block ends with a quality pass
+
+## Activity log archival (active context compression) — implemented 2026-03-24
+What: BRAIN sessions check activity_log.md entry count. If > 30 entries, archive oldest 20 to activity_log_archive.md. Keeps the auto-loaded context file from growing unbounded.
+Where: meta/BRAIN_PROMPT.md (Step 1D, added between Step 1C and Step 2)
+Source: arxiv 2601.07190 (Active Context Compression) — 22.7% token reduction with autonomous context pruning, identical accuracy
+Expected impact: Prevents activity_log.md from exceeding context window limits as session count grows beyond 50-100
+
+## Backlog low-water-mark check — implemented 2026-03-24
+What: After removing a completed task from backlog.md (Step 3 of post-task logging), count remaining HIGH PRIORITY items. If < 2, immediately generate 3+ new testing tasks before closing.
+Where: PROMPT.md (STEP 3 commit section, after the backlog cleanup instruction)
+Source: Observed pattern — 4 META sessions spent replenishing empty backlog (sessions 6/16/26/36); WORK sessions could self-replenish instead
+Expected impact: Eliminates reactive backlog replenishment; next session starts with tasks ready instead of spending context on discovery
+
+## Symmetry audit rule in testing — implemented 2026-03-24
+What: When a coverage gap is found in function A of module M, immediately audit all analogous functions in M for the same gap type. Do NOT move to the next module until the full symmetry check is done.
+Where: autoagent/skills/testing.md (BRANCH AUDIT WORKFLOW — checklist, SYMMETRY AUDIT RULE block)
+Source: Session #39-40 pattern — send_telegram had missing True-return path; same gap existed in send_sms but wasn't caught in the same session
+Expected impact: Prevents spending a full additional session finding the same gap in a sibling function
 
 ## Event-driven commit reminders (instruction fade-out prevention) — implemented 2026-03-21
 What: At every commit, re-display the 4 most commonly forgotten rules as a COMMIT REMINDERS block: no autoagent/ in project git add, use py not python3, project branch=main vs autoagent branch=master, clear current_task.md immediately after push. Rules re-injected at the exact decision point where they're most needed prevent instruction fade-out — the pattern where critical rules are read at session start but forgotten 30 tool calls later.

@@ -104,6 +104,8 @@ When the backlog is empty, use this audit loop to find 5+ gaps in ~10 minutes:
 - [ ] All 3 tiers (free/basic/VIP) tested for any tier-gated response field?
 - [ ] All webhook event status strings (canceled, past_due, unpaid, active) have a test?
 
+**SYMMETRY AUDIT RULE** (from session #39-40 pattern): When a coverage gap is found in function A of module M, immediately apply the same audit to all analogous functions in M. Example: `send_telegram` had a missing True-return path → check `send_sms` and `send_web_push` for the same gap → they had it too. Testing one does NOT cover the others. After finding any gap type, scan the full module for the same pattern before moving on.
+
 ## POLYEDGE-SPECIFIC PATTERNS (read before writing any PolyEdge tests)
 
 ### Module-level cache isolation
