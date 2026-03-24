@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 20)
+DONE: Added 5 coverage-gap tests — trades endpoint cached=True second-call branch, login response user dict fields, SMS start happy path (first success test for that endpoint), telegram/verify no-auth 403, sms/verify no-auth 403. 179→184 tests.
+IMPACT: Closes the SMS start happy path (was only error paths before); locks in the trades cached=True contract matching the leaderboard pattern; two more auth gaps closed for verify endpoints.
+FILES: backend/tests/test_bettors.py, backend/tests/test_auth.py, backend/tests/test_alerts.py
+
 ## 2026-03-24 — TESTING (Session 19)
 DONE: Added 5 coverage-gap tests — PUT /alerts/settings auth gap, POST /follows auth gap, VIP telegram/start, leaderboard cache-hit returns cached=True, GET /alerts/settings response includes phone/telegram fields. 174→179 tests.
 IMPACT: Closes the last HTTP-method auth gaps (PUT and POST were untested for missing auth); confirms VIP tier can initiate telegram linking; validates the leaderboard cache True branch that was previously only tested as False.

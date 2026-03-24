@@ -234,5 +234,15 @@
     "files": ["backend/tests/test_alerts.py", "backend/tests/test_follows.py", "backend/tests/test_bettors.py"],
     "tests": {"before": 174, "after": 179, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+  },
+  {
+    "session": 20,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 5 response-field and auth coverage tests: trades endpoint now has a cached=True second-call test; login response user dict verified; SMS start happy path (VIP, valid phone, send_sms=True) tested for first time; telegram/verify and sms/verify now tested for no-auth 403",
+    "files": ["backend/tests/test_bettors.py", "backend/tests/test_auth.py", "backend/tests/test_alerts.py"],
+    "tests": {"before": 179, "after": 184, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
   }
 ]

@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **179 passed** (as of 2026-03-24, session 19 added 5 coverage-gap tests)
+- Test count: **184 passed** (as of 2026-03-24, session 20 added 5 coverage-gap tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #20 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 5 tests. Gaps found by auditing response field assertions and happy-path coverage. Trades cached=True was the only missing branch for that pattern. Login user dict untested despite being returned. SMS start had zero success-path tests. telegram/verify and sms/verify had no no-auth tests. All 5 passed first run. 179→184.
+FAILED: Nothing failed. All 5 passed first run.
+RULE: [2026-03-24] When auditing for coverage gaps, check: (1) for every endpoint that returns a `cached` bool, is there a second-call test verifying cached=True? (2) for every POST endpoint that returns a response body, are success-path response fields asserted in at least one test? (3) for every POST /verify-style endpoint (sms/verify, telegram/verify), is there a no-auth test? These are the most common missed test types after basic happy/error coverage exists.
 
 ### Session #19 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 coverage-gap tests. Gaps found via rule from Session #18: (3) not all HTTP methods covered for auth. PUT /alerts/settings and POST /follows had no no-auth test (only GET/DELETE were tested). Also covered: VIP tier telegram/start (only basic was tested), leaderboard cached=True second-call branch, GET /alerts/settings phone/telegram field presence. 174→179.
