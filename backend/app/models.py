@@ -29,6 +29,8 @@ class User(Base):
     telegram_verified = Column(Boolean, default=False)
     telegram_verify_code = Column(String, nullable=True)
     phone_number = Column(String, nullable=True)
+    phone_verified = Column(Boolean, default=False)
+    phone_verify_code = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     is_active = Column(Boolean, default=True)
 
@@ -55,6 +57,7 @@ class AlertSetting(Base):
     user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
     web_push_enabled = Column(Boolean, default=False)
     telegram_enabled = Column(Boolean, default=False)
+    sms_enabled = Column(Boolean, default=False)
     push_subscription = Column(Text, nullable=True)  # JSON string
     created_at = Column(DateTime, default=datetime.utcnow)
 

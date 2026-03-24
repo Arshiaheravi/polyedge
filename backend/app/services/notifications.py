@@ -1,5 +1,5 @@
 """
-Notification dispatcher — Telegram + Web Push.
+Notification dispatcher — Telegram + Web Push + SMS (Twilio).
 """
 import json
 import logging
@@ -73,6 +73,31 @@ async def send_web_push(push_subscription_json: str, payload: dict) -> bool:
         return False
 
 
+async def send_sms(to_number: str, message: str, account_sid: str, auth_token: str, from_number: str) -> bool:
+    """Send an SMS via Twilio REST API. Returns True on success."""
+    if not all([account_sid, auth_token, from_number, to_number]):
+        return False
+    url = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json"
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.post(
+                url,
+                data={"To": to_number, "From": from_number, "Body": message},
+                auth=(account_sid, auth_token),
+            )
+            resp.raise_for_status()
+            return True
+    except Exception as exc:
+        logger.warning("SMS send failed for %s: %s", to_number, exc)
+        return False
+
+
+def format_sms_message(bettor_name: str, market: str, outcome: str, amount: float) -> str:
+    """Short SMS format (160 chars max)."""
+    short_market = market[:60] + "..." if len(market) > 60 else market
+    return f"PolyEdge: {bettor_name} bet ${amount:,.0f} on {outcome} — {short_market}"
+
+
 async def dispatch_bet_notification(
     *,
     bettor_name: str,
@@ -82,11 +107,18 @@ async def dispatch_bet_notification(
     telegram_chat_id: Optional[str],
     telegram_bot_token: str,
     push_subscription_json: Optional[str],
+    phone_number: Optional[str] = None,
+    sms_enabled: bool = False,
+    twilio_account_sid: str = "",
+    twilio_auth_token: str = "",
+    twilio_from_number: str = "",
     user_tier: str,
 ) -> dict:
     """
     Dispatch notifications to a single user for a new bet event.
-    Respects tier: VIP gets Telegram + push, Basic gets push only.
+    Tier rules:
+      Basic: web push + Telegram
+      VIP:   web push + Telegram + SMS
     Returns a dict of {channel: success_bool}.
     """
     results = {}
@@ -104,5 +136,12 @@ async def dispatch_bet_notification(
             "icon": "/icon.png",
         }
         results["web_push"] = await send_web_push(push_subscription_json, push_payload)
+
+    # SMS: VIP only
+    if user_tier == "vip" and sms_enabled and phone_number:
+        sms_body = format_sms_message(bettor_name, market, outcome, amount)
+        results["sms"] = await send_sms(
+            phone_number, sms_body, twilio_account_sid, twilio_auth_token, twilio_from_number
+        )
 
     return results

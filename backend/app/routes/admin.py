@@ -36,5 +36,5 @@ def get_stats(db: Session = Depends(get_db), _=Depends(verify_admin)):
             "total": total_bet_events,
             "notified": notified_events,
         },
-        "mrr_estimate": basic_users * 4.99 + vip_users * 14.99,
+        "mrr_estimate": basic_users * 4.99 + vip_users * 9.99,
     }

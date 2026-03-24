@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     stripe_basic_price_id: str = ""
     stripe_vip_price_id: str = ""
     telegram_bot_token: str = ""
+    twilio_account_sid: str = ""
+    twilio_auth_token: str = ""
+    twilio_from_number: str = ""  # e.g. +15005550006
     frontend_url: str = "http://localhost:3000"
     admin_password: str = "admin"
 

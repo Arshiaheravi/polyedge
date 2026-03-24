@@ -169,6 +169,11 @@
     .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 0 32px rgba(245,158,11,0.45); filter: brightness(1.08); }
     .btn-secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
     .btn-secondary:hover { background: var(--card3); border-color: var(--border2); }
+    .btn-ghost { background: transparent; color: var(--text2); border: none; padding: 8px 12px; }
+    .btn-ghost:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .sort-btn { background: var(--card2); color: var(--text2); border: 1px solid var(--border); border-radius: 100px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .sort-btn:hover { border-color: var(--accent); color: var(--text); }
+    .sort-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
     .btn-danger { background: rgba(240,62,62,0.12); color: var(--red); border: 1px solid rgba(240,62,62,0.3); }
     .btn-danger:hover { background: rgba(240,62,62,0.22); }
     .btn-outline { background: transparent; color: var(--accent2); border: 1px solid var(--accent); }
@@ -395,6 +400,7 @@
        DASHBOARD
     ==================================================== */
     #view-dashboard { display: flex; min-height: 100vh; }
+    .view-flex { display: flex; min-height: 100vh; }
 
     /* Sidebar */
     .sidebar { width: 230px; flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
@@ -448,6 +454,45 @@
     .stat-box { background: var(--bg2); border-radius: 9px; padding: 12px; border: 1px solid var(--border); }
     .stat-box-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
     .stat-box-val { font-size: 16px; font-weight: 800; }
+
+    /* Activity feed */
+    .activity-feed { display: flex; flex-direction: column; gap: 0; }
+    .activity-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-item:hover { background: rgba(255,255,255,0.02); }
+    .activity-item.new-bet { animation: flashGreen 1.5s ease-out; }
+    @keyframes flashGreen { 0% { background: rgba(0,201,122,0.18); } 100% { background: transparent; } }
+    .activity-avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; }
+    .activity-meta { flex: 1; min-width: 0; }
+    .activity-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+    .activity-name { font-weight: 700; font-size: 13px; color: var(--text); }
+    .activity-action { font-size: 12px; color: var(--text2); }
+    .activity-market { font-size: 13px; color: var(--text); line-height: 1.4; margin-bottom: 4px; }
+    .activity-time { font-size: 11px; color: var(--text3); }
+    .bet-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 100px; font-size: 11px; font-weight: 700; }
+    .bet-badge.buy { background: rgba(0,201,122,0.15); color: var(--green); border: 1px solid rgba(0,201,122,0.3); }
+    .bet-badge.sell { background: rgba(240,62,62,0.12); color: var(--red); border: 1px solid rgba(240,62,62,0.25); }
+    .pos-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 100px; font-size: 11px; font-weight: 700; }
+    .pos-badge.open { background: rgba(0,201,122,0.15); color: var(--green); border: 1px solid rgba(0,201,122,0.3); }
+    .pos-badge.settled { background: rgba(100,100,120,0.15); color: var(--text3); border: 1px solid var(--border); }
+    .pos-pnl { font-size: 13px; font-weight: 800; margin-left: auto; white-space: nowrap; }
+    .activity-section { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 20px; overflow: hidden; }
+    .activity-section-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: var(--card2); border-bottom: 1px solid var(--border); }
+    .activity-section-title { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+    .live-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{ opacity:1; transform: scale(1); } 50%{ opacity:0.5; transform:scale(1.3); } }
+    .bettor-section { margin-bottom: 24px; }
+    .bettor-section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 0 2px; }
+    .bettor-section-name { font-weight: 700; font-size: 15px; }
+
+    /* Search bar */
+    .search-wrap { position: relative; }
+    .search-input { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px 9px 36px; color: var(--text); font-size: 14px; font-family: inherit; width: 100%; max-width: 280px; transition: border-color 0.15s, box-shadow 0.15s; }
+    .search-input::placeholder { color: var(--text3); }
+    .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,201,122,0.12); }
+    .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 14px; pointer-events: none; }
+    .lb-row-hidden { display: none !important; }
+    .search-no-results { padding: 32px; text-align: center; color: var(--text3); font-size: 14px; }
 
     /* Settings */
     .settings-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; }
@@ -527,7 +572,7 @@
     <p class="animate-fade-up delay-2">Follow the most profitable bettors and get instant alerts the moment they place a bet. Be first. Win more.</p>
     <div class="hero-cta animate-fade-up delay-3">
       <button class="btn btn-primary btn-lg" onclick="showView('auth', 'register')">Get Started Free &rarr;</button>
-      <button class="btn btn-secondary btn-lg" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">View Pricing</button>
+      <button class="btn btn-secondary btn-lg" onclick="showView('browse')">View Live Leaderboard</button>
     </div>
 
     <!-- Stats strip -->
@@ -546,21 +591,84 @@
       </div>
     </div>
 
-    <!-- Live ticker (decorative — screen readers skip) -->
+    <!-- Live ticker — real Polymarket trades via /bettors/trades/recent -->
     <div class="live-ticker-wrap" style="margin-top:16px;" aria-hidden="true">
       <span class="ticker-label">&#9679; Live</span>
       <div class="ticker-scroll">
         <div class="ticker-inner" id="live-ticker">
-          <span class="ticker-item"><strong>losingbadly</strong> bet <span class="up">$481</span> on Bitcoin Up &#8599;</span>
-          <span class="ticker-item"><strong>godfatherjohn</strong> bet <span class="up">$2,000</span> on Trump Win &#8599;</span>
-          <span class="ticker-item"><strong>mmmjie</strong> bet <span class="down">$592</span> on Ethereum Down &#8600;</span>
-          <span class="ticker-item"><strong>gricst</strong> bet <span class="up">$542</span> on Solana Up &#8599;</span>
-          <span class="ticker-item"><strong>Montaguejghl</strong> bet <span class="up">$963</span> on BTC ATH &#8599;</span>
-          <span class="ticker-item"><strong>losingbadly</strong> bet <span class="up">$481</span> on Bitcoin Up &#8599;</span>
-          <span class="ticker-item"><strong>godfatherjohn</strong> bet <span class="up">$2,000</span> on Trump Win &#8599;</span>
-          <span class="ticker-item"><strong>mmmjie</strong> bet <span class="down">$592</span> on Ethereum Down &#8600;</span>
-          <span class="ticker-item"><strong>gricst</strong> bet <span class="up">$542</span> on Solana Up &#8599;</span>
-          <span class="ticker-item"><strong>Montaguejghl</strong> bet <span class="up">$963</span> on BTC ATH &#8599;</span>
+          <span class="ticker-item" style="color:var(--text3)">Connecting to live feed...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What is this / beginner explainer -->
+  <div class="section" style="padding-top:0;">
+    <div class="section-eyebrow">New to this?</div>
+    <div class="section-title">How anyone can earn on Polymarket</div>
+    <div class="section-sub">You don't need to be an expert. You just need to copy one.</div>
+
+    <!-- Two column: what is polymarket + how you earn -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;">
+        <div style="font-size:28px;margin-bottom:12px;">🌍</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;">What is Polymarket?</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.8;">
+          Polymarket is a website where people bet real money on whether things will happen — sports results, election outcomes, whether Bitcoin hits a price target, and thousands of other events.<br><br>
+          Every question has a <strong style="color:var(--text);">YES</strong> and <strong style="color:var(--text);">NO</strong> side. The price is between 0¢ and 100¢ — it represents the crowd's opinion of the probability. <strong style="color:var(--text);">If you're right when it resolves, you get paid 100¢ per share.</strong>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;">
+        <div style="font-size:28px;margin-bottom:12px;">💰</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;">How do you make money?</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.8;">
+          Two ways:<br><br>
+          <strong style="color:var(--text);">1. Be right</strong> — bet YES or NO, wait for the event, collect 100¢ if correct.<br><br>
+          <strong style="color:var(--text);">2. Sell early</strong> — if you buy YES at 30¢ and the price moves to 70¢, you can sell now and pocket the difference. Like trading stocks, but for predictions.
+        </div>
+      </div>
+    </div>
+
+    <!-- Real example -->
+    <div style="background:linear-gradient(135deg,rgba(0,201,122,0.08),rgba(0,163,255,0.05));border:1px solid rgba(0,201,122,0.2);border-radius:14px;padding:24px;margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Real example</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
+        <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:14px;">
+          <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;">THE MARKET</div>
+          <div style="font-size:13px;color:var(--text);font-weight:600;">Will OKC Thunder win the 2026 NBA Finals?</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:14px;">
+          <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;">YOU BET</div>
+          <div style="font-size:13px;color:var(--green);font-weight:700;">YES at 40¢</div>
+          <div style="font-size:11px;color:var(--text3);">$100 buys 250 shares</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:14px;">
+          <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;">THEY WIN →</div>
+          <div style="font-size:15px;color:var(--green);font-weight:800;">+$150 profit</div>
+          <div style="font-size:11px;color:var(--text3);">250 shares × 100¢ = $250 payout</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:14px;">
+          <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;">SELL EARLY AT 70¢ →</div>
+          <div style="font-size:15px;color:var(--green);font-weight:800;">+$75 profit</div>
+          <div style="font-size:11px;color:var(--text3);">250 shares × 70¢ = $175 payout</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The problem + PolyEdge solution -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div style="background:rgba(240,62,62,0.06);border:1px solid rgba(240,62,62,0.2);border-radius:14px;padding:24px;">
+        <div style="font-size:28px;margin-bottom:12px;">😰</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;color:#f87171;">The problem</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.8;">
+          Most beginners lose money because they're guessing. The markets are full of people with deep research, insider knowledge, and years of experience. Competing against them is hard.
+        </div>
+      </div>
+      <div style="background:rgba(0,201,122,0.06);border:1px solid rgba(0,201,122,0.2);border-radius:14px;padding:24px;">
+        <div style="font-size:28px;margin-bottom:12px;">⚡</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;color:var(--green);">The PolyEdge solution</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.8;">
+          Instead of guessing yourself — <strong style="color:var(--text);">copy the people already winning.</strong> PolyEdge shows you who the top bettors are, what they're betting on right now, and alerts you the moment they place a new bet so you can follow instantly.
         </div>
       </div>
     </div>
@@ -575,17 +683,17 @@
       <div class="step-card" data-step="1">
         <div class="step-icon">&#128269;</div>
         <div class="step-title">Browse the leaderboard</div>
-        <div class="step-desc">See the top 100 most profitable Polymarket bettors ranked by profit, accuracy, and activity. All live data.</div>
+        <div class="step-desc">See the top 100 most profitable Polymarket bettors ranked by real profit. Filter by today, this week, this month, or all time.</div>
       </div>
       <div class="step-card" data-step="2">
         <div class="step-icon">&#11088;</div>
         <div class="step-title">Follow who you trust</div>
-        <div class="step-desc">Click Follow on bettors whose track record impresses you. Basic members follow up to 5, VIP members follow unlimited.</div>
+        <div class="step-desc">Click Follow on bettors with consistent profit. Their live open bets appear in your dashboard — markets still active, ready to copy.</div>
       </div>
       <div class="step-card" data-step="3">
         <div class="step-icon">&#9889;</div>
-        <div class="step-title">Get instant alerts</div>
-        <div class="step-desc">The moment a followed bettor places a bet, you get a Telegram message or web notification — fast enough to copy them.</div>
+        <div class="step-title">Copy &amp; get alerts</div>
+        <div class="step-desc">Click any open bet card to go straight to that market on Polymarket. Turn on alerts so you're notified the second they bet — before the odds move.</div>
       </div>
     </div>
   </div>
@@ -605,13 +713,12 @@
           <tr>
             <th>#</th>
             <th>Bettor</th>
+            <th>Profit</th>
             <th>Volume</th>
-            <th>Bets</th>
-            <th></th>
           </tr>
         </thead>
         <tbody id="preview-leaderboard">
-          <tr><td colspan="5"><div style="padding:16px;display:flex;gap:10px;flex-direction:column;">
+          <tr><td colspan="4"><div style="padding:16px;display:flex;gap:10px;flex-direction:column;">
             <div class="skeleton" style="height:38px;"></div>
             <div class="skeleton" style="height:38px;"></div>
             <div class="skeleton" style="height:38px;"></div>
@@ -620,7 +727,7 @@
       </table>
     </div>
     <div style="text-align:center;margin-top:20px;">
-      <button class="btn btn-outline btn-lg" onclick="showView('auth', 'register')">See Full Top 100 &rarr;</button>
+      <button class="btn btn-outline btn-lg" onclick="showView('browse')">See Full Top 100 &rarr;</button>
     </div>
   </div>
 
@@ -638,9 +745,9 @@
         <ul class="pricing-features">
           <li><span class="check">&#10003;</span> Full leaderboard access</li>
           <li><span class="check">&#10003;</span> Bettor profiles &amp; stats</li>
-          <li><span class="cross">&#10007;</span> <span style="color:var(--text3);">Follow bettors</span></li>
-          <li><span class="cross">&#10007;</span> <span style="color:var(--text3);">Instant alerts</span></li>
-          <li><span class="cross">&#10007;</span> <span style="color:var(--text3);">Telegram notifications</span></li>
+          <li><span class="check">&#10003;</span> Follow <strong>1 bettor</strong></li>
+          <li><span class="cross">&#10007;</span> <span style="color:var(--text3);">Alerts &amp; notifications</span></li>
+          <li><span class="cross">&#10007;</span> <span style="color:var(--text3);">Priority speed</span></li>
         </ul>
         <button class="btn btn-secondary w-full btn-lg" onclick="showView('auth', 'register')">Get Started Free</button>
       </div>
@@ -652,23 +759,25 @@
         <div class="pricing-period">Less than a coffee</div>
         <ul class="pricing-features">
           <li><span class="check">&#10003;</span> Full leaderboard access</li>
+          <li><span class="check">&#10003;</span> Bettor profiles &amp; stats</li>
           <li><span class="check">&#10003;</span> Follow up to <strong>5 bettors</strong></li>
           <li><span class="check">&#10003;</span> Web push notifications</li>
           <li><span class="check">&#10003;</span> Telegram alerts</li>
-          <li><span class="cross">&#10007;</span> <span style="color:var(--text3);">Priority speed</span></li>
         </ul>
         <button class="btn btn-primary w-full btn-lg" onclick="showView('auth', 'register')">Start Basic &rarr;</button>
       </div>
       <!-- VIP -->
       <div class="pricing-card" style="border-color:rgba(245,158,11,0.3);">
         <div class="pricing-name" style="color:var(--gold2);">VIP</div>
-        <div class="pricing-price" style="color:var(--gold2);">$14.99<sub>/mo</sub></div>
+        <div class="pricing-price" style="color:var(--gold2);">$9.99<sub>/mo</sub></div>
         <div class="pricing-period">For serious traders</div>
         <ul class="pricing-features">
+          <li><span class="check">&#10003;</span> Full leaderboard access</li>
+          <li><span class="check">&#10003;</span> Bettor profiles &amp; stats</li>
           <li><span class="check">&#10003;</span> <strong>Unlimited</strong> bettor follows</li>
           <li><span class="check">&#10003;</span> Web push notifications</li>
           <li><span class="check">&#10003;</span> Telegram alerts</li>
-          <li><span class="check">&#10003;</span> Instant SMS alerts</li>
+          <li><span class="check">&#10003;</span> <strong>SMS alerts</strong> (text message)</li>
           <li><span class="check">&#10003;</span> <strong>Priority speed</strong> (fastest alerts)</li>
         </ul>
         <button class="btn btn-gold w-full btn-lg" onclick="showView('auth', 'register')">Go VIP &rarr;</button>
@@ -739,7 +848,7 @@
 ============================================================ -->
 <div id="view-auth" class="hidden">
   <div style="position:absolute;top:20px;left:20px;z-index:10;">
-    <button class="btn btn-secondary btn-sm" onclick="showView('landing')">&larr; Back</button>
+    <button class="btn btn-secondary btn-sm" onclick="showView('browse')">&larr; Back</button>
   </div>
   <div class="auth-box">
     <div class="auth-logo">Poly<span>Edge</span></div>
@@ -781,6 +890,75 @@
 </div>
 
 <!-- ============================================================
+     BROWSE (public leaderboard — no account required)
+============================================================ -->
+<div id="view-browse" class="hidden view-flex">
+  <!-- Same sidebar structure as dashboard -->
+  <aside class="sidebar" role="complementary" aria-label="Navigation">
+    <div class="sidebar-logo" aria-label="PolyEdge" onclick="showView('landing')" style="cursor:pointer;">Poly<span>Edge</span></div>
+    <nav class="sidebar-nav" role="navigation" aria-label="App sections">
+      <div class="nav-item active" role="button" tabindex="0" aria-current="page">
+        <span class="nav-icon" aria-hidden="true">&#127942;</span> Leaderboard
+      </div>
+      <div class="nav-item" role="button" tabindex="0" onclick="showView('auth','register')" style="opacity:0.5;" title="Sign up to access">
+        <span class="nav-icon" aria-hidden="true">&#11088;</span> My Follows
+      </div>
+      <div class="nav-item" role="button" tabindex="0" onclick="showView('auth','register')" style="opacity:0.5;" title="Sign up to access">
+        <span class="nav-icon" aria-hidden="true">&#128276;</span> Alerts
+      </div>
+    </nav>
+    <!-- Sign-up CTA in place of user chip -->
+    <div class="sidebar-footer">
+      <div style="background:linear-gradient(135deg,rgba(0,201,122,0.12),rgba(0,201,122,0.04));border:1px solid rgba(0,201,122,0.25);border-radius:12px;padding:16px;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Free account</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Follow 1 bettor &bull; Get instant alerts</div>
+        <button class="btn btn-primary w-full" onclick="showView('auth','register')" style="font-size:13px;">Sign Up Free &rarr;</button>
+        <button class="btn btn-ghost w-full" onclick="showView('auth','login')" style="font-size:12px;margin-top:6px;color:var(--text2);">Log In</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Leaderboard</h1>
+      <p>Top 100 Polymarket bettors by real profit &mdash; same data as Polymarket's own leaderboard. <strong style="color:var(--accent);">Sign up free</strong> to follow and get alerts.</p>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+      <div class="tab-bar" style="gap:6px;flex-wrap:wrap;margin-bottom:0;">
+        <button class="tab-btn active" id="browse-sort-profit"  onclick="loadBrowseLeaderboard('profit', browsePeriod)">Top Profit</button>
+      <button class="tab-btn"        id="browse-sort-volume"  onclick="loadBrowseLeaderboard('volume', browsePeriod)">Top Volume</button>
+      <span style="width:1px;background:var(--border);margin:0 4px;"></span>
+      <button class="tab-btn"        id="browse-period-day"   onclick="loadBrowseLeaderboard(browseSort, 'day')">Today</button>
+      <button class="tab-btn active" id="browse-period-month" onclick="loadBrowseLeaderboard(browseSort, 'month')">Month</button>
+      <button class="tab-btn"        id="browse-period-week"  onclick="loadBrowseLeaderboard(browseSort, 'week')">Week</button>
+      <button class="tab-btn"        id="browse-period-all"   onclick="loadBrowseLeaderboard(browseSort, 'all')">All Time</button>
+      </div>
+      <div class="search-wrap">
+        <span class="search-icon">&#128269;</span>
+        <input class="search-input" id="browse-search" type="text" placeholder="Search by name or address…" oninput="filterLeaderboard('browse-leaderboard-body', this.value)" autocomplete="off" />
+      </div>
+    </div>
+    <div class="leaderboard-wrap" role="region" aria-label="Bettor leaderboard" aria-live="polite">
+      <table class="lb-table" aria-label="Top Polymarket bettors">
+        <caption class="hidden">Top 100 Polymarket bettors — ranked by profit or volume</caption>
+        <thead>
+          <tr>
+            <th scope="col" style="width:48px;">#</th>
+            <th scope="col">Bettor</th>
+            <th scope="col">Profit (USD)</th>
+            <th scope="col">Volume</th>
+            <th scope="col"><span class="hidden">Follow action</span></th>
+          </tr>
+        </thead>
+        <tbody id="browse-leaderboard-body">
+          <tr><td colspan="6"><div id="browse-skeleton" style="padding:20px;"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- ============================================================
      DASHBOARD
 ============================================================ -->
 <div id="view-dashboard" class="hidden">
@@ -818,29 +996,55 @@
     <div id="tab-leaderboard">
       <div class="page-header">
         <h1>Leaderboard</h1>
-        <p>Top 100 most active Polymarket bettors &mdash; live data</p>
+        <p>Top 100 Polymarket bettors by real profit &mdash; live data</p>
       </div>
-      <div class="tab-bar">
-        <button class="tab-btn active" id="sort-profit"   onclick="loadLeaderboard('profit')">Most Profitable</button>
-        <button class="tab-btn" id="sort-accuracy" onclick="loadLeaderboard('accuracy')">Most Accurate</button>
-        <button class="tab-btn" id="sort-volume"   onclick="loadLeaderboard('volume')">Most Active</button>
+
+      <!-- What is this? explainer -->
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:18px;display:flex;gap:14px;align-items:flex-start;">
+        <span style="font-size:22px;flex-shrink:0;">💡</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;">How to use this page</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.6;">
+            These are the top 100 real bettors on <strong style="color:var(--text);">Polymarket</strong> — a platform where you bet on real-world events (sports, politics, crypto, etc.) using real money.
+            <br><br>
+            <strong style="color:var(--text);">Profit</strong> = how much money they've made in total &nbsp;·&nbsp; <strong style="color:var(--text);">Volume</strong> = total amount they've bet (win or lose)
+            <br>
+            <strong style="color:var(--text);">Follow</strong> a bettor to see their live open bets in <em>My Follows</em> — so you can copy them on Polymarket.
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <div class="tab-bar" style="gap:6px;flex-wrap:wrap;margin-bottom:0;">
+            <button class="tab-btn active" id="sort-profit"  onclick="loadLeaderboard('profit', currentPeriod)" title="Rank by how much money they made">Top Profit</button>
+            <button class="tab-btn"        id="sort-volume"  onclick="loadLeaderboard('volume', currentPeriod)" title="Rank by total amount bet">Top Volume</button>
+            <span style="width:1px;background:var(--border);margin:0 4px;"></span>
+            <button class="tab-btn"        id="period-day"   onclick="loadLeaderboard(currentSort, 'day')"   title="Profit made today only">Today</button>
+            <button class="tab-btn active" id="period-month" onclick="loadLeaderboard(currentSort, 'month')" title="Profit made this month">Month</button>
+            <button class="tab-btn"        id="period-week"  onclick="loadLeaderboard(currentSort, 'week')"  title="Profit made this week">Week</button>
+            <button class="tab-btn"        id="period-all"   onclick="loadLeaderboard(currentSort, 'all')"   title="All-time profit since they started">All Time</button>
+          </div>
+        </div>
+        <div class="search-wrap">
+          <span class="search-icon">&#128269;</span>
+          <input class="search-input" id="dash-search" type="text" placeholder="Search by name or wallet address…" oninput="filterLeaderboard('lb-body', this.value)" autocomplete="off" />
+        </div>
       </div>
       <div class="leaderboard-wrap" role="region" aria-label="Bettor leaderboard" aria-live="polite">
-        <table class="lb-table" aria-label="Top Polymarket bettors ranked by activity">
-          <caption class="hidden">Top 100 Polymarket bettors — ranked by volume, profit, or accuracy</caption>
+        <table class="lb-table" aria-label="Top Polymarket bettors ranked by profit">
+          <caption class="hidden">Top 100 Polymarket bettors — ranked by real profit or volume</caption>
           <thead>
             <tr>
               <th scope="col" style="width:48px;">#</th>
               <th scope="col">Bettor</th>
-              <th scope="col">Profit</th>
-              <th scope="col">Win Rate</th>
-              <th scope="col">Bets</th>
-              <th scope="col">Volume</th>
+              <th scope="col" title="Total money made after subtracting losses">Profit (USD) ℹ</th>
+              <th scope="col" title="Total amount of money they have bet — win or lose">Volume ℹ</th>
               <th scope="col"><span class="hidden">Follow action</span></th>
             </tr>
           </thead>
           <tbody id="lb-body">
-            <tr><td colspan="7"><div id="lb-skeleton" style="padding:20px;"></div></td></tr>
+            <tr><td colspan="6"><div id="lb-skeleton" style="padding:20px;"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -853,53 +1057,135 @@
           <h1>My Follows</h1>
           <p id="follows-subtitle">Loading...</p>
         </div>
-        <button class="btn btn-primary" onclick="showTab('leaderboard')">+ Add Bettor</button>
-      </div>
-      <div id="follows-container">
-        <div class="empty-state">
-          <div class="icon">&#11088;</div>
-          <h3>No bettors followed yet</h3>
-          <p>Go to the Leaderboard and click Follow on any bettor.</p>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <span id="activity-refresh-indicator" style="font-size:12px;color:var(--text3);display:none;">
+            <span class="live-pulse" style="margin-right:5px;"></span>Live — refreshes every 30s
+          </span>
+          <button class="btn btn-secondary" onclick="document.getElementById('guide-modal').classList.remove('hidden')" style="font-size:13px;">📖 How to copy a bet?</button>
+          <button class="btn btn-primary" onclick="showTab('leaderboard')">+ Add Bettor</button>
         </div>
       </div>
+
+      <!-- How it works explainer -->
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;gap:14px;align-items:flex-start;">
+        <span style="font-size:22px;flex-shrink:0;">📋</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;">How copy-trading works</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;">
+            <strong style="color:var(--text);">1. Follow</strong> a bettor from the Leaderboard &nbsp;→&nbsp;
+            <strong style="color:var(--text);">2. See their open bets</strong> below (markets still live) &nbsp;→&nbsp;
+            <strong style="color:var(--text);">3. Click a card</strong> to open that exact market on Polymarket &nbsp;→&nbsp;
+            <strong style="color:var(--text);">4. Place the same bet</strong> yourself.
+            <br><br>
+            Cards update every 30 seconds. A bet disappears from here once its market closes (game ends, election called, etc.).
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div id="follows-empty" class="empty-state hidden">
+        <div class="icon">&#11088;</div>
+        <h3>No bettors followed yet</h3>
+        <p>Go to the Leaderboard, find a profitable bettor, and click <strong>Follow</strong>. Their live open bets will appear here so you can copy them.</p>
+        <button class="btn btn-primary mt-4" onclick="showTab('leaderboard')">Browse Leaderboard</button>
+      </div>
+
+      <!-- Live activity feed (per bettor) -->
+      <div id="follows-activity-container"></div>
+
+      <!-- Followed bettor cards -->
+      <div id="follows-container"></div>
     </div>
 
     <!-- ALERTS TAB -->
     <div id="tab-alerts" class="hidden">
       <div class="page-header">
         <h1>Alert Settings</h1>
-        <p>Get notified instantly when followed bettors place bets.</p>
+        <p>Get notified the moment a bettor you follow places a new bet.</p>
       </div>
+
+      <!-- Why alerts explainer -->
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;gap:14px;align-items:flex-start;">
+        <span style="font-size:22px;flex-shrink:0;">⚡</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;">Why alerts matter</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;">
+            The best bettors move fast — by the time you check the app, the odds may have already moved against you.
+            Alerts tell you <strong style="color:var(--text);">the second</strong> a followed bettor places a bet, so you can copy it at the same price.
+            <br><br>
+            <strong style="color:var(--text);">Web Push</strong> — free, pops up in your browser like a normal notification &nbsp;·&nbsp;
+            <strong style="color:var(--text);">Telegram</strong> — message on your phone via the Telegram app (Basic/VIP) &nbsp;·&nbsp;
+            <strong style="color:var(--text);">SMS</strong> — text message directly to your phone number (VIP only)
+          </div>
+        </div>
+      </div>
+
       <div class="settings-card">
         <h3>Notifications</h3>
         <div class="toggle-row">
           <div>
             <div class="toggle-label">Web Push Notifications</div>
-            <div class="toggle-sub">Instant browser notifications — all plans</div>
+            <div class="toggle-sub">Pop-up in your browser when a bet is placed — free for all plans. You must allow notifications when your browser asks.</div>
           </div>
           <div class="toggle" id="toggle-push" onclick="toggleWebPush()"><div class="toggle-knob"></div></div>
         </div>
         <div class="toggle-row">
           <div>
             <div class="toggle-label">Telegram Alerts</div>
-            <div class="toggle-sub">Basic &amp; VIP only — messages via Telegram bot</div>
+            <div class="toggle-sub">Get a message on Telegram the moment a bet is placed. Requires Basic or VIP plan. Set up below.</div>
           </div>
           <div class="toggle" id="toggle-telegram" onclick="toggleTelegram()"><div class="toggle-knob"></div></div>
         </div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">SMS Alerts <span style="font-size:11px;background:var(--gold);color:#000;border-radius:4px;padding:1px 6px;margin-left:6px;font-weight:700;">VIP</span></div>
+            <div class="toggle-sub">Text message to your phone number. Works even without internet. VIP plan only. Verify your number below.</div>
+          </div>
+          <div class="toggle" id="toggle-sms" onclick="toggleSms()"><div class="toggle-knob"></div></div>
+        </div>
       </div>
+
       <div class="settings-card" id="telegram-setup-card">
         <h3>Link Telegram Account</h3>
-        <p style="font-size:14px;color:var(--text2);margin-bottom:16px;">Connect your Telegram to receive instant bet alerts from followed bettors.</p>
+        <p style="font-size:14px;color:var(--text2);margin-bottom:4px;">Connect your Telegram to receive instant bet alerts.</p>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:16px;">Don't have Telegram? Download it free at <strong style="color:var(--text2);">telegram.org</strong> — it's like WhatsApp.</p>
         <div id="telegram-status">
           <button class="btn btn-primary" onclick="setupTelegram()">Generate Verification Code</button>
         </div>
         <div id="telegram-code-section" class="hidden">
-          <p style="font-size:13px;color:var(--text2);">Send this code to our Telegram bot:</p>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">
+            <strong>Step 1:</strong> Copy this code &nbsp;→&nbsp; <strong>Step 2:</strong> Open our Telegram bot &nbsp;→&nbsp; <strong>Step 3:</strong> Send <code>/verify YOUR_CODE</code>
+          </p>
           <div class="code-box" id="tg-code-display">----</div>
-          <a id="tg-bot-link" href="#" target="_blank" class="btn btn-outline w-full" style="display:block;text-align:center;margin-bottom:12px;">Open @PolyEdgeBot on Telegram</a>
+          <a id="tg-bot-link" href="#" target="_blank" class="btn btn-outline w-full" style="display:block;text-align:center;margin-bottom:12px;">Open @PolyEdgeBot on Telegram ↗</a>
           <div style="display:flex;gap:10px;margin-top:12px;">
-            <input class="form-input" id="tg-verify-input" placeholder="Enter code from bot" />
+            <input class="form-input" id="tg-verify-input" placeholder="Paste code from bot here" />
             <button class="btn btn-primary" onclick="verifyTelegram()">Verify</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-card" id="sms-setup-card">
+        <h3>Link Phone Number for SMS</h3>
+        <p style="font-size:14px;color:var(--text2);margin-bottom:4px;">Get a text message the moment a followed bettor bets. VIP only.</p>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:16px;">We'll send a 6-digit code to confirm it's your number. Standard SMS rates from your carrier may apply.</p>
+        <div id="sms-verified-status" class="hidden" style="display:flex;align-items:center;gap:10px;padding:12px;background:rgba(0,201,122,0.08);border:1px solid rgba(0,201,122,0.25);border-radius:10px;margin-bottom:12px;">
+          <span style="color:var(--green);font-size:18px;">&#10003;</span>
+          <span id="sms-verified-number" style="font-weight:700;"></span>
+          <span style="color:var(--text2);font-size:13px;">verified</span>
+        </div>
+        <div id="sms-input-section">
+          <div style="display:flex;gap:10px;">
+            <input class="form-input" id="sms-phone-input" placeholder="+14155552671" style="flex:1;" />
+            <button class="btn btn-primary" onclick="startSmsVerify()">Send Code</button>
+          </div>
+          <p style="font-size:12px;color:var(--text3);margin-top:8px;">Include your country code. Examples: <strong style="color:var(--text2);">+1</strong> for US/Canada, <strong style="color:var(--text2);">+44</strong> for UK, <strong style="color:var(--text2);">+61</strong> for Australia.</p>
+        </div>
+        <div id="sms-otp-section" class="hidden" style="margin-top:16px;">
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">Check your texts — enter the 6-digit code we sent:</p>
+          <div style="display:flex;gap:10px;">
+            <input class="form-input" id="sms-otp-input" placeholder="123456" maxlength="6" style="flex:1;" />
+            <button class="btn btn-primary" onclick="verifySmsOtp()">Verify</button>
           </div>
         </div>
       </div>
@@ -916,7 +1202,7 @@
           <div>
             <div style="font-size:12px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Current Plan</div>
             <div style="font-size:28px;font-weight:900;letter-spacing:-0.5px;" id="acct-tier-label">Free</div>
-            <div style="font-size:13px;color:var(--text2);margin-top:6px;" id="acct-tier-desc">Upgrade to follow bettors and get alerts.</div>
+            <div style="font-size:13px;color:var(--text2);margin-top:6px;" id="acct-tier-desc">You can follow 1 bettor. Upgrade for more follows &amp; alerts.</div>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
             <button class="btn btn-primary" id="acct-upgrade-btn" onclick="openUpgradeModal()">Upgrade Plan &rarr;</button>
@@ -947,13 +1233,14 @@
   <div class="modal">
     <button class="modal-close" onclick="closeModal('upgrade-modal')">&times;</button>
     <h2 style="font-size:22px;font-weight:800;margin-bottom:6px;letter-spacing:-0.5px;">Upgrade PolyEdge</h2>
-    <p style="font-size:14px;color:var(--text2);margin-bottom:20px;">Follow bettors and get instant alerts the moment they bet.</p>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:20px;">You're on the free plan (1 follow). Upgrade to follow more bettors and get instant alerts.</p>
     <div class="upgrade-plan-grid">
       <div class="upgrade-plan-card" onclick="openCheckout('basic')">
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <div>
             <div style="font-weight:700;font-size:16px;color:var(--accent2);">Basic</div>
             <div style="font-size:13px;color:var(--text2);margin-top:4px;">Follow up to 5 bettors &bull; Push &amp; Telegram alerts</div>
+
           </div>
           <div style="font-size:22px;font-weight:900;color:var(--accent2);">$4.99<span style="font-size:13px;font-weight:400;color:var(--text2);">/mo</span></div>
         </div>
@@ -962,9 +1249,9 @@
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <div>
             <div style="font-weight:700;font-size:16px;color:var(--gold2);">VIP</div>
-            <div style="font-size:13px;color:var(--text2);margin-top:4px;">Unlimited follows &bull; SMS &bull; Priority speed</div>
+            <div style="font-size:13px;color:var(--text2);margin-top:4px;">Unlimited follows &bull; Priority speed</div>
           </div>
-          <div style="font-size:22px;font-weight:900;color:var(--gold2);">$14.99<span style="font-size:13px;font-weight:400;color:var(--text2);">/mo</span></div>
+          <div style="font-size:22px;font-weight:900;color:var(--gold2);">$9.99<span style="font-size:13px;font-weight:400;color:var(--text2);">/mo</span></div>
         </div>
       </div>
     </div>
@@ -981,11 +1268,147 @@
   </div>
 </div>
 
+<!-- BEGINNER GUIDE MODAL -->
+<div id="guide-modal" class="modal-overlay hidden">
+  <div class="modal" style="max-width:640px;padding:0;overflow:hidden;max-height:90vh;display:flex;flex-direction:column;">
+    <div style="padding:24px 28px 0;flex-shrink:0;">
+      <button class="modal-close" onclick="closeModal('guide-modal')" style="top:16px;right:16px;">&times;</button>
+      <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Complete Beginner Guide</div>
+      <h2 style="font-size:22px;margin-bottom:4px;">How to Copy a Winning Bettor</h2>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:20px;">From zero knowledge to placing your first copied bet — step by step.</p>
+    </div>
+    <div style="overflow-y:auto;padding:0 28px 28px;flex:1;">
+
+      <!-- Step 1 -->
+      <div style="display:flex;gap:14px;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));color:#000;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:6px;">Create a Polymarket account</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
+            Go to <strong style="color:var(--accent2);">polymarket.com</strong> and sign up. You can use your email (easiest) or a crypto wallet if you have one. It takes about 2 minutes.
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--text3);">
+            💡 <strong style="color:var(--text2);">What is Polymarket?</strong> It's a website where you bet real money on real-world events — sports, politics, crypto prices, etc. Think of it like a stock market, but for predictions.
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div style="display:flex;gap:14px;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));color:#000;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:6px;">Deposit money (USDC)</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
+            Polymarket uses <strong style="color:var(--text);">USDC</strong> — a digital dollar that is always worth exactly $1 USD. You deposit it like topping up a prepaid card.
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--text2);">
+              <strong style="color:var(--text);">Easiest way:</strong> On Polymarket, click <em>Deposit</em> → choose <em>Credit/Debit Card</em> → buy USDC directly with your card. Done.
+            </div>
+            <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--text3);">
+              💡 Start small — $20–$50 is enough to try it. You can always add more later.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div style="display:flex;gap:14px;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));color:#000;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:6px;">Follow a winning bettor on PolyEdge</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
+            Go to the <strong style="color:var(--text);">Leaderboard</strong> tab. You'll see the top 100 most profitable bettors on Polymarket ranked by real profit.
+            <br><br>
+            Pick someone with consistent profit — not just a big number today, check <em>Month</em> and <em>All Time</em> too. Click <strong style="color:var(--accent2);">Follow</strong> next to their name.
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--text3);">
+            💡 <strong style="color:var(--text2);">Tip:</strong> A high profit with moderate volume is better than huge volume with tiny profit. It means they're accurate, not just gambling a lot.
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div style="display:flex;gap:14px;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));color:#000;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:6px;">See their open bets in My Follows</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
+            Go to <strong style="color:var(--text);">My Follows</strong>. You'll see cards showing every bet that bettor currently has open — markets still live, money still in play.
+            <br><br>
+            Each card shows: <strong style="color:var(--text);">what they bet on</strong>, <strong style="color:var(--text);">which side</strong> (Yes/No), <strong style="color:var(--text);">current odds</strong>, their <strong style="color:var(--text);">profit/loss</strong>, and <strong style="color:var(--text);">when it closes</strong>.
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div style="display:flex;gap:14px;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));color:#000;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">5</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:6px;">Click the card → place the same bet</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
+            Click any position card. It opens that exact market on Polymarket. You'll see a page like this:
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:12px;color:var(--text2);line-height:1.8;">
+            <div style="margin-bottom:8px;font-weight:700;color:var(--text);font-size:13px;">Example: "Will OKC Thunder win the NBA Finals? — YES at 45¢"</div>
+            1. You land on the Polymarket page for that market<br>
+            2. Click <strong style="color:var(--text);">YES</strong> (or whatever side the bettor is on — shown on the card)<br>
+            3. Type how much you want to bet (e.g. $20)<br>
+            4. Click <strong style="color:var(--text);">Buy</strong> — done. You're in the same bet.
+          </div>
+          <div style="background:rgba(0,201,122,0.06);border:1px solid rgba(0,201,122,0.2);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;color:var(--text2);">
+            💡 <strong style="color:var(--text);">The price in ¢ is the probability.</strong> Betting YES at 45¢ means you think there's a 45%+ chance it happens. If it resolves YES, you get paid 100¢ per share — so $1 becomes $2.22. If it resolves NO, you lose what you put in.
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6 -->
+      <div style="display:flex;gap:14px;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));color:#000;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">6</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:6px;">Wait, sell early, or let it resolve</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
+            You have three options after placing a bet:
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+            <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text2);">
+              <strong style="color:var(--text);">Hold until it resolves</strong> — wait for the event to finish. If you're right, Polymarket automatically pays you 100¢ per share. If wrong, you lose your stake.
+            </div>
+            <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text2);">
+              <strong style="color:var(--text);">Sell early to lock in profit</strong> — if the price moved in your favour (e.g. you bought YES at 45¢ and it's now 75¢), you can sell now and keep the difference. Go to <em>Portfolio</em> on Polymarket and click Sell.
+            </div>
+            <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text2);">
+              <strong style="color:var(--text);">Sell early to cut losses</strong> — if the price dropped (e.g. 45¢ → 20¢), you can sell now and recover some money instead of losing it all.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 7 - withdraw -->
+      <div style="display:flex;gap:14px;margin-bottom:24px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));color:#000;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">7</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:6px;">Withdraw your winnings</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
+            Once you have USDC in your Polymarket balance, go to <strong style="color:var(--text);">Withdraw</strong> on Polymarket. You can convert back to regular money via a crypto exchange like Coinbase or Kraken — or just leave it in for the next bet.
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk warning -->
+      <div style="background:rgba(240,62,62,0.07);border:1px solid rgba(240,62,62,0.25);border-radius:10px;padding:14px 16px;font-size:12px;color:var(--text2);line-height:1.7;">
+        <strong style="color:#f87171;">⚠ Risk disclaimer:</strong> Prediction markets involve real money. Even the best bettors lose sometimes. Never bet more than you can afford to lose. Copy-trading does not guarantee profits — past performance of any bettor is not a guarantee of future results. Start small.
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- ============================================================
      JAVASCRIPT
 ============================================================ -->
 <script>
-const API = 'http://localhost:8001';
+const API = 'http://localhost:8002';
 let currentUser = null;
 let followedAddresses = new Set();
 let alertSettings = {};
@@ -1051,12 +1474,13 @@ function setBtn(id, disabled, text) {
 // ── View routing ─────────────────────────────────────────────
 
 function showView(view, sub) {
-  ['landing', 'auth', 'dashboard'].forEach(v => {
+  ['landing', 'auth', 'dashboard', 'browse'].forEach(v => {
     document.getElementById(`view-${v}`).classList.toggle('hidden', v !== view);
   });
   if (view === 'auth' && sub) switchAuthTab(sub);
   if (view === 'dashboard') onDashboardLoad();
   if (view === 'landing') loadLandingPreview();
+  if (view === 'browse') loadBrowseLeaderboard();
 }
 
 function showTab(tab) {
@@ -1065,6 +1489,9 @@ function showTab(tab) {
     const nav = document.getElementById(`nav-${t}`);
     if (nav) nav.classList.toggle('active', t === tab);
   });
+  if (tab !== 'follows' && _followsRefreshTimer) {
+    clearInterval(_followsRefreshTimer); _followsRefreshTimer = null;
+  }
   if (tab === 'leaderboard') loadLeaderboard(currentSort);
   if (tab === 'follows')     loadMyFollows();
   if (tab === 'alerts')      loadAlertSettings();
@@ -1182,48 +1609,109 @@ async function loadFollowedAddresses() {
   } catch {}
 }
 
+// ── Leaderboard search ────────────────────────────────────────
+
+function filterLeaderboard(tbodyId, query) {
+  const tbody = document.getElementById(tbodyId);
+  if (!tbody) return;
+  const q = query.trim().toLowerCase();
+  const rows = tbody.querySelectorAll('tr');
+  let visibleCount = 0;
+
+  rows.forEach(row => {
+    if (row.querySelector('.empty-state') || row.querySelector('.skeleton')) return;
+    const text = row.textContent.toLowerCase();
+    const match = !q || text.includes(q);
+    row.classList.toggle('lb-row-hidden', !match);
+    if (match) visibleCount++;
+  });
+
+  // Show "no results" if nothing matches
+  const noResultsId = tbodyId + '-no-results';
+  let noResultsRow = document.getElementById(noResultsId);
+  if (q && visibleCount === 0) {
+    if (!noResultsRow) {
+      noResultsRow = document.createElement('tr');
+      noResultsRow.id = noResultsId;
+      noResultsRow.innerHTML = `<td colspan="5"><div class="search-no-results">No bettors match "<strong>${query}</strong>"</div></td>`;
+      tbody.appendChild(noResultsRow);
+    } else {
+      noResultsRow.querySelector('strong').textContent = query;
+      noResultsRow.classList.remove('lb-row-hidden');
+    }
+  } else if (noResultsRow) {
+    noResultsRow.classList.add('lb-row-hidden');
+  }
+}
+
+// Clear search inputs when leaderboard reloads (new data)
+function clearSearch(tbodyId) {
+  const inputId = tbodyId === 'lb-body' ? 'dash-search' : 'browse-search';
+  const input = document.getElementById(inputId);
+  if (input) input.value = '';
+}
+
 // ── Leaderboard ───────────────────────────────────────────────
 
-async function loadLeaderboard(sort = 'profit') {
+let currentPeriod = 'month';
+
+async function loadLeaderboard(sort = currentSort, period = currentPeriod) {
   currentSort = sort;
-  ['profit', 'accuracy', 'volume'].forEach(s => {
+  currentPeriod = period;
+
+  ['profit', 'volume'].forEach(s => {
     const el = document.getElementById(`sort-${s}`);
     if (el) el.classList.toggle('active', s === sort);
   });
+  ['day', 'month', 'week', 'all'].forEach(p => {
+    const el = document.getElementById(`period-${p}`);
+    if (el) el.classList.toggle('active', p === period);
+  });
 
   const tbody = document.getElementById('lb-body');
-  tbody.innerHTML = renderSkeletonRows(8, 7);
+  clearSearch('lb-body');
+  tbody.innerHTML = renderSkeletonRows(8, 5);
 
   try {
-    const res = await apiFetch(`/bettors?sort=${sort}&limit=100`);
+    const res = await apiFetch(`/bettors?sort=${sort}&time_period=${period}&limit=100`);
     if (!res.ok) throw new Error('Failed to load leaderboard');
     const data = await res.json();
     const bettors = data.bettors || [];
     if (!bettors.length) {
-      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">&#127942;</div><h3>No data yet</h3><p>Leaderboard is loading from Polymarket.</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="icon">&#127942;</div><h3>No data yet</h3><p>Leaderboard is loading from Polymarket.</p></div></td></tr>`;
       return;
     }
     tbody.innerHTML = bettors.map((b, i) => renderBettorRow(b, i)).join('');
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p>${e.message}</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p>${e.message}</p></div></td></tr>`;
   }
+}
+
+function pnlColor(pnl) {
+  if (pnl > 0) return 'var(--green)';
+  if (pnl < 0) return 'var(--red)';
+  return 'var(--text2)';
+}
+
+function fmtPnl(pnl) {
+  const abs = Math.abs(pnl);
+  const sign = pnl >= 0 ? '+' : '-';
+  return sign + '$' + abs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function renderBettorRow(b, i) {
   const addr = b.address || '';
   const name = b.name || shortAddr(addr);
   const isFollowing = followedAddresses.has(addr);
-  const profit = b.profit_usd || 0;
-  const profitColor = profit >= 0 ? 'var(--green2)' : 'var(--red)';
-  // Non-color-only indicator: arrow + color (WCAG 1.4.1 — no color alone)
-  const profitIcon = profit >= 0 ? '&#9650;' : '&#9660;';
-  const profitAriaLabel = `${profit >= 0 ? 'Profit' : 'Loss'}: ${fmtUSD(Math.abs(profit))}`;
   const avatarUrl = b.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${addr}`;
-  // Stagger delay per row (max 8 rows for perf)
   const delay = Math.min(i, 8) * 40;
+  const pnl = b.pnl_usd ?? null;
+  const pnlCell = pnl !== null
+    ? `<td style="color:${pnlColor(pnl)};font-weight:800;font-size:15px;">${fmtPnl(pnl)}</td>`
+    : `<td style="color:var(--text3);">—</td>`;
   return `
     <tr class="row-animate" style="animation-delay:${delay}ms">
-      <td>${rankBadge(i)}</td>
+      <td>${rankBadge(b.rank ? b.rank - 1 : i)}</td>
       <td>
         <div class="bettor-row">
           <img class="avatar" src="${avatarUrl}" alt="${name} avatar" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${addr}'" />
@@ -1233,17 +1721,8 @@ function renderBettorRow(b, i) {
           </div>
         </div>
       </td>
-      <td style="color:${profitColor};font-weight:800;" aria-label="${profitAriaLabel}">
-        <span aria-hidden="true">${profitIcon} </span>${fmtUSD(profit)}
-      </td>
-      <td>
-        <span class="badge ${b.win_rate >= 60 ? 'badge-green' : b.win_rate >= 40 ? 'badge-basic' : 'badge-red'}"
-              aria-label="Win rate: ${fmtPct(b.win_rate)}">
-          ${fmtPct(b.win_rate)}
-        </span>
-      </td>
-      <td style="color:var(--text2);">${(b.total_bets || 0).toLocaleString()}</td>
-      <td style="color:var(--text2);">${fmtUSD(b.volume_usd)}</td>
+      ${pnlCell}
+      <td style="color:var(--text2);">${fmtUSD(b.volume_usd || 0)}</td>
       <td>
         <button class="follow-btn ${isFollowing ? 'following' : ''}"
                 onclick="toggleFollow('${addr}', '${name.replace(/'/g, "\\'")}', this)"
@@ -1263,10 +1742,54 @@ function renderSkeletonRows(rows, cols) {
   ).join('');
 }
 
+// ── Public Browse Leaderboard (no auth) ───────────────────────
+
+let browseSort = 'profit';
+let browsePeriod = 'month';
+
+async function loadBrowseLeaderboard(sort = browseSort, period = browsePeriod) {
+  browseSort = sort;
+  browsePeriod = period;
+
+  ['profit', 'volume'].forEach(s => {
+    const btn = document.getElementById(`browse-sort-${s}`);
+    if (btn) btn.classList.toggle('active', s === sort);
+  });
+  ['day', 'month', 'week', 'all'].forEach(p => {
+    const btn = document.getElementById(`browse-period-${p}`);
+    if (btn) btn.classList.toggle('active', p === period);
+  });
+
+  const tbody = document.getElementById('browse-leaderboard-body');
+  if (!tbody) return;
+  clearSearch('browse-leaderboard-body');
+  tbody.innerHTML = renderSkeletonRows(10, 5);
+
+  try {
+    const res = await fetch(`${API}/bettors?sort=${sort}&time_period=${period}&limit=100`);
+    if (!res.ok) throw new Error('Failed to load leaderboard');
+    const data = await res.json();
+    const bettors = data.bettors || [];
+    if (!bettors.length) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="icon">&#127942;</div><h3>No data yet</h3><p>Leaderboard is loading from Polymarket.</p></div></td></tr>`;
+      return;
+    }
+    // Reuse same renderBettorRow — follow buttons will trigger sign-up prompt for visitors
+    tbody.innerHTML = bettors.map((b, i) => renderBettorRow(b, i)).join('');
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p>${e.message}</p></div></td></tr>`;
+  }
+}
+
 // ── Follow / Unfollow ─────────────────────────────────────────
 
 async function toggleFollow(address, name, btn) {
-  if (!currentUser) { showView('auth', 'login'); return; }
+  if (!currentUser) {
+    // Visitor — show sign-up nudge instead of hard redirect
+    toast(`Sign up free to follow ${name}`, 'info');
+    setTimeout(() => showView('auth', 'register'), 900);
+    return;
+  }
   const isFollowing = followedAddresses.has(address);
   if (isFollowing) {
     await unfollowBettor(address, btn);
@@ -1325,77 +1848,255 @@ async function updateFollowCountBadge() { await loadFollowedAddresses(); }
 
 // ── My Follows ────────────────────────────────────────────────
 
-async function loadMyFollows() {
-  const container = document.getElementById('follows-container');
-  container.innerHTML = `<div style="padding:40px;display:flex;gap:12px;flex-direction:column;">${
-    Array.from({ length: 3 }, () => `<div class="skeleton" style="height:120px;border-radius:14px;"></div>`).join('')
-  }</div>`;
+let _followsRefreshTimer = null;
+let _seenBetIds = new Set(); // track new bets for flash animation
 
+async function loadMyFollows() {
+  const activityContainer = document.getElementById('follows-activity-container');
+  const cardContainer     = document.getElementById('follows-container');
+  const emptyEl           = document.getElementById('follows-empty');
+
+  activityContainer.innerHTML = `<div style="padding:32px;display:flex;gap:12px;flex-direction:column;">${
+    Array.from({ length: 2 }, () => `<div class="skeleton" style="height:80px;border-radius:14px;"></div>`).join('')
+  }</div>`;
+  cardContainer.innerHTML = '';
+
+  // Load follows list first (fast, local DB)
+  let follows = [], tier = 'free', limit = 0;
   try {
     const res = await apiFetch('/follows');
-    if (!res.ok) throw new Error('Failed to load follows');
+    if (res.ok) {
+      const data = await res.json();
+      follows = data.follows || [];
+      tier    = data.tier || 'free';
+      limit   = data.limit || 0;
+    }
+  } catch {}
+
+  document.getElementById('follows-subtitle').textContent =
+    tier === 'vip'   ? `${follows.length} bettors followed — unlimited` :
+    tier === 'basic' ? `${follows.length} / ${limit} bettors followed` :
+    `${follows.length} / 1 bettor followed`;
+
+  if (!follows.length) {
+    activityContainer.innerHTML = '';
+    emptyEl.classList.remove('hidden');
+    document.getElementById('activity-refresh-indicator').style.display = 'none';
+    return;
+  }
+
+  emptyEl.classList.add('hidden');
+  document.getElementById('activity-refresh-indicator').style.display = 'flex';
+
+  // Render follow cards (quick)
+  cardContainer.innerHTML = `<h3 style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin:8px 0 12px;">Followed Bettors</h3>
+  <div class="follows-grid">${follows.map(f => {
+    const name = f.bettor_name || shortAddr(f.bettor_address);
+    const avatarUrl = `https://api.dicebear.com/7.x/identicon/svg?seed=${f.bettor_address}`;
+    return `<div class="follow-card">
+      <div class="follow-card-head">
+        <img class="avatar" style="width:44px;height:44px;" src="${avatarUrl}" alt="avatar" />
+        <div style="flex:1;overflow:hidden;">
+          <div class="font-semibold truncate" title="${name}">${name}</div>
+          <div class="bettor-addr">${shortAddr(f.bettor_address)}</div>
+        </div>
+      </div>
+      <button class="btn btn-danger btn-sm w-full" onclick="unfollowFromFollowsTab('${f.bettor_address}', this)">Unfollow</button>
+    </div>`;
+  }).join('')}</div>`;
+
+  // Load live activity
+  await refreshFollowsActivity();
+
+  // Auto-refresh every 30s
+  if (_followsRefreshTimer) clearInterval(_followsRefreshTimer);
+  _followsRefreshTimer = setInterval(refreshFollowsActivity, 30000);
+}
+
+async function refreshFollowsActivity() {
+  const activityContainer = document.getElementById('follows-activity-container');
+  if (!activityContainer) return;
+
+  try {
+    const res = await apiFetch('/follows/live');
+    if (!res.ok) return;
     const data = await res.json();
-    const follows = data.follows || [];
-    const limit = data.limit || 0;
-    const tier = data.tier || 'free';
+    const bettors = data.bettors || [];
 
-    document.getElementById('follows-subtitle').textContent =
-      tier === 'vip' ? `${follows.length} bettors followed (unlimited)` :
-      tier === 'basic' ? `${follows.length} / ${limit} bettors followed` :
-      'Upgrade to follow bettors';
-
-    if (!follows.length) {
-      container.innerHTML = `<div class="empty-state">
-        <div class="icon">&#11088;</div>
-        <h3>No bettors followed yet</h3>
-        <p>Go to the <a href="#" onclick="showTab('leaderboard');return false;">Leaderboard</a> and click Follow on any bettor.</p>
-      </div>`;
+    if (!bettors.length) {
+      activityContainer.innerHTML = '';
       return;
     }
 
-    let bettorMap = {};
-    try {
-      const lbRes = await apiFetch(`/bettors?sort=profit&limit=100`);
-      if (lbRes.ok) {
-        const lbData = await lbRes.json();
-        (lbData.bettors || []).forEach(b => { bettorMap[b.address] = b; });
-      }
-    } catch {}
+    // Flatten all open positions across all followed bettors
+    const allPositions = bettors.flatMap(b =>
+      (b.active_positions || []).map(p => ({ ...p, _bettor: b.name, _addr: b.address,
+        _avatarUrl: `https://api.dicebear.com/7.x/identicon/svg?seed=${b.address}` }))
+    );
 
-    container.innerHTML = `<div class="follows-grid">${follows.map(f => {
-      const b = bettorMap[f.bettor_address] || {};
-      const name = f.bettor_name || shortAddr(f.bettor_address);
-      const avatarUrl = b.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${f.bettor_address}`;
-      const profit = b.profit_usd ?? null;
-      const winRate = b.win_rate ?? null;
-      return `<div class="follow-card">
-        <div class="follow-card-head">
-          <img class="avatar" style="width:44px;height:44px;" src="${avatarUrl}" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${f.bettor_address}'" alt="avatar" />
-          <div style="flex:1;overflow:hidden;">
-            <div class="font-semibold truncate" title="${name}">${name}</div>
-            <div class="bettor-addr">${shortAddr(f.bettor_address)}</div>
-          </div>
-        </div>
-        <div class="follow-card-stats">
-          <div class="stat-box">
-            <div class="stat-box-label">Profit</div>
-            <div class="stat-box-val ${profit !== null ? (profit >= 0 ? 'text-green' : 'text-red') : ''}">${profit !== null ? fmtUSD(profit) : '—'}</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-box-label">Win Rate</div>
-            <div class="stat-box-val">${winRate !== null ? fmtPct(winRate) : '—'}</div>
-          </div>
-        </div>
-        <button class="btn btn-danger btn-sm w-full" onclick="unfollowFromFollowsTab('${f.bettor_address}', this)">Unfollow</button>
+    let html = '';
+
+    if (allPositions.length) {
+      html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+        <span class="live-pulse"></span>
+        <span style="font-size:16px;font-weight:800;color:var(--green);">Copyable Bets</span>
+        <span style="background:rgba(0,201,122,0.15);color:var(--green);border:1px solid rgba(0,201,122,0.3);border-radius:100px;font-size:11px;font-weight:700;padding:2px 9px;">${allPositions.length} open</span>
+        <span style="font-size:12px;color:var(--text3);margin-left:4px;">— click any card to open it on Polymarket and place the same bet</span>
+      </div>
+      <div style="background:rgba(0,201,122,0.05);border:1px solid rgba(0,201,122,0.15);border-radius:10px;padding:11px 14px;margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.6;">
+        <strong style="color:var(--text);">Worth now</strong> = current value if they sold today &nbsp;·&nbsp;
+        <strong style="color:var(--text);">Invested</strong> = what they originally put in &nbsp;·&nbsp;
+        <strong style="color:var(--text);">P&amp;L</strong> = profit or loss so far &nbsp;·&nbsp;
+        <strong style="color:var(--text);">Price in ¢</strong> = chance of winning (85¢ = 85% likely) &nbsp;·&nbsp;
+        <strong style="color:var(--text);">Closes in Xd</strong> = when the market shuts and bets resolve
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;">
+        ${allPositions.map(p => renderPositionItem(p)).join('')}
       </div>`;
-    }).join('')}</div>`;
+    } else {
+      html = `<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:48px 32px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:12px;">📭</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text2);margin-bottom:8px;">No open bets right now</div>
+        <div style="font-size:13px;color:var(--text3);">When someone you follow has an active bet you can copy, it appears here.</div>
+      </div>`;
+    }
+
+    activityContainer.innerHTML = html;
   } catch (e) {
-    container.innerHTML = `<div class="empty-state"><div class="icon">&#9888;</div><h3>Error</h3><p>${e.message}</p></div>`;
+    // silently fail — don't wipe existing content on refresh error
   }
+}
+
+function daysUntil(dateStr) {
+  if (!dateStr) return null;
+  const end = new Date(dateStr);
+  const now = new Date();
+  const diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+  return diff;
+}
+
+function renderDeadline(dateStr) {
+  const days = daysUntil(dateStr);
+  if (days === null) return '';
+  if (days < 0)  return `<span style="font-size:11px;color:var(--red);font-weight:700;">Closes soon</span>`;
+  if (days === 0) return `<span style="font-size:11px;color:var(--red);font-weight:800;animation:pulse 1s infinite;">Closes TODAY</span>`;
+  if (days <= 3)  return `<span style="font-size:11px;color:var(--red);font-weight:700;">Closes in ${days}d</span>`;
+  if (days <= 14) return `<span style="font-size:11px;color:#f59e0b;font-weight:700;">Closes in ${days}d</span>`;
+  return `<span style="font-size:11px;color:var(--text3);">Closes ${new Date(dateStr).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>`;
+}
+
+function renderPositionItem(p) {
+  const pnlColor = p.cash_pnl >= 0 ? 'var(--green)' : 'var(--red)';
+  const pnlSign  = p.cash_pnl >= 0 ? '+' : '';
+  const pnlPct   = (p.percent_pnl >= 0 ? '+' : '') + p.percent_pnl.toFixed(1) + '%';
+  const curPricePct = (p.cur_price * 100).toFixed(0);
+  const avgPricePct = (p.avg_price * 100).toFixed(0);
+  const priceMoved = avgPricePct !== curPricePct;
+  const priceDir   = p.cur_price > p.avg_price ? '↑' : '↓';
+  const priceDirColor = p.cur_price > p.avg_price ? 'var(--green)' : 'var(--red)';
+  const deadlineHtml = renderDeadline(p.end_date);
+
+  return `<a href="${p.poly_url}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:0;background:var(--card);border:1px solid rgba(0,201,122,0.25);border-radius:14px;overflow:hidden;text-decoration:none;transition:transform 0.15s,box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 32px rgba(0,201,122,0.18)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
+
+    <!-- Top bar: bettor + deadline + LIVE badge -->
+    <div style="display:flex;align-items:center;gap:9px;padding:12px 14px 10px;border-bottom:1px solid rgba(255,255,255,0.05);">
+      <img src="${p._avatarUrl}" style="width:24px;height:24px;border-radius:50%;flex-shrink:0;" alt="" />
+      <span style="font-size:12px;font-weight:700;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p._bettor}</span>
+      ${deadlineHtml}
+      <span style="font-size:10px;font-weight:800;background:rgba(0,201,122,0.15);color:var(--green);border:1px solid rgba(0,201,122,0.3);border-radius:100px;padding:2px 8px;white-space:nowrap;flex-shrink:0;">&#9679; LIVE</span>
+    </div>
+
+    <!-- Market title -->
+    <div style="padding:12px 14px 8px;font-size:14px;font-weight:600;line-height:1.45;color:var(--text);">${p.market_title}</div>
+
+    <!-- Outcome pill + price -->
+    <div style="padding:0 14px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span style="background:rgba(0,201,122,0.12);color:var(--green);padding:3px 11px;border-radius:100px;font-size:13px;font-weight:800;border:1px solid rgba(0,201,122,0.2);">${p.outcome}</span>
+      <span style="font-size:12px;color:var(--text3);">now <strong style="color:var(--text);">${curPricePct}¢</strong></span>
+      ${priceMoved ? `<span style="font-size:11px;color:${priceDirColor};">${priceDir} from ${avgPricePct}¢ when bought</span>` : ''}
+    </div>
+
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);">
+      <div style="background:var(--bg2);padding:10px 12px;">
+        <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Worth now</div>
+        <div style="font-size:15px;font-weight:800;color:var(--accent2);">${fmtUSD(p.current_value_usd)}</div>
+      </div>
+      <div style="background:var(--bg2);padding:10px 12px;">
+        <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Invested</div>
+        <div style="font-size:15px;font-weight:800;">${fmtUSD(p.initial_value_usd)}</div>
+      </div>
+      <div style="background:var(--bg2);padding:10px 12px;">
+        <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">P&amp;L</div>
+        <div style="font-size:15px;font-weight:800;color:${pnlColor};">${pnlSign}${fmtUSD(Math.abs(p.cash_pnl))}</div>
+        <div style="font-size:10px;color:${pnlColor};font-weight:600;">${pnlPct}</div>
+      </div>
+    </div>
+
+    <!-- CTA footer -->
+    <div style="padding:11px 14px;background:linear-gradient(135deg,rgba(0,201,122,0.12),rgba(0,163,255,0.08));display:flex;align-items:center;justify-content:center;gap:6px;">
+      <span style="font-size:12px;font-weight:800;color:var(--green);">Copy this bet on Polymarket</span>
+      <span style="font-size:14px;color:var(--green);">↗</span>
+    </div>
+
+  </a>`;
+}
+
+function renderBetItem(bet, bettorName, avatarUrl, isNew) {
+  const side = (bet.type || bet.side || 'BUY').toUpperCase();
+  const isBuy = side === 'BUY';
+  const ts = bet.timestamp ? timeAgo(bet.timestamp) : '';
+  const marketUrl = bet.market_slug
+    ? `https://polymarket.com/event/${bet.market_slug}`
+    : bet.market_id ? `https://polymarket.com/markets?q=${encodeURIComponent(bet.market_question || '')}` : null;
+
+  return `<a href="${marketUrl || '#'}" target="${marketUrl ? '_blank' : '_self'}" rel="noopener"
+     style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;background:var(--card);text-decoration:none;transition:background 0.12s;border-bottom:1px solid var(--border);"
+     onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='var(--card)'">
+
+    <!-- Avatar -->
+    <img src="${avatarUrl}" style="width:34px;height:34px;border-radius:50%;flex-shrink:0;margin-top:1px;" alt="" />
+
+    <!-- Main content -->
+    <div style="flex:1;min-width:0;">
+
+      <!-- Row 1: name + side badge + amount + time -->
+      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:5px;">
+        <span style="font-size:13px;font-weight:700;color:var(--text2);">${bettorName}</span>
+        <span style="font-size:11px;font-weight:800;padding:2px 7px;border-radius:5px;${isBuy ? 'background:rgba(0,201,122,0.15);color:var(--green);' : 'background:rgba(255,80,80,0.15);color:var(--red);'}">${isBuy ? '↑ BUY' : '↓ SELL'}</span>
+        <span style="font-size:13px;font-weight:800;color:var(--accent2);">${fmtUSD(bet.amount_usd)}</span>
+        <span style="font-size:11px;color:var(--text3);margin-left:auto;">${ts}</span>
+      </div>
+
+      <!-- Row 2: market question -->
+      <div style="font-size:13px;color:var(--text);line-height:1.4;margin-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${bet.market_question}</div>
+
+      <!-- Row 3: outcome pill + price + view link -->
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:100px;background:rgba(0,201,122,0.1);color:var(--green2);border:1px solid rgba(0,201,122,0.15);">${bet.outcome}</span>
+        <span style="font-size:11px;color:var(--text3);">@ ${(bet.price * 100).toFixed(0)}¢</span>
+        ${marketUrl ? `<span style="font-size:11px;color:var(--accent2);margin-left:auto;font-weight:600;">View on Polymarket ↗</span>` : `<span style="font-size:11px;color:var(--text3);margin-left:auto;">market may be closed</span>`}
+      </div>
+
+    </div>
+  </a>`;
+}
+
+function timeAgo(ts) {
+  let date;
+  if (typeof ts === 'number') date = new Date(ts * 1000);
+  else date = new Date(ts);
+  if (isNaN(date)) return '';
+  const seconds = Math.floor((Date.now() - date) / 1000);
+  if (seconds < 60)  return `${seconds}s ago`;
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  return `${Math.floor(seconds / 86400)}d ago`;
 }
 
 async function unfollowFromFollowsTab(address, btn) {
   await unfollowBettor(address, btn);
+  if (_followsRefreshTimer) { clearInterval(_followsRefreshTimer); _followsRefreshTimer = null; }
   await loadMyFollows();
 }
 
@@ -1408,9 +2109,14 @@ async function loadAlertSettings() {
     alertSettings = await res.json();
     setToggle('toggle-push', alertSettings.web_push_enabled);
     setToggle('toggle-telegram', alertSettings.telegram_enabled);
+    setToggle('toggle-sms', alertSettings.sms_enabled);
     if (alertSettings.telegram_verified) {
       document.getElementById('telegram-status').innerHTML =
         `<div class="flex items-center gap-2"><span style="color:var(--green2);">&#10003;</span> <span style="font-size:14px;">Telegram linked (chat ${alertSettings.telegram_chat_id || 'connected'})</span></div>`;
+    }
+    if (alertSettings.phone_verified && alertSettings.phone_number) {
+      document.getElementById('sms-verified-status').classList.remove('hidden');
+      document.getElementById('sms-verified-number').textContent = alertSettings.phone_number;
     }
   } catch {}
 }
@@ -1487,6 +2193,59 @@ async function verifyTelegram() {
   }
 }
 
+// ── SMS ───────────────────────────────────────────────────────
+
+async function toggleSms() {
+  const el = document.getElementById('toggle-sms');
+  const newVal = !el.classList.contains('on');
+  if (newVal && currentUser?.subscription_tier !== 'vip') {
+    toast('SMS alerts require VIP plan', 'info');
+    openUpgradeModal();
+    return;
+  }
+  setToggle('toggle-sms', newVal);
+  try {
+    const res = await apiFetch('/alerts/settings', { method: 'PUT', body: JSON.stringify({ sms_enabled: newVal }) });
+    if (!res.ok) { const d = await res.json(); throw new Error(d.detail || 'Failed'); }
+    toast(newVal ? 'SMS alerts enabled' : 'SMS alerts disabled', 'success');
+  } catch (e) {
+    setToggle('toggle-sms', !newVal);
+    toast(e.message, 'error');
+  }
+}
+
+async function startSmsVerify() {
+  if (currentUser?.subscription_tier !== 'vip') { openUpgradeModal(); return; }
+  const phone = document.getElementById('sms-phone-input').value.trim();
+  if (!phone) { toast('Enter your phone number', 'error'); return; }
+  try {
+    const res = await apiFetch('/alerts/sms/start', { method: 'POST', body: JSON.stringify({ phone_number: phone }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Failed to send OTP');
+    document.getElementById('sms-otp-section').classList.remove('hidden');
+    toast('OTP sent — check your phone', 'success');
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+async function verifySmsOtp() {
+  const code = document.getElementById('sms-otp-input').value.trim();
+  if (!code) { toast('Enter the OTP code', 'error'); return; }
+  try {
+    const res = await apiFetch('/alerts/sms/verify', { method: 'POST', body: JSON.stringify({ code }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Verification failed');
+    toast('Phone verified!', 'success');
+    document.getElementById('sms-otp-section').classList.add('hidden');
+    const phone = document.getElementById('sms-phone-input').value.trim();
+    document.getElementById('sms-verified-status').classList.remove('hidden');
+    document.getElementById('sms-verified-number').textContent = phone;
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
 // ── Account ───────────────────────────────────────────────────
 
 function renderAccount() {
@@ -1497,11 +2256,11 @@ function renderAccount() {
     ? new Date(currentUser.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     : '';
   const tier = currentUser.subscription_tier || 'free';
-  const labels = { free: 'Free', basic: 'Basic — $4.99/mo', vip: 'VIP — $14.99/mo' };
+  const labels = { free: 'Free', basic: 'Basic — $4.99/mo', vip: 'VIP — $9.99/mo' };
   const descs = {
-    free: 'Upgrade to follow bettors and get instant alerts.',
-    basic: 'Follow up to 5 bettors. Push + Telegram alerts included.',
-    vip: 'Unlimited follows. Push, Telegram, and SMS alerts. Priority speed.',
+    free: 'You can follow 1 bettor. Upgrade for more follows and instant alerts.',
+    basic: 'Follow up to 5 bettors. Web push + Telegram alerts included.',
+    vip: 'Unlimited follows. Web push + Telegram + SMS alerts. Priority speed.',
   };
   document.getElementById('acct-tier-label').textContent = labels[tier] || tier;
   document.getElementById('acct-tier-desc').textContent = descs[tier] || '';
@@ -1558,20 +2317,23 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 async function loadLandingPreview() {
   const tbody = document.getElementById('preview-leaderboard');
   try {
-    const res = await fetch(`${API}/bettors?sort=profit&limit=5`);
+    const res = await fetch(`${API}/bettors?sort=profit&time_period=month&limit=5`);
     if (!res.ok) throw new Error('API unavailable');
     const data = await res.json();
     const bettors = (data.bettors || []).slice(0, 5);
     if (!bettors.length) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text3);">Start the backend to see live data.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text3);">Start the backend to see live data.</td></tr>`;
       return;
     }
     tbody.innerHTML = bettors.map((b, i) => {
-      const profit = b.profit_usd || 0;
       const avatarUrl = b.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${b.address}`;
       const blurred = i >= 3 ? 'blur-row' : '';
+      const pnl = b.pnl_usd ?? null;
+      const pnlDisplay = pnl !== null
+        ? `<span style="color:${pnlColor(pnl)};font-weight:800;">${fmtPnl(pnl)}</span>`
+        : `<span style="color:var(--text3);">—</span>`;
       return `<tr class="${blurred}">
-        <td>${rankBadge(i)}</td>
+        <td>${rankBadge(b.rank ? b.rank - 1 : i)}</td>
         <td>
           <div class="bettor-row">
             <img class="avatar" src="${avatarUrl}" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${b.address}'" alt="avatar" style="width:32px;height:32px;" />
@@ -1581,13 +2343,12 @@ async function loadLandingPreview() {
             </div>
           </div>
         </td>
-        <td style="color:${profit >= 0 ? 'var(--green2)' : 'var(--red)'};font-weight:800;">${fmtUSD(profit)}</td>
-        <td><span class="badge ${b.win_rate >= 60 ? 'badge-green' : 'badge-basic'}">${fmtPct(b.win_rate)}</span></td>
-        <td style="color:var(--text2);">${(b.total_bets || 0).toLocaleString()}</td>
+        <td>${pnlDisplay}</td>
+        <td style="color:var(--text2);">${fmtUSD(b.volume_usd || 0)}</td>
       </tr>`;
     }).join('');
   } catch {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text3);">Connect to the backend to view live leaderboard.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text3);">Connect to the backend to view live leaderboard.</td></tr>`;
   }
 }
 
@@ -1643,10 +2404,46 @@ function runLandingCounters() {
   observer.observe(strip);
 }
 
+// ── Live ticker (real Polymarket trades) ──────────────────────
+
+function buildTickerItem(t) {
+  const isBuy = (t.side || '').toUpperCase() !== 'SELL';
+  const arrow = isBuy ? '&#8599;' : '&#8600;';
+  const cls   = isBuy ? 'up' : 'down';
+  const amt   = t.amount_usd >= 1000
+    ? '$' + (t.amount_usd / 1000).toFixed(1) + 'k'
+    : '$' + Math.round(t.amount_usd);
+  // Truncate long market names to keep ticker clean
+  const market = t.market.length > 40 ? t.market.slice(0, 38) + '…' : t.market;
+  return `<span class="ticker-item"><strong>${t.name}</strong> bet <span class="${cls}">${amt}</span> on ${market} ${arrow}</span>`;
+}
+
+async function refreshLiveTicker() {
+  try {
+    const res = await fetch(`${API}/bettors/trades/recent?limit=20`);
+    if (!res.ok) return;
+    const json = await res.json();
+    const trades = (json.trades || []).filter(t => t.amount_usd >= 10); // skip dust
+    if (!trades.length) return;
+    // Duplicate list so CSS infinite scroll looks seamless
+    const html = [...trades, ...trades].map(buildTickerItem).join('');
+    const inner = document.getElementById('live-ticker');
+    if (inner) {
+      inner.innerHTML = html;
+      // Reset animation so new items scroll from start
+      inner.style.animation = 'none';
+      inner.offsetHeight; // reflow
+      inner.style.animation = '';
+    }
+  } catch (_) { /* silently ignore — ticker is decorative */ }
+}
+
 // ── Bootstrap ─────────────────────────────────────────────────
 
 init();
 runLandingCounters();
+refreshLiveTicker();
+setInterval(refreshLiveTicker, 30000); // refresh every 30s
 </script>
 </body>
 </html>

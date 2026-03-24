@@ -121,6 +121,11 @@ async def _poll_bets() -> None:
                             telegram_chat_id=user.telegram_chat_id if (alert and alert.telegram_enabled and user.telegram_verified) else None,
                             telegram_bot_token=cfg.telegram_bot_token,
                             push_subscription_json=alert.push_subscription if (alert and alert.web_push_enabled) else None,
+                            phone_number=user.phone_number if (alert and alert.sms_enabled and user.phone_verified) else None,
+                            sms_enabled=bool(alert and alert.sms_enabled and user.phone_verified),
+                            twilio_account_sid=cfg.twilio_account_sid,
+                            twilio_auth_token=cfg.twilio_auth_token,
+                            twilio_from_number=cfg.twilio_from_number,
                             user_tier=user.subscription_tier,
                         )
                     except Exception as exc:

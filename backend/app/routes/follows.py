@@ -1,3 +1,6 @@
+import asyncio
+import time
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -5,11 +8,15 @@ from sqlalchemy.orm import Session
 from app.auth import get_current_user
 from app.database import get_db
 from app.models import BettorFollow, User
+from app.services.polymarket import get_active_positions
 
 router = APIRouter(prefix="/follows", tags=["follows"])
 
+_activity_cache: dict = {}   # keyed by user_id
+ACTIVITY_TTL = 30            # seconds
+
 TIER_LIMITS = {
-    "free": 0,
+    "free": 1,
     "basic": 5,
     "vip": 999999,
 }
@@ -55,17 +62,16 @@ def add_follow(
     tier = current_user.subscription_tier
     max_follows = TIER_LIMITS.get(tier, 0)
 
-    if max_follows == 0:
-        raise HTTPException(
-            status_code=403,
-            detail="Free tier cannot follow bettors. Upgrade to Basic or VIP.",
-        )
-
     current_count = (
         db.query(BettorFollow).filter(BettorFollow.user_id == current_user.id).count()
     )
 
     if current_count >= max_follows:
+        if tier == "free":
+            raise HTTPException(
+                status_code=403,
+                detail="Free tier allows 1 follow. Upgrade to Basic for 5 or VIP for unlimited.",
+            )
         raise HTTPException(
             status_code=403,
             detail=f"{tier.title()} tier allows max {max_follows} follows. Upgrade to VIP for unlimited.",
@@ -97,6 +103,53 @@ def add_follow(
         "bettor_name": follow.bettor_name,
         "created_at": follow.created_at.isoformat() if follow.created_at else None,
     }
+
+
+@router.get("/live")
+async def follows_activity(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Returns two things for the logged-in user's followed bettors:
+      - recent_bets: last 5 trades per followed bettor (sorted newest first)
+      - active_positions: open unredeemed positions per followed bettor
+
+    Cached 30 seconds per user to avoid hammering the Polymarket API.
+    """
+    now = time.time()
+    cached = _activity_cache.get(current_user.id)
+    if cached and (now - cached["ts"]) < ACTIVITY_TTL:
+        return cached["data"]
+
+    follows = (
+        db.query(BettorFollow)
+        .filter(BettorFollow.user_id == current_user.id)
+        .all()
+    )
+
+    if not follows:
+        result = {"bettors": []}
+        _activity_cache[current_user.id] = {"data": result, "ts": now}
+        return result
+
+    async def _fetch_one(follow: BettorFollow):
+        addr = follow.bettor_address
+        try:
+            positions = await get_active_positions(addr)
+        except Exception:
+            positions = []
+        return {
+            "address": addr,
+            "name": follow.bettor_name or addr[:12] + "...",
+            "followed_at": follow.created_at.isoformat() if follow.created_at else None,
+            "active_positions": positions,
+        }
+
+    bettors = await asyncio.gather(*[_fetch_one(f) for f in follows])
+    result = {"bettors": list(bettors)}
+    _activity_cache[current_user.id] = {"data": result, "ts": now}
+    return result
 
 
 @router.delete("/{bettor_address}", status_code=status.HTTP_204_NO_CONTENT)
