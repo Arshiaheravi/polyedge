@@ -2,12 +2,6 @@
 
 ---
 
-## META (added at 45 work sessions — periodic de-sloppify check)
-
-- [ ] Code quality audit — scan last 5 work sessions' changed files (frontend/index.html) for cross-file coupling, test specificity degradation, and smells introduced by agent edits
-
----
-
 ## HIGH PRIORITY — UI/UX Tasks
 
 - [ ] Hero section redesign — add compelling headline ("Copy the best Polymarket traders instantly"), subheadline, animated CTA button, and a live stats bar showing total bettors tracked / total users / bets detected today; replace any plain text landing with a visual wow moment

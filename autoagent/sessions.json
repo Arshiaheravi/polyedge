@@ -1289,5 +1289,26 @@
       "failures": 0,
       "notes": "all 9 checks pass including card rendering in both browse and dashboard views"
     }
+  },
+  {
+    "session": 59,
+    "date": "2026-03-24",
+    "time": "23:59",
+    "type": "meta",
+    "summary": "Code quality audit caught 6 XSS injection points in the leaderboard card renderer — bettor names from Polymarket API were inserted raw into innerHTML; added escapeHtml() and applied it everywhere, then removed dead legacy table-row fallback code",
+    "files": [
+      "frontend/index.html"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 9,
+      "failures": 0,
+      "notes": "all 9 checks pass after XSS fixes"
+    }
   }
 ]

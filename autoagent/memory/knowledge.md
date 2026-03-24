@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #59 Reflexion — 2026-03-24
+ACCOMPLISHED: META audit of sessions 54-58. Found 6 XSS injection points in renderBettorCard (new session 58 code) and pre-existing renderBettorRow — bettor names from Polymarket API inserted raw into innerHTML, filterLeaderboard's no-results message used `${query}` in innerHTML, error state used `${e.message}` in innerHTML. Fixed by adding escapeHtml() and applying it to all name/addr/message innerHTML insertions. Also removed ~25 lines of dead legacy table-row fallback code in filterLeaderboard. 303 tests stable, 9/9 Playwright pass.
+FAILED: Nothing failed — all fixes were clean on first try.
+RULE: [2026-03-24] Template-literal innerHTML with external API strings is XSS — always add escapeHtml() and apply it to any name/message/user-input that goes into innerHTML. Wallet addresses (hex-only) are structurally safe, but names and error messages are not. Add escapeHtml as a shared utility immediately when writing renderXxx() functions that use innerHTML.
+
 ### Session #58 Reflexion — 2026-03-24
 ACCOMPLISHED: Converted leaderboard from table (lb-table) to responsive CSS card grid (lb-grid) in both browse and dashboard views. Added CSS (.lb-grid, .lb-card, .lb-stat, .lb-rank-badge), renderBettorCard() and renderSkeletonCards() JS functions, updated filterLeaderboard() to handle card divs via data-name/data-addr attributes, updated loadLeaderboard() and loadBrowseLeaderboard(). Also updated Playwright check script to recognise new lb-card-name class and navigate to browse view before checking. 303 tests stable, 9 Playwright checks pass.
 FAILED: Two Playwright check failures on first run — (1) CHECK 3 looked for "bettor-row"/"bettor-name" classes which don't exist in new card HTML (new cards use lb-card-name); (2) CHECK 7 found empty browse-leaderboard-body because old tbody had a skeleton <tr> as initial HTML but new grid starts empty until showView('browse') is called. Fixed by updating check strings to include lb-card-name and navigating to browse view before checking.

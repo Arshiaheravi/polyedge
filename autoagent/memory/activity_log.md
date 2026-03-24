@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — META/AUDIT (Session 59)
+DONE: Code quality audit of sessions 54-58 changes — found and fixed 6 XSS vulnerabilities in frontend/index.html introduced when renderBettorCard was added in session 58. Added escapeHtml() utility; applied it to name, addr in all innerHTML contexts (renderBettorCard, renderBettorRow, follows card); switched filterLeaderboard no-results and error state messages to use textContent. Removed dead legacy table-row fallback in filterLeaderboard (25 lines of dead code). 303 tests stable, 9/9 Playwright checks pass.
+IMPACT: Eliminates XSS attack surface where an adversarial Polymarket API response with an HTML-injected bettor name could execute arbitrary JS in a visitor's browser. Also removed dead code that confused future readers.
+FILES: frontend/index.html
+
 ## 2026-03-24 — UI/UX (Session 58)
 DONE: Converted leaderboard table rows to a responsive card grid — each card shows rank badge, avatar, bettor name, profit (USD), ROI %, volume, and a follow button with hover lift + green glow effect. Works in both browse (public) and dashboard (authenticated) views.
 IMPACT: Leaderboard now feels like a real trading platform — cards are visually scannable with profit/ROI prominently displayed instead of a plain data table. Follow CTA is prominent and full-width on each card.

@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #59] XSS audit + fix — escapeHtml() added, 6 injection points closed, dead table fallback removed** — Audit of session 58's renderBettorCard found bettor names from Polymarket API were injected raw into innerHTML; added escapeHtml(), applied to all name/addr innerHTML contexts, switched error states and search no-results to textContent, removed 25 lines of dead legacy table-row code.
 - **[SESSION #58] Leaderboard card redesign** — Converted both browse and dashboard leaderboard table rows to a responsive CSS card grid; each card shows rank badge, avatar, bettor name, profit, ROI %, volume, and follow button with hover lift/glow effect.
 - **[SESSION #57] 3 polymarket service tests — type BUY default, anon name, empty leaderboard page — 301→303** — Added assert type=="BUY" to existing test_normalise_bet_missing_fields; test_get_live_trades_empty_proxy_wallet_generates_anon_name locks in the "anon" fallback; test_get_leaderboard_empty_first_page_returns_empty_list verifies early exit with 1 API call.
 - **[SESSION #55] 2 auth tests — GET /auth/me deleted user + inactive user 401 — 299→301** — test_get_me_deleted_user_returns_401 and test_get_me_inactive_user_returns_401 lock in the is_active and None checks in get_current_user.
