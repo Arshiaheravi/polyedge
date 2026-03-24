@@ -171,4 +171,5 @@ def remove_follow(
 
     db.delete(follow)
     db.commit()
+    _activity_cache.pop(current_user.id, None)
     return None

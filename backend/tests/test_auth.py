@@ -253,3 +253,29 @@ def test_register_password_at_max_length_is_accepted(client):
         "name": "MaxPass",
     })
     assert resp.status_code == 201
+
+
+def test_login_password_too_long_returns_422(client):
+    """POST /auth/login with a >128-char password must return 422 (DoS guard).
+    Without max_length on LoginRequest, bcrypt would hash the huge input — same DoS vector as register."""
+    resp = client.post("/auth/login", json={
+        "email": "anyone@example.com",
+        "password": "x" * 10000,
+    })
+    assert resp.status_code == 422
+
+
+def test_login_password_at_max_length_succeeds(client):
+    """POST /auth/login with exactly 128-char password must succeed if user registered with same password."""
+    long_pw = "b" * 128
+    client.post("/auth/register", json={
+        "email": "maxlogin@example.com",
+        "password": long_pw,
+        "name": "MaxLogin",
+    })
+    resp = client.post("/auth/login", json={
+        "email": "maxlogin@example.com",
+        "password": long_pw,
+    })
+    assert resp.status_code == 200
+    assert "access_token" in resp.json()

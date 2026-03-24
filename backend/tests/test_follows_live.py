@@ -143,3 +143,54 @@ def test_follows_live_serves_cached_response(client, auth_headers):
     assert resp2.status_code == 200
     assert resp1.json() == resp2.json()
     assert mock_api.call_count == 1
+
+
+def test_delete_follow_clears_activity_cache(client, auth_headers):
+    """DELETE /follows/{address} must evict the user's cache entry.
+    Without eviction, a subsequent GET /follows/live returns stale data."""
+    import app.routes.follows as follows_module
+
+    addr = "0xevict1"
+    client.post("/follows", json={"bettor_address": addr, "bettor_name": "EvictTest"},
+                headers=auth_headers)
+
+    # Populate the cache
+    mock_api = AsyncMock(return_value=MOCK_POSITIONS)
+    with patch("app.routes.follows.get_active_positions", new=mock_api):
+        resp = client.get("/follows/live", headers=auth_headers)
+    assert len(resp.json()["bettors"]) == 1
+
+    # Delete the follow — cache must be evicted
+    client.delete(f"/follows/{addr}", headers=auth_headers)
+
+    # Now /follows/live must return empty (not the stale cached 1-bettor result)
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=[])):
+        resp2 = client.get("/follows/live", headers=auth_headers)
+    assert resp2.status_code == 200
+    assert resp2.json() == {"bettors": []}
+
+
+def test_follows_live_cache_hides_second_follow_within_ttl(client, auth_headers):
+    """Within TTL window, a second follow is NOT visible via /follows/live (cache is real).
+    Confirms the 30s cache gates all reads, not just the API call count."""
+    import app.routes.follows as follows_module
+
+    addr1 = "0xcache1"
+    addr2 = "0xcache2"
+    client.post("/follows", json={"bettor_address": addr1, "bettor_name": "First"},
+                headers=auth_headers)
+
+    mock_api = AsyncMock(return_value=MOCK_POSITIONS)
+    with patch("app.routes.follows.get_active_positions", new=mock_api):
+        # First call — cache populated with 1 bettor
+        resp1 = client.get("/follows/live", headers=auth_headers)
+    assert len(resp1.json()["bettors"]) == 1
+
+    # Add second follow — but cache not cleared
+    client.post("/follows", json={"bettor_address": addr2, "bettor_name": "Second"},
+                headers=auth_headers)
+
+    # Second call within TTL — still returns 1 bettor from cache
+    with patch("app.routes.follows.get_active_positions", new=mock_api):
+        resp2 = client.get("/follows/live", headers=auth_headers)
+    assert len(resp2.json()["bettors"]) == 1
