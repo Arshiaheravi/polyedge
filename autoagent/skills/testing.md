@@ -84,6 +84,26 @@ Unit tests passing ≠ feature working. Always verify the full flow at least onc
 - A missing attribute on a stub is often silently swallowed by `except` blocks in services, producing 0 rows instead of an error — very hard to debug
 - Add the new field (with a safe default like `""` or `0`) to every stub found
 
+## BRANCH AUDIT WORKFLOW — how to find coverage gaps systematically
+
+When the backlog is empty, use this audit loop to find 5+ gaps in ~10 minutes:
+
+1. **Pick one service file** (e.g. `polymarket.py`, `notifications.py`, `stripe_service.py`)
+2. **List every if/elif/else branch** in each function — count the branches
+3. **Grep existing tests** for that function name: `grep -r "function_name" tests/`
+4. **For each branch without a test, write one** — the branch is the test name
+5. Repeat for routes files after services
+
+**Checklist per function** (from sessions 22-25 — these reliably surface 3-5 gaps):
+- [ ] Multi-branch conditional (if A / elif B / else)? → one test per branch
+- [ ] `isinstance` guard (if not isinstance(x, list))? → test the non-list path
+- [ ] Cache hit path? → second call test returning `cached=True`
+- [ ] Empty-collection return? → test with empty input
+- [ ] Exception handler? → mock the exception, assert the error status code
+- [ ] Each HTTP method (GET/POST/PUT/DELETE) has a no-auth test?
+- [ ] All 3 tiers (free/basic/VIP) tested for any tier-gated response field?
+- [ ] All webhook event status strings (canceled, past_due, unpaid, active) have a test?
+
 ## POLYEDGE-SPECIFIC PATTERNS (read before writing any PolyEdge tests)
 
 ### Module-level cache isolation
@@ -149,5 +169,7 @@ def test_bettor_address_never_crashes_server(client, address):
 - Never commit if count drops — investigate why
 
 ## IMPORT CHECK BEFORE TESTS
-`py -c "from src.stockcards.app import create_app; print('OK')"`
+```bash
+cd backend && py -c "from app.main import app; print('OK')"
+```
 If this fails, fix imports first — pytest will fail on collection.

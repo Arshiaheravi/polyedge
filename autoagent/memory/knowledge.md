@@ -42,6 +42,11 @@
 
 ## Session Reflexions
 
+### META Session #26 Reflexion — 2026-03-24
+ACCOMPLISHED: Fixed testing.md import check (was pointing to `stockcards` — wrong project, would fail for PolyEdge). Added branch-audit workflow to testing.md (the systematic checklist used in sessions 22-25 was only in knowledge.md reflexions; moved it to testing.md where WORK agents actually look). Replenished backlog with 6 concrete testing tasks (stripe_service branches, send_web_push unit tests, scheduler edge cases, Hypothesis invariants, DELETE /follows 404, checkout response shape).
+FAILED: Nothing failed.
+RULE: [2026-03-24] When a META session finds no active failures (sessions all green), focus on: (1) stale references in skill files (wrong project names, outdated paths), (2) proven patterns in knowledge.md reflexions that haven't been promoted to the skill file that gets read daily, and (3) backlog replenishment so next session doesn't waste turns on task discovery. These three checks reliably produce 2-3 actionable improvements even in a "nothing broke" session.
+
 ### Session #25 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 6 coverage-gap tests found by auditing every branch in polymarket.py and notifications.py. Gaps: (1) get_active_positions poly_url has 3 branches (eventSlug / slug / fallback) — only eventSlug was tested; (2) get_live_trades non-list response branch untested; (3) get_recent_bets "activity" key fallback untested (only "data" key was); (4) send_telegram empty-creds early-return had no unit test despite being a real defensive branch. All 6 passed first run. 199→205.
 FAILED: Nothing failed.
