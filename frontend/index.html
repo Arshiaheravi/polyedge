@@ -464,7 +464,7 @@
     /* ====================================================
        DASHBOARD
     ==================================================== */
-    #view-dashboard { display: flex; min-height: 100vh; }
+    #view-dashboard { display: flex; min-height: 100vh; flex-direction: column; }
     .view-flex { display: flex; min-height: 100vh; }
 
     /* Sidebar */
@@ -642,16 +642,82 @@
     .cta-banner h2 { font-size: 32px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 12px; }
     .cta-banner p { font-size: 16px; color: var(--text2); margin-bottom: 28px; }
 
+    /* ── 2-column responsive grid (landing sections) ── */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Mobile top bar (dashboard / browse — shows when sidebar is hidden) ── */
+    .mobile-topbar {
+      display: none;
+      align-items: center; justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+      flex-shrink: 0;
+    }
+    .mobile-topbar-logo { font-size: 18px; font-weight: 900; font-family: var(--font-display); letter-spacing: -0.3px; color: var(--text); }
+    .mobile-topbar-logo span { color: var(--accent2); }
+
+    /* ── Mobile bottom nav (dashboard only) ── */
+    .mobile-bottom-nav {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 300;
+      background: var(--bg2); border-top: 1px solid var(--border);
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+    .mobile-bottom-nav-inner { display: flex; }
+    .mobile-nav-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+      padding: 10px 4px; background: none;
+      font-size: 10px; font-weight: 600; color: var(--text3);
+      cursor: pointer; font-family: var(--font-body);
+      transition: color 0.15s; border: none;
+      min-height: 52px;
+    }
+    .mobile-nav-btn .mob-icon { font-size: 18px; line-height: 1; }
+    .mobile-nav-btn.active { color: var(--accent2); }
+    .mobile-nav-btn:hover { color: var(--text); }
+
     /* Responsive */
     @media (max-width: 768px) {
       .sidebar { display: none; }
+      .mobile-topbar { display: flex; }
+      .mobile-bottom-nav { display: block; }
+      /* Push main content above the fixed bottom nav */
+      #view-dashboard .main-content,
+      #view-browse .main-content { padding-bottom: 72px; }
       .landing-nav { padding: 16px 20px; }
-      .hero { padding: 70px 20px 50px; }
-      .main-content { padding: 20px; }
+      /* Hide "Log In" on small screens — space too tight */
+      .nav-actions .btn-secondary { display: none; }
+      .hero { padding: 60px 16px 40px; }
+      .hero h1 { letter-spacing: -1px; }
+      .main-content { padding: 16px; }
       .stat-strip { flex-direction: column; }
       .stat-strip-item { border-right: none; border-bottom: 1px solid var(--border); }
       .stat-strip-item:last-child { border-bottom: none; }
       .lb-table th, .lb-table td { padding: 10px 10px; font-size: 13px; }
+      /* Search full width on mobile */
+      .search-wrap { width: 100%; }
+      .search-input { max-width: 100%; width: 100%; }
+      /* Tab bar scrollable on small screens */
+      .tab-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; scrollbar-width: none; }
+      .tab-bar::-webkit-scrollbar { display: none; }
+      /* CTA banner compact */
+      .cta-banner { padding: 28px 16px; }
+      .cta-banner h2 { font-size: 22px; }
+      /* Remove elevation on featured pricing card — can't elevate in a stacked column */
+      .pricing-card.featured { transform: none; margin-top: 8px; }
+      .pricing-card.featured:hover { transform: translateY(-4px); }
+      /* Toast above bottom nav */
+      #toast-container { bottom: 72px; right: 12px; left: 12px; }
+      .toast { max-width: 100%; }
+      /* Page header wrapping */
+      .page-header.flex { flex-direction: column; align-items: flex-start; }
+      /* Live ticker hidden on mobile (too narrow to read) */
+      .live-ticker-wrap { display: none; }
     }
   </style>
 </head>
@@ -728,7 +794,7 @@
     <div class="section-sub">You don't need to be an expert. You just need to copy one.</div>
 
     <!-- Two column: what is polymarket + how you earn -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+    <div class="grid-2col" style="margin-bottom:16px;">
       <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;">
         <div style="font-size:28px;margin-bottom:12px;">🌍</div>
         <div style="font-size:16px;font-weight:700;margin-bottom:8px;">What is Polymarket?</div>
@@ -775,7 +841,7 @@
     </div>
 
     <!-- The problem + PolyEdge solution -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="grid-2col">
       <div style="background:rgba(240,62,62,0.06);border:1px solid rgba(240,62,62,0.2);border-radius:14px;padding:24px;">
         <div style="font-size:28px;margin-bottom:12px;">😰</div>
         <div style="font-size:16px;font-weight:700;margin-bottom:8px;color:#f87171;">The problem</div>
@@ -1015,7 +1081,13 @@
 <!-- ============================================================
      BROWSE (public leaderboard — no account required)
 ============================================================ -->
-<div id="view-browse" class="hidden view-flex">
+<div id="view-browse" class="hidden view-flex" style="flex-direction:column;">
+  <!-- Mobile top bar — visible only on small screens -->
+  <div class="mobile-topbar">
+    <div class="mobile-topbar-logo" onclick="showView('landing')" style="cursor:pointer;">Poly<span>Edge</span></div>
+    <button class="btn btn-primary btn-sm" onclick="showView('auth','register')">Sign Up Free</button>
+  </div>
+  <div style="display:flex;flex:1;min-height:0;">
   <!-- Same sidebar structure as dashboard -->
   <aside class="sidebar" role="complementary" aria-label="Navigation">
     <div class="sidebar-logo" aria-label="PolyEdge" onclick="showView('landing')" style="cursor:pointer;">Poly<span>Edge</span></div>
@@ -1063,12 +1135,19 @@
     </div>
     <div class="lb-grid" id="browse-leaderboard-body" role="list" aria-label="Bettor leaderboard" aria-live="polite"></div>
   </main>
+  </div><!-- end inner flex wrapper -->
 </div>
 
 <!-- ============================================================
      DASHBOARD
 ============================================================ -->
-<div id="view-dashboard" class="hidden">
+<div id="view-dashboard" class="hidden" style="flex-direction:column;">
+  <!-- Mobile top bar — visible only on small screens -->
+  <div class="mobile-topbar">
+    <div class="mobile-topbar-logo">Poly<span>Edge</span></div>
+    <div class="user-avatar-sm" id="mobile-avatar" style="cursor:pointer;" onclick="showTab('account')" title="Account">U</div>
+  </div>
+  <div style="display:flex;flex:1;min-height:0;">
   <aside class="sidebar" role="complementary" aria-label="Dashboard navigation">
     <div class="sidebar-logo" aria-label="PolyEdge">Poly<span>Edge</span></div>
     <nav class="sidebar-nav" role="navigation" aria-label="App sections">
@@ -1340,6 +1419,29 @@
     </div>
 
   </main>
+  </div><!-- end inner flex wrapper -->
+
+  <!-- Mobile bottom nav — fixed, visible only on small screens -->
+  <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+    <div class="mobile-bottom-nav-inner">
+      <button class="mobile-nav-btn active" id="mob-nav-leaderboard" onclick="showTab('leaderboard')">
+        <span class="mob-icon">&#127942;</span>
+        <span>Leaders</span>
+      </button>
+      <button class="mobile-nav-btn" id="mob-nav-follows" onclick="showTab('follows')">
+        <span class="mob-icon">&#11088;</span>
+        <span>Follows</span>
+      </button>
+      <button class="mobile-nav-btn" id="mob-nav-alerts" onclick="showTab('alerts')">
+        <span class="mob-icon">&#128276;</span>
+        <span>Alerts</span>
+      </button>
+      <button class="mobile-nav-btn" id="mob-nav-account" onclick="showTab('account')">
+        <span class="mob-icon">&#128100;</span>
+        <span>Account</span>
+      </button>
+    </div>
+  </nav>
 </div>
 
 <!-- ============================================================
@@ -1614,6 +1716,8 @@ function showTab(tab) {
     document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
     const nav = document.getElementById(`nav-${t}`);
     if (nav) nav.classList.toggle('active', t === tab);
+    const mob = document.getElementById(`mob-nav-${t}`);
+    if (mob) mob.classList.toggle('active', t === tab);
   });
   if (tab !== 'follows' && _followsRefreshTimer) {
     clearInterval(_followsRefreshTimer); _followsRefreshTimer = null;
@@ -1714,7 +1818,10 @@ async function onDashboardLoad() {
   if (!currentUser) return;
   document.getElementById('sidebar-name').textContent = currentUser.name || 'User';
   document.getElementById('sidebar-tier').textContent = currentUser.subscription_tier?.toUpperCase() || 'FREE';
-  document.getElementById('sidebar-avatar').textContent = (currentUser.name || 'U')[0].toUpperCase();
+  const avatarLetter = (currentUser.name || 'U')[0].toUpperCase();
+  document.getElementById('sidebar-avatar').textContent = avatarLetter;
+  const mobAv = document.getElementById('mobile-avatar');
+  if (mobAv) mobAv.textContent = avatarLetter;
   await loadFollowedAddresses();
   showTab('leaderboard');
 }
