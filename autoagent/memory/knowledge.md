@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **167 passed** (as of 2026-03-24, session 15 added 5 coverage-gap tests)
+- Test count: **174 passed** (as of 2026-03-24, session 18 added 5 coverage-gap tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #18 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 5 coverage-gap tests by auditing each endpoint against the PROJECT.md table. Gaps found: basic-tier GET /follows limit field, leaderboard "cached" response field, DELETE /follows without-auth 403, web-push disable toggle, admin users.basic/users.vip count fields. All 5 passed first run. 169→174.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When the backlog empties, audit each endpoint by checking: (1) are all 3 tier values (free/basic/VIP) tested for any tier-gated response field, (2) are all response fields asserted in at least one test, (3) are all HTTP methods for protected endpoints covered in auth tests. These three checks reliably surface 3-5 new gaps per audit.
 
 ### Session #17 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 2 tests: test_leaderboard_sort_accuracy (verifies sort=accuracy passes correct arg) and test_poll_bets_multiple_followers_each_notified (verifies both followers get dispatch_bet_notification called). 167 → 169 tests. All 6 high-priority backlog testing tasks are now complete.

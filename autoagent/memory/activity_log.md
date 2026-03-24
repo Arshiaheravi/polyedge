@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 18)
+DONE: Added 5 coverage-gap tests — basic-tier GET /follows (tier+limit fields), leaderboard "cached" field, DELETE /follows without auth (403), web-push disable toggle, admin stats basic/vip user counts. 169→174 tests.
+IMPACT: Three tier slots (free/basic/VIP) for GET /follows limit are now all tested; DELETE auth gap closed; cached field contract locked in for the leaderboard response.
+FILES: backend/tests/test_follows.py, backend/tests/test_bettors.py, backend/tests/test_alerts.py, backend/tests/test_admin.py
+
 ## 2026-03-24 — TESTING (Session 17)
 DONE: Added 2 coverage-gap tests — GET /bettors sort=accuracy passes correct arg to service; scheduler dispatches to all N followers of same bettor. 167→169 tests.
 IMPACT: sort=accuracy was the only sort param without a test; multi-follower notification path is the core revenue mechanic (more followers → more upgrades) and was untested.

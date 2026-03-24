@@ -214,5 +214,15 @@
     "files": ["backend/tests/test_bettors.py", "backend/tests/test_scheduler.py"],
     "tests": {"before": 167, "after": 169, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+  },
+  {
+    "session": 18,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 5 coverage-gap tests: basic-tier follows shows correct limit, leaderboard cached field verified, DELETE /follows auth enforced, web-push disable tested, admin user counts by tier verified — 169→174",
+    "files": ["backend/tests/test_follows.py", "backend/tests/test_bettors.py", "backend/tests/test_alerts.py", "backend/tests/test_admin.py"],
+    "tests": {"before": 169, "after": 174, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
   }
 ]
