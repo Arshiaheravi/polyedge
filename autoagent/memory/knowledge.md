@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **281 passed** (as of 2026-03-24, session 45 — audit: 2 duplicates removed, 2 new tests added, 1 test assertion updated)
+- Test count: **287 passed** (as of 2026-03-24, session 47 — 6 new contract/edge-case tests added)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #47 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 6 response-contract and edge-case tests across test_auth.py, test_bettors.py, test_payments.py. All 6 passed first run; full suite 281→287 stable. Backlog replenished with 3 new HIGH PRIORITY tasks.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When a backlog task says "stripe_subscription_id=None" but the route only checks stripe_customer_id — verify the actual route code before writing the test. The concern in the backlog may have been misattributed. Write a test for the actual behavior (customer_id check), not the backlog's assumed behavior (subscription_id check). Reading the route is 30 seconds; writing the wrong test wastes the session.
 
 ### Session #45 Reflexion — 2026-03-24
 ACCOMPLISHED: META code quality audit (sessions 39-44). Found and fixed 3 issues: (1) routes/auth.py register duplicate-email returned 400 instead of 409 (PROJECT.md spec) — fixed route + 3 test assertions; (2) test_follows.py had 2 duplicate /follows/live tests already covered by test_follows_live.py (added in session 42 without checking existing dedicated file) — removed duplicates (-2 tests); (3) test_notifications.py had module-level `import app.services.notifications as notif_mod` and `from app.services.notifications import send_web_push` in the middle of the file — moved to top-level imports block. Also resolved 3 backlog tasks: sms/verify response includes "message" field, telegram/verify response includes "message" field, register response includes user.name. Net: 281→281 (2 removed + 2 added; name test modified existing test).

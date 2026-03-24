@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 17:00 — TESTING (Session 47)
+DONE: Added 6 response-contract and edge-case tests — 281→287 tests stable. Tests: login/register 7-field user_to_dict contract; bettor detail null-profile returns 200 not 404; leaderboard limit param is forwarded to service; portal works when stripe_subscription_id=None (only customer_id matters); webhook unknown event returns 200 not 502. Replenished backlog with 3 new HIGH PRIORITY tasks.
+IMPACT: Locks in the full auth response contract (all 7 user fields) across register AND login, preventing silent regressions. Documents that bettor detail returns null profile (not 404) for unknown addresses. Confirms portal route only requires customer_id.
+FILES: backend/tests/test_auth.py, backend/tests/test_bettors.py, backend/tests/test_payments.py
+
 ## 2026-03-24 16:00 — META SESSION (Session 46)
 IMPROVED: (1) Added "BEFORE ADDING ANY TEST — CHECK FOR EXISTING TEST FILES" section to testing.md — explicit grep commands to check for dedicated test files and duplicate test names before writing any test. (2) Added spec-first status code rule to testing.md RULES — "verify expected HTTP status code against PROJECT.md spec, not current code" with the session 45 409 example. (3) Replenished backlog with 3 new HIGH PRIORITY testing tasks: GET /payments/portal no subscription, POST /payments/webhook unknown event, POST /auth/register full response contract.
 PATTERNS FOUND: (1) Session 42 added /follows/live tests to test_follows.py without checking test_follows_live.py existed — cost a full META session 45 to find+remove. The RULE was added to knowledge.md but not testing.md, where WORK agents actually read before coding. (2) Session 45 found 409 vs 400 spec violation masked by test written to match code — same issue: RULE in knowledge.md but not testing.md RULES section (the read-first list).

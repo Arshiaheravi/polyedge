@@ -1040,5 +1040,15 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 47,
+    "date": "2026-03-24",
+    "time": "17:00",
+    "type": "work",
+    "summary": "Added 6 response-contract tests locking in the full auth user dict (7 fields), bettor null-profile behavior, leaderboard limit passthrough, portal subscription_id handling, and webhook unknown-event 200 response — 281 to 287 tests",
+    "files": ["backend/tests/test_auth.py", "backend/tests/test_bettors.py", "backend/tests/test_payments.py"],
+    "tests": {"before": 281, "after": 287, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]
