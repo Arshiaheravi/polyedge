@@ -561,3 +561,17 @@ def test_put_alert_settings_response_includes_telegram_and_phone_verified(client
     data = resp.json()
     assert "telegram_verified" in data
     assert "phone_verified" in data
+
+
+def test_put_alerts_settings_invalid_push_subscription_returns_422(client, auth_headers):
+    """PUT /alerts/settings with push_subscription set to an invalid JSON string must return 422.
+    The route validates push_subscription via json.loads() and raises HTTPException(422) on failure.
+    This guards against browsers sending malformed push subscription objects that would later
+    crash GET /alerts/settings when it tries to json.loads() the stored value."""
+    resp = client.put(
+        "/alerts/settings",
+        json={"push_subscription": "not_valid_json"},
+        headers=auth_headers,
+    )
+
+    assert resp.status_code == 422

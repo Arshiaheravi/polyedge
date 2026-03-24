@@ -194,3 +194,33 @@ def test_follows_live_cache_hides_second_follow_within_ttl(client, auth_headers)
     with patch("app.routes.follows.get_active_positions", new=mock_api):
         resp2 = client.get("/follows/live", headers=auth_headers)
     assert len(resp2.json()["bettors"]) == 1
+
+
+def test_follows_live_all_bettors_raise_returns_three_entries_with_empty_positions(
+    client, db, auth_headers, registered_user
+):
+    """GET /follows/live when ALL followed bettors raise exceptions — each bettor
+    entry must still appear with active_positions=[] (asyncio.gather catch-all),
+    and the total bettors list must have 3 entries (not 0 and not a 500).
+    Tests that a full multi-failure gather doesn't collapse the response."""
+    from app.models import User
+
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "vip"
+    db.commit()
+
+    for addr in ["0xfail1", "0xfail2", "0xfail3"]:
+        client.post("/follows", json={"bettor_address": addr}, headers=auth_headers)
+
+    with patch(
+        "app.routes.follows.get_active_positions",
+        new=AsyncMock(side_effect=Exception("API down")),
+    ):
+        resp = client.get("/follows/live", headers=auth_headers)
+
+    assert resp.status_code == 200
+    bettors = resp.json()["bettors"]
+    assert len(bettors) == 3
+    for bettor in bettors:
+        assert bettor["active_positions"] == []

@@ -279,3 +279,21 @@ def test_login_password_at_max_length_succeeds(client):
     })
     assert resp.status_code == 200
     assert "access_token" in resp.json()
+
+
+def test_login_empty_password_returns_401(client):
+    """POST /auth/login with empty password string must return 401.
+    LoginRequest.password has max_length=128 but no min_length — so an empty
+    string passes Pydantic validation and reaches verify_password("", hash)
+    which correctly returns False, yielding a 401.  Should never be 422 or 500."""
+    # Register a user first so the login lookup path is actually hit
+    client.post("/auth/register", json={
+        "email": "emptylogin@example.com",
+        "password": "realpassword",
+        "name": "EmptyLoginUser",
+    })
+    resp = client.post("/auth/login", json={
+        "email": "emptylogin@example.com",
+        "password": "",
+    })
+    assert resp.status_code == 401
