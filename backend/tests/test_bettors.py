@@ -33,6 +33,13 @@ def test_leaderboard_sort_volume(client):
     mock.assert_called_once_with(sort_by="volume", time_period="all", limit=50)
 
 
+def test_leaderboard_sort_accuracy(client):
+    with patch("app.routes.bettors.get_leaderboard", new=AsyncMock(return_value=MOCK_LEADERBOARD)) as mock:
+        resp = client.get("/bettors?sort=accuracy&time_period=week")
+    assert resp.status_code == 200
+    mock.assert_called_once_with(sort_by="accuracy", time_period="week", limit=50)
+
+
 def test_leaderboard_invalid_sort(client):
     # FastAPI str enum is advisory for docs — unknown sort falls back gracefully
     with patch("app.routes.bettors.get_leaderboard", new=AsyncMock(return_value=[])):

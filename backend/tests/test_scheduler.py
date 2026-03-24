@@ -396,3 +396,24 @@ def test_poll_bets_api_error_continues_to_next_address(sched_db):
     verify.close()
 
     assert len(events) == 1
+
+
+def test_poll_bets_multiple_followers_each_notified(sched_db):
+    """When two users follow the same bettor, dispatch_bet_notification is called once per follower."""
+    session, Session = sched_db
+
+    user_a = User(email="a@x.com", hashed_password=hash_password("p"), name="A", subscription_tier="basic")
+    user_b = User(email="b@x.com", hashed_password=hash_password("p"), name="B", subscription_tier="vip")
+    session.add(user_a)
+    session.add(user_b)
+    session.flush()
+    session.add(BettorFollow(user_id=user_a.id, bettor_address="0xshared", bettor_name="whale"))
+    session.add(BettorFollow(user_id=user_b.id, bettor_address="0xshared", bettor_name="whale"))
+    session.commit()
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()) as mock_notify:
+        run(_poll_bets())
+
+    assert mock_notify.call_count == 2
