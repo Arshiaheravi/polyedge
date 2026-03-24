@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **301 passed** (as of 2026-03-24, session 55 — added GET /auth/me deleted user + inactive user 401 tests)
+- Test count: **303 passed** (as of 2026-03-24, session 57 — added 3 polymarket service tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +44,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #57 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 3 tests to test_polymarket_service.py — (1) added `assert result["type"] == "BUY"` to existing test_normalise_bet_missing_fields (the `raw.get("side") or "BUY"` guard was the only untested field in the missing-fields test); (2) test_get_live_trades_empty_proxy_wallet_generates_anon_name: proxyWallet="" + no name/pseudonym → name=="anon" via `addr[:8] + "..." if addr else "anon"`; (3) test_get_leaderboard_empty_first_page_returns_empty_list: mock returning [] on first call → result==[], call_count==1. 301→303 tests.
+FAILED: Nothing failed. All 3 tests passed on first run.
+RULE: [2026-03-24] When a "missing fields" test exists for a normalisation function (e.g. `_normalise_bet`), always check it asserts ALL output keys — not just the obvious ones. Add missing assertions to the existing test rather than creating a parallel test with one extra assert. The existing test is the canonical contract for the zero-input case.
 
 ### Session #55 Reflexion — 2026-03-24
 ACCOMPLISHED: Added test_get_me_deleted_user_returns_401 and test_get_me_inactive_user_returns_401 to test_auth.py. Both register a fresh user, mutate DB state (delete row or set is_active=False), then call GET /auth/me with the original (still-valid-HMAC) token. Also cleared bettor_name backlog item (already covered). 299→301 tests.

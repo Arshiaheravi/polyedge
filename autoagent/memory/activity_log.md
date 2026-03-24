@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — TESTING (Session 57)
+DONE: Added 3 polymarket service tests — (1) assert type=="BUY" in test_normalise_bet_missing_fields (the `raw.get("side") or "BUY"` guard was untested); (2) test_get_live_trades_empty_proxy_wallet_generates_anon_name (proxyWallet="" + no name → "anon"); (3) test_get_leaderboard_empty_first_page_returns_empty_list ([] first page breaks immediately, 1 API call). 301→303 tests.
+IMPACT: Locks in 3 defensive paths in polymarket.py normalization — the "BUY" default for missing side, the "anon" fallback for anonymous wallets, and the early-exit for empty leaderboard pages. Regressions in any of these guards would now be caught immediately.
+FILES: backend/tests/test_polymarket_service.py
+
 ## 2026-03-24 — META SESSION (Session 56)
 IMPROVED: (1) Added grep-before-adding requirement to LOW-WATER-MARK CHECK in PROMPT.md — agents must run `grep -r "def test_<function_keyword>" backend/tests/` before adding any backlog task, only add if zero matches. (2) Archived sessions 21-40 to activity_log_archive.md (log was at 35 entries, over the 30-entry threshold).
 PATTERNS FOUND: Sessions 53, 54, and 55 each found 1 backlog item "already covered" — 3 consecutive sessions wasted turns discovering tasks were done. Root cause: LOW-WATER-MARK CHECK generated tasks from logical analysis without verifying existing test coverage first.

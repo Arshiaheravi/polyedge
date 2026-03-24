@@ -6,9 +6,9 @@
 
 *(replenish when empty — see DEBUG MODE rules in PROMPT.md)*
 
-- [ ] `_normalise_bet` type field defaults to "BUY" when side absent — `test_normalise_bet_missing_fields` passes `{}` but doesn't assert `result["type"] == "BUY"`; the `raw.get("side") or "BUY"` guard is untested; add assertion to existing test or add new test to `test_polymarket_service.py`
-- [ ] `get_live_trades` generates "anon" name when proxyWallet is empty and no name/pseudonym — the `addr[:8] + "..." if addr else "anon"` branch is untested; mock a trade with `{"proxyWallet": "", "usdcSize": "10"}` and assert name == "anon"; add to `test_polymarket_service.py`
-- [ ] `get_leaderboard` returns empty list when first API page is `[]` — the `len(page) == 0` break condition on the first call is untested (only pagination with full first page is tested); mock response returning `[]` and assert `get_leaderboard()` returns `[]` without a second API call; add to `test_polymarket_service.py`
+- [ ] `get_leaderboard` non-list response (e.g. dict) on first page — `if not isinstance(page, list) or len(page) == 0: break` — the `not isinstance` branch is untested (only empty `[]` is tested); mock first page returning `{"error": "bad"}` and assert result == [] with call_count == 1; add to `test_polymarket_service.py`
+- [ ] `_normalise_profile` with `numTrades` key in raw overrides computed `trade_count` — `int(raw.get("numTrades") or raw.get("total_bets") or trade_count)` — when numTrades=5 in raw dict and trade_count=2, total_bets should be 5 not 2; add unit test `test_normalise_profile_num_trades_overrides_trade_count` to `test_polymarket_service.py`
+- [ ] `get_live_trades` missing `side` field → `side` output is `""` — `side = (t.get("side") or "").upper()` — when no side key, result["side"] is `""` not "BUY"; add `test_get_live_trades_missing_side_field_returns_empty_string` to confirm the current behavior (or identify if this is a latent bug that should default to "BUY"); add to `test_polymarket_service.py`
 
 
 
