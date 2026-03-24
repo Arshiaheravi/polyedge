@@ -398,6 +398,32 @@ def test_poll_bets_api_error_continues_to_next_address(sched_db):
     assert len(events) == 1
 
 
+def test_poll_bets_api_returns_none_does_not_crash(sched_db):
+    """If get_recent_bets returns None instead of a list, _poll_bets handles it gracefully."""
+    session, Session = sched_db
+
+    user = User(
+        email="u@x.com", hashed_password=hash_password("p"),
+        name="U", subscription_tier="basic",
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xnone"))
+    session.commit()
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=None)), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()) as mock_notify:
+        run(_poll_bets())  # must not raise
+
+    verify = Session()
+    count = verify.query(BetEvent).count()
+    verify.close()
+
+    assert count == 0
+    mock_notify.assert_not_called()
+
+
 def test_poll_bets_multiple_followers_each_notified(sched_db):
     """When two users follow the same bettor, dispatch_bet_notification is called once per follower."""
     session, Session = sched_db

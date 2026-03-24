@@ -246,3 +246,74 @@ async def test_send_telegram_returns_false_when_chat_id_empty():
     """send_telegram returns False immediately when chat_id is empty — no HTTP call made."""
     result = await send_telegram(chat_id="", message="hello", bot_token="bottoken123")
     assert result is False
+
+
+# ── send_web_push direct unit tests ──────────────────────────────────────────
+
+from app.services.notifications import send_web_push
+import app.services.notifications as notif_mod
+
+
+def _make_mock_http_client(status_code: int):
+    """Helper: returns a mock AsyncClient whose .post() returns a response with the given status."""
+    mock_resp = MagicMock()
+    mock_resp.status_code = status_code
+    mock_instance = AsyncMock()
+    mock_instance.post = AsyncMock(return_value=mock_resp)
+    mock_instance.__aenter__ = AsyncMock(return_value=mock_instance)
+    mock_instance.__aexit__ = AsyncMock(return_value=False)
+    return mock_instance
+
+
+@pytest.mark.asyncio
+async def test_send_web_push_happy_path_json_string_201():
+    """send_web_push returns True when endpoint is present and HTTP returns 201."""
+    sub_json = '{"endpoint": "https://push.example.com/abc", "keys": {"p256dh": "x", "auth": "y"}}'
+    mock_client = _make_mock_http_client(201)
+    with patch.object(notif_mod.httpx, "AsyncClient", return_value=mock_client):
+        result = await send_web_push(sub_json, {"title": "test", "body": "hello"})
+    assert result is True
+
+
+@pytest.mark.asyncio
+async def test_send_web_push_happy_path_dict_200():
+    """send_web_push accepts a dict (not a string) and returns True when HTTP returns 200."""
+    sub_dict = {"endpoint": "https://push.example.com/def"}
+    mock_client = _make_mock_http_client(200)
+    with patch.object(notif_mod.httpx, "AsyncClient", return_value=mock_client):
+        result = await send_web_push(sub_dict, {"title": "test"})
+    assert result is True
+
+
+@pytest.mark.asyncio
+async def test_send_web_push_no_endpoint_returns_false():
+    """send_web_push returns False immediately when endpoint key is missing — no HTTP call."""
+    sub_json = '{"keys": {"p256dh": "x", "auth": "y"}}'  # no "endpoint"
+    mock_client = _make_mock_http_client(201)
+    with patch.object(notif_mod.httpx, "AsyncClient", return_value=mock_client):
+        result = await send_web_push(sub_json, {"title": "test"})
+    assert result is False
+    mock_client.post.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_send_web_push_http_410_returns_false():
+    """send_web_push returns False when the push endpoint returns a non-200/201 status (e.g. 410 Gone)."""
+    sub_json = '{"endpoint": "https://push.example.com/expired"}'
+    mock_client = _make_mock_http_client(410)
+    with patch.object(notif_mod.httpx, "AsyncClient", return_value=mock_client):
+        result = await send_web_push(sub_json, {"title": "test"})
+    assert result is False
+
+
+@pytest.mark.asyncio
+async def test_send_web_push_http_exception_returns_false():
+    """send_web_push returns False and does not raise when an httpx error occurs."""
+    sub_json = '{"endpoint": "https://push.example.com/broken"}'
+    mock_instance = AsyncMock()
+    mock_instance.post = AsyncMock(side_effect=Exception("Connection refused"))
+    mock_instance.__aenter__ = AsyncMock(return_value=mock_instance)
+    mock_instance.__aexit__ = AsyncMock(return_value=False)
+    with patch.object(notif_mod.httpx, "AsyncClient", return_value=mock_instance):
+        result = await send_web_push(sub_json, {"title": "test"})
+    assert result is False

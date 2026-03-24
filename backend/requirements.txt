@@ -9,3 +9,4 @@ stripe==11.1.0
 apscheduler==3.10.4
 python-multipart==0.0.12
 twilio>=9.0.0
+hypothesis>=6.0.0
