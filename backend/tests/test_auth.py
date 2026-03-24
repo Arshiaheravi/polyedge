@@ -33,6 +33,22 @@ def test_login_success(client):
     assert "access_token" in resp.json()
 
 
+def test_login_response_includes_user_fields(client):
+    """POST /auth/login response includes a user dict with email, name, and subscription_tier."""
+    client.post("/auth/register", json={
+        "email": "fields@example.com", "password": "mypass", "name": "FieldUser"
+    })
+    resp = client.post("/auth/login", json={
+        "email": "fields@example.com", "password": "mypass"
+    })
+    assert resp.status_code == 200
+    data = resp.json()
+    user = data["user"]
+    assert user["email"] == "fields@example.com"
+    assert user["name"] == "FieldUser"
+    assert user["subscription_tier"] == "free"
+
+
 def test_login_wrong_password(client):
     client.post("/auth/register", json={
         "email": "wrong@example.com", "password": "correct", "name": "Dan"

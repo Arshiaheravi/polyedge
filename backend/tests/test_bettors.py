@@ -140,6 +140,27 @@ def test_leaderboard_response_includes_cached_field(client):
     assert data["cached"] is False  # First call to this combo — not cached
 
 
+def test_recent_trades_cached_field_is_true_on_second_call(client):
+    """Second call to GET /bettors/trades/recent within TTL returns cached=True."""
+    import app.routes.bettors as bettors_mod
+    # Clear the trades cache so first call is guaranteed fresh
+    bettors_mod._trades_cache["data"] = None
+    bettors_mod._trades_cache["ts"] = 0
+    mock_trades = [
+        {"name": "Alice", "market": "Will X happen?", "outcome": "Yes",
+         "amount_usd": 100.0, "side": "BUY", "timestamp": "2026-01-01", "market_slug": "x"}
+    ]
+    mock_fn = AsyncMock(return_value=mock_trades)
+    with patch("app.routes.bettors.get_live_trades", new=mock_fn):
+        resp1 = client.get("/bettors/trades/recent")
+        resp2 = client.get("/bettors/trades/recent")
+    assert resp1.status_code == 200
+    assert resp2.status_code == 200
+    assert resp1.json()["cached"] is False   # First call — live
+    assert resp2.json()["cached"] is True    # Second call — from cache
+    assert mock_fn.call_count == 1           # API called only once
+
+
 def test_leaderboard_cached_field_is_true_on_second_call(client):
     """Second leaderboard call with the same params within TTL returns cached=True."""
     import app.routes.bettors as bettors_mod

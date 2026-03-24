@@ -348,6 +348,40 @@ def test_get_alert_settings_includes_phone_and_telegram_fields(client, auth_head
     assert "phone_verified" in data
 
 
+def test_sms_start_happy_path(client, db, auth_headers, registered_user):
+    """VIP user with valid E.164 phone and Twilio configured → 200 with sent=True."""
+    from unittest.mock import AsyncMock, patch
+    _make_vip(db, registered_user)
+    import app.routes.alerts as alerts_module
+    original_sid = alerts_module.settings.twilio_account_sid
+    original_tok = alerts_module.settings.twilio_auth_token
+    alerts_module.settings.twilio_account_sid = "ACtest"
+    alerts_module.settings.twilio_auth_token = "testtoken"
+    try:
+        with patch("app.routes.alerts.send_sms", new=AsyncMock(return_value=True)):
+            resp = client.post("/alerts/sms/start", json={"phone_number": "+14155552671"},
+                               headers=auth_headers)
+    finally:
+        alerts_module.settings.twilio_account_sid = original_sid
+        alerts_module.settings.twilio_auth_token = original_tok
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["sent"] is True
+    assert "+14155552671" in data["message"]
+
+
+def test_telegram_verify_requires_auth(client):
+    """POST /alerts/telegram/verify without an auth token returns 403."""
+    resp = client.post("/alerts/telegram/verify", json={"code": "ABCD1234"})
+    assert resp.status_code == 403
+
+
+def test_sms_verify_requires_auth(client):
+    """POST /alerts/sms/verify without an auth token returns 403."""
+    resp = client.post("/alerts/sms/verify", json={"code": "123456"})
+    assert resp.status_code == 403
+
+
 def test_sms_start_send_fails_returns_502(client, db, auth_headers, registered_user):
     """If send_sms returns False (Twilio rejects), /sms/start returns 502."""
     from unittest.mock import AsyncMock, patch
