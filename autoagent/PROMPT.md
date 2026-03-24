@@ -121,6 +121,7 @@ Re-read the 3 most-changed functions/sections you just wrote. Ask:
 2. Is there an obvious edge case I missed?
 3. Did I wire all return values through? (model field → route → frontend)
 4. **Global consistency check**: Does what I just built invalidate any remaining steps in current_task.md? If yes, update the plan before continuing — a mid-task discovery can make a future step wrong. (Source: PARC arxiv 2512.03549)
+5. **Irreversibility check**: Does this session touch any irreversible actions — DB deletes, Stripe charges, Telegram sends, email sends, git pushes? If yes, confirm these were explicitly requested and tested with a mock/guard before going live. Agents consistently underweight the cost of irreversible actions — name them explicitly. (Source: arxiv 2601.02749 — "The Path Ahead for Agentic AI")
 Fix anything found BEFORE running tests. This catches a class of bugs that tests miss.
 Skip only if: zero Python code was changed this session.
 

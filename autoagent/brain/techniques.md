@@ -234,6 +234,18 @@ Where: PROMPT.md (CONTEXT_SUMMARY gate section, step 6)
 Source: github.com/affaan-m/everything-claude-code/skills/agentic-engineering/SKILL.md
 Expected impact: Prevents lost debugging context when /compact is triggered at wrong time in fix cycles
 
+## Irreversibility check in self-critique gate — implemented 2026-03-24
+What: Added Q5 to STEP 0 self-critique: "Does this session touch irreversible actions (DB deletes, Stripe charges, Telegram sends)? Name them explicitly and confirm they're mocked/guarded."
+Where: autoagent/PROMPT.md (STEP 0 self-critique, question 5)
+Source: arxiv 2601.02749 (The Path Ahead for Agentic AI) — agents consistently underweight cost of irreversible actions
+Expected impact: Prevents accidentally firing live Telegram/Stripe/email calls in sessions that only intend to test them
+
+## Hypothesis property-based testing pattern — implemented 2026-03-24
+What: Added a new section to testing.md documenting Hypothesis property-based testing for PolyEdge invariants (auth always 401, tier limits never exceeded, cached field always present). Includes concrete PolyEdge example patterns.
+Where: autoagent/skills/testing.md (PROPERTY-BASED TESTING section)
+Source: dasroot.net Python Agent Testing Best Practices 2026 — 72% of deployed LLM agents show non-deterministic behavior; invariant testing is more reliable for auth/validation paths
+Expected impact: Future testing sessions can use Hypothesis to generate adversarial inputs for auth and tier-limit routes instead of only writing example-based tests
+
 ## ACE Curator step in BRAIN sessions — implemented 2026-03-24
 What: Each BRAIN session, scan knowledge.md for duplicate or superseded RULE: entries. Merge duplicates into one canonical rule (best wording + most recent date). Remove rules contradicted by newer ones.
 Where: meta/BRAIN_PROMPT.md (Step 1C, added between Step 1B and Step 2)

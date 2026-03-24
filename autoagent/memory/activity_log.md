@@ -1,5 +1,13 @@
 # Activity Log
 
+## 2026-03-24 — BRAIN SESSION (Session 21)
+RESEARCHED: autonomous AI agent best practices 2026, LLM pytest testing patterns, FastAPI async patterns, agentic instruction-following reliability (arxiv), Polymarket copy-trading competitors
+DOWNLOADED: No new skill files (patterns extracted directly into existing skill files)
+IMPLEMENTED: (1) Irreversibility check (Q5) added to PROMPT.md self-critique gate — agents must name all irreversible actions before committing; (2) Hypothesis property-based testing section added to skills/testing.md with PolyEdge-specific invariant examples; (3) 4 new feature backlog items: Discord webhook channel, entry price in notifications, conviction score, outbox pattern for reliable dispatch
+BACKLOGGED: Discord, entry price, conviction score, outbox pattern (all FEATURE MODE ONLY)
+SOURCES: 8 new sources logged in brain/sources.md
+CURATED: Merged duplicate grep-before-adding rules (sessions #10 and #17) into one canonical entry in knowledge.md
+
 ## 2026-03-24 — TESTING (Session 20)
 DONE: Added 5 coverage-gap tests — trades endpoint cached=True second-call branch, login response user dict fields, SMS start happy path (first success test for that endpoint), telegram/verify no-auth 403, sms/verify no-auth 403. 179→184 tests.
 IMPACT: Closes the SMS start happy path (was only error paths before); locks in the trades cached=True contract matching the leaderboard pattern; two more auth gaps closed for verify endpoints.

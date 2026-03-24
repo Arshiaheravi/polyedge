@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **184 passed** (as of 2026-03-24, session 20 added 5 coverage-gap tests)
+- Test count: **184 passed** (as of 2026-03-24, session 20 added 5 coverage-gap tests — no new tests in session 21 BRAIN session)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### BRAIN Session #21 Reflexion — 2026-03-24
+ACCOMPLISHED: Curated knowledge.md (merged duplicate grep-before-adding rules from sessions #10 and #17 into one canonical entry). Ran web searches across 5 topics. Found 3 actionable improvements: (1) irreversibility check added to self-critique gate in PROMPT.md, (2) Hypothesis property-based testing added to testing.md, (3) 4 new feature items added to backlog (Discord, entry price in alerts, conviction score, outbox pattern). Logged 8 new sources in sources.md. Found strong competitor intelligence on Polymarket copy-trading SaaS market.
+FAILED: Nothing failed.
+RULE: [2026-03-24] Agents consistently underweight irreversible actions (DB deletes, Stripe charges, live notification sends) — explicitly name each one in self-critique before committing. If the session's tests don't mock or guard the irreversible action, flag it before running the code. (Source: arxiv 2601.02749 The Path Ahead for Agentic AI)
 
 ### Session #20 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 tests. Gaps found by auditing response field assertions and happy-path coverage. Trades cached=True was the only missing branch for that pattern. Login user dict untested despite being returned. SMS start had zero success-path tests. telegram/verify and sms/verify had no no-auth tests. All 5 passed first run. 179→184.
@@ -60,7 +65,7 @@ RULE: [2026-03-24] When the backlog empties, audit each endpoint by checking: (1
 ### Session #17 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 2 tests: test_leaderboard_sort_accuracy (verifies sort=accuracy passes correct arg) and test_poll_bets_multiple_followers_each_notified (verifies both followers get dispatch_bet_notification called). 167 → 169 tests. All 6 high-priority backlog testing tasks are now complete.
 FAILED: Nothing failed. Both tests passed first run.
-RULE: [2026-03-24] When checking backlog items, always verify against existing tests first with grep — several "backlog" tasks (telegram/start, DELETE /follows 404, follows/live error, admin MRR) were already implemented in prior sessions. Grepping saves a full read of each test file.
+*(grep-before-adding rule merged into Session #10 canonical entry above)*
 
 ### Session #15 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 tests covering previously untested branches: SMS start 503 (Twilio not configured), 400 (invalid phone format), 502 (send_sms returns False); GET /alerts/settings returns parsed push_subscription dict; /follows/live cache-hit path (API called once, second call served from cache). 162 → 167 tests.
@@ -86,7 +91,7 @@ RULE: [2026-03-24] The PolyEdge leaderboard rows have NO onclick — there is no
 ### Session #10 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 2 tests — `test_follows_list_contains_bettor_fields` (GET /follows returns bettor_address, bettor_name, created_at per item) and `test_get_me_reflects_updated_subscription_tier` (GET /auth/me returns updated tier after DB change). Confirmed webhook delete test and MRR test already existed in test_payments.py and test_admin.py. 151 → 153 tests.
 FAILED: Nothing failed. Both tests passed first run.
-RULE: [2026-03-24] Before adding a backlog test task, grep existing test files for the function name or endpoint path — 50% of the time the test already exists from a previous session and adding it would be a duplicate.
+RULE: [2026-03-24] Before adding any backlog test task or checking off a backlog item, grep existing test files for the function name or endpoint path — ~50% of the time it already exists from a prior session. Grepping saves a full read of each test file and prevents duplicate tests. (Merged from sessions #10 + #17.)
 
 ### Session #9 Reflexion — 2026-03-24
 ACCOMPLISHED: Ran 16-check Playwright E2E for follows + alerts pages. All 16 passed. Discovered that `toggleWebPush()` calls `Notification.requestPermission()` — headless tests must grant notifications via `browser.new_context(permissions=['notifications'])`. Found that `showView('dashboard')` does NOT set `currentUser` — must call `window.init()` instead so `/auth/me` is fetched. Free tier Telegram toggle is intentionally blocked by `openUpgradeModal()`.

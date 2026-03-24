@@ -116,6 +116,32 @@ cd backend && py -m pytest tests/ -v
 ```
 (Use `-v` not `-q` for this project — matches PROJECT.md and gives clearer failure output.)
 
+## PROPERTY-BASED TESTING (Hypothesis) — for invariant coverage
+
+When a route or function has a clear invariant that must hold for ALL valid inputs, write a property-based test using `hypothesis` instead of (or in addition to) example-based tests. This generates adversarial inputs automatically and catches edge cases that examples miss.
+
+**When to use**: Routes with hard business-rule invariants — auth, tier limits, input validation.
+
+**PolyEdge invariants ideal for Hypothesis**:
+- `GET /follows` always returns tier + limit fields regardless of input
+- `POST /follows` never exceeds TIER_LIMITS for any valid user
+- `GET /bettors` always returns a `cached` bool field
+- Any protected endpoint always returns 401 when Authorization header is missing
+
+**Pattern**:
+```python
+from hypothesis import given, strategies as st
+
+@given(st.text(min_size=1))  # adversarial address strings
+def test_bettor_address_never_crashes_server(client, address):
+    resp = client.get(f"/bettors/{address}")
+    assert resp.status_code in (200, 404, 502)  # never 500
+    assert "detail" in resp.json() or "bets" in resp.json()
+```
+
+**Install**: `pip install hypothesis` (add to requirements.txt if using).
+(Source: dasroot.net Python Agent Testing Best Practices 2026 — 72% of deployed agents show non-deterministic behavior; invariant testing is more reliable than example-based for coverage of auth and validation paths.)
+
 ## WHAT "TESTS PASS" MEANS
 - Zero failures in `tests/` (excluding test_e2e.py)
 - No collection errors

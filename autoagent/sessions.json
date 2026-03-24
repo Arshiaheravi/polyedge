@@ -244,5 +244,15 @@
     "files": ["backend/tests/test_bettors.py", "backend/tests/test_auth.py", "backend/tests/test_alerts.py"],
     "tests": {"before": 179, "after": 184, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+  },
+  {
+    "session": 21,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "brain",
+    "summary": "Searched 5 topics for agent and PolyEdge improvements; added irreversibility check to self-critique gate, property-based testing pattern to testing.md, and 4 new feature backlog items (Discord, entry price in alerts, conviction score, outbox); curated knowledge.md by merging duplicate grep rules",
+    "files": ["autoagent/PROMPT.md", "autoagent/skills/testing.md", "autoagent/memory/backlog.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md", "autoagent/memory/knowledge.md", "autoagent/memory/activity_log.md"],
+    "tests": {"before": 184, "after": 184, "status": "skip"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "brain session, no code changes"}
   }
 ]
