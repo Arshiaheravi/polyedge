@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — META SESSION (Session 66)
+IMPROVED: (1) Created `autoagent/playwright_registry.py` — a persistent 9-check PolyEdge Playwright suite covering hero, live ticker, nav, pricing, leaderboard, follows empty state, CSS variables, and JS errors; updated playwright.md to use registry as base (copy → add session checks → copy back on success). (2) Added external asset API rule to design.md — check .env before calling NovaBanana/similar, document in ASSETS_NEEDED.md and skip if unconfigured. (3) Reordered backlog: mobile responsiveness audit moved to top of HIGH PRIORITY with rationale (~60% mobile traffic).
+PATTERNS FOUND: Sessions 60→65 Playwright count regressed 9→7 because each session rewrites tmp_check.py from generic template; PolyEdge-specific checks from earlier sessions are lost. Session 64 wasted turns attempting NovaBanana API with a 401 before falling back to CSS — no pre-check rule existed.
+PREDICTED IMPACT: Playwright coverage becomes cumulative — future sessions extend the registry instead of reinventing 7 checks each time. Asset API failures eliminated by pre-check. Mobile audit now first in queue for next WORK session.
+
 ## 2026-03-24 — UI/UX (Session 65)
 DONE: Empty state illustrations added to follows page, alerts settings page, and leaderboard error state — all plain HTML entity emojis replaced with inline SVG art. Follows empty state: rising chart line + green "+" follow-badge SVG inside 88px circle container (es-illustration class). Alerts page: new #alerts-no-notifications banner with bell+lightning SVG that shows/hides via updateAlertsNoneState() when all three notification toggles are off. Leaderboard error: warning triangle SVG using --gold token. Added .es-illustration CSS class (88px circle, green/blue/gold tint variants) + .es-card background styling.
 IMPACT: First-time users on the follows page now see a purposeful visual metaphor (chart + follow button) instead of a faded star — immediately communicates what to do. Alerts page shows a contextual prompt when no notifications are active instead of silently showing controls that won't fire. 303 tests stable, 7/7 Playwright checks pass.
