@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 24)
+DONE: Added 5 coverage-gap tests — VIP tier GET /follows limit=999999 (completes tier triplet), get_bettor_profile empty-activity returns address-only profile with zeros, GET /follows/live response includes followed_at field, get_recent_bets dict response with data key extracts bets correctly, GET /bettors limit=0 returns 422 at minimum boundary. 194→199 tests.
+IMPACT: Closes the last uncovered tier slot in follows tier/limit tests (free/basic were done, VIP wasn't); verifies the empty-activity defensive path in the bettor profile service; locks in the follows/live response shape contract; confirms the get_recent_bets dict-response fallback that prevents data loss on unexpected API format changes.
+FILES: backend/tests/test_follows.py, backend/tests/test_follows_live.py, backend/tests/test_polymarket_service.py, backend/tests/test_bettors.py
+
 ## 2026-03-24 — TESTING (Session 23)
 DONE: Added 5 coverage-gap tests — get_bettor_profile normalised profile (name/volume/avg_bet from activity), get_recent_bets normalised list (market_id/amount_usd/type), get_live_trades normalised trades (name/market/side/amount_usd), get_leaderboard pagination (2 API calls when first page is full), login email case-insensitivity (UPPER@EMAIL.COM matches lowercase user). 189→194 tests.
 IMPACT: Covers all four core async Polymarket service functions that were previously untested — these power bettor profile pages, live ticker, and leaderboard; email case test confirms login UX doesn't confuse users who type uppercase.

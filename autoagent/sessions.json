@@ -274,5 +274,15 @@
     "files": ["backend/tests/test_polymarket_service.py", "backend/tests/test_auth.py"],
     "tests": {"before": 189, "after": 194, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+  },
+  {
+    "session": 24,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 5 coverage-gap tests closing the VIP follows limit slot, bettor profile empty-activity path, follows/live followed_at field contract, get_recent_bets dict-response defense, and /bettors limit=0 boundary — 194 to 199 tests",
+    "files": ["backend/tests/test_follows.py", "backend/tests/test_follows_live.py", "backend/tests/test_polymarket_service.py", "backend/tests/test_bettors.py"],
+    "tests": {"before": 194, "after": 199, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]

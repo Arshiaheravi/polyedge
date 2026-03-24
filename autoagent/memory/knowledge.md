@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **194 passed** (as of 2026-03-24, session 23 added 5 coverage-gap tests)
+- Test count: **199 passed** (as of 2026-03-24, session 24 added 5 coverage-gap tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #24 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 5 coverage-gap tests found by systematic audit: VIP tier follows limit (completes free/basic/VIP triplet), get_bettor_profile empty-activity path, follows/live followed_at response field, get_recent_bets dict-response defensive branch, /bettors limit=0 boundary. All 5 passed first run. 194→199.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When auditing coverage, check service-level defensive branches separately from route tests — e.g. `get_recent_bets` has `if not isinstance(raw_list, list): raw_list = raw_list.get("data") or []` that can only be hit by mocking the httpx client at the service level. Route-level mocks (patching the service function itself) will never exercise this branch. Always look for untested `isinstance` guards and empty-collection returns in service files.
 
 ### Session #23 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 coverage-gap tests for previously untested async polymarket service functions and auth email lowercasing. All 5 passed first run. 189→194.
