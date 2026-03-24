@@ -445,6 +445,40 @@
     .follow-btn.following { background: rgba(16,185,129,0.1); color: var(--green2); border-color: rgba(16,185,129,0.25); }
     .follow-btn.following:hover { background: rgba(239,68,68,0.1); color: var(--red); border-color: rgba(239,68,68,0.25); }
 
+    /* ── Leaderboard Card Grid ── */
+    .lb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+      gap: 16px;
+      padding: 4px 0;
+    }
+    .lb-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; position: relative; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .lb-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.4), var(--glow-sm); }
+    .lb-card-hidden { display: none !important; }
+    .lb-rank-badge {
+      position: absolute; top: 14px; right: 14px;
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; flex-shrink: 0;
+    }
+    .lb-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-right: 36px; }
+    .lb-card-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border); }
+    .lb-card-identity { flex: 1; min-width: 0; }
+    .lb-card-name { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lb-card-addr { font-size: 11px; color: var(--text3); font-family: monospace; margin-top: 2px; }
+    .lb-card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .lb-stat { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; }
+    .lb-stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 4px; }
+    .lb-stat-val { font-size: 15px; font-weight: 800; font-family: var(--font-display); }
+    .lb-stat-vol { grid-column: 1 / -1; }
+    .lb-stat-vol .lb-stat-val { font-size: 13px; color: var(--text2); }
+    @media (max-width: 768px) {
+      .lb-grid { grid-template-columns: 1fr; }
+    }
+
     /* Follows grid */
     .follows-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
     .follow-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; transition: border-color 0.2s, transform 0.2s; }
@@ -938,23 +972,7 @@
         <input class="search-input" id="browse-search" type="text" placeholder="Search by name or address…" oninput="filterLeaderboard('browse-leaderboard-body', this.value)" autocomplete="off" />
       </div>
     </div>
-    <div class="leaderboard-wrap" role="region" aria-label="Bettor leaderboard" aria-live="polite">
-      <table class="lb-table" aria-label="Top Polymarket bettors">
-        <caption class="hidden">Top 100 Polymarket bettors — ranked by profit or volume</caption>
-        <thead>
-          <tr>
-            <th scope="col" style="width:48px;">#</th>
-            <th scope="col">Bettor</th>
-            <th scope="col">Profit (USD)</th>
-            <th scope="col">Volume</th>
-            <th scope="col"><span class="hidden">Follow action</span></th>
-          </tr>
-        </thead>
-        <tbody id="browse-leaderboard-body">
-          <tr><td colspan="6"><div id="browse-skeleton" style="padding:20px;"></div></td></tr>
-        </tbody>
-      </table>
-    </div>
+    <div class="lb-grid" id="browse-leaderboard-body" role="list" aria-label="Bettor leaderboard" aria-live="polite"></div>
   </main>
 </div>
 
@@ -1031,23 +1049,7 @@
           <input class="search-input" id="dash-search" type="text" placeholder="Search by name or wallet address…" oninput="filterLeaderboard('lb-body', this.value)" autocomplete="off" />
         </div>
       </div>
-      <div class="leaderboard-wrap" role="region" aria-label="Bettor leaderboard" aria-live="polite">
-        <table class="lb-table" aria-label="Top Polymarket bettors ranked by profit">
-          <caption class="hidden">Top 100 Polymarket bettors — ranked by real profit or volume</caption>
-          <thead>
-            <tr>
-              <th scope="col" style="width:48px;">#</th>
-              <th scope="col">Bettor</th>
-              <th scope="col" title="Total money made after subtracting losses">Profit (USD) ℹ</th>
-              <th scope="col" title="Total amount of money they have bet — win or lose">Volume ℹ</th>
-              <th scope="col"><span class="hidden">Follow action</span></th>
-            </tr>
-          </thead>
-          <tbody id="lb-body">
-            <tr><td colspan="6"><div id="lb-skeleton" style="padding:20px;"></div></td></tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="lb-grid" id="lb-body" role="list" aria-label="Top Polymarket bettors" aria-live="polite"></div>
     </div>
 
     <!-- MY FOLLOWS TAB -->
@@ -1611,13 +1613,45 @@ async function loadFollowedAddresses() {
 
 // ── Leaderboard search ────────────────────────────────────────
 
-function filterLeaderboard(tbodyId, query) {
-  const tbody = document.getElementById(tbodyId);
-  if (!tbody) return;
+function filterLeaderboard(containerId, query) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
   const q = query.trim().toLowerCase();
-  const rows = tbody.querySelectorAll('tr');
-  let visibleCount = 0;
+  const noResultsId = containerId + '-no-results';
 
+  // Card grid mode
+  const cards = container.querySelectorAll('.lb-card');
+  if (cards.length) {
+    let visibleCount = 0;
+    cards.forEach(card => {
+      if (card.querySelector('.skeleton')) return;
+      const name = card.dataset.name || '';
+      const addr = card.dataset.addr || '';
+      const match = !q || name.includes(q) || addr.includes(q);
+      card.classList.toggle('lb-card-hidden', !match);
+      if (match) visibleCount++;
+    });
+    let noResultsEl = document.getElementById(noResultsId);
+    if (q && visibleCount === 0) {
+      if (!noResultsEl) {
+        noResultsEl = document.createElement('div');
+        noResultsEl.id = noResultsId;
+        noResultsEl.style.gridColumn = '1 / -1';
+        noResultsEl.innerHTML = `<div class="search-no-results">No bettors match "<strong>${query}</strong>"</div>`;
+        container.appendChild(noResultsEl);
+      } else {
+        noResultsEl.querySelector('strong').textContent = query;
+        noResultsEl.classList.remove('lb-card-hidden');
+      }
+    } else if (noResultsEl) {
+      noResultsEl.classList.add('lb-card-hidden');
+    }
+    return;
+  }
+
+  // Legacy table row fallback
+  const rows = container.querySelectorAll('tr');
+  let visibleCount = 0;
   rows.forEach(row => {
     if (row.querySelector('.empty-state') || row.querySelector('.skeleton')) return;
     const text = row.textContent.toLowerCase();
@@ -1625,16 +1659,13 @@ function filterLeaderboard(tbodyId, query) {
     row.classList.toggle('lb-row-hidden', !match);
     if (match) visibleCount++;
   });
-
-  // Show "no results" if nothing matches
-  const noResultsId = tbodyId + '-no-results';
   let noResultsRow = document.getElementById(noResultsId);
   if (q && visibleCount === 0) {
     if (!noResultsRow) {
       noResultsRow = document.createElement('tr');
       noResultsRow.id = noResultsId;
       noResultsRow.innerHTML = `<td colspan="5"><div class="search-no-results">No bettors match "<strong>${query}</strong>"</div></td>`;
-      tbody.appendChild(noResultsRow);
+      container.appendChild(noResultsRow);
     } else {
       noResultsRow.querySelector('strong').textContent = query;
       noResultsRow.classList.remove('lb-row-hidden');
@@ -1668,9 +1699,9 @@ async function loadLeaderboard(sort = currentSort, period = currentPeriod) {
     if (el) el.classList.toggle('active', p === period);
   });
 
-  const tbody = document.getElementById('lb-body');
+  const container = document.getElementById('lb-body');
   clearSearch('lb-body');
-  tbody.innerHTML = renderSkeletonRows(8, 5);
+  container.innerHTML = renderSkeletonCards(8);
 
   try {
     const res = await apiFetch(`/bettors?sort=${sort}&time_period=${period}&limit=100`);
@@ -1678,12 +1709,12 @@ async function loadLeaderboard(sort = currentSort, period = currentPeriod) {
     const data = await res.json();
     const bettors = data.bettors || [];
     if (!bettors.length) {
-      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="icon">&#127942;</div><h3>No data yet</h3><p>Leaderboard is loading from Polymarket.</p></div></td></tr>`;
+      container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="icon">&#127942;</div><h3>No data yet</h3><p>Leaderboard is loading from Polymarket.</p></div>`;
       return;
     }
-    tbody.innerHTML = bettors.map((b, i) => renderBettorRow(b, i)).join('');
+    container.innerHTML = bettors.map((b, i) => renderBettorCard(b, i)).join('');
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p>${e.message}</p></div></td></tr>`;
+    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p>${e.message}</p></div>`;
   }
 }
 
@@ -1742,6 +1773,83 @@ function renderSkeletonRows(rows, cols) {
   ).join('');
 }
 
+function renderBettorCard(b, i) {
+  const addr = b.address || '';
+  const name = b.name || shortAddr(addr);
+  const isFollowing = followedAddresses.has(addr);
+  const avatarUrl = b.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${addr}`;
+  const delay = Math.min(i, 8) * 40;
+  const pnl = b.pnl_usd ?? null;
+  const vol = b.volume_usd || 0;
+  const rank = b.rank ? b.rank - 1 : i;
+
+  const roi = vol > 0 && pnl !== null ? (pnl / vol * 100).toFixed(1) : null;
+  const roiStr = roi !== null ? (roi > 0 ? '+' : '') + roi + '%' : '—';
+  const roiColorVal = roi > 0 ? 'var(--green)' : roi < 0 ? 'var(--red)' : 'var(--text2)';
+  const pnlStr = pnl !== null ? fmtPnl(pnl) : '—';
+  const pnlColorVal = pnl !== null ? pnlColor(pnl) : 'var(--text2)';
+
+  let rankBadgeEl;
+  if (rank === 0)      rankBadgeEl = `<div class="lb-rank-badge rank-1">1</div>`;
+  else if (rank === 1) rankBadgeEl = `<div class="lb-rank-badge rank-2">2</div>`;
+  else if (rank === 2) rankBadgeEl = `<div class="lb-rank-badge rank-3">3</div>`;
+  else                 rankBadgeEl = `<div class="lb-rank-badge rank-n">${rank + 1}</div>`;
+
+  const safeName = name.replace(/'/g, "\\'");
+  return `<div class="lb-card animate-fade-up" style="animation-delay:${delay}ms"
+    role="listitem" data-name="${name.toLowerCase()}" data-addr="${addr.toLowerCase()}">
+    ${rankBadgeEl}
+    <div class="lb-card-header">
+      <img class="lb-card-avatar" src="${avatarUrl}" alt="${name}"
+           onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${addr}'" />
+      <div class="lb-card-identity">
+        <div class="lb-card-name" title="${name}">${name}</div>
+        <div class="lb-card-addr">${shortAddr(addr)}</div>
+      </div>
+    </div>
+    <div class="lb-card-stats">
+      <div class="lb-stat">
+        <div class="lb-stat-label">Profit</div>
+        <div class="lb-stat-val" style="color:${pnlColorVal};">${pnlStr}</div>
+      </div>
+      <div class="lb-stat">
+        <div class="lb-stat-label">ROI</div>
+        <div class="lb-stat-val" style="color:${roiColorVal};">${roiStr}</div>
+      </div>
+      <div class="lb-stat lb-stat-vol">
+        <div class="lb-stat-label">Volume Traded</div>
+        <div class="lb-stat-val">${fmtUSD(vol)}</div>
+      </div>
+    </div>
+    <button class="follow-btn w-full ${isFollowing ? 'following' : ''}"
+            onclick="toggleFollow('${addr}', '${safeName}', this)"
+            aria-label="${isFollowing ? 'Unfollow' : 'Follow'} ${name}"
+            aria-pressed="${isFollowing}">
+      ${isFollowing ? '&#10003; Following' : '+ Follow'}
+    </button>
+  </div>`;
+}
+
+function renderSkeletonCards(count) {
+  return Array.from({ length: count }, () => `
+    <div class="lb-card">
+      <div class="lb-card-header">
+        <div class="skeleton" style="width:44px;height:44px;border-radius:50%;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div class="skeleton" style="height:14px;width:65%;margin-bottom:7px;border-radius:4px;"></div>
+          <div class="skeleton" style="height:10px;width:45%;border-radius:4px;"></div>
+        </div>
+      </div>
+      <div class="lb-card-stats">
+        <div class="lb-stat"><div class="skeleton" style="height:32px;border-radius:6px;"></div></div>
+        <div class="lb-stat"><div class="skeleton" style="height:32px;border-radius:6px;"></div></div>
+        <div class="lb-stat lb-stat-vol"><div class="skeleton" style="height:24px;border-radius:6px;"></div></div>
+      </div>
+      <div class="skeleton" style="height:38px;border-radius:8px;"></div>
+    </div>`
+  ).join('');
+}
+
 // ── Public Browse Leaderboard (no auth) ───────────────────────
 
 let browseSort = 'profit';
@@ -1760,10 +1868,10 @@ async function loadBrowseLeaderboard(sort = browseSort, period = browsePeriod) {
     if (btn) btn.classList.toggle('active', p === period);
   });
 
-  const tbody = document.getElementById('browse-leaderboard-body');
-  if (!tbody) return;
+  const container = document.getElementById('browse-leaderboard-body');
+  if (!container) return;
   clearSearch('browse-leaderboard-body');
-  tbody.innerHTML = renderSkeletonRows(10, 5);
+  container.innerHTML = renderSkeletonCards(10);
 
   try {
     const res = await fetch(`${API}/bettors?sort=${sort}&time_period=${period}&limit=100`);
@@ -1771,13 +1879,12 @@ async function loadBrowseLeaderboard(sort = browseSort, period = browsePeriod) {
     const data = await res.json();
     const bettors = data.bettors || [];
     if (!bettors.length) {
-      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="icon">&#127942;</div><h3>No data yet</h3><p>Leaderboard is loading from Polymarket.</p></div></td></tr>`;
+      container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="icon">&#127942;</div><h3>No data yet</h3><p>Leaderboard is loading from Polymarket.</p></div>`;
       return;
     }
-    // Reuse same renderBettorRow — follow buttons will trigger sign-up prompt for visitors
-    tbody.innerHTML = bettors.map((b, i) => renderBettorRow(b, i)).join('');
+    container.innerHTML = bettors.map((b, i) => renderBettorCard(b, i)).join('');
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p>${e.message}</p></div></td></tr>`;
+    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p>${e.message}</p></div>`;
   }
 }
 
