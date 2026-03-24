@@ -1,0 +1,198 @@
+[
+  {
+    "session": 1,
+    "date": "2026-03-23",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Fixed 5 failing webhook tests by patching Stripe webhook secret in conftest; committed prior-session backend bugfixes and full 91-test E2E suite; corrected CLAUDE.md free tier docs",
+    "files": [
+      "backend/tests/conftest.py",
+      "backend/tests/test_admin.py",
+      "backend/tests/test_alerts.py",
+      "backend/tests/test_auth.py",
+      "backend/tests/test_bettors.py",
+      "backend/tests/test_follows.py",
+      "backend/tests/test_follows_live.py",
+      "backend/tests/test_health.py",
+      "backend/tests/test_notifications.py",
+      "backend/tests/test_payments.py",
+      "backend/tests/test_polymarket_service.py",
+      "backend/tests/test_stripe_service.py",
+      "backend/app/config.py",
+      "backend/app/main.py",
+      "backend/app/models.py",
+      "backend/app/routes/admin.py",
+      "backend/app/routes/alerts.py",
+      "backend/app/routes/bettors.py",
+      "backend/app/routes/follows.py",
+      "backend/app/services/notifications.py",
+      "backend/app/services/polymarket.py",
+      "backend/app/services/scheduler.py",
+      "backend/requirements.txt",
+      "frontend/index.html",
+      "run.sh",
+      "CLAUDE.md"
+    ],
+    "tests": {"before": 86, "after": 91, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "server not running"},
+    "notes": "No git remote configured — commits are local only"
+  },
+  {
+    "session": 2,
+    "date": "2026-03-23",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 17 scheduler tests covering timestamp parsing and the core polling loop — new bets are saved, old/duplicate bets are skipped, free-tier users get no notification, API errors don't crash the poll",
+    "files": [
+      "backend/tests/test_scheduler.py"
+    ],
+    "tests": {"before": 91, "after": 108, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend code changed"},
+    "notes": "No git remote configured — commits are local only"
+  },
+  {
+    "session": 4,
+    "date": "2026-03-23",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 18 security and business-rule tests — JWT tokens can't be tampered or expired to gain access, VIP tier correctly allows unlimited follows, register/login reject malformed input, re-following after unfollow works fine",
+    "files": [
+      "backend/tests/test_security.py"
+    ],
+    "tests": {"before": 108, "after": 126, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend code changed"},
+    "notes": "No git remote configured — commits are local only"
+  },
+  {
+    "session": 5,
+    "date": "2026-03-23",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Found and fixed a bug where invalid JSON in push_subscription was silently stored then crashed GET with 500 — route now validates and returns 422. Added 8 edge-case tests covering error message wording, SQL injection safety, empty-DB admin stats, and the push_subscription bug.",
+    "files": [
+      "backend/tests/test_edge_cases.py",
+      "backend/app/routes/alerts.py"
+    ],
+    "tests": {"before": 126, "after": 134, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "server not running"},
+    "notes": "No git remote configured — commits are local only"
+  },
+  {
+    "session": 3,
+    "date": "2026-03-23",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Ran full E2E frontend smoke test with Playwright — all 7 checks pass: landing page loads, backend API responds with real leaderboard data (100 bettors), browse view opens, login form works, register form works, no JS errors",
+    "files": [],
+    "tests": {"before": 108, "after": 108, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 7, "failures": 0, "notes": "All core user flows verified: landing, leaderboard (100 bettors), login form, register form, no JS errors"},
+    "notes": "No code changes this session — pure verification run"
+  }
+,
+  {
+    "session": 7,
+    "date": "2026-03-23",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 11 tests covering notification dispatch edge cases and the full Telegram account-linking flow — every branch in dispatch_bet_notification and telegram/verify is now tested. Also confirmed admin password loads correctly from .env (polyedge-admin-2026).",
+    "files": [
+      "backend/tests/test_notifications.py",
+      "backend/tests/test_alerts.py"
+    ],
+    "tests": {"before": 134, "after": 145, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend code changed"},
+    "notes": "No git remote configured — commits are local only"
+  },
+  {
+    "session": 8,
+    "date": "2026-03-23",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 6 tests: BetEvent field values are now verified (market_question, outcome, amount_usd, timestamp) and the downgrade path is documented — follows survive a tier change, new ones are blocked at the new limit",
+    "files": [
+      "backend/tests/test_scheduler.py",
+      "backend/tests/test_stripe_service.py"
+    ],
+    "tests": {"before": 145, "after": 151, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend code changed"},
+    "notes": "No git remote configured — commits are local only"
+  },
+  {
+    "session": 6,
+    "date": "2026-03-23",
+    "time": "00:00",
+    "type": "meta",
+    "summary": "Refilled the empty backlog with 7 concrete testing tasks so the next work session has immediate direction without wasting turns on task discovery",
+    "files": [
+      "autoagent/memory/backlog.md",
+      "autoagent/memory/project_root.md",
+      "autoagent/memory/knowledge.md",
+      "autoagent/PROMPT.md",
+      "autoagent/memory/activity_log.md",
+      "autoagent/sessions.json"
+    ],
+    "tests": {"before": 134, "after": 134, "status": "skip"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "meta session — no code changes"},
+    "notes": "Fixed: missing project_root.md, empty backlog, admin password conflict in docs, PROMPT.md DEBUG MODE rule"
+  },
+  {
+    "session": 10,
+    "date": "2026-03-24",
+    "time": "05:00",
+    "type": "work",
+    "summary": "Added 2 field-coverage tests: GET /follows now verified to return bettor_address + bettor_name + created_at in each array item; GET /auth/me verified to return updated subscription_tier after DB change — closes all 4 uncovered backend edge cases from backlog.",
+    "files": ["backend/tests/test_follows.py", "backend/tests/test_auth.py"],
+    "tests": {"before": 151, "after": 153, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "server not running"}
+  },
+  {
+    "session": 9,
+    "date": "2026-03-24",
+    "time": "04:30",
+    "type": "work",
+    "summary": "Ran 16-check Playwright E2E verification of follows and alerts pages — all 16 pass. Confirmed: follows tab shows correct count, follow button works for logged-in users (found and fixed a test-script bug where init() must be called instead of showView() so currentUser is set), free tier limit enforced, alerts toggles visible, web push toggle changes state with notification permission, Telegram toggle correctly blocked on free tier, settings persist after reload.",
+    "files": [],
+    "tests": {"before": 151, "after": 151, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 16, "failures": 0, "notes": "follows tab: subtitle, container, follow btn, follow action, limit; alerts tab: push toggle, telegram toggle, setup card, state changes, persist after reload"}
+  },
+  {
+    "session": 11,
+    "date": "2026-03-24",
+    "time": "06:00",
+    "type": "brain",
+    "summary": "Researched Polymarket trading strategies and found the information arbitrage window is under 30 seconds — added VIP 15s polling, win_rate display, and Alembic migrations to high-priority backlog. Implemented ACE Curator step so the agent reviews its own knowledge base for duplicates each brain session.",
+    "files": ["autoagent/meta/BRAIN_PROMPT.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md", "autoagent/memory/backlog.md", "autoagent/memory/knowledge.md", "autoagent/memory/activity_log.md"],
+    "tests": {"before": 153, "after": 153, "status": "skip"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "brain session, no code changes"}
+  },
+  {
+    "session": 12,
+    "date": "2026-03-24",
+    "time": "07:00",
+    "type": "work",
+    "summary": "Ran 9-check Playwright E2E verifying leaderboard sort tabs, period tabs, account tier display, and public browse view all work correctly — also discovered the bettor profile click-through was never built and updated the backlog.",
+    "files": [],
+    "tests": {"before": 153, "after": 153, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 9, "failures": 0, "notes": "sort tabs, period tabs, account tab, browse view, no-JS-errors all pass"}
+  },
+  {
+    "session": 13,
+    "date": "2026-03-24",
+    "time": "08:00",
+    "type": "work",
+    "summary": "Added 5 tests covering previously untested error paths: billing portal Stripe failure (502), leaderboard API failure (502), recent trades API failure (502), and recent trades limit boundaries (422 for <5 and >50).",
+    "files": ["backend/tests/test_bettors.py", "backend/tests/test_payments.py"],
+    "tests": {"before": 153, "after": 158, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+  },
+  {
+    "session": 14,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 4 tests filling branch gaps: disabled account login returns 403, bettor detail returns 502 when Polymarket API fails, basic tier limit shows VIP upgrade message, and empty bettor_name defaults to truncated address",
+    "files": ["backend/tests/test_auth.py", "backend/tests/test_bettors.py", "backend/tests/test_follows.py"],
+    "tests": {"before": 158, "after": 162, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+  }
+]
