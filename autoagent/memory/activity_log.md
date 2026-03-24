@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 18:00 — TESTING (Session 49)
+DONE: Fixed flaky JWT tamper test (_tamper_token was changing padding-only bits A↔B on last base64url char, leaving HMAC identical → token verified as valid non-deterministically); added 3 backlog tests: scheduler multi-bet loop (2 bets per address → 2 BetEvents), GET /follows unknown tier returns limit=0, checkout 502 when Stripe price ID unconfigured. 290→293 tests stable.
+IMPACT: Eliminates a test that randomly passed/failed depending on wall-clock time (last sig char in A-P range = same decoded bytes when flipped). Closes all 3 remaining HIGH PRIORITY backlog items.
+FILES: backend/tests/test_security.py, backend/tests/test_scheduler.py, backend/tests/test_follows.py, backend/tests/test_payments.py
+
 ## 2026-03-24 10:00 — TESTING (Session 48)
 DONE: Added 3 edge-case tests — get_active_positions dict response returns [], unknown subscription tier gets 403, /admin/stats full nested type contract (users/follows/bet_events/mrr_estimate types). 287→290 tests stable.
 IMPACT: Closes last 3 backlog HIGH PRIORITY testing gaps. Any regression where non-list API responses crash, unknown tiers bypass the follow limit, or /admin/stats drops a nested field will now be caught immediately.

@@ -1086,5 +1086,20 @@
       "failures": 0,
       "notes": "no server running"
     }
+  },
+  {
+    "session": 49,
+    "date": "2026-03-24",
+    "time": "18:00",
+    "type": "work",
+    "summary": "Fixed a flaky JWT security test where tampered tokens were being accepted as valid, and added 3 new tests covering scheduler multi-bet loop, unknown subscription tier in GET /follows, and checkout 502 when Stripe price IDs are not configured",
+    "files": [
+      "backend/tests/test_security.py",
+      "backend/tests/test_scheduler.py",
+      "backend/tests/test_follows.py",
+      "backend/tests/test_payments.py"
+    ],
+    "tests": {"before": 290, "after": 293, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend code changed"}
   }
 ]

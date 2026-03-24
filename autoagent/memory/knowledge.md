@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **290 passed** (as of 2026-03-24, session 48 — 3 edge-case tests added)
+- Test count: **293 passed** (as of 2026-03-24, session 49 — flaky tamper fix + 3 backlog tests added)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #49 Reflexion — 2026-03-24
+ACCOMPLISHED: Fixed flaky test `test_tampered_token_blocked_on_follows` — root cause was `_tamper_token` flipping between 'A' (000000) and 'B' (000001) on the last character of the JWT signature. For HMAC-SHA256 (32 bytes = 43 base64url chars), the last character has 2 unused padding bits; 'A' and 'B' differ only in those padding bits and decode to identical byte sequences. So the "tampered" token still passed JWT verification. Fix: tamper `sig[0]` (first character, all 6 bits significant). Added 3 backlog tests: scheduler multi-bet, GET /follows unknown tier, checkout no-price-id 502. 290→293 stable.
+FAILED: Nothing failed after the fix.
+RULE: [2026-03-24] When writing a JWT tamper helper, NEVER change only the last character of the base64url signature. For any N-byte HMAC, the last base64url character may have up to 5 unused padding bits. Characters that differ only in padding bits decode to the same bytes and the tamper is invisible to the JWT verifier. Tamper a character at index 0 or near the middle of the signature — all 6 bits are significant there.
 
 ### Session #48 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 3 targeted edge-case tests: (1) `get_active_positions` with a dict API response returns `[]` (the `if not isinstance(raw, list)` branch); (2) unknown subscription tier "enterprise" blocked with 403 via TIER_LIMITS.get fallback; (3) `/admin/stats` full nested shape contract with `isinstance` checks on all nested fields. 287→290 tests stable.
