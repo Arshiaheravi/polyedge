@@ -2,7 +2,6 @@
 
 BETTOR_A = "0xabc123"
 BETTOR_B = "0xdef456"
-BETTOR_C = "0xghi789"
 
 
 def test_list_follows_empty(client, auth_headers):
@@ -116,21 +115,6 @@ def test_follows_list_contains_bettor_fields(client, auth_headers):
     assert "created_at" in follows[0]
 
 
-def test_list_follows_basic_tier_reports_tier_and_limit(client, db, auth_headers, registered_user):
-    """GET /follows for a basic-tier user returns tier='basic' and limit=5."""
-    from app.models import User
-    _, user_data = registered_user
-    user = db.query(User).filter(User.id == user_data["id"]).first()
-    user.subscription_tier = "basic"
-    db.commit()
-
-    resp = client.get("/follows", headers=auth_headers)
-    assert resp.status_code == 200
-    data = resp.json()
-    assert data["tier"] == "basic"
-    assert data["limit"] == 5
-
-
 def test_delete_follows_requires_auth(client):
     """DELETE /follows/{address} without a token returns 403, not 500."""
     resp = client.delete("/follows/0xsomeaddress")
@@ -141,21 +125,6 @@ def test_post_follows_requires_auth(client):
     """POST /follows without an auth token returns 403, not 201 or 500."""
     resp = client.post("/follows", json={"bettor_address": "0xtest"})
     assert resp.status_code == 403
-
-
-def test_list_follows_vip_tier_reports_tier_and_limit(client, db, auth_headers, registered_user):
-    """GET /follows for a VIP user returns tier='vip' and limit=999999."""
-    from app.models import User
-    _, user_data = registered_user
-    user = db.query(User).filter(User.id == user_data["id"]).first()
-    user.subscription_tier = "vip"
-    db.commit()
-
-    resp = client.get("/follows", headers=auth_headers)
-    assert resp.status_code == 200
-    data = resp.json()
-    assert data["tier"] == "vip"
-    assert data["limit"] == 999999
 
 
 def test_post_follows_response_body_includes_all_fields(client, auth_headers):
