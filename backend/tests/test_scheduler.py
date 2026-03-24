@@ -424,6 +424,49 @@ def test_poll_bets_api_returns_none_does_not_crash(sched_db):
     mock_notify.assert_not_called()
 
 
+def test_parse_timestamp_overflow_int_returns_none():
+    """An integer too large for fromtimestamp() causes OverflowError, caught → None."""
+    result = _parse_timestamp(10**20)  # far beyond valid Unix timestamp range
+    assert result is None
+
+
+def test_poll_bets_inactive_user_is_skipped(sched_db):
+    """A follower with is_active=False is not notified — dispatch never called."""
+    session, Session = sched_db
+
+    user = User(
+        email="inactive@x.com", hashed_password=hash_password("p"),
+        name="Inactive", subscription_tier="basic", is_active=False,
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xabc", bettor_name="whale"))
+    session.commit()
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()) as mock_notify:
+        run(_poll_bets())
+
+    mock_notify.assert_not_called()
+
+
+def test_poll_bets_orphaned_follow_is_skipped(sched_db):
+    """A BettorFollow whose user_id has no matching User row is skipped gracefully."""
+    session, Session = sched_db
+
+    # Insert follow with user_id 99999 — no User with that id exists
+    session.add(BettorFollow(user_id=99999, bettor_address="0xorphan", bettor_name="ghost"))
+    session.commit()
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()) as mock_notify:
+        run(_poll_bets())  # must not raise
+
+    mock_notify.assert_not_called()
+
+
 def test_poll_bets_multiple_followers_each_notified(sched_db):
     """When two users follow the same bettor, dispatch_bet_notification is called once per follower."""
     session, Session = sched_db

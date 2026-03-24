@@ -382,6 +382,25 @@ def test_sms_verify_requires_auth(client):
     assert resp.status_code == 403
 
 
+def test_disable_telegram_for_basic_user(client, db, auth_headers, registered_user):
+    """Basic user can explicitly set telegram_enabled=False after enabling it."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
+    # Enable telegram first
+    resp = client.put("/alerts/settings", json={"telegram_enabled": True}, headers=auth_headers)
+    assert resp.status_code == 200
+    assert resp.json()["telegram_enabled"] is True
+
+    # Now explicitly disable it
+    resp = client.put("/alerts/settings", json={"telegram_enabled": False}, headers=auth_headers)
+    assert resp.status_code == 200
+    assert resp.json()["telegram_enabled"] is False
+
+
 def test_sms_start_send_fails_returns_502(client, db, auth_headers, registered_user):
     """If send_sms returns False (Twilio rejects), /sms/start returns 502."""
     from unittest.mock import AsyncMock, patch

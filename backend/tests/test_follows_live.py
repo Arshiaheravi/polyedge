@@ -105,6 +105,30 @@ def test_follows_live_bettor_includes_followed_at_field(client, auth_headers):
     assert "followed_at" in bettor  # isoformat string or None, but must be present
 
 
+def test_follows_live_name_fallback_when_bettor_name_is_none(client, db, auth_headers, registered_user):
+    """When bettor_name is None in DB, _fetch_one falls back to addr[:12]+'...'."""
+    import app.routes.follows as follows_module
+    follows_module._activity_cache.clear()
+
+    addr = "0xabcdefghijkl1234"
+    client.post("/follows", json={"bettor_address": addr, "bettor_name": "original"},
+                headers=auth_headers)
+
+    # Manually set bettor_name to None in DB to trigger the fallback path
+    from app.models import BettorFollow as BF
+    follow = db.query(BF).filter(BF.bettor_address == addr).first()
+    follow.bettor_name = None
+    db.commit()
+    follows_module._activity_cache.clear()
+
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=[])):
+        resp = client.get("/follows/live", headers=auth_headers)
+
+    assert resp.status_code == 200
+    bettor = resp.json()["bettors"][0]
+    assert bettor["name"] == addr[:12] + "..."
+
+
 def test_follows_live_serves_cached_response(client, auth_headers):
     """Second call within TTL returns cached data — Polymarket API called only once."""
     client.post("/follows", json={"bettor_address": "0xcache", "bettor_name": "CacheWhale"},
