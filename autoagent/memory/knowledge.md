@@ -375,3 +375,9 @@ RULE: [2026-03-24] Before writing any backlog test, grep test_hypothesis_invaria
 ACCOMPLISHED: Fixed 5 failing webhook tests by adding autouse conftest fixture to clear stripe_webhook_secret. Committed prior-session backend bugfixes and full 91-test suite. Fixed CLAUDE.md free tier documentation.
 FAILED: Nothing failed in this session.
 RULE: [2026-03-23] When .env has a truthy placeholder (e.g. `whsec_REPLACE_ME`), pydantic-settings loads it as a real value — tests that rely on the field being falsy must mock or clear it explicitly in conftest.
+
+### Session #68 Reflexion — 2026-03-24
+ACCOMPLISHED: Full mobile responsiveness audit. Added mobile bottom nav (4-tab fixed nav) + sticky topbar to dashboard; mobile topbar + sign-up to browse. Fixed 2-column hardcoded grids on landing. Full-width search, scrollable tab bar, compact CTA banner, no-elevation featured pricing card on mobile. Playwright: 9→12 checks (3 new mobile checks). 303 tests stable.
+FAILED: Nothing failed.
+RULE: [2026-03-24] Mobile nav pattern for single-HTML SPA with sidebar: wrap sidebar+main in an inner `display:flex;flex:1;min-height:0` div inside the view container; add sticky topbar and fixed bottom-nav as siblings outside that inner div; the view container gets `display:flex;flex-direction:column`. On desktop, topbar/bottom-nav have `display:none` — inner div gets full 100vh.
+RULE: [2026-03-24] Hardcoded `grid-template-columns:1fr 1fr` inline styles are invisible to media queries. Convert them to a CSS class (`.grid-2col { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) }`) to make them responsive automatically.

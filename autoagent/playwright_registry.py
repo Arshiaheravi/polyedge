@@ -122,6 +122,47 @@ async def check():
             checks += 1
             print("  [CHECK 9] No JS errors")
 
+        # ── CHECK 10: Mobile — no horizontal overflow at 375px ────────────────
+        try:
+            mob_page = await browser.new_page(viewport={"width": 375, "height": 812})
+            mob_js_errors = []
+            mob_page.on("pageerror", lambda e: mob_js_errors.append(str(e)))
+            await mob_page.goto(FRONTEND_URL, timeout=12000)
+            await asyncio.sleep(1)
+            overflow = await mob_page.evaluate(
+                "document.documentElement.scrollWidth > document.documentElement.clientWidth"
+            )
+            if overflow:
+                failures.append("Mobile 375px: horizontal overflow detected (page wider than viewport)")
+            else:
+                checks += 1
+                print("  [CHECK 10] Mobile 375px: no horizontal overflow")
+            await mob_page.close()
+        except Exception as e:
+            failures.append(f"Mobile overflow check error: {e}")
+
+        # ── CHECK 11: Mobile bottom nav present in DOM ────────────────────────
+        try:
+            mob_nav = await page.query_selector(".mobile-bottom-nav")
+            if mob_nav:
+                checks += 1
+                print("  [CHECK 11] Mobile bottom nav (.mobile-bottom-nav) in DOM")
+            else:
+                failures.append(".mobile-bottom-nav not found in DOM")
+        except Exception as e:
+            failures.append(f"Mobile nav check error: {e}")
+
+        # ── CHECK 12: Mobile topbar present in DOM ────────────────────────────
+        try:
+            mob_topbar = await page.query_selector(".mobile-topbar")
+            if mob_topbar:
+                checks += 1
+                print("  [CHECK 12] Mobile topbar (.mobile-topbar) in DOM")
+            else:
+                failures.append(".mobile-topbar not found in DOM")
+        except Exception as e:
+            failures.append(f"Mobile topbar check error: {e}")
+
         await browser.close()
     return checks, failures
 

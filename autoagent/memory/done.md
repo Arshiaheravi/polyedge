@@ -65,3 +65,5 @@
 - **[SESSION #63] CSS type scale + typography + button press states + staggered lb-card animation** — Added --fs-* font-size CSS vars, h1-h4 heading scale, universal button :active feedback, and fadeInUp staggered entrance for leaderboard cards
 
 - **[SESSION #67] Code quality audit — XSS in toast() + dead code removal** — Fixed XSS where API-sourced bettor names/error strings were injected via innerHTML in toast(); deleted dead renderBettorRow + renderSkeletonRows functions (46 lines gone) that predated session 58's card grid.
+
+- **[SESSION #68] Mobile responsiveness audit** — added mobile bottom nav + topbar to dashboard/browse, fixed 2-col landing grids, full-width search, scrollable tab bar, CTA banner compact, hero padding, featured card no-elevate on mobile

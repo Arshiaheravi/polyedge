@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 68)
+DONE: Mobile responsiveness audit — added sticky mobile topbar (logo + avatar/sign-up) and fixed bottom nav (4 tabs: Leaders/Follows/Alerts/Account) to dashboard view; mobile topbar to browse view; fixed two hardcoded 2-column grids on landing page to auto-fit responsive; search input now full-width on mobile; tab bar horizontally scrollable; featured pricing card elevation removed on mobile; CTA banner compact; hero padding reduced; toast repositioned above bottom nav; live ticker hidden on mobile. showTab() syncs mobile nav active state.
+IMPACT: Mobile users (≈60% of traffic) can now navigate all dashboard tabs without the sidebar. Landing page 2-column sections no longer overflow at 375px. 12/12 Playwright checks pass (3 new mobile checks: overflow, bottom nav, topbar). 303 tests stable.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-24 — AUDIT (Session 67)
 DONE: Code quality audit of sessions 62–66 changes — found and fixed XSS in toast() (msg was injected via innerHTML; API-sourced bettor names and server error detail strings are now rendered via textContent). Deleted dead renderBettorRow() and renderSkeletonRows() (46 lines) — both functions were unreachable since session 58 converted the leaderboard from a table to a card grid. 303 tests stable, 9/9 Playwright checks pass.
 IMPACT: Eliminates XSS attack surface where a malicious Polymarket API response with an HTML-injected bettor name or crafted error string in toast() could execute arbitrary JS in a visitor's browser. Dead code removal makes the file 46 lines leaner and clearer for future sessions.
