@@ -23,7 +23,9 @@
 - Price IDs not yet configured — STRIPE_BASIC_PRICE_ID and STRIPE_VIP_PRICE_ID are still `price_REPLACE_ME`
 - VIP price: **$9.99/mo**
 - Polymarket API base: `https://data-api.polymarket.com`
-- Polymarket API rate limits (from docs.polymarket.com/api-reference/rate-limits): `/markets/0x` = 50 req/10s; `/price` = 100 req/10s; `/books` = 300 req/10s. Cloudflare throttling queues requests rather than rejecting. PolyEdge's 30s poll of ~100 bettor addresses is well within limits (≤5 req/sec on `/activity`).
+- Polymarket has 3 separate APIs: **Gamma API** (gamma-api.polymarket.com — markets, events), **Data API** (data-api.polymarket.com — profiles, activity, leaderboards; what PolyEdge uses), **CLOB API** (clob.polymarket.com — orderbook, trading; requires auth)
+- Polymarket API rate limit: **60 requests per minute** sliding window. Cloudflare queues rather than hard-rejects. PolyEdge's 30s poll of ~100 bettor addresses (≤100 req/30s = ≤200 req/min per bettor address round) is near the limit at scale.
+- **Polymarket WebSocket endpoints exist**: `/v1/ws/markets` and `/v1/ws/private` — real-time price/trade/orderbook streams up to 10 instruments. Switching from polling to WebSocket would reduce API calls and detect bets instantly instead of waiting up to 30s. Key feature for VIP tier differentiation.
 
 ## Test Infrastructure
 
