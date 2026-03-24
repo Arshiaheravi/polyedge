@@ -163,6 +163,19 @@ def test_login_with_stripped_email_after_whitespace_register(client):
     assert "access_token" in resp.json()
 
 
+def test_login_with_whitespace_padded_email_works(client):
+    """Login with a whitespace-padded email (e.g. ' user@example.com ') must succeed.
+    Registration strips the email to 'user@example.com', and login must strip too."""
+    client.post("/auth/register", json={
+        "email": "padlogin@example.com", "password": "pass", "name": "PadLogin"
+    })
+    resp = client.post("/auth/login", json={
+        "email": "  padlogin@example.com  ", "password": "pass"
+    })
+    assert resp.status_code == 200
+    assert "access_token" in resp.json()
+
+
 def test_get_me_reflects_updated_subscription_tier(client, db, auth_headers, registered_user):
     """GET /auth/me returns the current subscription_tier after a Stripe webhook upgrades the user."""
     from app.models import User

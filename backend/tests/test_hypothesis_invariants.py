@@ -9,11 +9,6 @@ from hypothesis import given, settings, strategies as st, HealthCheck
 
 # ── Invariant 1: GET /follows always returns tier + limit fields ──────────────
 
-@given(st.nothing())  # placeholder — real parametrisation below
-def _placeholder():
-    pass
-
-
 @pytest.mark.parametrize("tier,expected_limit", [
     ("free", 1),
     ("basic", 5),
