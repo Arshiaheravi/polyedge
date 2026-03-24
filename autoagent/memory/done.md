@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #58] Leaderboard card redesign** — Converted both browse and dashboard leaderboard table rows to a responsive CSS card grid; each card shows rank badge, avatar, bettor name, profit, ROI %, volume, and follow button with hover lift/glow effect.
 - **[SESSION #57] 3 polymarket service tests — type BUY default, anon name, empty leaderboard page — 301→303** — Added assert type=="BUY" to existing test_normalise_bet_missing_fields; test_get_live_trades_empty_proxy_wallet_generates_anon_name locks in the "anon" fallback; test_get_leaderboard_empty_first_page_returns_empty_list verifies early exit with 1 API call.
 - **[SESSION #55] 2 auth tests — GET /auth/me deleted user + inactive user 401 — 299→301** — test_get_me_deleted_user_returns_401 and test_get_me_inactive_user_returns_401 lock in the is_active and None checks in get_current_user.
 - **[SESSION #54] 3 backlog tests — register extra field, DELETE URL-special chars — 296→299** — Confirms Pydantic v2 ignores extra fields (password_confirm); URL-encoded slash and unencoded slash in bettor address both return 404 not 500/422; sort=accuracy was already covered so cleared that backlog item too.

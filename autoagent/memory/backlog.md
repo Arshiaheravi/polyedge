@@ -2,43 +2,37 @@
 
 ---
 
-## HIGH PRIORITY — Testing tasks (DEBUG MODE)
+## META (added at 45 work sessions — periodic de-sloppify check)
 
-*(replenish when empty — see DEBUG MODE rules in PROMPT.md)*
-
-- [ ] `get_leaderboard` non-list response (e.g. dict) on first page — `if not isinstance(page, list) or len(page) == 0: break` — the `not isinstance` branch is untested (only empty `[]` is tested); mock first page returning `{"error": "bad"}` and assert result == [] with call_count == 1; add to `test_polymarket_service.py`
-- [ ] `_normalise_profile` with `numTrades` key in raw overrides computed `trade_count` — `int(raw.get("numTrades") or raw.get("total_bets") or trade_count)` — when numTrades=5 in raw dict and trade_count=2, total_bets should be 5 not 2; add unit test `test_normalise_profile_num_trades_overrides_trade_count` to `test_polymarket_service.py`
-- [ ] `get_live_trades` missing `side` field → `side` output is `""` — `side = (t.get("side") or "").upper()` — when no side key, result["side"] is `""` not "BUY"; add `test_get_live_trades_missing_side_field_returns_empty_string` to confirm the current behavior (or identify if this is a latent bug that should default to "BUY"); add to `test_polymarket_service.py`
-
-
+- [ ] Code quality audit — scan last 5 work sessions' changed files (frontend/index.html) for cross-file coupling, test specificity degradation, and smells introduced by agent edits
 
 ---
 
-## FEATURE MODE ONLY — skip in DEBUG MODE
+## HIGH PRIORITY — UI/UX Tasks
 
-- [ ] Switch scheduler from polling to Polymarket WebSocket (/v1/ws/markets or /v1/ws/private) for real-time bet detection — current 30s poll misses the <30s information arbitrage window; WebSocket pushes trade events instantly; eliminates polling entirely; critical for VIP tier's "fastest alerts" promise (Source: docs.polymarket.com WebSocket docs 2026)
-- [ ] Add win_rate and total_trades fields to bettor leaderboard display — whale-following research confirms users need "50+ trades + 60%+ win rate" to make smart follow decisions; Polymarket API /profiles endpoint returns this data, just not surfaced in UI
-- [ ] Reduce scheduler polling to 15s for VIP tier — information arbitrage window on Polymarket is <30s; current 30s polling misses the fastest edge; VIP users pay for speed, this justifies the tier price
-- [ ] Add Alembic migration setup — current `Base.metadata.create_all()` destroys schema history; Alembic enables zero-downtime column additions and PostgreSQL migration path when scaling; add `alembic init`, create initial migration from existing models
-- [ ] Add Discord webhook notification channel — competitor analysis (Polycop) shows users explicitly request Discord alongside Telegram; add `discord_webhook_url` to AlertSetting model and `send_discord()` to notifications.py; VIP tier feature
-- [ ] Show entry price in bet notifications — competitor analysis (stand.trade) shows cost-basis visibility is top user request; include entry price and implied probability in Telegram/push notification body
-- [ ] Add "conviction score" to bettor profiles — compute ratio of directional-only bets vs. offsetting Yes/No pairs from activity data; surfaces whether a bettor has conviction or is farming liquidity rewards; unique differentiator not offered by any competitor
-- [ ] Add outbox pattern for reliable notification dispatch — currently scheduler fires notifications inline; write bet events to an `outbox` DB table atomically, then dispatch from a relay loop; prevents missed notifications on partial failure (Source: async-database-access-patterns 2026)
-- [ ] Add GET /bettors/{address}/playbook endpoint — returns latest open positions as copy-ready instructions (market, side, entry size); competitor analysis shows this is top UX gap vs. stand.trade and Polycop; FEATURE MODE ONLY
-- [ ] Add hourly leaderboard cache refresh via second APScheduler job — current /bettors makes a live Polymarket API call on every request; competitors refresh rankings hourly and serve from cache; add scheduler job every 60min to refresh top-100 into a DB-backed cache (Source: HolyPoly competitor analysis 2026)
-- [ ] Add Server-Sent Events (SSE) endpoint for real-time bet notifications in browser — current web push uses VAPID which requires browser permission; SSE via `/events/user/{id}` is simpler and doesn't require push permission; yield events from an in-process queue; clients subscribe and get instant bet alerts (Source: medium.com FastAPI SSE patterns 2026)
-- [ ] Migrate scheduler to ARQ + Redis if scaling beyond single server — APScheduler is fine for single-server; ARQ (asyncio-native) with Redis broker handles multi-worker deployments without forking; drop-in replacement for APScheduler periodic jobs (Source: davidmuraya.com ARQ vs APScheduler FastAPI 2026)
+- [ ] Hero section redesign — add compelling headline ("Copy the best Polymarket traders instantly"), subheadline, animated CTA button, and a live stats bar showing total bettors tracked / total users / bets detected today; replace any plain text landing with a visual wow moment
+- [ ] Pricing section redesign — 3 cards (Free / Basic / VIP), highlight Basic as "Most Popular" with a badge, show feature checklist per tier, add a subtle animated border on the recommended plan, make upgrade CTA buttons prominent
+- [ ] Global CSS variables & typography overhaul — define consistent color palette (:root CSS vars), upgrade font stack to Inter or similar system font, set heading scale (h1-h4), ensure 8px spacing grid is consistent across all sections
+- [ ] Animations & micro-interactions — add smooth fade-in on page load, hover lift on all cards, button press feedback (scale down), smooth section transitions; use CSS transitions only (no heavy JS animation libs)
+- [ ] Generate hero background image using Nano Banana API and wire into hero section with CSS fallback gradient
+- [ ] Empty state illustrations — add helpful illustrated empty states for: no follows yet, no alerts configured, leaderboard loading; use CSS-generated or Nano Banana API
+- [ ] Mobile responsiveness audit — test every screen at 375px width, fix any horizontal overflow, ensure nav/header works on mobile, make cards stack vertically, make buttons full-width on mobile
+- [ ] Bettor profile page — add click-through from leaderboard cards to a profile page showing bettor stats, recent bets timeline, and a prominent Follow/Unfollow CTA
+- [ ] Login/Register modal polish — clean up form design, add smooth open/close animation, add password visibility toggle, improve error message styling (red inline, not alert box)
 
 ---
 
-## MEDIUM PRIORITY — Frontend E2E: remaining pages
+## MEDIUM PRIORITY
 
-- [ ] Playwright: bettor profile page — NOTE: no click-through exists yet in the frontend (leaderboard rows have no onclick). This task requires first building the UI navigation to /bettors/{address}, THEN adding the Playwright check. Skip until the feature is built.
+- [ ] Notification/alerts settings page redesign — replace raw form with toggle switches, add status indicators (connected/disconnected) for Telegram and web push, add a "Test notification" button
+- [ ] Nav/header improvements — add active state to nav links, smooth scroll behavior, add a subtle top progress bar on page load
+- [ ] Loading skeleton screens — replace any spinner with skeleton placeholder cards while data loads (leaderboard, follows list)
+- [ ] Trust signals section — add "Built on real Polymarket data", show live bet count ticker, add a "How it works" 3-step section with icons
+- [ ] Color-coded profit/loss — green for positive P&L, red for negative, consistent across all cards and tables
 
 ---
 
-## LOW PRIORITY — Blocked on external input
+## BLOCKED — Needs User Action
 
-- [ ] Configure real Stripe price IDs (STRIPE_BASIC_PRICE_ID, STRIPE_VIP_PRICE_ID) so payments work end-to-end — requires Seb to update .env
-- [ ] Set up git remote so commits can be pushed — requires Seb to create remote repo
-- [ ] Configure TELEGRAM_BOT_TOKEN so live Telegram notifications work — requires Seb to create a bot via @BotFather
+- [ ] Configure real Stripe price IDs (STRIPE_BASIC_PRICE_ID, STRIPE_VIP_PRICE_ID) — requires user to update backend/.env
+- [ ] Configure TELEGRAM_BOT_TOKEN — requires user to create bot via @BotFather

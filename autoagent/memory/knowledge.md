@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #58 Reflexion — 2026-03-24
+ACCOMPLISHED: Converted leaderboard from table (lb-table) to responsive CSS card grid (lb-grid) in both browse and dashboard views. Added CSS (.lb-grid, .lb-card, .lb-stat, .lb-rank-badge), renderBettorCard() and renderSkeletonCards() JS functions, updated filterLeaderboard() to handle card divs via data-name/data-addr attributes, updated loadLeaderboard() and loadBrowseLeaderboard(). Also updated Playwright check script to recognise new lb-card-name class and navigate to browse view before checking. 303 tests stable, 9 Playwright checks pass.
+FAILED: Two Playwright check failures on first run — (1) CHECK 3 looked for "bettor-row"/"bettor-name" classes which don't exist in new card HTML (new cards use lb-card-name); (2) CHECK 7 found empty browse-leaderboard-body because old tbody had a skeleton <tr> as initial HTML but new grid starts empty until showView('browse') is called. Fixed by updating check strings to include lb-card-name and navigating to browse view before checking.
+RULE: [2026-03-24] When converting from table rows to card divs, update ALL consumers: (1) Playwright checks that test for class names; (2) filterLeaderboard() which iterates 'tr' elements; (3) empty-state HTML (tr/td wrapper → plain div). Also: any Playwright check that reads a hidden view's content must first navigate to that view — empty div as initial state means the check reads nothing.
+
 ### Session #57 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 3 tests to test_polymarket_service.py — (1) added `assert result["type"] == "BUY"` to existing test_normalise_bet_missing_fields (the `raw.get("side") or "BUY"` guard was the only untested field in the missing-fields test); (2) test_get_live_trades_empty_proxy_wallet_generates_anon_name: proxyWallet="" + no name/pseudonym → name=="anon" via `addr[:8] + "..." if addr else "anon"`; (3) test_get_leaderboard_empty_first_page_returns_empty_list: mock returning [] on first call → result==[], call_count==1. 301→303 tests.
 FAILED: Nothing failed. All 3 tests passed on first run.

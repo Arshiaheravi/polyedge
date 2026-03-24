@@ -1268,5 +1268,26 @@
       "failures": 0,
       "notes": "server not running"
     }
+  },
+  {
+    "session": 58,
+    "date": "2026-03-24",
+    "time": "23:59",
+    "type": "work",
+    "summary": "Converted leaderboard table rows to a responsive card grid — each card shows rank badge, avatar, profit, ROI %, volume, and a follow button with hover lift/glow; makes the leaderboard feel like a real trading platform",
+    "files": [
+      "frontend/index.html"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 9,
+      "failures": 0,
+      "notes": "all 9 checks pass including card rendering in both browse and dashboard views"
+    }
   }
 ]

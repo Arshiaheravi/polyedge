@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 58)
+DONE: Converted leaderboard table rows to a responsive card grid — each card shows rank badge, avatar, bettor name, profit (USD), ROI %, volume, and a follow button with hover lift + green glow effect. Works in both browse (public) and dashboard (authenticated) views.
+IMPACT: Leaderboard now feels like a real trading platform — cards are visually scannable with profit/ROI prominently displayed instead of a plain data table. Follow CTA is prominent and full-width on each card.
+FILES: frontend/index.html
+
 ## 2026-03-24 — TESTING (Session 57)
 DONE: Added 3 polymarket service tests — (1) assert type=="BUY" in test_normalise_bet_missing_fields (the `raw.get("side") or "BUY"` guard was untested); (2) test_get_live_trades_empty_proxy_wallet_generates_anon_name (proxyWallet="" + no name → "anon"); (3) test_get_leaderboard_empty_first_page_returns_empty_list ([] first page breaks immediately, 1 API call). 301→303 tests.
 IMPACT: Locks in 3 defensive paths in polymarket.py normalization — the "BUY" default for missing side, the "anon" fallback for anonymous wallets, and the early-exit for empty leaderboard pages. Regressions in any of these guards would now be caught immediately.
