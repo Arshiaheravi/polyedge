@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **260 passed** (as of 2026-03-24, session 37 — DELETE shape, checkout shape, dual-channel dispatch)
+- Test count: **258 passed** (as of 2026-03-24, session 38 — De-Sloppify removed 2 duplicate tier/limit tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #38 Reflexion — 2026-03-24 (De-Sloppify Audit)
+ACCOMPLISHED: Ran De-Sloppify audit across sessions 32–37 changed files. Found 3 issues: (1) dead module-level var `BETTOR_C` in test_follows.py — defined at top but never referenced in any test; (2) two duplicate tier/limit tests in test_follows.py (`test_list_follows_basic_tier_reports_tier_and_limit`, `test_list_follows_vip_tier_reports_tier_and_limit`) that are exact duplicates of the parametrized `test_follows_always_returns_tier_and_limit` invariant already in test_hypothesis_invariants.py; (3) `_activity_cache` in follows.py grows unboundedly (logged to tech_debt.md). Fixed 1+2, logged 3. 260→258.
+FAILED: Nothing failed.
+RULE: [2026-03-24] Agent-written tests accumulate duplicate parametrized coverage across files over time. When a parametrized invariant test is added to test_hypothesis_invariants.py covering all tier variants, the matching per-tier tests in test_follows.py become redundant. De-Sloppify pattern: after each De-Sloppify session, grep each individual test name across all test_*.py files and check if the same scenario is already covered by a parametrized or invariant test.
+RULE: [2026-03-24] Dead module-level constants in test files accumulate silently (e.g., `BETTOR_C = "0xghi789"` defined but never used). Periodic audit: for each `^[A-Z_]+ =` module-level variable in test_*.py, verify it appears at least once outside its definition line.
 
 ### Session #37 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 tests. Found that 2 of 5 HIGH PRIORITY backlog items (invoice.payment_failed, sort=volume) were already covered — grepped and skipped per knowledge.md rule. Real gaps found: DELETE /follows 204 had no `resp.content == b""` assertion; DELETE 404 had no detail message check; POST /payments/checkout response key set had no complete contract assertion; scheduler had no test for both channels enabled simultaneously; scheduler had no test for web_push-only (telegram_enabled=False) path. All 5 passed first run. 255→260.

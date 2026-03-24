@@ -827,7 +827,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session — no code changes"
+      "notes": "meta session \u00e2\u20ac\u201d no code changes"
     }
   },
   {
@@ -835,13 +835,43 @@
     "date": "2026-03-24",
     "time": "07:00",
     "type": "work",
-    "summary": "Added 5 tests locking in response shape contracts and dual-channel notification dispatch — DELETE /follows 204 has no body, 404 returns exact 'Follow not found' detail, checkout response key is exactly 'checkout_url', scheduler fires both Telegram and web push simultaneously when both are enabled",
+    "summary": "Added 5 tests locking in response shape contracts and dual-channel notification dispatch \u00e2\u20ac\u201d DELETE /follows 204 has no body, 404 returns exact 'Follow not found' detail, checkout response key is exactly 'checkout_url', scheduler fires both Telegram and web push simultaneously when both are enabled",
     "files": [
       "backend/tests/test_follows.py",
       "backend/tests/test_payments.py",
       "backend/tests/test_scheduler.py"
     ],
-    "tests": {"before": 255, "after": 260, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "server not running"}
+    "tests": {
+      "before": 255,
+      "after": 260,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "server not running"
+    }
+  },
+  {
+    "session": 38,
+    "date": "2026-03-24",
+    "time": "08:00",
+    "type": "work",
+    "summary": "Removed 2 duplicate per-tier tests in test_follows.py that were already covered by parametrized invariant tests in test_hypothesis_invariants.py, and deleted unused BETTOR_C constant \u2014 keeps test suite clean as coverage accumulates",
+    "files": [
+      "backend/tests/test_follows.py"
+    ],
+    "tests": {
+      "before": 260,
+      "after": 258,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend code changed"
+    }
   }
 ]

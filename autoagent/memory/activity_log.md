@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — DE-SLOPPIFY AUDIT (Session 38)
+DONE: Ran De-Sloppify audit across sessions 32–37 changed files — found and fixed 3 issues: (1) dead module-level constant BETTOR_C in test_follows.py never used in any test; (2) test_list_follows_basic_tier_reports_tier_and_limit and test_list_follows_vip_tier_reports_tier_and_limit were exact duplicates of the parametrized test_follows_always_returns_tier_and_limit invariant in test_hypothesis_invariants.py; (3) _activity_cache in routes/follows.py grows unboundedly (no eviction, logged to tech_debt.md). 260→258 tests.
+IMPACT: Removes test duplication that will accumulate into noise — when both parametrized invariants AND individual tests exist for the same logic, the individual tests create false confidence that branches are "double-covered" while actually reducing the signal-to-noise ratio for test failures. Dead vars are micro-clutter that slows down future readers.
+FILES: backend/tests/test_follows.py
+
 ## 2026-03-24 07:00 — TESTING (Session 37)
 DONE: Added 5 contract and dispatch tests — (1) DELETE /follows 204 response body is empty bytes; (2) DELETE /follows 404 detail is exactly "Follow not found"; (3) POST /payments/checkout response key set is exactly {"checkout_url"}; (4) Scheduler: user with BOTH telegram_enabled AND web_push_enabled fires both channels simultaneously (dispatch gets both telegram_chat_id and push_subscription_json set); (5) Scheduler: web_push-only path (telegram_enabled=False) sets push_subscription_json but telegram_chat_id=None. Two backlog items (invoice.payment_failed, sort=volume) were already covered by prior sessions — grepped and skipped. 255→260 tests.
 IMPACT: Response shape contracts for DELETE and checkout are now locked in — any future change that adds unexpected keys or returns wrong body will be caught. Dual-channel scheduler dispatch was the only remaining untested notification path; now all single and combined channel combinations are covered.
