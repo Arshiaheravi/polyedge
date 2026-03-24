@@ -21,18 +21,18 @@ Writing tests first forces you to clarify intent before you lock it in code.
 
 ## PATCHING — MOST COMMON SOURCE OF FAILURES
 - ALWAYS patch at the namespace where the name is looked up
-- If route does `from stockcards.services.X import func` → patch `stockcards.routes.routefile.func`
-- NOT `stockcards.services.X.func` — that's the wrong binding
-- Patch the guard function, not the third-party symbol
-  - CORRECT: patch `_get_resend_module`
-  - WRONG: patch `resend.Emails.send`
+- If route does `from app.services.polymarket import get_leaderboard` → patch `app.routes.bettors.get_leaderboard`
+- NOT `app.services.polymarket.get_leaderboard` — that's the wrong binding
+- Patch the function at the callsite, not the source module
+  - CORRECT: `patch("app.routes.bettors.get_leaderboard", new_callable=AsyncMock)`
+  - WRONG: `patch("app.services.polymarket.get_leaderboard", ...)`
 
 ### Intra-function imports (APPLIES TO SCHEDULER/SERVICE, NOT JUST ROUTES)
 When ANY function (route, service, scheduler, job) uses `from module import func` INSIDE the function body:
 - The import runs at call time, looking up `func` from `module` directly
 - The calling module (e.g. `scheduler.py`) NEVER holds a reference to `func`
-- CORRECT: patch `stockcards.services.email_service.send_welcome_email_2`
-- WRONG: patch `stockcards.services.scheduler.send_welcome_email_2` (doesn't exist)
+- CORRECT: patch `app.services.notifications.send_telegram`
+- WRONG: patch `app.services.scheduler.send_telegram` (doesn't exist there)
 - Rule: trace the import statement to its origin module, patch there
 
 ### Float formatting in test assertions
