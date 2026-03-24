@@ -325,3 +325,15 @@ def test_register_response_has_all_7_fields(client):
     for field in ("id", "email", "name", "subscription_tier",
                   "telegram_verified", "telegram_chat_id", "created_at"):
         assert field in user, f"register response missing field: {field}"
+
+
+def test_register_with_extra_password_confirm_field_succeeds(client):
+    """RegisterRequest has no password_confirm field — Pydantic v2 ignores extra fields
+    by default, so sending password_confirm alongside valid fields must return 201."""
+    resp = client.post("/auth/register", json={
+        "email": "extrapwconfirm@example.com",
+        "password": "pass123",
+        "name": "Extra",
+        "password_confirm": "pass123",
+    })
+    assert resp.status_code == 201

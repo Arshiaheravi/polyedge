@@ -234,6 +234,20 @@ def test_vip_tier_can_add_six_plus_follows(client, db, auth_headers, registered_
     assert len(data["follows"]) == 6
 
 
+def test_delete_follow_url_encoded_slash_in_address_returns_404(client, auth_headers):
+    """DELETE /follows/0x%2Ftest — TestClient sends the literal %2F in the path; Starlette
+    decodes it to '/' giving bettor_address='0x/test'. No follow exists → 404, not 500 or 422."""
+    resp = client.delete("/follows/0x%2Ftest", headers=auth_headers)
+    assert resp.status_code == 404
+
+
+def test_delete_follow_unencoded_slash_in_path_returns_404(client, auth_headers):
+    """DELETE /follows/0x/test — unencoded slash creates an extra path segment.
+    Route /follows/{bettor_address} is single-segment; multi-segment path returns 404, not 500 or 422."""
+    resp = client.delete("/follows/0x/test", headers=auth_headers)
+    assert resp.status_code == 404
+
+
 def test_delete_follow_with_multiple_follows_removes_only_correct_one(client, db, auth_headers, registered_user):
     """DELETE /follows/{address} with 2 follows must remove only the targeted address.
     Guards against accidental cascade deletes that would remove all follows."""
