@@ -615,6 +615,19 @@
     .empty-state h3 { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
     .empty-state p { font-size: 14px; }
 
+    /* Illustrated empty state */
+    .es-illustration {
+      width: 88px; height: 88px; margin: 0 auto 24px;
+      background: rgba(0,201,122,0.06);
+      border: 1px solid rgba(0,201,122,0.18);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .es-illustration svg { width: 48px; height: 48px; }
+    .es-illustration-blue { background: rgba(74,158,255,0.06); border-color: rgba(74,158,255,0.18); }
+    .es-illustration-gold { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.18); }
+    .es-card { background: var(--card2); border: 1px solid var(--border); border-radius: var(--radius); }
+
     /* Upgrade modal */
     .upgrade-plan-grid { display: grid; gap: 12px; margin-top: 16px; }
     .upgrade-plan-card { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 18px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
@@ -1161,11 +1174,20 @@
       </div>
 
       <!-- Empty state -->
-      <div id="follows-empty" class="empty-state hidden">
-        <div class="icon">&#11088;</div>
-        <h3>No bettors followed yet</h3>
-        <p>Go to the Leaderboard, find a profitable bettor, and click <strong>Follow</strong>. Their live open bets will appear here so you can copy them.</p>
-        <button class="btn btn-primary mt-4" onclick="showTab('leaderboard')">Browse Leaderboard</button>
+      <div id="follows-empty" class="empty-state es-card hidden">
+        <div class="es-illustration">
+          <!-- chart line + follow badge -->
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <polyline points="5,42 14,30 22,34 32,18 43,10" stroke="#00c97a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="43" cy="10" r="3.5" fill="#00c97a"/>
+            <circle cx="40" cy="40" r="9" fill="#00c97a"/>
+            <line x1="40" y1="35" x2="40" y2="45" stroke="#09090b" stroke-width="2.2" stroke-linecap="round"/>
+            <line x1="35" y1="40" x2="45" y2="40" stroke="#09090b" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>No traders followed yet</h3>
+        <p style="max-width:340px;margin:0 auto 20px;">Browse the leaderboard, find a top performer, and click <strong style="color:var(--text);">Follow</strong> — their live bets appear here so you can copy at the same price.</p>
+        <button class="btn btn-primary" onclick="showTab('leaderboard')">Browse Top Traders</button>
       </div>
 
       <!-- Live activity feed (per bettor) -->
@@ -1195,6 +1217,22 @@
             <strong style="color:var(--text);">Telegram</strong> — message on your phone via the Telegram app (Basic/VIP) &nbsp;·&nbsp;
             <strong style="color:var(--text);">SMS</strong> — text message directly to your phone number (VIP only)
           </div>
+        </div>
+      </div>
+
+      <!-- No notifications active state (shown via JS when all toggles off) -->
+      <div id="alerts-no-notifications" class="hidden" style="margin-bottom:20px;">
+        <div class="empty-state es-card" style="padding:32px 20px;">
+          <div class="es-illustration es-illustration-blue">
+            <!-- bell with lightning -->
+            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M26 7C18.5 7 13 13.8 13 21V35L9 39H43L39 35V21C39 13.8 33.5 7 26 7Z" stroke="#4A9EFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M22 39C22 42 23.8 45 26 45C28.2 45 30 42 30 39" stroke="#4A9EFF" stroke-width="2" stroke-linecap="round"/>
+              <path d="M28 14L23 23H27L24 32" stroke="#4A9EFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>No notifications active</h3>
+          <p style="max-width:320px;margin:0 auto;">Enable at least one channel below — so you're alerted the second a followed bettor bets and can copy it before the odds move.</p>
         </div>
       </div>
 
@@ -1771,7 +1809,7 @@ async function loadLeaderboard(sort = currentSort, period = currentPeriod) {
     }
     container.innerHTML = bettors.map((b, i) => renderBettorCard(b, i)).join('');
   } catch (e) {
-    container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p></p></div>';
+    container.innerHTML = '<div class="empty-state es-card" style="grid-column:1/-1;"><div class="es-illustration es-illustration-gold"><svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M26 5L3 47H49L26 5Z" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="26" y1="21" x2="26" y2="33" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/><circle cx="26" cy="40" r="2.2" fill="#f59e0b"/></svg></div><h3>Could not load leaderboard</h3><p></p></div>';
     container.querySelector('.empty-state p').textContent = e.message;
   }
 }
@@ -1945,7 +1983,7 @@ async function loadBrowseLeaderboard(sort = browseSort, period = browsePeriod) {
     }
     container.innerHTML = bettors.map((b, i) => renderBettorCard(b, i)).join('');
   } catch (e) {
-    container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="icon">&#9888;</div><h3>Could not load leaderboard</h3><p></p></div>';
+    container.innerHTML = '<div class="empty-state es-card" style="grid-column:1/-1;"><div class="es-illustration es-illustration-gold"><svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M26 5L3 47H49L26 5Z" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="26" y1="21" x2="26" y2="33" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/><circle cx="26" cy="40" r="2.2" fill="#f59e0b"/></svg></div><h3>Could not load leaderboard</h3><p></p></div>';
     container.querySelector('.empty-state p').textContent = e.message;
   }
 }
@@ -2289,7 +2327,17 @@ async function loadAlertSettings() {
       document.getElementById('sms-verified-status').classList.remove('hidden');
       document.getElementById('sms-verified-number').textContent = alertSettings.phone_number;
     }
+    updateAlertsNoneState();
   } catch {}
+}
+
+function updateAlertsNoneState() {
+  const el = document.getElementById('alerts-no-notifications');
+  if (!el) return;
+  const pushOn = document.getElementById('toggle-push')?.classList.contains('on');
+  const tgOn   = document.getElementById('toggle-telegram')?.classList.contains('on');
+  const smsOn  = document.getElementById('toggle-sms')?.classList.contains('on');
+  el.classList.toggle('hidden', pushOn || tgOn || smsOn);
 }
 
 function setToggle(id, on) {
@@ -2306,12 +2354,14 @@ async function toggleWebPush() {
     if (perm !== 'granted') { toast('Notification permission denied', 'error'); return; }
   }
   setToggle('toggle-push', newVal);
+  updateAlertsNoneState();
   try {
     const res = await apiFetch('/alerts/settings', { method: 'PUT', body: JSON.stringify({ web_push_enabled: newVal }) });
     if (!res.ok) throw new Error('Failed to update');
     toast(newVal ? 'Web push enabled' : 'Web push disabled', 'success');
   } catch (e) {
     setToggle('toggle-push', !newVal);
+    updateAlertsNoneState();
     toast(e.message, 'error');
   }
 }
@@ -2321,12 +2371,14 @@ async function toggleTelegram() {
   const newVal = !el.classList.contains('on');
   if (newVal && currentUser?.subscription_tier === 'free') { openUpgradeModal(); return; }
   setToggle('toggle-telegram', newVal);
+  updateAlertsNoneState();
   try {
     const res = await apiFetch('/alerts/settings', { method: 'PUT', body: JSON.stringify({ telegram_enabled: newVal }) });
     if (!res.ok) { const d = await res.json(); throw new Error(d.detail || 'Failed'); }
     toast(newVal ? 'Telegram alerts enabled' : 'Telegram alerts disabled', 'success');
   } catch (e) {
     setToggle('toggle-telegram', !newVal);
+    updateAlertsNoneState();
     toast(e.message, 'error');
   }
 }
@@ -2375,12 +2427,14 @@ async function toggleSms() {
     return;
   }
   setToggle('toggle-sms', newVal);
+  updateAlertsNoneState();
   try {
     const res = await apiFetch('/alerts/settings', { method: 'PUT', body: JSON.stringify({ sms_enabled: newVal }) });
     if (!res.ok) { const d = await res.json(); throw new Error(d.detail || 'Failed'); }
     toast(newVal ? 'SMS alerts enabled' : 'SMS alerts disabled', 'success');
   } catch (e) {
     setToggle('toggle-sms', !newVal);
+    updateAlertsNoneState();
     toast(e.message, 'error');
   }
 }
