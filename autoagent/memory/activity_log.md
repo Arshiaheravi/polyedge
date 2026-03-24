@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — AUDIT (Session 67)
+DONE: Code quality audit of sessions 62–66 changes — found and fixed XSS in toast() (msg was injected via innerHTML; API-sourced bettor names and server error detail strings are now rendered via textContent). Deleted dead renderBettorRow() and renderSkeletonRows() (46 lines) — both functions were unreachable since session 58 converted the leaderboard from a table to a card grid. 303 tests stable, 9/9 Playwright checks pass.
+IMPACT: Eliminates XSS attack surface where a malicious Polymarket API response with an HTML-injected bettor name or crafted error string in toast() could execute arbitrary JS in a visitor's browser. Dead code removal makes the file 46 lines leaner and clearer for future sessions.
+FILES: frontend/index.html
+
 ## 2026-03-24 — META SESSION (Session 66)
 IMPROVED: (1) Created `autoagent/playwright_registry.py` — a persistent 9-check PolyEdge Playwright suite covering hero, live ticker, nav, pricing, leaderboard, follows empty state, CSS variables, and JS errors; updated playwright.md to use registry as base (copy → add session checks → copy back on success). (2) Added external asset API rule to design.md — check .env before calling NovaBanana/similar, document in ASSETS_NEEDED.md and skip if unconfigured. (3) Reordered backlog: mobile responsiveness audit moved to top of HIGH PRIORITY with rationale (~60% mobile traffic).
 PATTERNS FOUND: Sessions 60→65 Playwright count regressed 9→7 because each session rewrites tmp_check.py from generic template; PolyEdge-specific checks from earlier sessions are lost. Session 64 wasted turns attempting NovaBanana API with a 401 before falling back to CSS — no pre-check rule existed.

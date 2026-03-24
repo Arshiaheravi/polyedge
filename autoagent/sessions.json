@@ -1420,5 +1420,12 @@
     "files": ["frontend/index.html"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 7, "failures": 0, "notes": "follows empty state SVG verified, no JS errors"}
+  },
+  {
+    "session": 67, "date": "2026-03-24", "time": "00:00", "type": "work",
+    "summary": "Code quality audit — fixed XSS in toast() where API-sourced bettor names and server error strings were injected via innerHTML (now uses textContent); deleted 46 lines of dead code (renderBettorRow + renderSkeletonRows, unreachable since session 58)",
+    "files": ["frontend/index.html"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 9, "failures": 0, "notes": "9/9 registry checks pass, no JS errors"}
   }
 ]

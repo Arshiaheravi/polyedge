@@ -45,6 +45,12 @@
 
 ## Session Reflexions
 
+### Session #67 Reflexion — 2026-03-24
+ACCOMPLISHED: Code quality audit of sessions 62–66 changes in frontend/index.html. Fixed XSS: toast() was using innerHTML with a msg param that callers pass API-sourced bettor names and server `data.detail` error strings via e.message. Replaced with a DOM-built approach: iconSpan.innerHTML = hardcoded entity (safe), msgSpan.textContent = msg (safe). Deleted 46 lines of dead code: renderBettorRow() and renderSkeletonRows() — both were never called; they predated the session 58 table→card grid conversion. 303 tests stable, 9/9 Playwright pass.
+FAILED: First full test run showed 5 failures + 7 errors — traced to DB lock contention because the backend server (port 8002) was still running while pytest used its own in-memory SQLite. Killing the server first gives 303/303 pass.
+RULE: [2026-03-24] Never run `py -m pytest tests/` while the live uvicorn backend is also running on the same machine — DB lock contention causes intermittent SQLAlchemy OperationalError failures. Always kill background servers before running the full test suite.
+RULE: [2026-03-24] Dead code audit pattern: after any session that converts a UI element from one rendering strategy to another (table→cards, list→grid), grep for the OLD render function name in the file — if zero callers remain, delete it immediately. Renderer replacements consistently leave the old function unreachable.
+
 ### Session #65 Reflexion — 2026-03-24
 ACCOMPLISHED: Empty state illustrations — three inline SVG illustrations added: (1) follows page chart+follow-badge SVG; (2) alerts no-notifications banner with bell+lightning SVG that toggles based on all-channels-off state; (3) leaderboard error warning triangle SVG. Added .es-illustration CSS class (88px circle, 3 tint variants). Added updateAlertsNoneState() JS helper called from loadAlertSettings + all 3 toggle functions. 303 tests stable, 7/7 Playwright checks pass.
 FAILED: Playwright check 5 initially failed because it looked for .lb-card/.skeleton which only appear after API data loads, not on initial page load. Fixed by targeting #preview-leaderboard which is immediately visible on the landing page.
