@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #60 Reflexion — 2026-03-24
+ACCOMPLISHED: Hero redesign — added "Bets Detected Today" 4th stat (animates 0→1247, then +1 every 8s), CTA shimmer sweep animation via `.btn-hero::after` pseudo-element, social proof "Join 847+ traders" line. Fixed last XSS gap: `buildTickerItem` used `t.name` and `t.market` raw in innerHTML — wrapped in `escapeHtml()`. Added null guard for `t.market` (was `t.market.length` which crashes if undefined). 303 tests stable, 9/9 Playwright pass.
+FAILED: Nothing failed — all edits were clean on first try.
+RULE: [2026-03-24] When session 59 fixed XSS in renderBettorCard, buildTickerItem was missed because it's not a "renderXxx" function — it's a template helper. Lesson: after fixing XSS in a file, grep for ALL innerHTML template literals with API-sourced variables, not just renderXxx functions. Full grep: `grep -n 'innerHTML.*\${' file.html`.
+
 ### Session #59 Reflexion — 2026-03-24
 ACCOMPLISHED: META audit of sessions 54-58. Found 6 XSS injection points in renderBettorCard (new session 58 code) and pre-existing renderBettorRow — bettor names from Polymarket API inserted raw into innerHTML, filterLeaderboard's no-results message used `${query}` in innerHTML, error state used `${e.message}` in innerHTML. Fixed by adding escapeHtml() and applying it to all name/addr/message innerHTML insertions. Also removed ~25 lines of dead legacy table-row fallback code in filterLeaderboard. 303 tests stable, 9/9 Playwright pass.
 FAILED: Nothing failed — all fixes were clean on first try.

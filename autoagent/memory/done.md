@@ -55,3 +55,6 @@
 
 ## 2026-03-24
 - **[SESSION #55] GET /auth/me deleted + inactive user 401 tests** — verified get_current_user guards (user is None / is_active=False) return 401; 299→301 tests
+
+## 2026-03-24
+- **[SESSION #60] Hero section redesign** — Added "Bets Detected Today" live counter, CTA shimmer animation, social proof line, fixed XSS in live ticker buildTickerItem

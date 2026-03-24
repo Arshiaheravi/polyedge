@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 60)
+DONE: Hero section redesign — added "Bets Detected Today" 4th live stat (animates 0→1247 on scroll, then +1 every 8s); added CTA shimmer sweep animation on primary button; added "Join 847+ traders" social proof line above the stats strip; fixed XSS in buildTickerItem (t.name and market were injected raw into innerHTML — now wrapped in escapeHtml). 303 tests stable, 9/9 Playwright checks pass.
+IMPACT: Hero now has all 4 conversion signals above the fold — live activity counter creates urgency, shimmer CTA draws the eye, social proof reduces friction to sign up. XSS fix closes the last innerHTML injection gap in the live ticker that was missed in session 59.
+FILES: frontend/index.html
+
 ## 2026-03-24 — META/AUDIT (Session 59)
 DONE: Code quality audit of sessions 54-58 changes — found and fixed 6 XSS vulnerabilities in frontend/index.html introduced when renderBettorCard was added in session 58. Added escapeHtml() utility; applied it to name, addr in all innerHTML contexts (renderBettorCard, renderBettorRow, follows card); switched filterLeaderboard no-results and error state messages to use textContent. Removed dead legacy table-row fallback in filterLeaderboard (25 lines of dead code). 303 tests stable, 9/9 Playwright checks pass.
 IMPACT: Eliminates XSS attack surface where an adversarial Polymarket API response with an HTML-injected bettor name could execute arbitrary JS in a visitor's browser. Also removed dead code that confused future readers.

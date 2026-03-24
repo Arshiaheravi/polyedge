@@ -1310,5 +1310,26 @@
       "failures": 0,
       "notes": "all 9 checks pass after XSS fixes"
     }
+  },
+  {
+    "session": 60,
+    "date": "2026-03-24",
+    "time": "23:59",
+    "type": "work",
+    "summary": "Hero redesign — added live Bets Detected Today counter that animates up and slowly increments, shimmer sweep animation on primary CTA, social proof line showing 847+ traders, and fixed the last XSS gap in the live ticker buildTickerItem function",
+    "files": [
+      "frontend/index.html"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 9,
+      "failures": 0,
+      "notes": "all 9 checks pass including 4-stat strip, btn-hero, and social proof"
+    }
   }
 ]

@@ -4,7 +4,6 @@
 
 ## HIGH PRIORITY — UI/UX Tasks
 
-- [ ] Hero section redesign — add compelling headline ("Copy the best Polymarket traders instantly"), subheadline, animated CTA button, and a live stats bar showing total bettors tracked / total users / bets detected today; replace any plain text landing with a visual wow moment
 - [ ] Pricing section redesign — 3 cards (Free / Basic / VIP), highlight Basic as "Most Popular" with a badge, show feature checklist per tier, add a subtle animated border on the recommended plan, make upgrade CTA buttons prominent
 - [ ] Global CSS variables & typography overhaul — define consistent color palette (:root CSS vars), upgrade font stack to Inter or similar system font, set heading scale (h1-h4), ensure 8px spacing grid is consistent across all sections
 - [ ] Animations & micro-interactions — add smooth fade-in on page load, hover lift on all cards, button press feedback (scale down), smooth section transitions; use CSS transitions only (no heavy JS animation libs)
