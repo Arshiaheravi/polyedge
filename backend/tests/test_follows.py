@@ -197,6 +197,20 @@ def test_delete_follow_not_found_detail_message(client, auth_headers):
 
 
 
+def test_post_follows_unknown_subscription_tier_is_blocked(client, db, auth_headers, registered_user):
+    """A user with an unrecognised subscription tier (not free/basic/vip) can never add a follow.
+    TIER_LIMITS.get(unknown_tier, 0) returns 0, so current_count (0) >= max_follows (0) is True
+    and the route raises 403 immediately."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "enterprise"  # not in TIER_LIMITS
+    db.commit()
+
+    resp = client.post("/follows", json={"bettor_address": "0xtest_unknown_tier"}, headers=auth_headers)
+    assert resp.status_code == 403
+
+
 def test_vip_tier_can_add_six_plus_follows(client, db, auth_headers, registered_user):
     """VIP tier has no artificial cap — 6+ follows succeed.
     TIER_LIMITS["vip"] = 999999 means any real-world usage is well within limit.

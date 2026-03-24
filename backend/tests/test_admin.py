@@ -149,6 +149,34 @@ def test_admin_stats_zero_users_all_counts_zero(client):
     assert data["mrr_estimate"] == 0.0
 
 
+def test_admin_stats_full_nested_shape_contract(client):
+    """GET /admin/stats response must have the exact nested shape with correct types.
+    Contract: users.{total,free,basic,vip} are ints; follows.total is int;
+    bet_events.{total,notified} are ints; mrr_estimate is a float/int (numeric)."""
+    from app.config import get_settings
+    pw = get_settings().admin_password
+
+    resp = client.get("/admin/stats", headers={"x-admin-password": pw})
+    assert resp.status_code == 200
+    data = resp.json()
+
+    # users nested shape
+    assert isinstance(data["users"]["total"], int)
+    assert isinstance(data["users"]["free"], int)
+    assert isinstance(data["users"]["basic"], int)
+    assert isinstance(data["users"]["vip"], int)
+
+    # follows nested shape
+    assert isinstance(data["follows"]["total"], int)
+
+    # bet_events nested shape
+    assert isinstance(data["bet_events"]["total"], int)
+    assert isinstance(data["bet_events"]["notified"], int)
+
+    # mrr_estimate is numeric
+    assert isinstance(data["mrr_estimate"], (int, float))
+
+
 def test_admin_stats_mrr_multi_user_decimal_precision(client, db):
     """MRR with 3 basic + 2 VIP uses float arithmetic (not integer rounding).
     3*4.99 + 2*9.99 = 14.97 + 19.98 = 34.95 — must not be rounded to an integer."""

@@ -428,6 +428,29 @@ async def test_get_live_trades_non_list_response_returns_empty():
     assert result == []
 
 
+# ── get_active_positions non-list response ────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_active_positions_non_list_response_returns_empty():
+    """When API returns a non-list (e.g. dict), get_active_positions returns []."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {"error": "unexpected format"}
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest")
+
+    assert result == []
+
+
 # ── get_recent_bets "activity" key fallback ───────────────────────────────────
 
 @pytest.mark.asyncio
