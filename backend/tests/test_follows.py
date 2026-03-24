@@ -234,6 +234,30 @@ def test_vip_tier_can_add_six_plus_follows(client, db, auth_headers, registered_
     assert len(data["follows"]) == 6
 
 
+def test_delete_follow_with_multiple_follows_removes_only_correct_one(client, db, auth_headers, registered_user):
+    """DELETE /follows/{address} with 2 follows must remove only the targeted address.
+    Guards against accidental cascade deletes that would remove all follows."""
+    from app.models import User
+
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"  # basic allows 5 follows
+    db.commit()
+
+    client.post("/follows", json={"bettor_address": "0xaaa_multi", "bettor_name": "alpha"},
+                headers=auth_headers)
+    client.post("/follows", json={"bettor_address": "0xbbb_multi", "bettor_name": "beta"},
+                headers=auth_headers)
+
+    del_resp = client.delete("/follows/0xaaa_multi", headers=auth_headers)
+    assert del_resp.status_code == 204
+
+    list_resp = client.get("/follows", headers=auth_headers)
+    addresses = [f["bettor_address"] for f in list_resp.json()["follows"]]
+    assert "0xbbb_multi" in addresses
+    assert "0xaaa_multi" not in addresses
+
+
 def test_get_follows_unknown_tier_returns_limit_zero(client, db, auth_headers, registered_user):
     """GET /follows for a user with an unrecognised tier returns limit=0.
     TIER_LIMITS.get("enterprise", 0) == 0; tier field reflects the actual DB value."""

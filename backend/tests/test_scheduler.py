@@ -657,6 +657,34 @@ def test_poll_bets_dispatches_sms_for_vip_user(sched_db):
     assert call_kwargs["sms_enabled"] is True
 
 
+def test_poll_bets_last_check_updated_after_poll(sched_db):
+    """After _poll_bets() completes, scheduler._last_check must be updated to
+    the check_time captured at the start of the poll — not left at the
+    autouse-reset value of datetime(2000, 1, 1)."""
+    session, Session = sched_db
+
+    user = User(
+        email="lcupdate@x.com", hashed_password=hash_password("p"),
+        name="LCUser", subscription_tier="basic",
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xlcaddr", bettor_name="whale"))
+    session.commit()
+
+    # Capture a lower bound for the expected _last_check value
+    before_poll = datetime.now(tz=timezone.utc)
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[])):
+        run(_poll_bets())
+
+    assert scheduler_module._last_check >= before_poll, (
+        f"_last_check was not updated: got {scheduler_module._last_check!r}, "
+        f"expected >= {before_poll!r}"
+    )
+
+
 def test_poll_bets_multiple_bets_per_address_all_saved(sched_db):
     """When get_recent_bets returns 2 new bets for the same address, both are
     saved as BetEvent rows.  The inner `for bet in bets:` loop must not
