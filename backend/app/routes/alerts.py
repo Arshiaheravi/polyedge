@@ -88,6 +88,10 @@ def update_alert_settings(
         if isinstance(payload.push_subscription, dict):
             alert.push_subscription = json.dumps(payload.push_subscription)
         else:
+            try:
+                json.loads(payload.push_subscription)
+            except (json.JSONDecodeError, ValueError):
+                raise HTTPException(status_code=422, detail="push_subscription must be valid JSON")
             alert.push_subscription = payload.push_subscription
 
     db.commit()
