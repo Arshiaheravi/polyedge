@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #28] 19 new tests — send_web_push direct unit tests, scheduler API-None path, Hypothesis invariants** — first direct coverage of send_web_push (5 branches); scheduler graceful handling when API returns None; 13 invariant tests (tier/limit, tier enforcement, auth rejection, adversarial addresses); 210→229 tests.
 - **[SESSION #27] stripe_service.py branch audit — 5 gap tests: missing checkout metadata, subscription_id save, unknown customer, unrecognized price_id, portal unit test** — closes all untested branches in stripe_service; 205→210 tests.
 - **[SESSION #25] 6 coverage-gap tests — poly_url branches, live_trades non-list, activity key, send_telegram empty creds** — two untested poly_url branches in get_active_positions, live_trades non-list defense, get_recent_bets activity-key fallback, send_telegram empty-creds early returns; 199→205 tests.
 - **[SESSION #23] 5 coverage-gap tests — polymarket async service functions + auth email case** — first direct unit tests for get_bettor_profile, get_recent_bets, get_live_trades, get_leaderboard pagination; plus login email case-insensitivity; 189→194 tests.

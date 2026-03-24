@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **210 passed** (as of 2026-03-24, session 27 added 5 stripe_service branch tests)
+- Test count: **229 passed** (as of 2026-03-24, session 28 added 19 tests — send_web_push unit tests, scheduler API-None, Hypothesis invariants)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #28 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 19 tests covering 3 areas: (1) 5 direct `send_web_push` unit tests — happy-path JSON string (201), happy-path dict (200), missing endpoint, HTTP 410, connection exception. `send_web_push` was previously only ever mocked at dispatch level, never tested directly. (2) 1 scheduler test — `get_recent_bets` returns `None` (no exception) causes `for bet in None` TypeError, caught by outer except, no crash, no BetEvent, no dispatch. (3) 13 Hypothesis/parametrize invariant tests — GET /follows tier+limit presence for all 3 tiers, POST /follows tier limit enforcement for free/basic, 7 protected endpoints always reject missing auth, adversarial bettor address strings never cause 500. Installed hypothesis and added to requirements.txt. Checkout response shape and DELETE /follows 404 backlog items turned out to be already covered. 210 → 229.
+FAILED: First full-suite run showed Hypothesis adversarial-address test FAILED — issue was Hypothesis database interaction with test ordering (the profile_cache wasn't being cleared between Hypothesis iterations). When run in isolation the test PASSED. Fixed by ensuring `_profile_cache.clear()` runs per Hypothesis iteration (it's inside the test body). Passed on re-run.
+RULE: [2026-03-24] To patch `httpx.AsyncClient` used inside an async service function, use `patch.object(module, "httpx", ...)` won't work — the module references `httpx.AsyncClient`. Correct pattern: `patch.object(notif_mod.httpx, "AsyncClient", return_value=mock_instance)` where mock_instance has `__aenter__` and `__aexit__` set as AsyncMocks returning the instance itself. The mock_instance.post must be an AsyncMock returning a MagicMock with .status_code set.
 
 ### Session #27 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 stripe_service.py branch tests. Gaps found by reading every if/elif/else and checking grep in existing tests: (1) `_handle_checkout_completed` missing-metadata early-return had no test; (2) `if subscription_id:` set stripe_subscription_id had no assertion; (3) `_handle_subscription_change` unknown-customer early-return had no test; (4) active status with price_id matching neither basic nor vip left tier unchanged — untested; (5) `create_billing_portal_session` had no service-level unit test (only route-level mock). All 5 passed first run. 205→210.

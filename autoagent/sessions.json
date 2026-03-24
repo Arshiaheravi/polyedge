@@ -314,5 +314,15 @@
     "files": ["backend/tests/test_stripe_service.py"],
     "tests": {"before": 205, "after": 210, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+  },
+  {
+    "session": 28,
+    "date": "2026-03-24",
+    "time": "02:20",
+    "type": "work",
+    "summary": "Added 19 tests — first direct coverage of send_web_push, scheduler graceful handling when API returns None, and Hypothesis invariant tests for tier limits, auth enforcement, and adversarial addresses",
+    "files": ["backend/tests/test_notifications.py", "backend/tests/test_scheduler.py", "backend/tests/test_hypothesis_invariants.py", "backend/requirements.txt"],
+    "tests": {"before": 210, "after": 229, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]

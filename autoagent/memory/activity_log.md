@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 28)
+DONE: Added 19 tests — 5 direct send_web_push unit tests (JSON string 201, dict 200, no endpoint, HTTP 410, connection exception), 1 scheduler test (API returns None handled gracefully), 13 Hypothesis/parametrize invariant tests (GET /follows tier+limit for all 3 tiers, POST /follows tier enforcement for free/basic, 7 protected endpoints reject missing auth, adversarial bettor address strings never cause 500). Installed hypothesis and added to requirements.txt. 210→229 tests.
+IMPACT: send_web_push was previously only mocked at dispatch level — all 5 branches now covered directly. Scheduler None-return path was a latent crash risk. Hypothesis invariants now guard the 3 hardest-to-break business rules against adversarial inputs automatically.
+FILES: backend/tests/test_notifications.py, backend/tests/test_scheduler.py, backend/tests/test_hypothesis_invariants.py, backend/requirements.txt
+
 ## 2026-03-24 — TESTING (Session 27)
 DONE: Added 5 stripe_service.py branch tests — checkout with missing metadata early-returns without error, checkout saves stripe_subscription_id to user, subscription change with unknown customer_id early-returns without error, active subscription with unrecognized price_id leaves user tier unchanged, create_billing_portal_session direct unit test (happy path). 205→210 tests.
 IMPACT: Closes every untested explicit early-return guard and conditional branch in stripe_service.py — missing metadata, unknown customer, and unrecognized price_id were all defensive paths that could silently produce wrong state without a test catching it. stripe_subscription_id save was a data-persistence path never verified.
