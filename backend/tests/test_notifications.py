@@ -2,12 +2,14 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import app.services.notifications as notif_mod
 from app.services.notifications import (
     format_bet_message,
     format_sms_message,
     dispatch_bet_notification,
     send_telegram,
     send_sms,
+    send_web_push,
 )
 
 
@@ -251,9 +253,6 @@ async def test_send_telegram_returns_false_when_chat_id_empty():
 
 # ── send_web_push direct unit tests ──────────────────────────────────────────
 
-from app.services.notifications import send_web_push
-import app.services.notifications as notif_mod
-
 
 def _make_mock_http_client(status_code: int):
     """Helper: returns a mock AsyncClient whose .post() returns a response with the given status."""
@@ -355,8 +354,6 @@ async def test_send_sms_returns_false_when_credentials_missing():
 @pytest.mark.asyncio
 async def test_send_sms_returns_true_on_http_success():
     """send_sms returns True when Twilio HTTP call succeeds (raise_for_status does not raise)."""
-    import app.services.notifications as notif_mod
-
     mock_resp = MagicMock()
     mock_resp.raise_for_status = MagicMock()  # does not raise
     mock_instance = AsyncMock()
@@ -379,8 +376,6 @@ async def test_send_sms_returns_true_on_http_success():
 @pytest.mark.asyncio
 async def test_send_sms_returns_false_on_http_exception():
     """send_sms returns False and does not raise when an httpx error occurs."""
-    import app.services.notifications as notif_mod
-
     mock_instance = AsyncMock()
     mock_instance.post = AsyncMock(side_effect=Exception("Connection refused"))
     mock_instance.__aenter__ = AsyncMock(return_value=mock_instance)

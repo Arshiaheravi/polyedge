@@ -11,6 +11,7 @@ def test_register_success(client):
     data = resp.json()
     assert "access_token" in data
     assert data["user"]["email"] == "user@example.com"
+    assert data["user"]["name"] == "Alice"
     assert data["user"]["subscription_tier"] == "free"
 
 
@@ -18,7 +19,7 @@ def test_register_duplicate_email(client):
     payload = {"email": "dup@example.com", "password": "pass", "name": "Bob"}
     client.post("/auth/register", json=payload)
     resp = client.post("/auth/register", json=payload)
-    assert resp.status_code == 400
+    assert resp.status_code == 409
     assert "already registered" in resp.json()["detail"].lower()
 
 
@@ -115,7 +116,7 @@ def test_register_uppercase_email_is_treated_as_duplicate(client):
     resp = client.post("/auth/register", json={
         "email": "DUPCASE@EXAMPLE.COM", "password": "pass2", "name": "DupCase2"
     })
-    assert resp.status_code == 400
+    assert resp.status_code == 409
     assert "already registered" in resp.json()["detail"].lower()
 
 
@@ -143,11 +144,11 @@ def test_register_whitespace_padded_email_strips_and_deduplicates(client):
     assert resp1.status_code == 201
     assert resp1.json()["user"]["email"] == "ws@example.com"
 
-    # Second registration with same padded email — duplicate check must catch it (400, not 500)
+    # Second registration with same padded email — duplicate check must catch it (409, not 500)
     resp2 = client.post("/auth/register", json={
         "email": " ws@example.com ", "password": "pass2", "name": "WS2"
     })
-    assert resp2.status_code == 400
+    assert resp2.status_code == 409
     assert "already registered" in resp2.json()["detail"].lower()
 
 

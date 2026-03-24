@@ -412,6 +412,39 @@ def test_sms_verify_requires_auth(client):
     assert resp.status_code == 403
 
 
+def test_sms_verify_response_includes_verified_and_message(client, db, auth_headers, registered_user):
+    """POST /alerts/sms/verify success response must include BOTH verified=True AND message string."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "vip"
+    user.phone_number = "+14155552671"
+    user.phone_verify_code = "654321"
+    db.commit()
+
+    resp = client.post("/alerts/sms/verify", json={"code": "654321"}, headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["verified"] is True
+    assert data["message"] == "Phone number verified successfully"
+
+
+def test_telegram_verify_response_includes_verified_and_message(client, db, auth_headers, registered_user):
+    """POST /alerts/telegram/verify success response must include BOTH verified=True AND message string."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    user.telegram_verify_code = "DEADBEEF"
+    db.commit()
+
+    resp = client.post("/alerts/telegram/verify", json={"code": "DEADBEEF"}, headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["verified"] is True
+    assert data["message"] == "Telegram linked successfully"
+
+
 def test_disable_telegram_for_basic_user(client, db, auth_headers, registered_user):
     """Basic user can explicitly set telegram_enabled=False after enabling it."""
     from app.models import User
