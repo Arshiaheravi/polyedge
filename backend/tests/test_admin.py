@@ -131,6 +131,24 @@ def test_admin_stats_bet_events_count(client, db):
     assert data["bet_events"]["notified"] == 2
 
 
+def test_admin_stats_zero_users_all_counts_zero(client):
+    """GET /admin/stats with empty DB returns 0 for every count and MRR=0.0.
+    Guards against None returns or crashes when the DB has no rows."""
+    from app.config import get_settings
+    pw = get_settings().admin_password
+
+    resp = client.get("/admin/stats", headers={"x-admin-password": pw})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["users"]["total"] == 0
+    assert data["users"]["free"] == 0
+    assert data["users"]["basic"] == 0
+    assert data["users"]["vip"] == 0
+    assert data["follows"]["total"] == 0
+    assert data["bet_events"]["total"] == 0
+    assert data["mrr_estimate"] == 0.0
+
+
 def test_admin_stats_mrr_multi_user_decimal_precision(client, db):
     """MRR with 3 basic + 2 VIP uses float arithmetic (not integer rounding).
     3*4.99 + 2*9.99 = 14.97 + 19.98 = 34.95 — must not be rounded to an integer."""

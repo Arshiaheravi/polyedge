@@ -194,3 +194,66 @@ def test_delete_follow_not_found_detail_message(client, auth_headers):
     resp = client.delete("/follows/0xnever_followed_addr", headers=auth_headers)
     assert resp.status_code == 404
     assert resp.json()["detail"] == "Follow not found"
+
+
+def test_follows_live_no_follows_returns_empty_bettors_list(client, auth_headers):
+    """GET /follows/live with no follows returns {"bettors": []} — not a bare array."""
+    import app.routes.follows as follows_module
+    follows_module._activity_cache.clear()
+
+    resp = client.get("/follows/live", headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "bettors" in data
+    assert data["bettors"] == []
+
+
+def test_follows_live_response_shape_per_bettor(client, auth_headers):
+    """GET /follows/live with one follow returns correct shape per bettor item.
+    Each item must have address, name, followed_at, active_positions keys."""
+    from unittest.mock import AsyncMock, patch
+    import app.routes.follows as follows_module
+
+    # Clear module-level cache — it's shared across tests since it's a module global.
+    follows_module._activity_cache.clear()
+
+    client.post("/follows", json={"bettor_address": "0xliveshape", "bettor_name": "LiveWhale"},
+                headers=auth_headers)
+
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=[])):
+        resp = client.get("/follows/live", headers=auth_headers)
+
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "bettors" in data
+    assert len(data["bettors"]) == 1
+    item = data["bettors"][0]
+    assert "address" in item
+    assert "name" in item
+    assert "followed_at" in item
+    assert "active_positions" in item
+    assert item["address"] == "0xliveshape"
+    assert item["name"] == "LiveWhale"
+
+
+def test_vip_tier_can_add_six_plus_follows(client, db, auth_headers, registered_user):
+    """VIP tier has no artificial cap — 6+ follows succeed.
+    TIER_LIMITS["vip"] = 999999 means any real-world usage is well within limit.
+    GET /follows also reports tier='vip' and limit=999999 for VIP users."""
+    from app.models import User
+
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "vip"
+    db.commit()
+
+    for i in range(6):
+        resp = client.post("/follows", json={"bettor_address": f"0xvip{i}"}, headers=auth_headers)
+        assert resp.status_code == 201, f"Follow {i} failed: {resp.json()}"
+
+    list_resp = client.get("/follows", headers=auth_headers)
+    assert list_resp.status_code == 200
+    data = list_resp.json()
+    assert data["tier"] == "vip"
+    assert data["limit"] == 999999
+    assert len(data["follows"]) == 6

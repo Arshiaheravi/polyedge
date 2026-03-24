@@ -231,3 +231,25 @@ def test_register_name_with_whitespace_is_stripped(client):
     token = login_resp.json()["access_token"]
     me_resp = client.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
     assert me_resp.json()["user"]["name"] == "Alice"
+
+
+def test_register_password_too_long_returns_422(client):
+    """POST /auth/register with a 10000-char password must return 422.
+    bcrypt has no built-in length limit — sending huge passwords is a DoS vector
+    because bcrypt's work factor scales with input length. max_length=128 blocks it."""
+    resp = client.post("/auth/register", json={
+        "email": "longpass@example.com",
+        "password": "x" * 10000,
+        "name": "LongPass",
+    })
+    assert resp.status_code == 422
+
+
+def test_register_password_at_max_length_is_accepted(client):
+    """POST /auth/register with exactly 128-char password must succeed (boundary)."""
+    resp = client.post("/auth/register", json={
+        "email": "maxpass@example.com",
+        "password": "a" * 128,
+        "name": "MaxPass",
+    })
+    assert resp.status_code == 201
