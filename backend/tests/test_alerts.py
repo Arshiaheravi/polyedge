@@ -152,3 +152,87 @@ def test_telegram_start_for_basic(client, db, auth_headers, registered_user):
 def test_alerts_require_auth(client):
     resp = client.get("/alerts/settings")
     assert resp.status_code == 403
+
+
+# ── Telegram /verify flow ────────────────────────────────────────────────────
+
+
+def test_telegram_verify_no_pending_code_returns_400(client, db, auth_headers, registered_user):
+    """Calling /verify without a pending code returns 400."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    user.telegram_verify_code = None
+    db.commit()
+
+    resp = client.post("/alerts/telegram/verify", json={"code": "ABCD1234"}, headers=auth_headers)
+    assert resp.status_code == 400
+    assert "No pending verification" in resp.json()["detail"]
+
+
+def test_telegram_verify_wrong_code_returns_400(client, db, auth_headers, registered_user):
+    """Submitting the wrong verification code returns 400."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    user.telegram_verify_code = "ABCDEF12"
+    db.commit()
+
+    resp = client.post("/alerts/telegram/verify", json={"code": "WRONGCOD"}, headers=auth_headers)
+    assert resp.status_code == 400
+    assert "Invalid" in resp.json()["detail"]
+
+
+def test_telegram_verify_correct_code_links_account(client, db, auth_headers, registered_user):
+    """Correct code sets telegram_verified=True and clears the code."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    user.telegram_verify_code = "ABCDEF12"
+    db.commit()
+
+    resp = client.post("/alerts/telegram/verify", json={"code": "ABCDEF12"}, headers=auth_headers)
+    assert resp.status_code == 200
+    assert resp.json()["verified"] is True
+
+    db.refresh(user)
+    assert user.telegram_verified is True
+    assert user.telegram_verify_code is None
+
+
+def test_telegram_start_then_verify_full_round_trip(client, db, auth_headers, registered_user):
+    """Full round-trip: start → get code → verify → account linked."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
+    # Step 1: start — get the code
+    start_resp = client.post("/alerts/telegram/start", headers=auth_headers)
+    assert start_resp.status_code == 200
+    code = start_resp.json()["code"]
+    assert len(code) == 8
+
+    # Step 2: verify with the returned code
+    verify_resp = client.post("/alerts/telegram/verify", json={"code": code}, headers=auth_headers)
+    assert verify_resp.status_code == 200
+    assert verify_resp.json()["verified"] is True
+
+
+def test_telegram_already_verified_can_start_again(client, db, auth_headers, registered_user):
+    """A user already verified can call /start again — generates a new code (200)."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    user.telegram_verified = True
+    user.telegram_chat_id = "existing_chat_id"
+    db.commit()
+
+    resp = client.post("/alerts/telegram/start", headers=auth_headers)
+    assert resp.status_code == 200
+    assert "code" in resp.json()

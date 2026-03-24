@@ -111,3 +111,123 @@ async def test_dispatch_vip_no_sms_if_disabled():
         )
     assert "sms" not in results
     mock_sms.assert_not_called()
+
+
+# ── 6 new targeted tests for dispatch_bet_notification ──────────────────────
+
+
+@pytest.mark.asyncio
+async def test_dispatch_basic_both_channels_none_returns_empty():
+    """Basic tier with no chat_id and no push_subscription → nothing sent."""
+    results = await dispatch_bet_notification(
+        bettor_name="Alice",
+        market="Test",
+        outcome="Yes",
+        amount=50.0,
+        telegram_chat_id=None,
+        telegram_bot_token="token",
+        push_subscription_json=None,
+        user_tier="basic",
+    )
+    assert results == {}
+
+
+@pytest.mark.asyncio
+async def test_dispatch_no_chat_id_skips_telegram():
+    """telegram_chat_id=None → send_telegram never called even on basic tier."""
+    with patch("app.services.notifications.send_telegram", new=AsyncMock(return_value=True)) as mock_tg:
+        results = await dispatch_bet_notification(
+            bettor_name="Alice",
+            market="Test",
+            outcome="Yes",
+            amount=50.0,
+            telegram_chat_id=None,
+            telegram_bot_token="sometoken",
+            push_subscription_json=None,
+            user_tier="basic",
+        )
+    assert "telegram" not in results
+    mock_tg.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_dispatch_no_push_subscription_skips_web_push():
+    """push_subscription_json=None → send_web_push never called even on basic tier."""
+    with patch("app.services.notifications.send_web_push", new=AsyncMock(return_value=True)) as mock_push:
+        results = await dispatch_bet_notification(
+            bettor_name="Alice",
+            market="Test",
+            outcome="Yes",
+            amount=50.0,
+            telegram_chat_id=None,
+            telegram_bot_token="",
+            push_subscription_json=None,
+            user_tier="basic",
+        )
+    assert "web_push" not in results
+    mock_push.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_dispatch_telegram_called_with_correct_args():
+    """send_telegram is called with correct chat_id, message, and bot_token."""
+    mock_tg = AsyncMock(return_value=True)
+    with patch("app.services.notifications.send_telegram", new=mock_tg):
+        await dispatch_bet_notification(
+            bettor_name="Alice",
+            market="Will BTC reach 100k?",
+            outcome="Yes",
+            amount=200.0,
+            telegram_chat_id="chat_999",
+            telegram_bot_token="bot_abc",
+            push_subscription_json=None,
+            user_tier="basic",
+        )
+    mock_tg.assert_called_once()
+    call_args = mock_tg.call_args
+    assert call_args[0][0] == "chat_999"   # first positional: chat_id
+    assert call_args[0][2] == "bot_abc"    # third positional: bot_token
+    assert "Alice" in call_args[0][1]      # second positional: message
+
+
+@pytest.mark.asyncio
+async def test_dispatch_web_push_called_with_subscription():
+    """send_web_push is called with the push_subscription_json when present."""
+    mock_push = AsyncMock(return_value=True)
+    sub_json = '{"endpoint":"https://push.example.com","keys":{"p256dh":"abc","auth":"def"}}'
+    with patch("app.services.notifications.send_web_push", new=mock_push):
+        await dispatch_bet_notification(
+            bettor_name="Bob",
+            market="Test market",
+            outcome="No",
+            amount=75.0,
+            telegram_chat_id=None,
+            telegram_bot_token="",
+            push_subscription_json=sub_json,
+            user_tier="basic",
+        )
+    mock_push.assert_called_once()
+    assert mock_push.call_args[0][0] == sub_json
+
+
+@pytest.mark.asyncio
+async def test_dispatch_telegram_failure_does_not_prevent_web_push():
+    """If send_telegram returns False (API error), web push is still attempted and can succeed."""
+    mock_tg = AsyncMock(return_value=False)   # telegram failed internally
+    mock_push = AsyncMock(return_value=True)
+    with patch("app.services.notifications.send_telegram", new=mock_tg), \
+         patch("app.services.notifications.send_web_push", new=mock_push):
+        results = await dispatch_bet_notification(
+            bettor_name="Alice",
+            market="Test",
+            outcome="Yes",
+            amount=50.0,
+            telegram_chat_id="chat_123",
+            telegram_bot_token="bot_token",
+            push_subscription_json='{"endpoint":"https://push.example.com"}',
+            user_tier="basic",
+        )
+    # Both were attempted — telegram failed, push succeeded
+    assert results.get("telegram") is False
+    assert results.get("web_push") is True
+    mock_push.assert_called_once()
