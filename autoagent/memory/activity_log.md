@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 64)
+DONE: Hero section background enhanced with premium CSS — dot grid texture (26px, 0.045 opacity, radial mask fade) via ::before; three-layer ambient glow (green top-centre 20%, blue bottom-right 9%, soft green bottom-left 7%) via ::after; overflow:hidden added; commented background-image hook for when hero-bg.jpg is available. NovaBanana API returned 401 (invalid key) — documented in ASSETS_NEEDED.md with instructions.
+IMPACT: Hero now has visual depth and a premium "fintech data platform" feel without adding any image weight — loads instantly, scales crisp at all resolutions. When a hero image is available, it can be wired in by uncommenting one CSS line.
+FILES: frontend/index.html, autoagent/ASSETS_NEEDED.md
+
 ## 2026-03-24 — UI/UX (Session 63)
 DONE: CSS type scale + heading rules + button press states + staggered lb-card fadeInUp animation — added --fs-2xs through --fs-6xl font-size CSS variables to :root; added h1-h4 default heading size rules (clamp-based, overridden by component selectors); added :active scale(0.97) press states to all btn variants; added @keyframes fadeInUp (translateY -12px→0) with .animate-fade-in-up class; lb-cards now use fadeInUp at 80ms stagger increments.
 IMPACT: Defines a consistent type scale for future use; h1-h4 headings have sane defaults on any screen without a component-specific size; all buttons now give tactile press feedback (not just primary); leaderboard cards animate in from above giving "live feed" feel at 80ms stagger instead of flat 40ms from below.

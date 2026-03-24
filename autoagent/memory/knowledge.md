@@ -45,6 +45,12 @@
 
 ## Session Reflexions
 
+### Session #64 Reflexion — 2026-03-24
+ACCOMPLISHED: Hero background CSS enhanced — dot grid ::before with radial mask fade + three-layer ambient glow ::after replacing the old single-glow. overflow:hidden added to hero. bg-image hook commented in for when actual hero-bg.jpg is dropped in frontend/assets/. NovaBanana API key invalid (401) — documented in ASSETS_NEEDED.md. 303 tests stable, 7/7 Playwright checks pass.
+FAILED: Nothing failed. CSS-only change, no JS touched.
+RULE: [2026-03-24] When adding `::before` and `::after` backgrounds behind hero content, set `z-index: -1` on both pseudo-elements (not `z-index: 0`). Within a stacking context, z-index: 0 paints at the same level as block children (ambiguous ordering) while z-index: -1 reliably paints behind all non-positioned children. Test with `overflow: hidden` on the parent to prevent glow bleed.
+RULE: [2026-03-24] NovaBanana API key `458ef44f91c6cbcc614a31573b7f15fe` returns 401 Invalid API key — do NOT retry. Use CSS fallback per novabana.md rules; log in ASSETS_NEEDED.md.
+
 ### Session #63 Reflexion — 2026-03-24
 ACCOMPLISHED: (1) Added `--fs-2xs` through `--fs-6xl` font-size CSS variables to `:root` — type scale now defined, reusable in future refactors. (2) Added `h1–h4` default heading size rules using `clamp()` — any heading without a component-specific override gets a sane proportional size. (3) Added `:active { transform: scale(0.97); transition-duration: 60ms; }` to all btn variants — previously only `btn-primary` had an active state, all others gave no press feedback. (4) Added `@keyframes fadeInUp` (translateY(-12px)→0) + `.animate-fade-in-up` CSS class; updated `renderBettorCard` to use it at 80ms stagger increments (was `fadeUp` at 40ms). 303 tests stable, 9/9 Playwright checks pass.
 FAILED: Nothing failed. The `settings-card h3 { font-size: 16px; }` rule correctly overrides the generic `h3 { font-size: clamp(17px,...) }` — verified by CSS specificity rules (class + element > element alone).

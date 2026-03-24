@@ -18,7 +18,7 @@ Once you have the asset, drop it in `frontend/assets/` and tell the agent — it
 
 | Asset | Purpose | Suggested Prompt / Spec | Where to Get | Status |
 |-------|---------|------------------------|--------------|--------|
-| Hero background | Landing page hero section background — dark, abstract, financial/crypto feel | "Dark abstract financial data visualization, trading charts, deep navy blue, glowing green lines, cinematic" | NovaBanana / Midjourney | ❌ Needed |
+| Hero background | Landing page hero section background — dark, abstract, financial/crypto feel | "Dark abstract financial data visualization, trading charts, deep navy blue, glowing green lines, cinematic, no text" aspect_ratio=16:9 | NovaBanana / Midjourney | ❌ Needed — NovaBanana API key invalid (401). CSS fallback active. Drop `hero-bg.jpg` in `frontend/assets/` and uncomment the `background-image` line in `.hero` CSS |
 | PolyEdge Logo | Replace text logo with a proper mark | "PE monogram logo, minimal, electric green on dark, fintech style" | NovaBanana / Designer | ❌ Needed |
 | Empty state illustration | Shown when user has no follows yet | "Person looking at empty screen, minimal line art, dark theme" | Undraw.co (free) | ❌ Needed |
 | Trader avatar placeholders | Default avatar for bettors with no profile image | "Abstract geometric avatar, 8 variants, dark background, colorful" | NovaBanana | ❌ Needed |

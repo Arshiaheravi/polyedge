@@ -4,7 +4,6 @@
 
 ## HIGH PRIORITY — UI/UX Tasks
 
-- [ ] Generate hero background image using Nano Banana API and wire into hero section with CSS fallback gradient
 - [ ] Empty state illustrations — add helpful illustrated empty states for: no follows yet, no alerts configured, leaderboard loading; use CSS-generated or Nano Banana API
 - [ ] Mobile responsiveness audit — test every screen at 375px width, fix any horizontal overflow, ensure nav/header works on mobile, make cards stack vertically, make buttons full-width on mobile
 - [ ] Bettor profile page — add click-through from leaderboard cards to a profile page showing bettor stats, recent bets timeline, and a prominent Follow/Unfollow CTA

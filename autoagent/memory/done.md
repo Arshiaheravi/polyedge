@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #64] Hero background — premium CSS dot grid + multi-glow ambient lights** — Added dot grid ::before (26px, fades at edges) and three-layer ambient glow ::after to hero section; bg-image hook commented in for hero-bg.jpg; NovaBanana API key invalid so documented in ASSETS_NEEDED.md with user instructions.
 - **[SESSION #62] Pricing section redesign — Basic card permanently elevated, animated glow border, trust copy** — Added `translateY(-8px)` elevation to Basic/featured card, `@keyframes pricing-glow-pulse` animated green border loop, "Cancel anytime" trust copy under all CTA buttons, `.pricing-vip` CSS class replacing inline styles on VIP card, and added SMS cross-mark to Basic tier for accurate comparison.
 - **[SESSION #59] XSS audit + fix — escapeHtml() added, 6 injection points closed, dead table fallback removed** — Audit of session 58's renderBettorCard found bettor names from Polymarket API were injected raw into innerHTML; added escapeHtml(), applied to all name/addr innerHTML contexts, switched error states and search no-results to textContent, removed 25 lines of dead legacy table-row code.
 - **[SESSION #58] Leaderboard card redesign** — Converted both browse and dashboard leaderboard table rows to a responsive CSS card grid; each card shows rank badge, avatar, bettor name, profit, ROI %, volume, and follow button with hover lift/glow effect.

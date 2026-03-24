@@ -1403,5 +1403,15 @@
       "failures": 0,
       "notes": "CSS var --fs-md verified, fadeInUp keyframe verified, no JS errors"
     }
+  },
+  {
+    "session": 64,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Hero section background upgraded to premium CSS — dot grid texture fades at edges, three ambient glows (green top, blue bottom-right, soft green bottom-left), bg-image hook added for when a hero photo is available; NovaBanana API key invalid so documented in ASSETS_NEEDED.md",
+    "files": ["frontend/index.html", "autoagent/ASSETS_NEEDED.md"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 7, "failures": 0, "notes": "hero overflow:hidden verified, no JS errors"}
   }
 ]
