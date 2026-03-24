@@ -254,5 +254,15 @@
     "files": ["autoagent/PROMPT.md", "autoagent/skills/testing.md", "autoagent/memory/backlog.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md", "autoagent/memory/knowledge.md", "autoagent/memory/activity_log.md"],
     "tests": {"before": 184, "after": 184, "status": "skip"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "brain session, no code changes"}
+  },
+  {
+    "session": 22,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 5 coverage-gap tests: bettor profile cache hit path, subscription past_due downgrade, subscription.updated basic upgrade, admin stats bet_events count verification, and POST /follows full response body — closes the last untested branches in bettors, stripe webhooks, and follows routes",
+    "files": ["backend/tests/test_bettors.py", "backend/tests/test_stripe_service.py", "backend/tests/test_admin.py", "backend/tests/test_follows.py"],
+    "tests": {"before": 184, "after": 189, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]

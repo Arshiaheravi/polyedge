@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 22)
+DONE: Added 5 coverage-gap tests — bettor_detail cache-hit path (second call served from _profile_cache), past_due subscription status downgrades VIP→free, subscription.updated active status upgrades free→basic, admin/stats bet_events.total+notified verified with real BetEvent rows, POST /follows response body includes id+bettor_name+created_at. 184→189 tests.
+IMPACT: Closes the last uncovered branches in bettor profile caching (a hot path), confirms two billing downgrade/upgrade scenarios not previously tested (past_due and sub.updated→basic), and locks in the admin observability query and the POST /follows contract.
+FILES: backend/tests/test_bettors.py, backend/tests/test_stripe_service.py, backend/tests/test_admin.py, backend/tests/test_follows.py
+
 ## 2026-03-24 — BRAIN SESSION (Session 21)
 RESEARCHED: autonomous AI agent best practices 2026, LLM pytest testing patterns, FastAPI async patterns, agentic instruction-following reliability (arxiv), Polymarket copy-trading competitors
 DOWNLOADED: No new skill files (patterns extracted directly into existing skill files)

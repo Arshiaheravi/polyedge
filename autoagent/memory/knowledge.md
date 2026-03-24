@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **184 passed** (as of 2026-03-24, session 20 added 5 coverage-gap tests — no new tests in session 21 BRAIN session)
+- Test count: **189 passed** (as of 2026-03-24, session 22 added 5 coverage-gap tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #22 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 5 coverage-gap tests. Gaps found by reading every route's branches vs. existing tests: _profile_cache hit was the only cache-hit path not tested (leaderboard + trades were); past_due and unpaid statuses in _handle_subscription_change were untested; subscription.updated basic upgrade had no test (only VIP); admin/stats bet_events fields were presence-checked but never value-verified; POST /follows response body only asserted bettor_address, not the other 3 fields. All 5 passed first run. 184→189.
+FAILED: Nothing failed.
+RULE: [2026-03-24] After testing all caches for hit paths, audit each cache separately — _profile_cache (keyed by address string), _leaderboard_cache (keyed by sort+period+limit), and _trades_cache (flat dict) have different key structures. Testing one cache type does not cover another. Similarly, for webhook event handler branches, list all status strings in the code (canceled, unpaid, past_due, active) and verify each has at least one test.
 
 ### BRAIN Session #21 Reflexion — 2026-03-24
 ACCOMPLISHED: Curated knowledge.md (merged duplicate grep-before-adding rules from sessions #10 and #17 into one canonical entry). Ran web searches across 5 topics. Found 3 actionable improvements: (1) irreversibility check added to self-critique gate in PROMPT.md, (2) Hypothesis property-based testing added to testing.md, (3) 4 new feature items added to backlog (Discord, entry price in alerts, conviction score, outbox pattern). Logged 8 new sources in sources.md. Found strong competitor intelligence on Polymarket copy-trading SaaS market.

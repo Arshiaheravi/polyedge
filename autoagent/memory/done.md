@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #22] 5 coverage-gap tests — bettor cache hit, past_due downgrade, sub.updated basic, bet_events admin count, POST /follows body** — closed last untested branches in bettors profile cache, stripe webhook downgrade/upgrade paths, admin bet_events count, and follows response shape; 184→189 tests.
 - **[SESSION #19] 5 coverage-gap tests — auth gaps, VIP telegram, cache hit, alert fields** — PUT /alerts and POST /follows auth tested (403), VIP telegram/start confirmed, leaderboard cached=True second call verified, alert settings phone/telegram fields checked; 174→179 tests.
 - **[SESSION #17] sort=accuracy + multi-follower notify tests** — 2 new tests: GET /bettors sort=accuracy passes correct arg to service; scheduler notifies all N followers of same bettor; 167 → 169 tests.
 - **[SESSION #13] Error-path + boundary tests** — 5 new tests: portal Stripe 502, leaderboard API 502, trades API 502, trades limit 422 (low/high); 153 → 158 tests.
