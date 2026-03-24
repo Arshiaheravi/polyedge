@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 65)
+DONE: Empty state illustrations added to follows page, alerts settings page, and leaderboard error state — all plain HTML entity emojis replaced with inline SVG art. Follows empty state: rising chart line + green "+" follow-badge SVG inside 88px circle container (es-illustration class). Alerts page: new #alerts-no-notifications banner with bell+lightning SVG that shows/hides via updateAlertsNoneState() when all three notification toggles are off. Leaderboard error: warning triangle SVG using --gold token. Added .es-illustration CSS class (88px circle, green/blue/gold tint variants) + .es-card background styling.
+IMPACT: First-time users on the follows page now see a purposeful visual metaphor (chart + follow button) instead of a faded star — immediately communicates what to do. Alerts page shows a contextual prompt when no notifications are active instead of silently showing controls that won't fire. 303 tests stable, 7/7 Playwright checks pass.
+FILES: frontend/index.html
+
 ## 2026-03-24 — UI/UX (Session 64)
 DONE: Hero section background enhanced with premium CSS — dot grid texture (26px, 0.045 opacity, radial mask fade) via ::before; three-layer ambient glow (green top-centre 20%, blue bottom-right 9%, soft green bottom-left 7%) via ::after; overflow:hidden added; commented background-image hook for when hero-bg.jpg is available. NovaBanana API returned 401 (invalid key) — documented in ASSETS_NEEDED.md with instructions.
 IMPACT: Hero now has visual depth and a premium "fintech data platform" feel without adding any image weight — loads instantly, scales crisp at all resolutions. When a hero image is available, it can be wired in by uncommenting one CSS line.

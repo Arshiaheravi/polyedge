@@ -2,9 +2,14 @@
 
 ---
 
+## META (Code Quality Audit)
+
+- [ ] Code quality audit — scan last 5 work sessions' changed files (frontend/index.html) for cross-file coupling, test specificity degradation, and smells introduced by agent edits
+
+---
+
 ## HIGH PRIORITY — UI/UX Tasks
 
-- [ ] Empty state illustrations — add helpful illustrated empty states for: no follows yet, no alerts configured, leaderboard loading; use CSS-generated or Nano Banana API
 - [ ] Mobile responsiveness audit — test every screen at 375px width, fix any horizontal overflow, ensure nav/header works on mobile, make cards stack vertically, make buttons full-width on mobile
 - [ ] Bettor profile page — add click-through from leaderboard cards to a profile page showing bettor stats, recent bets timeline, and a prominent Follow/Unfollow CTA
 - [ ] Login/Register modal polish — clean up form design, add smooth open/close animation, add password visibility toggle, improve error message styling (red inline, not alert box)

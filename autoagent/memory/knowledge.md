@@ -45,6 +45,12 @@
 
 ## Session Reflexions
 
+### Session #65 Reflexion — 2026-03-24
+ACCOMPLISHED: Empty state illustrations — three inline SVG illustrations added: (1) follows page chart+follow-badge SVG; (2) alerts no-notifications banner with bell+lightning SVG that toggles based on all-channels-off state; (3) leaderboard error warning triangle SVG. Added .es-illustration CSS class (88px circle, 3 tint variants). Added updateAlertsNoneState() JS helper called from loadAlertSettings + all 3 toggle functions. 303 tests stable, 7/7 Playwright checks pass.
+FAILED: Playwright check 5 initially failed because it looked for .lb-card/.skeleton which only appear after API data loads, not on initial page load. Fixed by targeting #preview-leaderboard which is immediately visible on the landing page.
+RULE: [2026-03-24] When writing Playwright checks for PolyEdge, target elements visible on the PUBLIC landing page (hero, nav, #preview-leaderboard, btn-primary) — not elements inside tabs/sections that require auth or user interaction to reveal. #browse-leaderboard-body and #lb-body are always hidden on initial load.
+RULE: [2026-03-24] For JS-driven empty state banners: put updateState() calls in (a) the load function AND (b) each mutating function's success AND error handler — the error handler must revert the toggle AND update the state banner, otherwise the banner can get out of sync with the actual DOM toggle state.
+
 ### Session #64 Reflexion — 2026-03-24
 ACCOMPLISHED: Hero background CSS enhanced — dot grid ::before with radial mask fade + three-layer ambient glow ::after replacing the old single-glow. overflow:hidden added to hero. bg-image hook commented in for when actual hero-bg.jpg is dropped in frontend/assets/. NovaBanana API key invalid (401) — documented in ASSETS_NEEDED.md. 303 tests stable, 7/7 Playwright checks pass.
 FAILED: Nothing failed. CSS-only change, no JS touched.
