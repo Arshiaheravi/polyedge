@@ -5,6 +5,7 @@
 - One test per branch (if/elif/else) minimum — penalty branches (-5, -10 pts) are most dangerous
 - Run `py -m pytest tests/ --collect-only -q` first — catches import errors before full run
 - Test command: `py -m pytest tests/ -q --ignore=tests/test_e2e.py`
+- **When testing error paths, verify the expected HTTP status code against PROJECT.md spec — NOT current code.** Write the test to match the spec, then fix the code if they diverge. Tests written to match code (not spec) lock in wrong behavior silently. (Session 45: duplicate email register was 400 in code but 409 in spec — test masked it for 45 sessions.)
 
 ## TEST-FIRST SPECIFICATION (evals-as-specs pattern)
 Before writing any feature code, write out in plain English what the tests will verify:
@@ -83,6 +84,20 @@ Unit tests passing ≠ feature working. Always verify the full flow at least onc
 - Pattern: `grep -r "FakeSignal\|StubSignal\|_FakeSignal\|MockSignal" tests/` to find all stubs
 - A missing attribute on a stub is often silently swallowed by `except` blocks in services, producing 0 rows instead of an error — very hard to debug
 - Add the new field (with a safe default like `""` or `0`) to every stub found
+
+## BEFORE ADDING ANY TEST — CHECK FOR EXISTING TEST FILES
+
+**Run this BEFORE adding tests to any file**:
+```bash
+ls backend/tests/
+grep -r "def test_" backend/tests/ | grep "<endpoint_keyword>"
+```
+Rules:
+- If a dedicated file exists for the endpoint (e.g. `test_follows_live.py` for `/follows/live`), add tests THERE — not in `test_follows.py` or generic files.
+- If similar test names appear in OTHER files, you likely have a duplicate — don't add another.
+- `grep -r "def test_<function>" backend/tests/` before writing any new test function.
+
+(Session 45 audited session 42: 2 `/follows/live` tests added to `test_follows.py` when `test_follows_live.py` already had comprehensive coverage. Took a full META session to find and remove them.)
 
 ## BRANCH AUDIT WORKFLOW — how to find coverage gaps systematically
 
