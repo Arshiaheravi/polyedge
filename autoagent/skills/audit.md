@@ -54,6 +54,7 @@ Mandate: zero security regressions. One vuln ships = company trust destroyed.
 **Checklist**:
 - [ ] No hardcoded secrets, API keys, passwords, or tokens anywhere in source files
 - [ ] All user-supplied input rendered via `textContent` or escaped — never `innerHTML` with user data (XSS)
+  - **Run this grep before every commit**: `grep -n 'innerHTML.*\${' frontend/index.html` — check EVERY match, not just renderXxx functions. Template helpers (buildXxx, createXxx, formatXxx) are equally dangerous. Any match with an API-sourced variable (name, market, message, addr) must use `escapeHtml()`. Only structural values (hardcoded strings, numbers, wallet hex) are safe unescaped.
 - [ ] All DB queries use SQLAlchemy ORM or parameterized statements — never f-string SQL (injection)
 - [ ] No IDOR: every DB query that returns user data filters by `current_user.id` — users cannot access other users' data
 - [ ] Admin routes check password/JWT — never accessible unauthenticated

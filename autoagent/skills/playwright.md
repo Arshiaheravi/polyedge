@@ -215,6 +215,23 @@ The only exception is status=skip (can't start servers / Playwright missing) —
 
 ---
 
+## CSS CLASS REFACTOR — update Playwright selectors first
+
+When doing a large frontend refactor that renames CSS classes (e.g., table rows → cards, old-name → new-name):
+
+**Before running the check script**, grep it for old class names:
+```bash
+grep -n 'bettor-row\|bettor-name\|old-class-pattern' autoagent/tmp_check.py
+```
+
+If any old class names appear in the check script, update them to the new names **at the same time as the refactor** — not after. Stale selectors in the check script silently "pass" on `null` (element not found) instead of catching regressions.
+
+**Rule**: Any time a CSS class is renamed in `frontend/index.html`, search the active Playwright check script for that class name and update it simultaneously.
+
+(Source: Session #58 — converted lb-table→lb-grid, Playwright checks still referenced .bettor-row/.bettor-name → 2 failures on first run)
+
+---
+
 ## RECONNAISSANCE-THEN-ACTION PATTERN (from Anthropic webapp-testing skill)
 
 When debugging a failing check, use this order — never skip to action:

@@ -282,6 +282,30 @@ Where: meta/BRAIN_PROMPT.md (Step 1C, added 5-factor block after existing merge/
 Source: arxiv 2603.04549 (A-MAC, ICLR 2026 Workshop MemAgent)
 Expected impact: knowledge.md stays compact and signal-dense; old one-time-fix rules get aged out instead of accumulating indefinitely
 
+## Anthropic frontend-design skill download + design.md rewrite — implemented 2026-03-24 (session 61)
+What: Downloaded official Anthropic frontend-design SKILL.md (correct path: skills/frontend-design/SKILL.md). Extracted: bold aesthetic direction framework (Purpose/Tone/Constraints/Differentiation), background depth patterns (gradient meshes, noise textures, grain overlays), motion hierarchy (one orchestrated load > scattered micro-interactions). Also rewrote design.md from stale StockCards content to accurate PolyEdge color system (actual :root CSS vars), file structure (single index.html), and card anatomy.
+Where: autoagent/skills/frontend-design.md (new), autoagent/skills/design.md (complete rewrite)
+Source: https://raw.githubusercontent.com/anthropics/skills/main/skills/frontend-design/SKILL.md
+Expected impact: Future UI/UX sessions read an accurate design.md with real CSS variables instead of wrong values from a prior project; frontend-design.md provides inspirational design framework for PolyEdge's current FEATURE MODE
+
+## XSS grep command in Marcus audit checklist — implemented 2026-03-24 (session 61)
+What: Added `grep -n 'innerHTML.*\${' frontend/index.html` command to Marcus security checklist in audit.md. After sessions 59+60 each found missed XSS injections in different function types (renderXxx vs buildXxx template helpers), the grep command catches ALL innerHTML template literals in one sweep rather than relying on a category-based mental search.
+Where: autoagent/skills/audit.md (Marcus checklist, XSS line)
+Source: Sessions 59+60 failure pattern — 2 consecutive sessions needed to fully fix XSS because pattern-based inspection missed non-renderXxx functions
+Expected impact: A single pre-commit grep catches all innerHTML injection points at once; eliminates the "missed one template helper" pattern that caused session 61 to need a follow-up XSS fix
+
+## CSS class refactor → Playwright selector sync — implemented 2026-03-24 (session 61)
+What: Added "CSS CLASS REFACTOR" section to playwright.md: when renaming CSS classes in a large refactor, grep the check script for old class names before running it. Old class selectors in check scripts silently "pass" on null (element not found) instead of catching regressions.
+Where: autoagent/skills/playwright.md (new section before RECONNAISSANCE pattern)
+Source: Session 58 failure — converted lb-table→lb-grid; Playwright checks referenced .bettor-row/.bettor-name → 2 first-run failures
+Expected impact: Eliminates first-run Playwright failures after CSS class refactors; agent updates check script at the same time as the refactor
+
+## design.md + INDEX.md stale reference cleanup — implemented 2026-03-24 (session 61)
+What: Removed stale references to the previous "StockCards" project from design.md (rewrote entire file for PolyEdge) and INDEX.md (updated frontend-only feature workflow, API endpoint workflow, scoring function workflow to reference PolyEdge's actual files: backend/app/routes/, frontend/index.html).
+Where: autoagent/skills/design.md, autoagent/skills/INDEX.md
+Source: Session 61 META audit — design.md referenced styles.css/app.js/PLAY signals/DECK blue which don't exist in PolyEdge; INDEX.md referenced src/stockcards/routes/ which is wrong
+Expected impact: Future UI/UX sessions read correct file paths and color variables on first read; eliminates risk of editing wrong files
+
 ## pytest.param() named IDs for parametrized tests — implemented 2026-03-24
 What: Use `pytest.param("free", 1, id="tier_free")` instead of bare tuples in @pytest.mark.parametrize. Named IDs appear in failure output as "FAILED test_follows[tier_free]" instead of unreadable "FAILED test_follows[0]". Makes parametrize-heavy test suites 3x faster to debug.
 Where: skills/testing.md (PARAMETRIZE BEST PRACTICES section, added before IMPORT CHECK)

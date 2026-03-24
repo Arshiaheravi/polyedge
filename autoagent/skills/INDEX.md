@@ -16,7 +16,8 @@ Read this first to find the right skill file before starting any task.
 | Frontend HTML/CSS/JS changes | `coding.md` | Frontend patterns section |
 | Playwright UI checks | `playwright.md` | How to run checks, pass/fail criteria, recon-then-action pattern |
 | Research and web search tasks | `research.md` | Search strategy, evaluation criteria |
-| UI/UX design changes | `design.md` | Dark theme rules, card aesthetic patterns, anti-AI-slop principles |
+| UI/UX design changes | `design.md` | PolyEdge color system, card anatomy, anti-AI-slop principles, XSS rule |
+| Generic frontend design (any project) | `frontend-design.md` | Anthropic official skill — bold aesthetic direction, typography, motion, spatial composition |
 | Building Claude API features | `claude_api.md` | Model selection, streaming, tool use, common pitfalls |
 | Pre-commit quality audit | `audit.md` | 8-person virtual senior dev team review — security, UX, performance, compliance |
 | Excel / spreadsheet output | `xlsx.md` | openpyxl formulas, pandas export, financial color coding, zero error rules |
@@ -29,27 +30,29 @@ Read this first to find the right skill file before starting any task.
 | Generative / algorithmic art | `algorithmic-art.md` | p5.js, seeded randomness, parameter controls, single HTML output |
 | Long-form document writing | `doc-coauthoring.md` | 3-stage co-authoring, section-by-section, reader testing |
 | Internal team updates | `internal-comms.md` | 3P updates, incident reports, status reports, formatted templates |
-| Brand color + font system | `brand-guidelines.md` | StockCards palette, Anthropic palette, CSS variable rules |
+| Brand color + font system | `brand-guidelines.md` | CSS variable rules (note: StockCards palette section is stale — use design.md for PolyEdge colors) |
 | Animated GIFs for Slack | `slack-gif.md` | PIL + imageio, emoji/message sizes, animation techniques |
 | Creating new skill files | `skill-creator.md` | Skill file format, quality checklist, when to create vs reuse |
 | Visual art / posters / design images | `canvas-design.md` | 2-phase: philosophy (.md) then canvas (.png/.pdf), 90% visual 10% text |
 
 ## Common task workflows (already proven)
 
-**Add a new scoring function:**
-1. Write function in `services/analysis.py` (pure — no I/O)
-2. Write tests for ALL branches immediately (see testing.md)
-3. Wire through: `signals.py` param → `dashboard.py` call → `StockSignal` field → frontend
+**Add a new UI section or component (PolyEdge — current mission):**
+1. Read design.md for color system, card anatomy, and anti-patterns
+2. Edit `frontend/index.html` (HTML structure in body, CSS in `<style>`, JS in `<script>`)
+3. Check XSS: `grep -n 'innerHTML.*\${' frontend/index.html`
+4. Run tests: `cd backend && py -m pytest tests/ -q`
+5. Run Playwright check (see playwright.md)
 
-**Add a new API endpoint:**
-1. Create route in `src/stockcards/routes/newroute.py`
-2. Register with `app.include_router()` in `src/stockcards/app.py`
+**Add a new API endpoint (PolyEdge):**
+1. Create route in `backend/app/routes/newroute.py`
+2. Register with `app.include_router()` in `backend/app/main.py`
 3. Write 3 tests: happy path, not-found, error case
 
-**Add a frontend-only feature:**
-1. Edit `frontend/index.html` for HTML structure
-2. Edit `frontend/app.js` for behavior
-3. Edit `frontend/styles.css` for styling
+**Add a frontend-only feature (PolyEdge — single file):**
+1. Edit `frontend/index.html` only — CSS in `<style>` block, JS in `<script>` block
+2. Use existing CSS variables from `:root` (see design.md for the full list)
+3. For any innerHTML with API data: wrap in `escapeHtml()` (see audit.md Marcus checklist)
 4. Run Playwright check (see playwright.md)
 
 **Fix a broken test:**
