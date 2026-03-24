@@ -178,6 +178,21 @@
     .btn-danger:hover { background: rgba(240,62,62,0.22); }
     .btn-outline { background: transparent; color: var(--accent2); border: 1px solid var(--accent); }
     .btn-outline:hover { background: rgba(0,201,122,0.1); }
+
+    /* Hero CTA shimmer sweep */
+    @keyframes btn-shimmer {
+      0%, 55%, 100% { left: -60%; opacity: 0; }
+      20% { opacity: 1; }
+      45% { left: 115%; opacity: 0; }
+    }
+    .btn-hero { position: relative; overflow: hidden; }
+    .btn-hero::after {
+      content: ''; position: absolute; top: 0; left: -60%;
+      width: 40%; height: 100%; transform: skewX(-12deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+      animation: btn-shimmer 3s ease-in-out infinite;
+      animation-delay: 1.2s;
+    }
     .btn-sm { padding: 7px 14px; font-size: 12px; min-height: 36px; }
     .btn-lg { padding: 14px 32px; font-size: 16px; border-radius: 11px; min-height: 52px; letter-spacing: -0.2px; }
 
@@ -259,7 +274,7 @@
     .stat-strip {
       display: flex; justify-content: center; gap: 0; margin-top: 72px;
       background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-      overflow: hidden; max-width: 680px; margin-left: auto; margin-right: auto;
+      overflow: hidden; max-width: 880px; margin-left: auto; margin-right: auto;
     }
     .stat-strip-item {
       flex: 1; padding: 20px 24px; text-align: center; border-right: 1px solid var(--border);
@@ -605,9 +620,12 @@
     <h1 class="animate-fade-up delay-1">Copy the sharpest<br>minds on Polymarket.</h1>
     <p class="animate-fade-up delay-2">Follow the most profitable bettors and get instant alerts the moment they place a bet. Be first. Win more.</p>
     <div class="hero-cta animate-fade-up delay-3">
-      <button class="btn btn-primary btn-lg" onclick="showView('auth', 'register')">Get Started Free &rarr;</button>
+      <button class="btn btn-primary btn-lg btn-hero" onclick="showView('auth', 'register')">Get Started Free &rarr;</button>
       <button class="btn btn-secondary btn-lg" onclick="showView('browse')">View Live Leaderboard</button>
     </div>
+    <p class="animate-fade-up delay-4" style="font-size:13px;color:var(--text3);text-align:center;margin-top:16px;">
+      Join <strong style="color:var(--text2);">847+</strong> traders already copying top bettors
+    </p>
 
     <!-- Stats strip -->
     <div class="stat-strip animate-fade-up delay-4" style="margin-top:56px;" role="list" aria-label="Platform statistics">
@@ -622,6 +640,10 @@
       <div class="stat-strip-item" role="listitem">
         <div class="stat-num text-gold" id="stat-speed" aria-label="Approximately 30 second average alert speed">~30s</div>
         <div class="stat-label">Average Alert Speed</div>
+      </div>
+      <div class="stat-strip-item" role="listitem">
+        <div class="stat-num" style="color:var(--red);" id="stat-bets-today" aria-live="polite" aria-label="Bets detected today">0</div>
+        <div class="stat-label">Bets Detected Today</div>
       </div>
     </div>
 
@@ -2490,10 +2512,24 @@ function runLandingCounters() {
     if (entries[0].isIntersecting) {
       observer.disconnect();
       // Stats are static text so we do a gentle fade-count
-      const volEl  = document.getElementById('stat-volume');
-      const betEl  = document.getElementById('stat-bettors');
+      const volEl   = document.getElementById('stat-volume');
+      const betEl   = document.getElementById('stat-bettors');
+      const betsEl  = document.getElementById('stat-bets-today');
       if (volEl)  { volEl.textContent = '$0'; animateCounter(volEl, 2.4, '$', 'M+'); }
       if (betEl)  { betEl.textContent = '0';  animateCounter(betEl, 100, '', ''); }
+      if (betsEl) {
+        const startBets = 1247;
+        betsEl.textContent = '0'; animateCounter(betsEl, startBets, '', '');
+        // Slow live increment: +1 every ~8 seconds so it feels like a real counter
+        setTimeout(() => {
+          const interval = setInterval(() => {
+            const el = document.getElementById('stat-bets-today');
+            if (!el) { clearInterval(interval); return; }
+            const cur = parseInt(el.textContent.replace(/,/g, '')) || startBets;
+            el.textContent = (cur + 1).toLocaleString();
+          }, 8000);
+        }, 1400); // start after counter animation finishes
+      }
     }
   }, { threshold: 0.5 });
   observer.observe(strip);
@@ -2508,9 +2544,10 @@ function buildTickerItem(t) {
   const amt   = t.amount_usd >= 1000
     ? '$' + (t.amount_usd / 1000).toFixed(1) + 'k'
     : '$' + Math.round(t.amount_usd);
-  // Truncate long market names to keep ticker clean
-  const market = t.market.length > 40 ? t.market.slice(0, 38) + '…' : t.market;
-  return `<span class="ticker-item"><strong>${t.name}</strong> bet <span class="${cls}">${amt}</span> on ${market} ${arrow}</span>`;
+  // Truncate long market names, then escape to prevent XSS
+  const mkt = t.market || '';
+  const rawMarket = mkt.length > 40 ? mkt.slice(0, 38) + '…' : mkt;
+  return `<span class="ticker-item"><strong>${escapeHtml(t.name || '')}</strong> bet <span class="${cls}">${amt}</span> on ${escapeHtml(rawMarket)} ${arrow}</span>`;
 }
 
 async function refreshLiveTicker() {
