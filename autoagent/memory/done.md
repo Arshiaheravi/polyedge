@@ -38,3 +38,4 @@
 - **[SESSION #15] 5 coverage-gap tests** — SMS 503/400/502 paths, alert settings push_subscription parsing, follows/live cache hit; 162→167 tests
 
 - **[SESSION #42] 6 branch-coverage tests** — password max_length DoS guard (added max_length=128, 2 tests), /follows/live shape contract (2 tests), VIP follow cap, admin zero-users; 268→274 tests
+- **[SESSION #43] Login DoS guard + unfollow cache eviction** — Fixed missing max_length=128 on LoginRequest and missing _activity_cache eviction on unfollow, added 4 tests

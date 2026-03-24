@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **274 passed** (as of 2026-03-24, session 42 — 6 branch-coverage tests added)
+- Test count: **278 passed** (as of 2026-03-24, session 43 — 2 bug fixes + 4 tests added)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -47,6 +47,12 @@ ACCOMPLISHED: (1) Curated knowledge.md — merged Sessions #13+#14 duplicate cac
 FAILED: Nothing failed.
 RULE: [2026-03-24] When a BRAIN/META session identifies a failure pattern caused by a MISSING RULE (e.g. backlog empties reactively), the fix must be implemented in the file that gets read at the exact point the failure occurs — not in knowledge.md. Backlog empties at end of WORK session → add the low-water-mark rule to PROMPT.md STEP 3 (where backlog cleanup happens). Symmetry audit fails during testing → add it to testing.md BRANCH AUDIT WORKFLOW. Rules placed in the right file at the right moment are followed; rules in knowledge.md are often forgotten.
 RULE: [2026-03-24] activity_log.md is auto-loaded into context. Archive when > 30 entries to prevent context bloat. Use BRAIN_PROMPT.md Step 1D trigger. The archive format is: move oldest 20 to activity_log_archive.md (append), add a header line to the active file noting the archive range.
+
+### Session #43 Reflexion — 2026-03-24
+ACCOMPLISHED: (1) Fixed LoginRequest missing max_length=128 — symmetry gap vs. RegisterRequest (same DoS vector). (2) Fixed remove_follow missing cache eviction — stale /follows/live data after unfollow was a real bug. (3) 4 tests: login 129-char→422, login 128-char→200 (boundary), DELETE clears cache, /follows/live cache hides 2nd follow within TTL. All 4 passed first run; full suite 278/278.
+FAILED: Full suite had 2 intermittent failures (test_admin_stats_counts_users assert 1==2, test_sms sqlalchemy error) — passed in isolation, passed on 2nd full run. Pre-existing test isolation flakiness, not caused by this session's changes.
+RULE: [2026-03-24] Always check BOTH register AND login request models when adding input validation (min_length, max_length, type). These models are often written separately and drift apart — a guard added to RegisterRequest may be missing from LoginRequest. Same applies to any paired request models (e.g. CreateRequest vs. UpdateRequest).
+RULE: [2026-03-24] When a DELETE or PUT endpoint modifies data that is also served by a cached GET endpoint, the DELETE/PUT handler MUST evict the cache entry for the affected resource. Pattern: `_activity_cache.pop(user_id, None)` in remove_follow. Without eviction, stale data persists until TTL expires — test by: populate cache via GET, DELETE the resource, call GET again, assert fresh data.
 
 ### Session #42 Reflexion — 2026-03-24
 ACCOMPLISHED: (1) Added max_length=128 to RegisterRequest.password — closes a real bcrypt DoS vector. (2) 2 tests for password boundary (10000-char rejected, 128-char accepted). (3) 2 tests for /follows/live response shape ({"bettors": []} contract, per-item key shape). (4) VIP tier follow cap test (6 follows succeed, limit=999999 confirmed). (5) Admin zero-users test (all 6 stats = 0/0.0). (6) Found scheduler freshness filter was already covered by test_poll_bets_skips_old_bets — grepped and confirmed before writing a duplicate.

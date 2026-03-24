@@ -902,7 +902,7 @@
     "date": "2026-03-24",
     "time": "11:00",
     "type": "brain",
-    "summary": "Deep brain session — curated knowledge.md (merged duplicate cache rules), fixed META patterns (backlog low-water-mark rule, symmetry audit for sibling functions, activity log archival), searched 7 topics, replenished 5 testing tasks in backlog",
+    "summary": "Deep brain session \u00e2\u20ac\u201d curated knowledge.md (merged duplicate cache rules), fixed META patterns (backlog low-water-mark rule, symmetry audit for sibling functions, activity log archival), searched 7 topics, replenished 5 testing tasks in backlog",
     "files": [
       "autoagent/PROMPT.md",
       "autoagent/brain/sources.md",
@@ -960,6 +960,30 @@
     "tests": {
       "before": 268,
       "after": 274,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
+  },
+  {
+    "session": 43,
+    "date": "2026-03-24",
+    "time": "13:00",
+    "type": "work",
+    "summary": "Fixed login DoS gap (missing max_length=128 on LoginRequest) and a stale-cache bug (unfollow did not evict _activity_cache), then added 4 tests to lock in both fixes",
+    "files": [
+      "backend/app/routes/auth.py",
+      "backend/app/routes/follows.py",
+      "backend/tests/test_auth.py",
+      "backend/tests/test_follows_live.py"
+    ],
+    "tests": {
+      "before": 274,
+      "after": 278,
       "status": "pass"
     },
     "frontend": {
