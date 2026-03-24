@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_capability.py
+# hypothesis_version: 6.151.9
+
+['Account', 'Capability', 'active', 'alternatives', 'capability', 'disabled', 'errors', 'future_requirements', 'inactive', 'invalid_tax_id', 'invalid_url_format', 'invalid_url_length', 'invalid_value_other', 'other', 'paused.inactivity', 'pending', 'pending.onboarding', 'pending.review', 'platform_disabled', 'platform_paused', 'rejected.inactivity', 'rejected.other', 'requirements', 'unrequested']

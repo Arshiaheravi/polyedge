@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_http_client.py
+# hypothesis_version: 6.151.9
+
+[0.5, 409, 500, 1000, '\n\n(Network error: ', '%s: %s', '%s:%s', ')', '.', ':', 'A %s was raised', 'AIOHTTPStreamReader', 'AIOHTTPTimeout', 'HTTPClient', 'HTTPXClientType', 'HTTPXTimeout', 'Request-Id', 'RequestsSession', 'aiohttp', 'connector', 'data', 'false', 'get', 'headers', 'http', 'https', 'httpx', 'last_request_metrics', 'post', 'proxies', 'proxy', 'pycurl', 'requests', 'retry-after', 'session', 'stream', 'stripe-should-retry', 'timeout', 'true', 'urlfetch', 'urllib.request', 'utf-8', 'verify']

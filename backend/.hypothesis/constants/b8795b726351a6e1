@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_file_link.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'File', 'FileLink', 'FileLink.ListParams', 'file_link', 'get', 'post']

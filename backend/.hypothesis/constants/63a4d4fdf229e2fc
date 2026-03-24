@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_plan.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Plan', 'Plan.CreateParams', 'Plan.DeleteParams', 'Plan.ListParams', 'Plan.ModifyParams', 'Plan.RetrieveParams', 'Product', '_cls_delete', '_cls_delete_async', 'day', 'delete', 'down', 'get', 'graduated', 'inf', 'last_during_period', 'last_ever', 'licensed', 'max', 'metered', 'month', 'per_unit', 'plan', 'post', 'sum', 'tiered', 'tiers', 'transform_usage', 'up', 'volume', 'week', 'year']

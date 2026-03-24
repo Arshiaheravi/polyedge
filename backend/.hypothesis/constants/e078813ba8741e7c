@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_shipping_rate.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'ShippingRate', 'TaxCode', 'business_day', 'currency_options', 'day', 'delivery_estimate', 'exclusive', 'fixed_amount', 'get', 'hour', 'inclusive', 'maximum', 'minimum', 'month', 'post', 'shipping_rate', 'unspecified', 'week']

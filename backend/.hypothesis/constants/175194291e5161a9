@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\async_generator\_impl.py
+# hypothesis_version: 6.151.9
+
+['AsyncGenerator', '__await__', '_async_gen_function', 'asyncgen_hooks', 'finalizer', 'firstiter', 'isasyncgen', 'isasyncgenfunction', 'pypy']

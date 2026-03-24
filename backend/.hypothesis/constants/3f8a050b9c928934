@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\tax\_registration.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', "Literal['now']|int", 'Registration', 'active', 'ae', 'all', 'at', 'au', 'be', 'bg', 'bh', 'ca', 'ch', 'cl', 'co', 'country_options', 'cy', 'cz', 'de', 'dk', 'ee', 'eg', 'elections', 'es', 'expired', 'fi', 'fr', 'gb', 'ge', 'get', 'gr', 'hr', 'hu', 'id', 'ie', 'ioss', 'is', 'is_', 'it', 'jp', 'ke', 'kr', 'kz', 'local_amusement_tax', 'local_lease_tax', 'local_use_tax', 'lt', 'lu', 'lv', 'mt', 'mx', 'my', 'ng', 'nl', 'no', 'now', 'nz', 'om', 'oss_non_union', 'oss_union', 'pl', 'post', 'province_standard', 'pt', 'ro', 'sa', 'scheduled', 'se', 'sg', 'si', 'simplified', 'single_local_use_tax', 'sk', 'small_seller', 'standard', 'state_sales_tax', 'tax.registration', 'th', 'tr', 'us', 'vn', 'za']

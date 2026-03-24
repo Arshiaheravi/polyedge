@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_source_transaction.py
+# hypothesis_version: 6.151.9
+
+['ach_credit_transfer', 'ach_debit', 'alipay', 'bancontact', 'card', 'card_present', 'chf_credit_transfer', 'eps', 'gbp_credit_transfer', 'giropay', 'ideal', 'klarna', 'multibanco', 'p24', 'paper_check', 'sepa_credit_transfer', 'sepa_debit', 'sofort', 'source_transaction', 'three_d_secure', 'wechat']

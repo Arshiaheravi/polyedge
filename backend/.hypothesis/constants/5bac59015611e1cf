@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\forwarding\_request.py
+# hypothesis_version: 6.151.9
+
+['POST', 'Request', 'Request.CreateParams', 'Request.ListParams', 'card_cvc', 'card_expiry', 'card_number', 'cardholder_name', 'forwarding.request', 'get', 'headers', 'post', 'request_context', 'request_details', 'response_details']

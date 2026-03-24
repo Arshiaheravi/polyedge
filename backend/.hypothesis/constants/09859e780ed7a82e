@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\jose\backends\base.py
+# hypothesis_version: 6.151.9
+
+['alg', 'k', 'kty', 'oct']

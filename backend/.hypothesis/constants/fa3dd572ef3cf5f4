@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\treasury\_received_credit_service.py
+# hypothesis_version: 6.151.9
+
+['api', 'credit_reversal', 'failed', 'get', 'other', 'outbound_payment', 'payout', 'succeeded']

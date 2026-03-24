@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_subscription_schedule_service.py
+# hypothesis_version: 6.151.9
+
+["Literal['']|str", 'account', 'always_invoice', 'api', 'automatic', 'cancel', 'charge_automatically', 'create_prorations', 'day', 'exclusive', 'get', 'inclusive', "int|Literal['now']", 'month', 'none', 'phase_start', 'post', 'release', 'renew', 'self', 'send_invoice', 'unspecified', 'week', 'year']

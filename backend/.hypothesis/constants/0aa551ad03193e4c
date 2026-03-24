@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\treasury\_financial_account_features.py
+# hypothesis_version: 6.151.9
+
+['aba', 'ach', 'activating', 'active', 'card_issuing', 'contact_stripe', 'deposit_insurance', 'financial_addresses', 'inbound_flows', 'inbound_transfers', 'intra_stripe_flows', 'outbound_flows', 'outbound_payments', 'outbound_transfers', 'pending', 'provide_information', 'rejected_other', 'remove_restriction', 'restricted', 'restricted_other', 'status_details', 'us_domestic_wire']

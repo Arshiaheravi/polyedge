@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_apple_pay_domain.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'ApplePayDomain', '_cls_delete', '_cls_delete_async', 'apple_pay_domain', 'delete', 'get', 'post']

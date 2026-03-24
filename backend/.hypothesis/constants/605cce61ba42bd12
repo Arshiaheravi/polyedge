@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_customer_balance_transaction.py
+# hypothesis_version: 6.151.9
+
+['CreditNote', 'Customer', 'Invoice', 'adjustment', 'applied_to_invoice', 'credit_note', 'initial', 'invoice_overpaid', 'invoice_too_large', 'invoice_too_small', 'migration']

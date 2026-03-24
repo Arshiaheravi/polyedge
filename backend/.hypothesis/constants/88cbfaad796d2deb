@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_customer_cash_balance_transaction.py
+# hypothesis_version: 6.151.9
+
+['BalanceTransaction', 'Customer', 'PaymentIntent', 'Refund', 'ach', 'applied_to_payment', 'bank_transfer', 'domestic_wire_us', 'eu_bank_transfer', 'funded', 'funding_reversed', 'gb_bank_transfer', 'jp_bank_transfer', 'mx_bank_transfer', 'return_canceled', 'return_initiated', 'swift', 'us_bank_transfer']

@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_invoice_item.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Customer', 'Discount', 'Invoice', 'InvoiceItem', "Literal['']|str", 'Plan', 'Price', 'Subscription', 'TaxRate', 'TestClock', '_cls_delete', '_cls_delete_async', 'delete', 'exclusive', 'get', 'inclusive', 'invoiceitem', 'period', 'post', 'unspecified']

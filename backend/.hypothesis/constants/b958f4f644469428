@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\treasury\_inbound_transfer.py
+# hypothesis_version: 6.151.9
+
+['InboundTransfer', 'Mandate', 'Transaction', '_cls_cancel', '_cls_cancel_async', '_cls_fail', '_cls_fail_async', '_cls_succeed', '_cls_succeed_async', 'account_closed', 'account_frozen', 'ach', 'address', 'billing_details', 'canceled', 'checking', 'company', 'debit_not_authorized', 'failed', 'failure_details', 'get', 'id', 'individual', 'insufficient_funds', 'invalid_currency', 'linked_flows', 'no_account', 'other', 'post', 'processing', 'savings', 'status_transitions', 'succeeded', 'us_bank_account']

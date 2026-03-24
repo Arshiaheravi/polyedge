@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\forwarding\_request_service.py
+# hypothesis_version: 6.151.9
+
+['api', 'card_cvc', 'card_expiry', 'card_number', 'cardholder_name', 'get', 'post']

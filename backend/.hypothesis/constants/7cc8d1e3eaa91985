@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_coupon.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Coupon', 'Coupon.CreateParams', 'Coupon.DeleteParams', 'Coupon.ListParams', 'Coupon.ModifyParams', '_cls_delete', '_cls_delete_async', 'applies_to', 'coupon', 'currency_options', 'delete', 'forever', 'get', 'once', 'post', 'repeating']

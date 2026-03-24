@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\test_helpers\_test_clock.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'TestClock', 'TestClock.ListParams', '_cls_advance', '_cls_advance_async', '_cls_delete', '_cls_delete_async', 'advancing', 'delete', 'get', 'id', 'internal_failure', 'post', 'ready', 'status_details']

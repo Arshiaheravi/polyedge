@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\treasury\_financial_account.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'FinancialAccount', '_cls_update_features', 'aba', 'account_rejected', 'ach', 'balance', 'card_issuing', 'closed', 'closed_by_platform', 'deposit_insurance', 'financial_addresses', 'get', 'id', 'intra_stripe_flows', 'open', 'other', 'post', 'restricted', 'status_details', 'unrestricted', 'us_domestic_wire']

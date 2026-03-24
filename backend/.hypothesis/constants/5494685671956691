@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_request_options.py
+# hypothesis_version: 6.151.9
+
+['api_key', 'content_type', 'headers', 'idempotency_key', 'int|None', 'max_network_retries', 'stripe_account', 'stripe_context', 'stripe_version', 'str|None']

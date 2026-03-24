@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\trio\_deprecate.py
+# hypothesis_version: 6.151.9
+
+['   Use {} instead.\n', ' ({})', ' with no replacement', '.', '.. deprecated:: {}\n', '; use {} instead', '__annotations__', '__module__', '__qualname__', '{}.{}']

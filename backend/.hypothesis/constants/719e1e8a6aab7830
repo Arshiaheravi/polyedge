@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\yarl\_url.py
+# hypothesis_version: 6.151.9
+
+[256, 443, 65535, '#&+;=', '#/:?@', '#?', '%', '&', '+', '.', '..', '/', '/+', ':', '=', '=+&;', '?/:@', '@', '@:', 'Invalid host type', 'Invalid name type', 'Invalid scheme type', 'Invalid suffix type', 'Invalid user type', '[', ']', '_cache', '_val', 'ascii', 'hash', 'http', 'https', 'idna', 'idna_decode', 'idna_encode', 'url should be URL', 'ws', 'wss', 'yarl', '{}={}']

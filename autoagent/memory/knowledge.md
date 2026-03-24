@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **294 passed** (as of 2026-03-24, session 52 — audit removed 1 duplicate VIP follow test)
+- Test count: **296 passed** (as of 2026-03-24, session 53 — added scheduler outer exception + push subscription roundtrip tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -301,6 +301,11 @@ RULE: [2026-03-23] When the backlog empties after a testing sprint, always pre-p
 ACCOMPLISHED: Searched 7 topics, evaluated 6 new sources. Implemented ACE Curator step (Step 1C) in BRAIN_PROMPT.md — prevents knowledge.md from accumulating redundant rules over time. Added 3 high-priority backlog items from Polymarket strategy research: win_rate display, 15s VIP polling, and Alembic migrations. Ran first curation pass on knowledge.md — 13 rules confirmed distinct, no merges needed.
 FAILED: Nothing failed.
 RULE: [2026-03-24] Polymarket information arbitrage window is <30s — 30s polling catches most bets but VIP users would benefit from 15s. Keep this in mind when any performance or tier-differentiation work comes up.
+
+### Session #53 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 2 tests for last 3 HIGH PRIORITY backlog items. Discovered task 1 (basic tier GET /follows limit=5) was already covered by test_hypothesis_invariants.py parametrize before writing any code — saved time and avoided a duplicate. test_poll_bets_outer_exception_leaves_last_check_unchanged uses a real-session wrapper with commit() overridden to raise. test_put_alerts_settings_valid_push_subscription_stores_and_get_retrieves is a full PUT→GET roundtrip. 294→296.
+FAILED: Nothing failed.
+RULE: [2026-03-24] Before writing any backlog test, grep test_hypothesis_invariants.py parametrize tables — they often cover combinations (free/basic/vip) that backlog items claim are "only tested for some tiers." Saves a full test slot.
 
 ### Session #1 Reflexion — 2026-03-23
 ACCOMPLISHED: Fixed 5 failing webhook tests by adding autouse conftest fixture to clear stripe_webhook_secret. Committed prior-session backend bugfixes and full 91-test suite. Fixed CLAUDE.md free tier documentation.

@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\OneDrive\Desktop\PolyEdge\backend\app\services\stripe_service.py
+# hypothesis_version: 6.151.9
+
+['active', 'basic', 'canceled', 'card', 'customer', 'data', 'free', 'id', 'items', 'metadata', 'object', 'past_due', 'plan', 'price', 'quantity', 'status', 'subscription', 'type', 'unpaid', 'url', 'user_id', 'vip']

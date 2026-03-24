@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\apps\_secret.py
+# hypothesis_version: 6.151.9
+
+['Secret', 'Secret.CreateParams', 'Secret.FindParams', 'Secret.ListParams', 'account', 'apps.secret', 'get', 'post', 'scope', 'user']

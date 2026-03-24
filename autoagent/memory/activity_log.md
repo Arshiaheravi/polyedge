@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-20 archived — see activity_log_archive.md)*
 
+## 2026-03-24 22:00 — TESTING (Session 53)
+DONE: Added 2 backlog tests — test_poll_bets_outer_exception_leaves_last_check_unchanged (db.commit() raises → outer except fires → _last_check stays at pre-poll value, so bets aren't skipped next run); test_put_alerts_settings_valid_push_subscription_stores_and_get_retrieves (PUT valid JSON string → GET returns parsed dict with endpoint key). Task 1 (basic tier GET /follows limit=5) found already covered by test_hypothesis_invariants.py parametrize. 294→296 tests.
+IMPACT: Scheduler outer exception path was the last untested defensive branch — a regression where _last_check advances despite a failed commit would silently skip all bets on the next poll. Push subscription PUT roundtrip locks in the json.loads() store/retrieve path so a breakage can't hide behind the existing direct-DB test.
+FILES: backend/tests/test_scheduler.py, backend/tests/test_alerts.py
+
 ## 2026-03-24 21:00 — META/AUDIT (Session 52)
 DONE: Code quality audit of sessions 46-50 test files — found and removed 2 issues: dead ADMIN_PW constant + _admin_headers() helper in test_admin.py (never called), and duplicate test_vip_can_add_more_than_5_follows in test_security.py (subsumed by test_follows.py). 295→294 tests, 0 failures.
 IMPACT: Prevents false confidence from having a helper function that looks like it tests something but is unreachable. Removes redundant VIP follow assertion that would create noise if tier limits were ever refactored.

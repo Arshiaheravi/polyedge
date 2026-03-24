@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_util.py
+# hypothesis_version: 6.151.9
+
+['/v2', 'APPENGINE_RUNTIME', 'Dev', 'Idempotency-Key', 'Resp', 'SERVER_SOFTWARE', 'STRIPE_LOG', 'StripeObject', 'StripeResponse', 'T', 'V1', 'V2', '\\s', '_APIRequestor', '_T', 'compare_digest', 'data', 'debug', 'decode', 'info', 'list', 'next_page_url', 'object', 'search_result', 'sk_(live|test)_', 'stripe', 'test', 'type', 'utf-8', 'v2.core.event', '{key}={val}']

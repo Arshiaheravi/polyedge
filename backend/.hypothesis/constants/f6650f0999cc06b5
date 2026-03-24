@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_mandate.py
+# hypothesis_version: 6.151.9
+
+['Mandate', 'PaymentMethod', 'accepted', 'account_closed', 'acss_debit', 'active', 'amazon_pay', 'au_becs_debit', 'bacs_debit', 'business', 'card', 'cashapp', 'combined', 'could_not_process', 'customer_acceptance', 'debit_not_authorized', 'inactive', 'interval', 'invoice', 'link', 'mandate', 'multi_use', 'offline', 'online', 'paper', 'paypal', 'pending', 'personal', 'refused', 'revoked', 'revolut_pay', 'sepa_debit', 'single_use', 'sporadic', 'subscription', 'us_bank_account']

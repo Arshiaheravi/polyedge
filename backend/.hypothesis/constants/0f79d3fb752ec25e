@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_credit_note_preview_lines_service.py
+# hypothesis_version: 6.151.9
+
+['api', 'credit_note', 'custom_line_item', 'duplicate', 'fraudulent', 'get', 'invoice_line_item', 'none', 'order_change']

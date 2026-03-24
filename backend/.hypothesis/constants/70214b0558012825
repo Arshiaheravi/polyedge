@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\billing_portal\_session.py
+# hypothesis_version: 6.151.9
+
+['Configuration', 'Session', 'Session.CreateParams', 'after_completion', 'auto', 'bg', 'coupon_offer', 'cs', 'da', 'de', 'discounts', 'el', 'en', 'en-AU', 'en-CA', 'en-GB', 'en-IE', 'en-IN', 'en-NZ', 'en-SG', 'es', 'es-419', 'et', 'fi', 'fil', 'flow', 'fr', 'fr-CA', 'hosted_confirmation', 'hr', 'hu', 'id', 'it', 'items', 'ja', 'ko', 'lt', 'lv', 'ms', 'mt', 'nb', 'nl', 'pl', 'portal_homepage', 'post', 'pt', 'pt-BR', 'redirect', 'retention', 'ro', 'ru', 'sk', 'sl', 'subscription_cancel', 'subscription_update', 'sv', 'th', 'tr', 'vi', 'zh', 'zh-HK', 'zh-TW']

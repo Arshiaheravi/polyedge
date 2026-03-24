@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_review.py
+# hypothesis_version: 6.151.9
+
+['Charge', 'PaymentIntent', 'Review', 'Review.ApproveParams', 'Review.ListParams', '_cls_approve', '_cls_approve_async', 'approved', 'disputed', 'get', 'id', 'ip_address_location', 'manual', 'post', 'redacted', 'refunded', 'refunded_as_fraud', 'review', 'rule', 'session']

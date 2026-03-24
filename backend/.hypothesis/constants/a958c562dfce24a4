@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_funding_instructions.py
+# hypothesis_version: 6.151.9
+
+['aba', 'ach', 'bacs', 'bank_transfer', 'domestic_wire_us', 'eu_bank_transfer', 'financial_addresses', 'fps', 'funding_instructions', 'iban', 'jp_bank_transfer', 'sepa', 'sort_code', 'spei', 'swift', 'zengin']

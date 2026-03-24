@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_multipart_data_generator.py
+# hypothesis_version: 6.151.9
+
+[1028, '"', '"; filename="', '--%s', '--%s--', 'V1', 'blob', 'name', 'read', 'utf-8']

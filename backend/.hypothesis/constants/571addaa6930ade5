@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\climate\_supplier.py
+# hypothesis_version: 6.151.9
+
+['Supplier', 'Supplier.ListParams', 'climate.supplier', 'direct_air_capture', 'enhanced_weathering', 'get', 'locations']

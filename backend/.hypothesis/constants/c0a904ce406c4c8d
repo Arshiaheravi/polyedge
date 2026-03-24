@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\apps\_secret_service.py
+# hypothesis_version: 6.151.9
+
+['/v1/apps/secrets', 'account', 'api', 'get', 'post', 'user']

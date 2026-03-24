@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\OneDrive\Desktop\PolyEdge\backend\app\config.py
+# hypothesis_version: 6.151.9
+
+[10080, '.env', 'HS256', 'admin']

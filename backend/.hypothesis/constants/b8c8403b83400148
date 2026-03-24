@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_stripe_object.py
+# hypothesis_version: 6.151.9
+
+[', ', '<%s at %s> JSON: %s', 'StripeObject', 'V1', '_', '_APIRequestor', '_last_response', '_unsaved_values', 'additional_owners', 'api', 'api_key', 'delete', 'get', 'id', 'id=%s', 'object', 'post', 'serialize', 'stripe_account', 'stripe_version']

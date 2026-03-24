@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\OneDrive\Desktop\PolyEdge\backend\app\services\scheduler.py
+# hypothesis_version: 6.151.9
+
+[0.0, '%Y-%m-%dT%H:%M:%S%z', '%Y-%m-%dT%H:%M:%SZ', 'Scheduler stopped', 'amount_usd', 'free', 'interval', 'market_id', 'market_question', 'outcome', 'poll_bets', 'timestamp']

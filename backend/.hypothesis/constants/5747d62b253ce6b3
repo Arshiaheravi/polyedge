@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_custom_method.py
+# hypothesis_version: 6.151.9
+
+['%s/%s/%s', '_cls_', 'delete', 'get', 'list', 'object', 'post']

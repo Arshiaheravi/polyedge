@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\tax\_registration_service.py
+# hypothesis_version: 6.151.9
+
+["Literal['now']|int", 'active', 'all', 'api', 'expired', 'get', 'ioss', 'is', 'local_amusement_tax', 'local_lease_tax', 'local_use_tax', 'now', 'oss_non_union', 'oss_union', 'post', 'province_standard', 'scheduled', 'simplified', 'single_local_use_tax', 'small_seller', 'standard', 'state_sales_tax']

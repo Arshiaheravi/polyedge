@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\tax\_calculation_line_item.py
+# hypothesis_version: 6.151.9
+
+['amusement_tax', 'city', 'communications_tax', 'country', 'county', 'customer_exempt', 'destination', 'district', 'exclusive', 'gst', 'hst', 'igst', 'inclusive', 'jct', 'jurisdiction', 'lease_tax', 'not_collecting', 'not_subject_to_tax', 'not_supported', 'origin', 'product_exempt', 'proportionally_rated', 'pst', 'qst', 'reduced_rated', 'reverse_charge', 'rst', 'sales_tax', 'standard_rated', 'state', 'tax_breakdown', 'tax_rate_details', 'vat', 'zero_rated']

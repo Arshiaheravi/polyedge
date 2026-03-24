@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_error_object.py
+# hypothesis_version: 6.151.9
+
+['PaymentIntent', 'PaymentMethod', 'SetupIntent', 'Source', 'V1', 'api_key', 'charge', 'code', 'decline_code', 'doc_url', 'error', 'error_description', 'message', 'param', 'payment_intent', 'payment_method', 'setup_intent', 'source', 'stripe_account', 'stripe_version', 'type']

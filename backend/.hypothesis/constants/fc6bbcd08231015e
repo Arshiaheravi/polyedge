@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\billing_portal\_configuration.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Application', 'Configuration', "Literal['']|str", 'address', 'always_invoice', 'at_period_end', 'business_profile', 'cancellation_reason', 'create_prorations', 'customer_service', 'customer_update', 'email', 'features', 'get', 'immediately', 'invoice_history', 'login_page', 'low_quality', 'missing_features', 'name', 'none', 'other', 'phone', 'post', 'price', 'products', 'promotion_code', 'quantity', 'shipping', 'subscription_cancel', 'subscription_update', 'switched_service', 'tax_id', 'too_complex', 'too_expensive', 'unused']

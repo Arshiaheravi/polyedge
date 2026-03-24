@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\identity\_verification_session_service.py
+# hypothesis_version: 6.151.9
+
+['api', 'canceled', 'document', 'driving_license', 'get', 'id_card', 'id_number', 'passport', 'post', 'processing', 'requires_input', 'verified']

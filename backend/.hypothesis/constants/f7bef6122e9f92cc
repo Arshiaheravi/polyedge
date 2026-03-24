@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_application_fee_refund.py
+# hypothesis_version: 6.151.9
+
+['%s/%s/refunds/%s', 'ApplicationFee', 'ApplicationFeeRefund', 'BalanceTransaction', 'fee_refund', 'post']

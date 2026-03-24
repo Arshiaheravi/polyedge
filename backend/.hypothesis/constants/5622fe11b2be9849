@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_transfer.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Account', 'BalanceTransaction', 'Charge', 'Reversal', 'Transfer', 'Transfer.ListParams', 'bank_account', 'card', 'fpx', 'get', 'post', 'reversal', 'transfer']

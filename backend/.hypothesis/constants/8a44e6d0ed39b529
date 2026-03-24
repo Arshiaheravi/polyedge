@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\treasury\_credit_reversal.py
+# hypothesis_version: 6.151.9
+
+['CreditReversal', 'Transaction', 'ach', 'canceled', 'get', 'post', 'posted', 'processing', 'status_transitions', 'stripe']

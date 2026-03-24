@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_nested_resource_class_methods.py
+# hypothesis_version: 6.151.9
+
+['%s/%s/%s', '%ss', '%ss_request', '%ss_url', '/%s', 'create', 'create_%s', 'delete', 'delete_%s', 'get', 'list', 'list_%s', 'modify_%s', 'post', 'retrieve', 'retrieve_%s', 'update']

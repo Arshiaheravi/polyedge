@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_dispute.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'BalanceTransaction', 'Charge', 'Dispute', 'Dispute.CloseParams', 'Dispute.ListParams', 'Dispute.ModifyParams', 'File', 'PaymentIntent', '_cls_close', '_cls_close_async', 'amazon_pay', 'card', 'chargeback', 'claim', 'dispute', 'evidence', 'evidence_details', 'get', 'id', 'inquiry', 'klarna', 'lost', 'needs_response', 'paypal', 'post', 'under_review', 'warning_closed', 'warning_under_review', 'won']

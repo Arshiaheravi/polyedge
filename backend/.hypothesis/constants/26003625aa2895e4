@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_error.py
+# hypothesis_version: 6.151.9
+
+['<empty message>', 'ErrorObject', 'Request {0}: {1}', 'V1', 'decode', 'error', 'request-id', 'utf-8']

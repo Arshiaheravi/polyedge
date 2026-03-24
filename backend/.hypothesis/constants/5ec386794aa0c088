@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\billing\_credit_balance_summary.py
+# hypothesis_version: 6.151.9
+
+['CreditBalanceSummary', 'Customer', 'applicability_scope', 'available_balance', 'balances', 'credit_grant', 'ledger_balance', 'metered', 'monetary']

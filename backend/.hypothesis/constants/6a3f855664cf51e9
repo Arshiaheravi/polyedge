@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\OneDrive\Desktop\PolyEdge\backend\app\routes\payments.py
+# hypothesis_version: 6.151.9
+
+[400, 502, '/checkout', '/payments', '/portal', '/webhook', 'basic', 'checkout_url', 'ok', 'payments', 'portal_url', 'status', 'stripe-signature', 'vip']

@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\issuing\_dispute.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'BalanceTransaction', 'Dispute', 'Dispute.CreateParams', 'Dispute.ListParams', 'Dispute.ModifyParams', 'Dispute.SubmitParams', 'File', "Literal['']|bool", "Literal['']|int", "Literal['']|str", 'Transaction', '_cls_submit', '_cls_submit_async', 'canceled', 'duplicate', 'evidence', 'expired', 'fraudulent', 'get', 'id', 'issuing.dispute', 'lost', 'merchandise', 'merchant_rejected', 'not_cancelled', 'not_received', 'other', 'post', 'refund_issued', 'service', 'submitted', 'successful', 'treasury', 'unsubmitted', 'won']

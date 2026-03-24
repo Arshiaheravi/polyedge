@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\v2\_event.py
+# hypothesis_version: 6.151.9
+
+['context', 'created', 'id', 'idempotency_key', 'livemode', 'reason', 'related_object', 'request', 'type', 'url', 'v2.core.event']

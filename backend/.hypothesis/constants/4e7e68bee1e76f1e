@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_promotion_code.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Coupon', 'Customer', 'PromotionCode', 'currency_options', 'get', 'post', 'promotion_code', 'restrictions']

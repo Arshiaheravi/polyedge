@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_subscription_item_usage_record_service.py
+# hypothesis_version: 6.151.9
+
+["Literal['now']|int", 'api', 'increment', 'post', 'set']

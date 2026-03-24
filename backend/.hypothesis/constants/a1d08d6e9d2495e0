@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\treasury\_debit_reversal.py
+# hypothesis_version: 6.151.9
+
+['DebitReversal', 'Transaction', 'ach', 'canceled', 'card', 'completed', 'failed', 'get', 'linked_flows', 'lost', 'post', 'processing', 'status_transitions', 'succeeded', 'won']

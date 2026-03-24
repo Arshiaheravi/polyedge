@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\events\_v1_billing_meter_no_meter_found_event.py
+# hypothesis_version: 6.151.9
+
+['archived_meter', 'error_types', 'no_meter', 'reason', 'request', 'sample_errors', 'timestamp_in_future']

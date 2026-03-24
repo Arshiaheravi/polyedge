@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\issuing\_personalization_design.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'File', "Literal['']|str", 'PhysicalBundle', '_cls_activate', '_cls_activate_async', '_cls_deactivate', '_cls_reject', '_cls_reject_async', 'active', 'carrier_text', 'geographic_location', 'get', 'id', 'inactive', 'inappropriate', 'network_name', 'non_binary_image', 'non_fiat_currency', 'other', 'other_entity', 'post', 'preferences', 'promotional_material', 'rejected', 'rejection_reasons', 'review']

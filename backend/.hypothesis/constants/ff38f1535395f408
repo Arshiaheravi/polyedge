@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_stripe_client.py
+# hypothesis_version: 6.151.9
+
+['Stripe-Context', 'V1', 'api', 'base', 'connect', 'decode', 'files', 'headers', 'meter_events', 'raw_request', 'stripe_context', 'utf-8']

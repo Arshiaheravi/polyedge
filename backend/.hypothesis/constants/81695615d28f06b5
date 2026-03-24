@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_token_service.py
+# hypothesis_version: 6.151.9
+
+['/v1/tokens', '/v1/tokens/{token}', "Literal['']|float", "Literal['']|str", 'api', 'cartes_bancaires', 'checking', 'company', 'existing', 'futsu', 'get', 'government_entity', 'individual', 'mastercard', 'non_profit', 'none', 'post', 'savings', 'toza', 'visa']

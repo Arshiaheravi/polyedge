@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_customer_funding_instructions_service.py
+# hypothesis_version: 6.151.9
+
+['api', 'bank_transfer', 'eu_bank_transfer', 'gb_bank_transfer', 'iban', 'jp_bank_transfer', 'mx_bank_transfer', 'post', 'sort_code', 'spei', 'us_bank_transfer', 'zengin']

@@ -6,9 +6,9 @@
 
 *(replenish when empty — see DEBUG MODE rules in PROMPT.md)*
 
-- [ ] GET /follows for basic tier reports limit=5 in response — TIER_LIMITS["basic"]=5 branch in the list endpoint; only free (limit=1) and VIP (limit=999999) GET responses are explicitly tested; add: upgrade user to basic, GET /follows, assert tier="basic" and limit=5
-- [ ] Scheduler outer exception path leaves _last_check unchanged — mock db.commit() to raise so the outer `except Exception as exc: logger.error(...)` handler fires; verify scheduler_module._last_check is still datetime(2000,1,1) (not updated); this ensures a failed poll doesn't skip bets on the next run
-- [ ] PUT /alerts/settings with valid JSON push_subscription stores and GET retrieves it — the PUT success path for non-None push_subscription; PUT {"push_subscription": '{"endpoint":"https://ex.com","keys":{"auth":"a","p256dh":"b"}}'}, then GET and assert push_subscription is a dict with "endpoint" key; guards against the json.loads() path breaking silently
+- [ ] POST /auth/register with mismatched password field — RegisterRequest has no password_confirm field so no mismatch check exists; verify that sending {"email":"x@x.com","name":"X","password":"abc"} succeeds with 201 (no server-side confirm validation to break)
+- [ ] GET /bettors sort=accuracy returns sorted results — parametrize the sort param; mock get_leaderboard to return a fixed list; assert response always returns {"bettors": [...], "cached": bool}; completes the sort param triplet (profit already tested in session 23)
+- [ ] DELETE /follows/{address} for address with URL-special characters (e.g. "0x/test") — verify FastAPI path decoding doesn't 404 or crash; assert the route either matches correctly or returns 404 "Follow not found" (not 500 or 422)
 
 
 ---

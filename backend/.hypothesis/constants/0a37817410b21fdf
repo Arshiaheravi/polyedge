@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_usage_record.py
+# hypothesis_version: 6.151.9
+
+['UsageRecord', 'api', 'post', 'subscription_item', 'usage_record']

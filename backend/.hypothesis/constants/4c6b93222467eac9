@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_account_external_account_service.py
+# hypothesis_version: 6.151.9
+
+['api', 'bank_account', 'card', 'checking', 'company', 'delete', 'futsu', 'get', 'individual', 'post', 'savings', 'toza']

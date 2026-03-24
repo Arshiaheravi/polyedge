@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\OneDrive\Desktop\PolyEdge\backend\app\routes\auth.py
+# hypothesis_version: 6.151.9
+
+[400, 401, 403, '/auth', '/login', '/me', '/register', 'Account is disabled', 'auth', 'bearer', 'created_at', 'email', 'free', 'id', 'name', 'sub', 'subscription_tier', 'telegram_chat_id', 'telegram_verified', 'user']
