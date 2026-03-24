@@ -177,6 +177,12 @@ def test_leaderboard_cached_field_is_true_on_second_call(client):
     assert mock_lb.call_count == 1          # API called only once
 
 
+def test_leaderboard_limit_zero_returns_422(client):
+    """limit=0 is below ge=1 constraint — FastAPI returns 422."""
+    resp = client.get("/bettors?limit=0")
+    assert resp.status_code == 422
+
+
 def test_bettor_detail_cache_hit_returns_cached_data(client):
     """Second call to GET /bettors/{address} within TTL returns cached data without re-calling API."""
     import app.routes.bettors as bettors_mod

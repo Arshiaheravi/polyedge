@@ -143,6 +143,21 @@ def test_post_follows_requires_auth(client):
     assert resp.status_code == 403
 
 
+def test_list_follows_vip_tier_reports_tier_and_limit(client, db, auth_headers, registered_user):
+    """GET /follows for a VIP user returns tier='vip' and limit=999999."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "vip"
+    db.commit()
+
+    resp = client.get("/follows", headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["tier"] == "vip"
+    assert data["limit"] == 999999
+
+
 def test_post_follows_response_body_includes_all_fields(client, auth_headers):
     """POST /follows response body includes id, bettor_address, bettor_name, and created_at."""
     resp = client.post("/follows",

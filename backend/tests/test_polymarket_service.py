@@ -255,6 +255,64 @@ async def test_get_live_trades_returns_normalised_trades():
     assert result[0]["amount_usd"] == 200.0
 
 
+# ── get_bettor_profile when activity is empty ─────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_bettor_profile_empty_activity_returns_address_profile():
+    """When Polymarket returns no activity, get_bettor_profile returns address-only profile with zeros."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = []
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_bettor_profile
+        result = await get_bettor_profile("0xempty")
+
+    assert result["address"] == "0xempty"
+    assert result["volume_usd"] == 0.0
+    assert result["avg_bet_usd"] == 0.0
+    assert result["total_bets"] == 0
+
+
+# ── get_recent_bets when API returns dict instead of list ─────────────────────
+
+@pytest.mark.asyncio
+async def test_get_recent_bets_dict_response_with_data_key_returns_bets():
+    """When API returns a dict with a 'data' key, get_recent_bets uses that list."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    bet = {
+        "conditionId": "cond_dict",
+        "title": "Dict Market",
+        "outcome": "No",
+        "usdcSize": "75.0",
+        "side": "SELL",
+    }
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {"data": [bet]}
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_recent_bets
+        result = await get_recent_bets("0xwhale", limit=20)
+
+    assert len(result) == 1
+    assert result[0]["market_id"] == "cond_dict"
+    assert result[0]["amount_usd"] == 75.0
+
+
 # ── get_leaderboard pagination ────────────────────────────────────────────────
 
 @pytest.mark.asyncio

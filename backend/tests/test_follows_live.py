@@ -92,6 +92,19 @@ def test_follows_live_multiple_bettors(client, db, auth_headers, registered_user
     assert len(resp.json()["bettors"]) == 3
 
 
+def test_follows_live_bettor_includes_followed_at_field(client, auth_headers):
+    """GET /follows/live response includes 'followed_at' field for each bettor."""
+    client.post("/follows", json={"bettor_address": "0xat_field", "bettor_name": "AtFieldWhale"},
+                headers=auth_headers)
+
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=[])):
+        resp = client.get("/follows/live", headers=auth_headers)
+
+    assert resp.status_code == 200
+    bettor = resp.json()["bettors"][0]
+    assert "followed_at" in bettor  # isoformat string or None, but must be present
+
+
 def test_follows_live_serves_cached_response(client, auth_headers):
     """Second call within TTL returns cached data — Polymarket API called only once."""
     client.post("/follows", json={"bettor_address": "0xcache", "bettor_name": "CacheWhale"},
