@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — META SESSION (Session 26)
+IMPROVED: (1) Fixed testing.md IMPORT CHECK — was pointing to `src.stockcards.app` (wrong project), now points to `app.main` (correct for PolyEdge). (2) Added BRANCH AUDIT WORKFLOW section to testing.md — the systematic checklist used successfully in sessions 22-25 was buried in knowledge.md reflexions; promoted to testing.md where WORK agents actually read before coding. (3) Replenished backlog with 6 concrete testing tasks covering stripe_service branches, send_web_push unit tests, scheduler edge cases, Hypothesis invariants, DELETE 404 edge case, and checkout response shape.
+PATTERNS FOUND: Sessions 22-25 were all green (no failures) but used the same branch-audit methodology each time without it being documented in the skill file. Any session could have derived it from reflexions, but that wastes context and is unreliable. The testing.md import check was a stale reference that would break any future session following it literally.
+PREDICTED IMPACT: Next WORK session starts with 6 ready test tasks instead of spending turns on task discovery. The branch-audit checklist in testing.md will cut the "find gaps" phase from ~5 turns to 1 read.
+
 ## 2026-03-24 — TESTING (Session 25)
 DONE: Added 6 coverage-gap tests — get_active_positions slug-only poly_url branch (no eventSlug, uses slug), get_active_positions no-slug fallback ("https://polymarket.com"), get_live_trades non-list API response returns [], get_recent_bets dict response with "activity" key, send_telegram returns False when bot_token empty, send_telegram returns False when chat_id empty. 199→205 tests.
 IMPACT: Closes the two untested poly_url construction branches in get_active_positions (the eventSlug path was already tested; slug-only and no-slug weren't); confirms get_live_trades defensive non-list handling; confirms get_recent_bets "activity" key fallback; and locks in the early-return guards in send_telegram that prevent sending to unconfigured/invalid recipients.
