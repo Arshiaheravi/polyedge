@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **162 passed** (as of 2026-03-24, session 14 added 4 coverage-gap tests)
+- Test count: **167 passed** (as of 2026-03-24, session 15 added 5 coverage-gap tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #15 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 5 tests covering previously untested branches: SMS start 503 (Twilio not configured), 400 (invalid phone format), 502 (send_sms returns False); GET /alerts/settings returns parsed push_subscription dict; /follows/live cache-hit path (API called once, second call served from cache). 162 → 167 tests.
+FAILED: Transient failure of test_tampered_signature_returns_401 on first full-suite run — passed in isolation and on second run. Likely a test ordering flake unrelated to changes.
+RULE: [2026-03-24] Module-level settings objects (settings = get_settings() at top of alerts.py) must be monkeypatched directly on the module attribute (app.routes.alerts.settings.twilio_account_sid) with try/finally restore — using monkeypatch fixture or patching get_settings() won't work because the reference is already bound at import time.
 
 ### Session #14 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 4 tests covering previously untested branches: is_active=False login guard (403), GET /bettors/{address} exception handler (502), basic-tier cap error message (VIP upsell), and bettor_name truncated-address fallback. 158 → 162 tests.

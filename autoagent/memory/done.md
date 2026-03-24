@@ -17,3 +17,4 @@
 - **[SESSION #2] Scheduler + BetEvent test suite** — 17 new tests covering _parse_timestamp and _poll_bets; test count 91 → 108.
 - **[SESSION #1] Fix 5 failing webhook tests** — Added autouse conftest fixture clearing STRIPE_WEBHOOK_SECRET so webhook tests work; committed prior-session backend bugfixes (polymarket API, follows live, notifications) and full 91-test E2E suite; fixed CLAUDE.md free tier docs.
 - **[SESSION #14] 4 coverage-gap tests** — disabled login, bettor_detail 502, basic tier message, bettor_name default
+- **[SESSION #15] 5 coverage-gap tests** — SMS 503/400/502 paths, alert settings push_subscription parsing, follows/live cache hit; 162→167 tests

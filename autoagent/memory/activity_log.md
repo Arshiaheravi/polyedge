@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 15)
+DONE: Added 5 coverage-gap tests — SMS start 503/400/502 error paths, GET /alerts/settings returns parsed push_subscription dict, /follows/live cache-hit path. 162→167 tests.
+IMPACT: Four previously untested SMS error branches now verified (Twilio unconfigured, bad phone format, send failure); alert settings push_subscription parsing confirmed; follows live cache behaviour locked in.
+FILES: backend/tests/test_alerts.py, backend/tests/test_follows_live.py
+
 ## 2026-03-24 — TESTING (Session 14)
 DONE: Added 4 coverage-gap tests — disabled account login (403), bettor_detail 502 on API failure, basic tier limit error message with VIP upsell, and bettor_name truncated-address default. 158→162 tests.
 IMPACT: Four previously uncovered code branches now tested: the is_active=False login guard, the bettors/{address} exception handler, the non-free tier cap message, and the bettor_name fallback logic.

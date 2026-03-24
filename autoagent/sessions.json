@@ -194,5 +194,15 @@
     "files": ["backend/tests/test_auth.py", "backend/tests/test_bettors.py", "backend/tests/test_follows.py"],
     "tests": {"before": 158, "after": 162, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+  },
+  {
+    "session": 15,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 5 tests covering previously untested branches: SMS start returns 503 when Twilio not configured, 400 for invalid phone format, 502 when send fails; GET /alerts/settings returns parsed push_subscription dict; /follows/live serves cached response on second call",
+    "files": ["backend/tests/test_alerts.py", "backend/tests/test_follows_live.py"],
+    "tests": {"before": 162, "after": 167, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
   }
 ]
