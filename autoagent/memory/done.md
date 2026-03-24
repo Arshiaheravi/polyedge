@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #52] META audit sessions 46-50 — removed dead code and duplicate test — 295→294** — Removed unused ADMIN_PW constant + _admin_headers() helper from test_admin.py; removed test_vip_can_add_more_than_5_follows from test_security.py (fully subsumed by test_follows.py's equivalent).
 - **[SESSION #50] 2 backlog tests — scheduler _last_check update + delete-only-correct-follow — 293→295** — _poll_bets() now verified to update _last_check after a successful poll; DELETE /follows with 2 follows now verified to remove only the targeted address and leave the other intact.
 - **[SESSION #49] Fixed flaky JWT tamper test + 3 backlog tests — 290→293** — _tamper_token was changing only base64url padding bits (A↔B on last char = same decoded HMAC bytes); fixed to tamper sig[0]; added scheduler multi-bet loop test, GET /follows unknown tier limit=0 test, checkout 502 no-price-ID test.
 - **[SESSION #48] 3 edge-case tests — non-list positions response, unknown tier 403, admin stats nested type contract — 287→290** — get_active_positions returns [] when API returns dict; unknown subscription tier (e.g. "enterprise") correctly blocked with 403 via TIER_LIMITS.get fallback; /admin/stats isinstance checks on all nested fields.

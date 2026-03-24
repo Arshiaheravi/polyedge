@@ -1,12 +1,18 @@
 # Activity Log
 *(Sessions 1-20 archived — see activity_log_archive.md)*
 
+## 2026-03-24 21:00 — META/AUDIT (Session 52)
+DONE: Code quality audit of sessions 46-50 test files — found and removed 2 issues: dead ADMIN_PW constant + _admin_headers() helper in test_admin.py (never called), and duplicate test_vip_can_add_more_than_5_follows in test_security.py (subsumed by test_follows.py). 295→294 tests, 0 failures.
+IMPACT: Prevents false confidence from having a helper function that looks like it tests something but is unreachable. Removes redundant VIP follow assertion that would create noise if tier limits were ever refactored.
+FILES: backend/tests/test_admin.py, backend/tests/test_security.py
+
 ## 2026-03-24 20:00 — BRAIN SESSION (Session 51)
 RESEARCHED: FastAPI notification architecture 2026, Polymarket API rate limits, APScheduler vs ARQ vs Celery, pytest parametrize best practices 2026, autonomous agent memory taxonomy (arxiv 2603.07670), coding agents as long-context processors (arxiv 2603.20432), new arxiv March 2026 agent papers
 DOWNLOADED: No new skill files (patterns extracted directly into existing skill files)
 IMPLEMENTED: (1) pytest.param(id=...) pattern added to skills/testing.md — named IDs for parametrize produce readable failure output; (2) First actual activity_log archival executed — sessions 1-20 moved to activity_log_archive.md, main log trimmed to sessions 21-50; (3) Polymarket API rate limits added to knowledge.md as project fact
-BACKLOGGED: SSE notification endpoint for browser real-time alerts; ARQ scheduler upgrade path for multi-server scaling
-SOURCES: 8 new sources logged in brain/sources.md
+BACKLOGGED: SSE notification endpoint for browser real-time alerts; ARQ scheduler upgrade path for multi-server scaling; WebSocket-based bet detection (Polymarket /v1/ws/markets) as top FEATURE MODE priority
+SOURCES: 9 new sources logged in brain/sources.md
+KEY FINDING: Polymarket exposes WebSocket endpoints (/v1/ws/markets, /v1/ws/private) — switching from 30s polling to WebSocket subscription gives instant bet detection, eliminating the core latency problem. Rate limit is 60 req/min (corrected from earlier estimate). This is the most important feature finding this session.
 
 ## 2026-03-24 19:00 — TESTING (Session 50)
 DONE: Added 2 backlog tests — test_poll_bets_last_check_updated_after_poll (verifies _last_check is set to check_time after a successful poll); test_delete_follow_with_multiple_follows_removes_only_correct_one (2 follows, delete one, verify other remains). Also discovered sort=accuracy and sort=volume tests already existed, so backlog item was already covered. 293→295 tests stable. Added META audit task + 3 new HIGH PRIORITY tasks to backlog.

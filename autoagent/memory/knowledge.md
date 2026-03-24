@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **295 passed** (as of 2026-03-24, session 50 — _last_check update + delete-only-correct-follow tests added)
+- Test count: **294 passed** (as of 2026-03-24, session 52 — audit removed 1 duplicate VIP follow test)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +44,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #52 Reflexion — 2026-03-24
+ACCOMPLISHED: META code quality audit of sessions 46-50 changed test files. Found 2 issues: (1) Dead code in test_admin.py — `ADMIN_PW = "testadmin"` and `_admin_headers()` helper defined but never called (all tests use `get_settings().admin_password` directly); (2) Duplicate test in test_security.py — `test_vip_can_add_more_than_5_follows` fully subsumed by `test_follows.py::test_vip_tier_can_add_six_plus_follows` which tests the same 6 VIP follows plus GET response. Both removed. 295→294 tests.
+FAILED: Nothing failed.
+RULE: [2026-03-24] In test files, scan module-level defs (constants and helper functions) against their callers before calling the audit done. Test-file dead code is subtler than production dead code because the def exists as scaffolding without warnings — grep for the function name and constant name to confirm they're actually called.
 
 ### BRAIN Session #51 Reflexion — 2026-03-24
 ACCOMPLISHED: (1) Archived activity_log.md sessions 1-20 to activity_log_archive.md — first actual archival execution (rule was added in session 41, now triggered at 50+ entries). (2) Curated knowledge.md — no merges needed, already clean after session 41 pass. (3) Searched 7+ topics, evaluated 8 new sources. (4) Implemented pytest.param(id=...) pattern in testing.md — names parametrize IDs for readable failure output. (5) Added Polymarket API rate limits to knowledge.md as project fact. (6) Backlogged SSE notification endpoint and ARQ scheduler migration path. (7) No new failure patterns found in last 10 sessions (41-50 — all clean).
