@@ -266,6 +266,105 @@ def test_poll_bets_dispatches_notification_for_basic_user(sched_db):
     mock_notify.assert_called_once()
 
 
+def test_poll_bets_bet_event_all_fields_correct(sched_db):
+    """BetEvent row stores all fields from the bet dict with correct values."""
+    session, Session = sched_db
+
+    user = User(
+        email="u@x.com", hashed_password=hash_password("p"),
+        name="U", subscription_tier="basic",
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xabc", bettor_name="whale"))
+    session.commit()
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()):
+        run(_poll_bets())
+
+    verify = Session()
+    event = verify.query(BetEvent).first()
+    verify.close()
+
+    assert event is not None
+    assert event.bettor_address == "0xabc"
+    assert event.market_id == "mkt1"
+    assert event.market_question == "Will X happen?"
+    assert event.outcome == "Yes"
+    assert event.amount_usd == 50.0
+    # SQLite strips tzinfo on round-trip; compare naive-normalised values
+    stored_naive = event.timestamp.replace(tzinfo=None) if event.timestamp.tzinfo else event.timestamp
+    assert stored_naive == FUTURE_TS.replace(tzinfo=None)
+
+
+def test_poll_bets_bet_event_missing_fields_use_defaults(sched_db):
+    """BetEvent fields default to empty string / 0.0 when bet dict is missing keys."""
+    session, Session = sched_db
+
+    user = User(
+        email="u@x.com", hashed_password=hash_password("p"),
+        name="U", subscription_tier="basic",
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xabc"))
+    session.commit()
+
+    sparse_bet = {"timestamp": FUTURE_TS}  # only timestamp — everything else absent
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[sparse_bet])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()):
+        run(_poll_bets())
+
+    verify = Session()
+    event = verify.query(BetEvent).first()
+    verify.close()
+
+    assert event is not None
+    assert event.bettor_address == "0xabc"
+    assert event.market_id == ""
+    assert event.market_question == ""
+    assert event.outcome == ""
+    assert event.amount_usd == 0.0
+
+
+def test_poll_bets_bet_event_timestamp_timezone_aware(sched_db):
+    """BetEvent timestamp stored from a Unix integer is timezone-aware."""
+    session, Session = sched_db
+
+    user = User(
+        email="u@x.com", hashed_password=hash_password("p"),
+        name="U", subscription_tier="basic",
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xabc"))
+    session.commit()
+
+    # Use a Unix timestamp far in the future so it passes the _last_check guard
+    unix_ts = 9_999_999_999  # year 2286
+    unix_bet = dict(SAMPLE_BET, timestamp=unix_ts)
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[unix_bet])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()):
+        run(_poll_bets())
+
+    verify = Session()
+    event = verify.query(BetEvent).first()
+    verify.close()
+
+    assert event is not None
+    expected = datetime.fromtimestamp(unix_ts, tz=timezone.utc)
+    # SQLite strips tzinfo on round-trip; compare naive-normalised values
+    stored_naive = event.timestamp.replace(tzinfo=None) if event.timestamp.tzinfo else event.timestamp
+    expected_naive = expected.replace(tzinfo=None)
+    assert stored_naive == expected_naive
+
+
 def test_poll_bets_api_error_continues_to_next_address(sched_db):
     """If Polymarket API fails for one address, polling continues for the remaining ones."""
     session, Session = sched_db
