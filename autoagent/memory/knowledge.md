@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **205 passed** (as of 2026-03-24, session 25 added 6 coverage-gap tests)
+- Test count: **210 passed** (as of 2026-03-24, session 27 added 5 stripe_service branch tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #27 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 5 stripe_service.py branch tests. Gaps found by reading every if/elif/else and checking grep in existing tests: (1) `_handle_checkout_completed` missing-metadata early-return had no test; (2) `if subscription_id:` set stripe_subscription_id had no assertion; (3) `_handle_subscription_change` unknown-customer early-return had no test; (4) active status with price_id matching neither basic nor vip left tier unchanged — untested; (5) `create_billing_portal_session` had no service-level unit test (only route-level mock). All 5 passed first run. 205→210.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When auditing stripe_service.py, check these 4 branch types that are commonly missed: (1) early-return guards (`if not user_id or not plan: return`, `if not user: return`) — they're silent and easy to miss in the "happy path" test set; (2) conditional field assignment (`if subscription_id: user.stripe_subscription_id = ...`) — often tested indirectly but the field value is never asserted; (3) loop body with no-match case (`for item in items: if price_id == X ...`) — what happens when nothing matches? Tier unchanged but db.commit() still runs; (4) service-level unit test vs. route-level mock — route tests mock the service function; they don't test the service function's own logic. Always add at least one direct service unit test.
 
 ### META Session #26 Reflexion — 2026-03-24
 ACCOMPLISHED: Fixed testing.md import check (was pointing to `stockcards` — wrong project, would fail for PolyEdge). Added branch-audit workflow to testing.md (the systematic checklist used in sessions 22-25 was only in knowledge.md reflexions; moved it to testing.md where WORK agents actually look). Replenished backlog with 6 concrete testing tasks (stripe_service branches, send_web_push unit tests, scheduler edge cases, Hypothesis invariants, DELETE /follows 404, checkout response shape).

@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 27)
+DONE: Added 5 stripe_service.py branch tests — checkout with missing metadata early-returns without error, checkout saves stripe_subscription_id to user, subscription change with unknown customer_id early-returns without error, active subscription with unrecognized price_id leaves user tier unchanged, create_billing_portal_session direct unit test (happy path). 205→210 tests.
+IMPACT: Closes every untested explicit early-return guard and conditional branch in stripe_service.py — missing metadata, unknown customer, and unrecognized price_id were all defensive paths that could silently produce wrong state without a test catching it. stripe_subscription_id save was a data-persistence path never verified.
+FILES: backend/tests/test_stripe_service.py
+
 ## 2026-03-24 — META SESSION (Session 26)
 IMPROVED: (1) Fixed testing.md IMPORT CHECK — was pointing to `src.stockcards.app` (wrong project), now points to `app.main` (correct for PolyEdge). (2) Added BRANCH AUDIT WORKFLOW section to testing.md — the systematic checklist used successfully in sessions 22-25 was buried in knowledge.md reflexions; promoted to testing.md where WORK agents actually read before coding. (3) Replenished backlog with 6 concrete testing tasks covering stripe_service branches, send_web_push unit tests, scheduler edge cases, Hypothesis invariants, DELETE 404 edge case, and checkout response shape.
 PATTERNS FOUND: Sessions 22-25 were all green (no failures) but used the same branch-audit methodology each time without it being documented in the skill file. Any session could have derived it from reflexions, but that wastes context and is unreliable. The testing.md import check was a stale reference that would break any future session following it literally.
