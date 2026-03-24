@@ -61,6 +61,24 @@ def test_get_me_unauthenticated(client):
     assert resp.status_code == 403
 
 
+def test_login_disabled_account(client, db):
+    """Login with is_active=False returns 403 Account is disabled."""
+    from app.models import User
+
+    client.post("/auth/register", json={
+        "email": "disabled@example.com", "password": "pass", "name": "Disabled"
+    })
+    user = db.query(User).filter(User.email == "disabled@example.com").first()
+    user.is_active = False
+    db.commit()
+
+    resp = client.post("/auth/login", json={
+        "email": "disabled@example.com", "password": "pass"
+    })
+    assert resp.status_code == 403
+    assert "disabled" in resp.json()["detail"].lower()
+
+
 def test_get_me_reflects_updated_subscription_tier(client, db, auth_headers, registered_user):
     """GET /auth/me returns the current subscription_tier after a Stripe webhook upgrades the user."""
     from app.models import User

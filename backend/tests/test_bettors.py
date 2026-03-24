@@ -98,6 +98,16 @@ def test_recent_trades_api_error_returns_502(client):
     assert "Polymarket" in resp.json()["detail"]
 
 
+def test_bettor_detail_api_error_returns_502(client):
+    """When Polymarket API fails on bettor detail, route must return 502."""
+    import app.routes.bettors as bettors_mod
+    bettors_mod._profile_cache.clear()
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(side_effect=Exception("profile down"))):
+        resp = client.get("/bettors/0xBAD")
+    assert resp.status_code == 502
+    assert "Polymarket" in resp.json()["detail"]
+
+
 def test_bettor_detail_public(client):
     mock_profile = {"address": "0xaaa", "name": "beachboy", "volume_usd": 1000.0, "total_bets": 10, "avg_bet_usd": 100.0, "avatar_url": ""}
     mock_bets = []

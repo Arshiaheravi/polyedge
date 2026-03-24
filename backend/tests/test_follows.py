@@ -78,6 +78,30 @@ def test_follows_require_auth(client):
     assert resp.status_code == 403
 
 
+def test_basic_tier_limit_error_message(client, db, auth_headers, registered_user):
+    """When basic user hits the 5-follow cap, error message mentions VIP upgrade."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
+    for i in range(5):
+        client.post("/follows", json={"bettor_address": f"0x{i:040x}"}, headers=auth_headers)
+
+    resp = client.post("/follows", json={"bettor_address": "0xextra"}, headers=auth_headers)
+    assert resp.status_code == 403
+    assert "VIP" in resp.json()["detail"]
+
+
+def test_follow_bettor_name_defaults_to_truncated_address(client, auth_headers):
+    """When bettor_name is omitted, stored name defaults to address[:12]+'...'."""
+    addr = "0xabcdefghij1234567890"
+    resp = client.post("/follows", json={"bettor_address": addr}, headers=auth_headers)
+    assert resp.status_code == 201
+    assert resp.json()["bettor_name"] == addr[:12] + "..."
+
+
 def test_follows_list_contains_bettor_fields(client, auth_headers):
     """GET /follows returns bettor_address and bettor_name for each follow."""
     client.post("/follows",
