@@ -1,5 +1,13 @@
 # Activity Log
 
+## 2026-03-24 — BRAIN SESSION (Session 31)
+RESEARCHED: autonomous AI agent planning 2026 (arxiv), LLM memory management 2026, FastAPI testing patterns 2026, Polymarket copy-trading competitor features (HolyPoly), everything-claude-code new skills (autonomous-loops, eval-harness), agentic coding multi-file reliability (MSR 2026 arxiv 2511.04427)
+DOWNLOADED: autonomous-loops/SKILL.md and eval-harness/SKILL.md from everything-claude-code (evaluated, De-Sloppify concept extracted)
+IMPLEMENTED: (1) Periodic De-Sloppify tech-debt trigger added to PROMPT.md step 3 — every 5 work sessions auto-adds a META code-quality audit task to backlog; addresses empirical finding that agentic velocity reverses after 6-8 weeks without quality checks. (2) Replenished empty testing backlog with 5 new edge-case tests (POST /follows empty address, MRR decimal precision, whitespace email, web_push independence, telegram/start regeneration).
+BACKLOGGED: playbook endpoint for bettors, hourly leaderboard cache refresh (FEATURE MODE ONLY); A-MEM linked memory (requires infrastructure); FSM planning (overkill for current complexity)
+SOURCES: 9 new sources logged in brain/sources.md
+CURATED: Scanned all knowledge.md RULE: entries — no duplicates or superseded rules found (already clean from session 21 curation)
+
 ## 2026-03-24 — TESTING (Session 30)
 DONE: Added 5 branch-coverage tests found by systematic audit — (1) DELETE /follows/{address} by a different user returns 404 (cross-user security invariant), (2) POST /auth/register with uppercase duplicate email returns 400 (email normalization), (3) GET /auth/me returns all 7 expected fields from user_to_dict (response contract), (4) admin/stats follows.total reflects actual BettorFollow count (data accuracy), (5) scheduler dispatches with correct telegram_chat_id when user has telegram_enabled=True and telegram_verified=True (notification arg passing). 234→239 tests.
 IMPACT: Closes a cross-user security gap (users cannot delete each other's follows), confirms email normalization is consistent between register and login, locks in the /auth/me response shape contract, verifies admin observability data is correct for follows, and confirms the scheduler correctly passes Telegram credentials to the notification dispatcher.

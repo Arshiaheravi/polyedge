@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #31] BRAIN — De-Sloppify trigger + testing backlog replenishment** — added periodic 5-session tech-debt audit rule to PROMPT.md; replenished empty testing backlog with 5 edge-case tests; logged 9 new research sources covering agentic reliability and Polymarket competitor features.
 - **[SESSION #30] 5 branch-coverage tests — cross-user unfollow blocked, register dup email uppercase, /auth/me fields, admin follows.total, scheduler telegram args** — closes 5 gaps: security invariant (cross-user delete), email normalization on register, response contract for /me, data accuracy for admin, and scheduler arg-passing for Telegram; 234→239 tests.
 - **[SESSION #29] 5 branch-coverage tests — inactive user skip, parse_ts overflow, orphaned follow, name fallback, telegram disable** — closes 5 untested defensive branches in scheduler, follows/live, and alerts; 229→234 tests.
 - **[SESSION #28] 19 new tests — send_web_push direct unit tests, scheduler API-None path, Hypothesis invariants** — first direct coverage of send_web_push (5 branches); scheduler graceful handling when API returns None; 13 invariant tests (tier/limit, tier enforcement, auth rejection, adversarial addresses); 210→229 tests.

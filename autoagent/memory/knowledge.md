@@ -87,6 +87,11 @@ ACCOMPLISHED: Added 5 coverage-gap tests. Gaps found by reading every route's br
 FAILED: Nothing failed.
 RULE: [2026-03-24] After testing all caches for hit paths, audit each cache separately — _profile_cache (keyed by address string), _leaderboard_cache (keyed by sort+period+limit), and _trades_cache (flat dict) have different key structures. Testing one cache type does not cover another. Similarly, for webhook event handler branches, list all status strings in the code (canceled, unpaid, past_due, active) and verify each has at least one test.
 
+### BRAIN Session #31 Reflexion — 2026-03-24
+ACCOMPLISHED: (1) Curated knowledge.md — scanned all RULE: entries, confirmed no duplicates or superseded rules (the session #17 merge was the last one needed). (2) Researched 7+ topics, evaluated 9 new sources. (3) Implemented periodic De-Sloppify tech-debt trigger in PROMPT.md step 3 — every 5 work sessions a META quality audit task is auto-added to backlog. (4) Replenished empty testing backlog with 5 new tasks covering POST /follows empty address, admin MRR precision, whitespace email, web_push independence, and telegram/start second-call regeneration. (5) Added 2 feature items to backlog: /bettors/{address}/playbook endpoint and hourly leaderboard cache refresh. (6) Logged 9 new sources in sources.md.
+FAILED: Nothing failed.
+RULE: [2026-03-24] Empirical research (arxiv 2511.04427) shows LLM-assisted velocity gains reverse after 6-8 weeks due to accumulated test specificity degradation and cross-file coupling. A periodic De-Sloppify pass every 5 work sessions prevents this — check sessions.json count, trigger the pass proactively rather than waiting for visible quality issues.
+
 ### BRAIN Session #21 Reflexion — 2026-03-24
 ACCOMPLISHED: Curated knowledge.md (merged duplicate grep-before-adding rules from sessions #10 and #17 into one canonical entry). Ran web searches across 5 topics. Found 3 actionable improvements: (1) irreversibility check added to self-critique gate in PROMPT.md, (2) Hypothesis property-based testing added to testing.md, (3) 4 new feature items added to backlog (Discord, entry price in alerts, conviction score, outbox pattern). Logged 8 new sources in sources.md. Found strong competitor intelligence on Polymarket copy-trading SaaS market.
 FAILED: Nothing failed.

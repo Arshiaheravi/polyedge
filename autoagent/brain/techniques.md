@@ -252,6 +252,12 @@ Where: meta/BRAIN_PROMPT.md (Step 1C, added between Step 1B and Step 2)
 Source: softmaxdata.com — ACE ICLR 2026 paper; Generate→Reflect→Curate loop prevents context collapse from redundant knowledge entries
 Expected impact: knowledge.md stays compact and authoritative instead of growing into a 100+ rule fragmented log; rules that overlap stop confusing the agent
 
+## Periodic De-Sloppify tech-debt trigger — implemented 2026-03-24
+What: Every 5 work sessions, automatically add a META code-quality audit task to the backlog — scan changed files for cross-file coupling and test specificity degradation introduced by agent edits. Triggered in PROMPT.md step 3 by counting work sessions in sessions.json.
+Where: PROMPT.md (EVERY SESSION — WHAT TO DO, step 3 — PERIODIC TECH-DEBT CHECK block)
+Source: arxiv 2511.04427 (MSR 2026) + everything-claude-code autonomous-loops De-Sloppify pattern
+Expected impact: Prevents technical debt accumulation that empirically reverses velocity gains after 6-8 weeks; ensures each 5-session block ends with a quality pass
+
 ## Event-driven commit reminders (instruction fade-out prevention) — implemented 2026-03-21
 What: At every commit, re-display the 4 most commonly forgotten rules as a COMMIT REMINDERS block: no autoagent/ in project git add, use py not python3, project branch=main vs autoagent branch=master, clear current_task.md immediately after push. Rules re-injected at the exact decision point where they're most needed prevent instruction fade-out — the pattern where critical rules are read at session start but forgotten 30 tool calls later.
 Where: PROMPT.md (STEP 3 — COMMIT REMINDERS block before step 1)
