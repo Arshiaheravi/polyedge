@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 19)
+DONE: Added 5 coverage-gap tests — PUT /alerts/settings auth gap, POST /follows auth gap, VIP telegram/start, leaderboard cache-hit returns cached=True, GET /alerts/settings response includes phone/telegram fields. 174→179 tests.
+IMPACT: Closes the last HTTP-method auth gaps (PUT and POST were untested for missing auth); confirms VIP tier can initiate telegram linking; validates the leaderboard cache True branch that was previously only tested as False.
+FILES: backend/tests/test_alerts.py, backend/tests/test_follows.py, backend/tests/test_bettors.py
+
 ## 2026-03-24 — TESTING (Session 18)
 DONE: Added 5 coverage-gap tests — basic-tier GET /follows (tier+limit fields), leaderboard "cached" field, DELETE /follows without auth (403), web-push disable toggle, admin stats basic/vip user counts. 169→174 tests.
 IMPACT: Three tier slots (free/basic/VIP) for GET /follows limit are now all tested; DELETE auth gap closed; cached field contract locked in for the leaderboard response.

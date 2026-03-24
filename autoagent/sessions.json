@@ -224,5 +224,15 @@
     "files": ["backend/tests/test_follows.py", "backend/tests/test_bettors.py", "backend/tests/test_alerts.py", "backend/tests/test_admin.py"],
     "tests": {"before": 169, "after": 174, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+  },
+  {
+    "session": 19,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 5 auth-gap and branch-coverage tests: PUT alerts settings and POST follows now tested for missing auth (403); VIP tier can start Telegram linking; leaderboard cache-hit returns cached=True; alert settings response includes phone and telegram fields",
+    "files": ["backend/tests/test_alerts.py", "backend/tests/test_follows.py", "backend/tests/test_bettors.py"],
+    "tests": {"before": 174, "after": 179, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
   }
 ]

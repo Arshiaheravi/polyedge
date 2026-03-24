@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **174 passed** (as of 2026-03-24, session 18 added 5 coverage-gap tests)
+- Test count: **179 passed** (as of 2026-03-24, session 19 added 5 coverage-gap tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #19 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 5 coverage-gap tests. Gaps found via rule from Session #18: (3) not all HTTP methods covered for auth. PUT /alerts/settings and POST /follows had no no-auth test (only GET/DELETE were tested). Also covered: VIP tier telegram/start (only basic was tested), leaderboard cached=True second-call branch, GET /alerts/settings phone/telegram field presence. 174→179.
+FAILED: Nothing failed. All 5 passed first run.
+RULE: [2026-03-24] For any endpoint with multiple HTTP methods (GET/POST/PUT/DELETE), each method needs its own no-auth test — passing GET /foo without auth ≠ POST /foo is also protected. Check every method, not just the first one found.
 
 ### Session #18 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 coverage-gap tests by auditing each endpoint against the PROJECT.md table. Gaps found: basic-tier GET /follows limit field, leaderboard "cached" response field, DELETE /follows without-auth 403, web-push disable toggle, admin users.basic/users.vip count fields. All 5 passed first run. 169→174.
