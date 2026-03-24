@@ -218,6 +218,19 @@ def test_portal_customer_with_no_subscription_id_still_works(client, db, auth_he
     assert resp.json()["portal_url"] == mock_url
 
 
+def test_checkout_no_price_id_configured_returns_502(client, auth_headers):
+    """When STRIPE_BASIC_PRICE_ID is not set, create_checkout_session raises
+    ValueError('No Stripe price ID configured for plan: basic').
+    The route's `except Exception` handler must return 502 and include
+    'No Stripe price ID' in the detail so operators know what to configure."""
+    with patch("app.routes.payments.create_checkout_session",
+               new=AsyncMock(side_effect=ValueError("No Stripe price ID configured for plan: basic"))):
+        resp = client.post("/payments/checkout", json={"plan": "basic"}, headers=auth_headers)
+
+    assert resp.status_code == 502
+    assert "No Stripe price ID" in resp.json()["detail"]
+
+
 def test_webhook_unknown_event_returns_200(client):
     """POST /payments/webhook with an unknown event type must return 200 {'status': 'ok'}.
     The webhook handler ignores unknown event types without raising — route must not 502."""

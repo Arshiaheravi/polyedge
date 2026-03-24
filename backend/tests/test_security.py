@@ -26,13 +26,19 @@ def _make_no_sub_token():
 
 
 def _tamper_token(token: str) -> str:
-    """Flip the last character of the signature to break HMAC."""
+    """Corrupt the JWT signature by flipping the first character.
+
+    The last character of a base64url-encoded HMAC-SHA256 signature (43 chars
+    for 32 bytes) has 2 unused padding bits, so flipping between 'A' and 'B'
+    only changes those padding bits — the decoded signature bytes are identical
+    and JWT verification passes. Tampering the first character guarantees all
+    6 bits are significant and the decoded signature changes.
+    """
     parts = token.split(".")
     sig = parts[-1]
-    # Flip last char: 'A' <-> 'B'
-    last = sig[-1]
-    tampered_last = "B" if last != "B" else "A"
-    parts[-1] = sig[:-1] + tampered_last
+    first = sig[0]
+    tampered_first = "B" if first != "B" else "A"
+    parts[-1] = tampered_first + sig[1:]
     return ".".join(parts)
 
 

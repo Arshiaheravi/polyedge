@@ -232,3 +232,22 @@ def test_vip_tier_can_add_six_plus_follows(client, db, auth_headers, registered_
     assert data["tier"] == "vip"
     assert data["limit"] == 999999
     assert len(data["follows"]) == 6
+
+
+def test_get_follows_unknown_tier_returns_limit_zero(client, db, auth_headers, registered_user):
+    """GET /follows for a user with an unrecognised tier returns limit=0.
+    TIER_LIMITS.get("enterprise", 0) == 0; tier field reflects the actual DB value."""
+    from app.models import User
+
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "enterprise"
+    db.commit()
+
+    resp = client.get("/follows", headers=auth_headers)
+
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["tier"] == "enterprise"
+    assert data["limit"] == 0
+    assert data["follows"] == []

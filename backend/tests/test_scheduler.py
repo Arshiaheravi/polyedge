@@ -655,3 +655,35 @@ def test_poll_bets_dispatches_sms_for_vip_user(sched_db):
     call_kwargs = mock_dispatch.call_args[1]
     assert call_kwargs["phone_number"] == "+14155559999"
     assert call_kwargs["sms_enabled"] is True
+
+
+def test_poll_bets_multiple_bets_per_address_all_saved(sched_db):
+    """When get_recent_bets returns 2 new bets for the same address, both are
+    saved as BetEvent rows.  The inner `for bet in bets:` loop must not
+    short-circuit after the first hit."""
+    session, Session = sched_db
+
+    user = User(
+        email="multi@x.com", hashed_password=hash_password("p"),
+        name="Multi", subscription_tier="basic",
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xmulti", bettor_name="whale"))
+    session.commit()
+
+    bet1 = dict(SAMPLE_BET, market_id="mkt_a", timestamp=datetime(2099, 1, 1, tzinfo=timezone.utc))
+    bet2 = dict(SAMPLE_BET, market_id="mkt_b", timestamp=datetime(2099, 1, 2, tzinfo=timezone.utc))
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[bet1, bet2])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()):
+        run(_poll_bets())
+
+    verify = Session()
+    events = verify.query(BetEvent).all()
+    verify.close()
+
+    assert len(events) == 2
+    market_ids = {e.market_id for e in events}
+    assert market_ids == {"mkt_a", "mkt_b"}
