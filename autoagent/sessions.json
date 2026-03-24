@@ -33,89 +33,151 @@
       "run.sh",
       "CLAUDE.md"
     ],
-    "tests": {"before": 86, "after": 91, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "server not running"},
-    "notes": "No git remote configured — commits are local only"
+    "tests": {
+      "before": 86,
+      "after": 91,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "server not running"
+    },
+    "notes": "No git remote configured \u00e2\u20ac\u201d commits are local only"
   },
   {
     "session": 2,
     "date": "2026-03-23",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 17 scheduler tests covering timestamp parsing and the core polling loop — new bets are saved, old/duplicate bets are skipped, free-tier users get no notification, API errors don't crash the poll",
+    "summary": "Added 17 scheduler tests covering timestamp parsing and the core polling loop \u00e2\u20ac\u201d new bets are saved, old/duplicate bets are skipped, free-tier users get no notification, API errors don't crash the poll",
     "files": [
       "backend/tests/test_scheduler.py"
     ],
-    "tests": {"before": 91, "after": 108, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend code changed"},
-    "notes": "No git remote configured — commits are local only"
+    "tests": {
+      "before": 91,
+      "after": 108,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend code changed"
+    },
+    "notes": "No git remote configured \u00e2\u20ac\u201d commits are local only"
   },
   {
     "session": 4,
     "date": "2026-03-23",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 18 security and business-rule tests — JWT tokens can't be tampered or expired to gain access, VIP tier correctly allows unlimited follows, register/login reject malformed input, re-following after unfollow works fine",
+    "summary": "Added 18 security and business-rule tests \u00e2\u20ac\u201d JWT tokens can't be tampered or expired to gain access, VIP tier correctly allows unlimited follows, register/login reject malformed input, re-following after unfollow works fine",
     "files": [
       "backend/tests/test_security.py"
     ],
-    "tests": {"before": 108, "after": 126, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend code changed"},
-    "notes": "No git remote configured — commits are local only"
+    "tests": {
+      "before": 108,
+      "after": 126,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend code changed"
+    },
+    "notes": "No git remote configured \u00e2\u20ac\u201d commits are local only"
   },
   {
     "session": 5,
     "date": "2026-03-23",
     "time": "00:00",
     "type": "work",
-    "summary": "Found and fixed a bug where invalid JSON in push_subscription was silently stored then crashed GET with 500 — route now validates and returns 422. Added 8 edge-case tests covering error message wording, SQL injection safety, empty-DB admin stats, and the push_subscription bug.",
+    "summary": "Found and fixed a bug where invalid JSON in push_subscription was silently stored then crashed GET with 500 \u00e2\u20ac\u201d route now validates and returns 422. Added 8 edge-case tests covering error message wording, SQL injection safety, empty-DB admin stats, and the push_subscription bug.",
     "files": [
       "backend/tests/test_edge_cases.py",
       "backend/app/routes/alerts.py"
     ],
-    "tests": {"before": 126, "after": 134, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "server not running"},
-    "notes": "No git remote configured — commits are local only"
+    "tests": {
+      "before": 126,
+      "after": 134,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "server not running"
+    },
+    "notes": "No git remote configured \u00e2\u20ac\u201d commits are local only"
   },
   {
     "session": 3,
     "date": "2026-03-23",
     "time": "00:00",
     "type": "work",
-    "summary": "Ran full E2E frontend smoke test with Playwright — all 7 checks pass: landing page loads, backend API responds with real leaderboard data (100 bettors), browse view opens, login form works, register form works, no JS errors",
+    "summary": "Ran full E2E frontend smoke test with Playwright \u00e2\u20ac\u201d all 7 checks pass: landing page loads, backend API responds with real leaderboard data (100 bettors), browse view opens, login form works, register form works, no JS errors",
     "files": [],
-    "tests": {"before": 108, "after": 108, "status": "pass"},
-    "frontend": {"status": "pass", "checks": 7, "failures": 0, "notes": "All core user flows verified: landing, leaderboard (100 bettors), login form, register form, no JS errors"},
-    "notes": "No code changes this session — pure verification run"
-  }
-,
+    "tests": {
+      "before": 108,
+      "after": 108,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 7,
+      "failures": 0,
+      "notes": "All core user flows verified: landing, leaderboard (100 bettors), login form, register form, no JS errors"
+    },
+    "notes": "No code changes this session \u00e2\u20ac\u201d pure verification run"
+  },
   {
     "session": 7,
     "date": "2026-03-23",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 11 tests covering notification dispatch edge cases and the full Telegram account-linking flow — every branch in dispatch_bet_notification and telegram/verify is now tested. Also confirmed admin password loads correctly from .env (polyedge-admin-2026).",
+    "summary": "Added 11 tests covering notification dispatch edge cases and the full Telegram account-linking flow \u00e2\u20ac\u201d every branch in dispatch_bet_notification and telegram/verify is now tested. Also confirmed admin password loads correctly from .env (polyedge-admin-2026).",
     "files": [
       "backend/tests/test_notifications.py",
       "backend/tests/test_alerts.py"
     ],
-    "tests": {"before": 134, "after": 145, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend code changed"},
-    "notes": "No git remote configured — commits are local only"
+    "tests": {
+      "before": 134,
+      "after": 145,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend code changed"
+    },
+    "notes": "No git remote configured \u00e2\u20ac\u201d commits are local only"
   },
   {
     "session": 8,
     "date": "2026-03-23",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 6 tests: BetEvent field values are now verified (market_question, outcome, amount_usd, timestamp) and the downgrade path is documented — follows survive a tier change, new ones are blocked at the new limit",
+    "summary": "Added 6 tests: BetEvent field values are now verified (market_question, outcome, amount_usd, timestamp) and the downgrade path is documented \u00e2\u20ac\u201d follows survive a tier change, new ones are blocked at the new limit",
     "files": [
       "backend/tests/test_scheduler.py",
       "backend/tests/test_stripe_service.py"
     ],
-    "tests": {"before": 145, "after": 151, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend code changed"},
-    "notes": "No git remote configured — commits are local only"
+    "tests": {
+      "before": 145,
+      "after": 151,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend code changed"
+    },
+    "notes": "No git remote configured \u00e2\u20ac\u201d commits are local only"
   },
   {
     "session": 6,
@@ -131,8 +193,17 @@
       "autoagent/memory/activity_log.md",
       "autoagent/sessions.json"
     ],
-    "tests": {"before": 134, "after": 134, "status": "skip"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "meta session — no code changes"},
+    "tests": {
+      "before": 134,
+      "after": 134,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "meta session \u00e2\u20ac\u201d no code changes"
+    },
     "notes": "Fixed: missing project_root.md, empty backlog, admin password conflict in docs, PROMPT.md DEBUG MODE rule"
   },
   {
@@ -140,40 +211,86 @@
     "date": "2026-03-24",
     "time": "05:00",
     "type": "work",
-    "summary": "Added 2 field-coverage tests: GET /follows now verified to return bettor_address + bettor_name + created_at in each array item; GET /auth/me verified to return updated subscription_tier after DB change — closes all 4 uncovered backend edge cases from backlog.",
-    "files": ["backend/tests/test_follows.py", "backend/tests/test_auth.py"],
-    "tests": {"before": 151, "after": 153, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "server not running"}
+    "summary": "Added 2 field-coverage tests: GET /follows now verified to return bettor_address + bettor_name + created_at in each array item; GET /auth/me verified to return updated subscription_tier after DB change \u00e2\u20ac\u201d closes all 4 uncovered backend edge cases from backlog.",
+    "files": [
+      "backend/tests/test_follows.py",
+      "backend/tests/test_auth.py"
+    ],
+    "tests": {
+      "before": 151,
+      "after": 153,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "server not running"
+    }
   },
   {
     "session": 9,
     "date": "2026-03-24",
     "time": "04:30",
     "type": "work",
-    "summary": "Ran 16-check Playwright E2E verification of follows and alerts pages — all 16 pass. Confirmed: follows tab shows correct count, follow button works for logged-in users (found and fixed a test-script bug where init() must be called instead of showView() so currentUser is set), free tier limit enforced, alerts toggles visible, web push toggle changes state with notification permission, Telegram toggle correctly blocked on free tier, settings persist after reload.",
+    "summary": "Ran 16-check Playwright E2E verification of follows and alerts pages \u00e2\u20ac\u201d all 16 pass. Confirmed: follows tab shows correct count, follow button works for logged-in users (found and fixed a test-script bug where init() must be called instead of showView() so currentUser is set), free tier limit enforced, alerts toggles visible, web push toggle changes state with notification permission, Telegram toggle correctly blocked on free tier, settings persist after reload.",
     "files": [],
-    "tests": {"before": 151, "after": 151, "status": "pass"},
-    "frontend": {"status": "pass", "checks": 16, "failures": 0, "notes": "follows tab: subtitle, container, follow btn, follow action, limit; alerts tab: push toggle, telegram toggle, setup card, state changes, persist after reload"}
+    "tests": {
+      "before": 151,
+      "after": 151,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 16,
+      "failures": 0,
+      "notes": "follows tab: subtitle, container, follow btn, follow action, limit; alerts tab: push toggle, telegram toggle, setup card, state changes, persist after reload"
+    }
   },
   {
     "session": 11,
     "date": "2026-03-24",
     "time": "06:00",
     "type": "brain",
-    "summary": "Researched Polymarket trading strategies and found the information arbitrage window is under 30 seconds — added VIP 15s polling, win_rate display, and Alembic migrations to high-priority backlog. Implemented ACE Curator step so the agent reviews its own knowledge base for duplicates each brain session.",
-    "files": ["autoagent/meta/BRAIN_PROMPT.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md", "autoagent/memory/backlog.md", "autoagent/memory/knowledge.md", "autoagent/memory/activity_log.md"],
-    "tests": {"before": 153, "after": 153, "status": "skip"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "brain session, no code changes"}
+    "summary": "Researched Polymarket trading strategies and found the information arbitrage window is under 30 seconds \u00e2\u20ac\u201d added VIP 15s polling, win_rate display, and Alembic migrations to high-priority backlog. Implemented ACE Curator step so the agent reviews its own knowledge base for duplicates each brain session.",
+    "files": [
+      "autoagent/meta/BRAIN_PROMPT.md",
+      "autoagent/brain/sources.md",
+      "autoagent/brain/techniques.md",
+      "autoagent/memory/backlog.md",
+      "autoagent/memory/knowledge.md",
+      "autoagent/memory/activity_log.md"
+    ],
+    "tests": {
+      "before": 153,
+      "after": 153,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "brain session, no code changes"
+    }
   },
   {
     "session": 12,
     "date": "2026-03-24",
     "time": "07:00",
     "type": "work",
-    "summary": "Ran 9-check Playwright E2E verifying leaderboard sort tabs, period tabs, account tier display, and public browse view all work correctly — also discovered the bettor profile click-through was never built and updated the backlog.",
+    "summary": "Ran 9-check Playwright E2E verifying leaderboard sort tabs, period tabs, account tier display, and public browse view all work correctly \u00e2\u20ac\u201d also discovered the bettor profile click-through was never built and updated the backlog.",
     "files": [],
-    "tests": {"before": 153, "after": 153, "status": "pass"},
-    "frontend": {"status": "pass", "checks": 9, "failures": 0, "notes": "sort tabs, period tabs, account tab, browse view, no-JS-errors all pass"}
+    "tests": {
+      "before": 153,
+      "after": 153,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 9,
+      "failures": 0,
+      "notes": "sort tabs, period tabs, account tab, browse view, no-JS-errors all pass"
+    }
   },
   {
     "session": 13,
@@ -181,9 +298,21 @@
     "time": "08:00",
     "type": "work",
     "summary": "Added 5 tests covering previously untested error paths: billing portal Stripe failure (502), leaderboard API failure (502), recent trades API failure (502), and recent trades limit boundaries (422 for <5 and >50).",
-    "files": ["backend/tests/test_bettors.py", "backend/tests/test_payments.py"],
-    "tests": {"before": 153, "after": 158, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+    "files": [
+      "backend/tests/test_bettors.py",
+      "backend/tests/test_payments.py"
+    ],
+    "tests": {
+      "before": 153,
+      "after": 158,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no UI changes"
+    }
   },
   {
     "session": 14,
@@ -191,9 +320,22 @@
     "time": "00:00",
     "type": "work",
     "summary": "Added 4 tests filling branch gaps: disabled account login returns 403, bettor detail returns 502 when Polymarket API fails, basic tier limit shows VIP upgrade message, and empty bettor_name defaults to truncated address",
-    "files": ["backend/tests/test_auth.py", "backend/tests/test_bettors.py", "backend/tests/test_follows.py"],
-    "tests": {"before": 158, "after": 162, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+    "files": [
+      "backend/tests/test_auth.py",
+      "backend/tests/test_bettors.py",
+      "backend/tests/test_follows.py"
+    ],
+    "tests": {
+      "before": 158,
+      "after": 162,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no UI changes"
+    }
   },
   {
     "session": 15,
@@ -201,29 +343,67 @@
     "time": "00:00",
     "type": "work",
     "summary": "Added 5 tests covering previously untested branches: SMS start returns 503 when Twilio not configured, 400 for invalid phone format, 502 when send fails; GET /alerts/settings returns parsed push_subscription dict; /follows/live serves cached response on second call",
-    "files": ["backend/tests/test_alerts.py", "backend/tests/test_follows_live.py"],
-    "tests": {"before": 162, "after": 167, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+    "files": [
+      "backend/tests/test_alerts.py",
+      "backend/tests/test_follows_live.py"
+    ],
+    "tests": {
+      "before": 162,
+      "after": 167,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no UI changes"
+    }
   },
   {
     "session": 17,
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added sort=accuracy leaderboard test and multi-follower notification test — two uncovered branches in bettors and scheduler now locked in",
-    "files": ["backend/tests/test_bettors.py", "backend/tests/test_scheduler.py"],
-    "tests": {"before": 167, "after": 169, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+    "summary": "Added sort=accuracy leaderboard test and multi-follower notification test \u00e2\u20ac\u201d two uncovered branches in bettors and scheduler now locked in",
+    "files": [
+      "backend/tests/test_bettors.py",
+      "backend/tests/test_scheduler.py"
+    ],
+    "tests": {
+      "before": 167,
+      "after": 169,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no UI changes"
+    }
   },
   {
     "session": 18,
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 coverage-gap tests: basic-tier follows shows correct limit, leaderboard cached field verified, DELETE /follows auth enforced, web-push disable tested, admin user counts by tier verified — 169→174",
-    "files": ["backend/tests/test_follows.py", "backend/tests/test_bettors.py", "backend/tests/test_alerts.py", "backend/tests/test_admin.py"],
-    "tests": {"before": 169, "after": 174, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+    "summary": "Added 5 coverage-gap tests: basic-tier follows shows correct limit, leaderboard cached field verified, DELETE /follows auth enforced, web-push disable tested, admin user counts by tier verified \u00e2\u20ac\u201d 169\u00e2\u2020\u2019174",
+    "files": [
+      "backend/tests/test_follows.py",
+      "backend/tests/test_bettors.py",
+      "backend/tests/test_alerts.py",
+      "backend/tests/test_admin.py"
+    ],
+    "tests": {
+      "before": 169,
+      "after": 174,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no UI changes"
+    }
   },
   {
     "session": 19,
@@ -231,9 +411,22 @@
     "time": "00:00",
     "type": "work",
     "summary": "Added 5 auth-gap and branch-coverage tests: PUT alerts settings and POST follows now tested for missing auth (403); VIP tier can start Telegram linking; leaderboard cache-hit returns cached=True; alert settings response includes phone and telegram fields",
-    "files": ["backend/tests/test_alerts.py", "backend/tests/test_follows.py", "backend/tests/test_bettors.py"],
-    "tests": {"before": 174, "after": 179, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+    "files": [
+      "backend/tests/test_alerts.py",
+      "backend/tests/test_follows.py",
+      "backend/tests/test_bettors.py"
+    ],
+    "tests": {
+      "before": 174,
+      "after": 179,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no UI changes"
+    }
   },
   {
     "session": 20,
@@ -241,9 +434,22 @@
     "time": "00:00",
     "type": "work",
     "summary": "Added 5 response-field and auth coverage tests: trades endpoint now has a cached=True second-call test; login response user dict verified; SMS start happy path (VIP, valid phone, send_sms=True) tested for first time; telegram/verify and sms/verify now tested for no-auth 403",
-    "files": ["backend/tests/test_bettors.py", "backend/tests/test_auth.py", "backend/tests/test_alerts.py"],
-    "tests": {"before": 179, "after": 184, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+    "files": [
+      "backend/tests/test_bettors.py",
+      "backend/tests/test_auth.py",
+      "backend/tests/test_alerts.py"
+    ],
+    "tests": {
+      "before": 179,
+      "after": 184,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no UI changes"
+    }
   },
   {
     "session": 21,
@@ -251,79 +457,187 @@
     "time": "00:00",
     "type": "brain",
     "summary": "Searched 5 topics for agent and PolyEdge improvements; added irreversibility check to self-critique gate, property-based testing pattern to testing.md, and 4 new feature backlog items (Discord, entry price in alerts, conviction score, outbox); curated knowledge.md by merging duplicate grep rules",
-    "files": ["autoagent/PROMPT.md", "autoagent/skills/testing.md", "autoagent/memory/backlog.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md", "autoagent/memory/knowledge.md", "autoagent/memory/activity_log.md"],
-    "tests": {"before": 184, "after": 184, "status": "skip"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "brain session, no code changes"}
+    "files": [
+      "autoagent/PROMPT.md",
+      "autoagent/skills/testing.md",
+      "autoagent/memory/backlog.md",
+      "autoagent/brain/sources.md",
+      "autoagent/brain/techniques.md",
+      "autoagent/memory/knowledge.md",
+      "autoagent/memory/activity_log.md"
+    ],
+    "tests": {
+      "before": 184,
+      "after": 184,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "brain session, no code changes"
+    }
   },
   {
     "session": 22,
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 coverage-gap tests: bettor profile cache hit path, subscription past_due downgrade, subscription.updated basic upgrade, admin stats bet_events count verification, and POST /follows full response body — closes the last untested branches in bettors, stripe webhooks, and follows routes",
-    "files": ["backend/tests/test_bettors.py", "backend/tests/test_stripe_service.py", "backend/tests/test_admin.py", "backend/tests/test_follows.py"],
-    "tests": {"before": 184, "after": 189, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+    "summary": "Added 5 coverage-gap tests: bettor profile cache hit path, subscription past_due downgrade, subscription.updated basic upgrade, admin stats bet_events count verification, and POST /follows full response body \u00e2\u20ac\u201d closes the last untested branches in bettors, stripe webhooks, and follows routes",
+    "files": [
+      "backend/tests/test_bettors.py",
+      "backend/tests/test_stripe_service.py",
+      "backend/tests/test_admin.py",
+      "backend/tests/test_follows.py"
+    ],
+    "tests": {
+      "before": 184,
+      "after": 189,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   },
   {
     "session": 23,
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 tests for core polymarket service functions (get_bettor_profile, get_recent_bets, get_live_trades, get_leaderboard pagination) and auth email case-insensitivity — these were the only core data pipeline functions with zero coverage",
-    "files": ["backend/tests/test_polymarket_service.py", "backend/tests/test_auth.py"],
-    "tests": {"before": 189, "after": 194, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+    "summary": "Added 5 tests for core polymarket service functions (get_bettor_profile, get_recent_bets, get_live_trades, get_leaderboard pagination) and auth email case-insensitivity \u00e2\u20ac\u201d these were the only core data pipeline functions with zero coverage",
+    "files": [
+      "backend/tests/test_polymarket_service.py",
+      "backend/tests/test_auth.py"
+    ],
+    "tests": {
+      "before": 189,
+      "after": 194,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   },
   {
     "session": 24,
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 coverage-gap tests closing the VIP follows limit slot, bettor profile empty-activity path, follows/live followed_at field contract, get_recent_bets dict-response defense, and /bettors limit=0 boundary — 194 to 199 tests",
-    "files": ["backend/tests/test_follows.py", "backend/tests/test_follows_live.py", "backend/tests/test_polymarket_service.py", "backend/tests/test_bettors.py"],
-    "tests": {"before": 194, "after": 199, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+    "summary": "Added 5 coverage-gap tests closing the VIP follows limit slot, bettor profile empty-activity path, follows/live followed_at field contract, get_recent_bets dict-response defense, and /bettors limit=0 boundary \u00e2\u20ac\u201d 194 to 199 tests",
+    "files": [
+      "backend/tests/test_follows.py",
+      "backend/tests/test_follows_live.py",
+      "backend/tests/test_polymarket_service.py",
+      "backend/tests/test_bettors.py"
+    ],
+    "tests": {
+      "before": 194,
+      "after": 199,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   },
   {
     "session": 25,
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 6 coverage-gap tests closing the two untested poly_url branches in get_active_positions (slug-only and no-slug fallback), get_live_trades non-list API response, get_recent_bets activity-key dict fallback, and send_telegram empty bot_token and empty chat_id guards — 199 to 205 tests",
-    "files": ["backend/tests/test_polymarket_service.py", "backend/tests/test_notifications.py"],
-    "tests": {"before": 199, "after": 205, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+    "summary": "Added 6 coverage-gap tests closing the two untested poly_url branches in get_active_positions (slug-only and no-slug fallback), get_live_trades non-list API response, get_recent_bets activity-key dict fallback, and send_telegram empty bot_token and empty chat_id guards \u00e2\u20ac\u201d 199 to 205 tests",
+    "files": [
+      "backend/tests/test_polymarket_service.py",
+      "backend/tests/test_notifications.py"
+    ],
+    "tests": {
+      "before": 199,
+      "after": 205,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   },
   {
     "session": 26,
     "date": "2026-03-24",
     "time": "00:00",
     "type": "meta",
-    "summary": "Improved the testing skill file — fixed a stale import-check command pointing to the wrong project, added a branch-audit workflow checklist that sessions 22-25 used successfully but was undocumented, and replenished the backlog with 6 concrete test tasks so the next session starts immediately instead of spending turns on task discovery",
-    "files": ["autoagent/skills/testing.md", "autoagent/memory/knowledge.md", "autoagent/memory/backlog.md", "autoagent/memory/activity_log.md"],
-    "tests": {"before": 205, "after": 205, "status": "skip"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "meta session — no code changed"}
+    "summary": "Improved the testing skill file \u00e2\u20ac\u201d fixed a stale import-check command pointing to the wrong project, added a branch-audit workflow checklist that sessions 22-25 used successfully but was undocumented, and replenished the backlog with 6 concrete test tasks so the next session starts immediately instead of spending turns on task discovery",
+    "files": [
+      "autoagent/skills/testing.md",
+      "autoagent/memory/knowledge.md",
+      "autoagent/memory/backlog.md",
+      "autoagent/memory/activity_log.md"
+    ],
+    "tests": {
+      "before": 205,
+      "after": 205,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "meta session \u00e2\u20ac\u201d no code changed"
+    }
   },
   {
     "session": 27,
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 stripe_service branch tests that close every untested code path: checkout with missing metadata returns early, checkout saves stripe_subscription_id, subscription change with unknown customer returns early, active subscription with unrecognized price_id leaves tier unchanged, and a direct unit test for create_billing_portal_session — 205 to 210 tests",
-    "files": ["backend/tests/test_stripe_service.py"],
-    "tests": {"before": 205, "after": 210, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+    "summary": "Added 5 stripe_service branch tests that close every untested code path: checkout with missing metadata returns early, checkout saves stripe_subscription_id, subscription change with unknown customer returns early, active subscription with unrecognized price_id leaves tier unchanged, and a direct unit test for create_billing_portal_session \u00e2\u20ac\u201d 205 to 210 tests",
+    "files": [
+      "backend/tests/test_stripe_service.py"
+    ],
+    "tests": {
+      "before": 205,
+      "after": 210,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   },
   {
     "session": 28,
     "date": "2026-03-24",
     "time": "02:20",
     "type": "work",
-    "summary": "Added 19 tests — first direct coverage of send_web_push, scheduler graceful handling when API returns None, and Hypothesis invariant tests for tier limits, auth enforcement, and adversarial addresses",
-    "files": ["backend/tests/test_notifications.py", "backend/tests/test_scheduler.py", "backend/tests/test_hypothesis_invariants.py", "backend/requirements.txt"],
-    "tests": {"before": 210, "after": 229, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+    "summary": "Added 19 tests \u00e2\u20ac\u201d first direct coverage of send_web_push, scheduler graceful handling when API returns None, and Hypothesis invariant tests for tier limits, auth enforcement, and adversarial addresses",
+    "files": [
+      "backend/tests/test_notifications.py",
+      "backend/tests/test_scheduler.py",
+      "backend/tests/test_hypothesis_invariants.py",
+      "backend/requirements.txt"
+    ],
+    "tests": {
+      "before": 210,
+      "after": 229,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   },
   {
     "session": 29,
@@ -331,9 +645,22 @@
     "time": "02:30",
     "type": "work",
     "summary": "Added 5 tests covering untested defensive branches found by branch audit: inactive user skipped by scheduler, parse_ts overflow integer returns None, orphaned follow (missing user) skipped gracefully, follows/live name fallback when bettor_name is None in DB, and telegram disable path for basic user",
-    "files": ["backend/tests/test_scheduler.py", "backend/tests/test_follows_live.py", "backend/tests/test_alerts.py"],
-    "tests": {"before": 229, "after": 234, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+    "files": [
+      "backend/tests/test_scheduler.py",
+      "backend/tests/test_follows_live.py",
+      "backend/tests/test_alerts.py"
+    ],
+    "tests": {
+      "before": 229,
+      "after": 234,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   },
   {
     "session": 30,
@@ -341,19 +668,48 @@
     "time": "00:00",
     "type": "work",
     "summary": "Added 5 branch-coverage tests: cross-user unfollow blocked (security), uppercase email duplicate detection on register, /auth/me response shape contract, admin follows.total count accuracy, and scheduler dispatches with correct telegram_chat_id when user has telegram enabled and verified",
-    "files": ["backend/tests/test_follows.py", "backend/tests/test_auth.py", "backend/tests/test_admin.py", "backend/tests/test_scheduler.py"],
-    "tests": {"before": 234, "after": 239, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+    "files": [
+      "backend/tests/test_follows.py",
+      "backend/tests/test_auth.py",
+      "backend/tests/test_admin.py",
+      "backend/tests/test_scheduler.py"
+    ],
+    "tests": {
+      "before": 234,
+      "after": 239,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   },
   {
     "session": 31,
     "date": "2026-03-24",
     "time": "12:00",
     "type": "brain",
-    "summary": "Researched agent reliability, competitor features, and tech-debt patterns — added periodic De-Sloppify trigger to PROMPT.md so code quality gets audited every 5 work sessions, and replenished the testing backlog with 5 new edge-case tests",
-    "files": ["autoagent/PROMPT.md", "autoagent/memory/backlog.md", "autoagent/memory/knowledge.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md"],
-    "tests": {"before": 239, "after": 239, "status": "skip"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "brain session — no code changed"}
+    "summary": "Researched agent reliability, competitor features, and tech-debt patterns \u00e2\u20ac\u201d added periodic De-Sloppify trigger to PROMPT.md so code quality gets audited every 5 work sessions, and replenished the testing backlog with 5 new edge-case tests",
+    "files": [
+      "autoagent/PROMPT.md",
+      "autoagent/memory/backlog.md",
+      "autoagent/memory/knowledge.md",
+      "autoagent/brain/sources.md",
+      "autoagent/brain/techniques.md"
+    ],
+    "tests": {
+      "before": 239,
+      "after": 239,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "brain session \u00e2\u20ac\u201d no code changed"
+    }
   },
   {
     "session": 32,
@@ -361,19 +717,48 @@
     "time": "03:05",
     "type": "work",
     "summary": "Fixed 2 bugs (empty bettor_address silently stored in DB; whitespace email bypassed duplicate check with 500 crash) and added 6 tests covering those fixes plus MRR decimal precision, web_push independence, and telegram/start regeneration",
-    "files": ["backend/app/routes/follows.py", "backend/app/routes/auth.py", "backend/tests/test_follows.py", "backend/tests/test_admin.py", "backend/tests/test_auth.py", "backend/tests/test_alerts.py"],
-    "tests": {"before": 239, "after": 245, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+    "files": [
+      "backend/app/routes/follows.py",
+      "backend/app/routes/auth.py",
+      "backend/tests/test_follows.py",
+      "backend/tests/test_admin.py",
+      "backend/tests/test_auth.py",
+      "backend/tests/test_alerts.py"
+    ],
+    "tests": {
+      "before": 239,
+      "after": 245,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no UI changes"
+    }
   },
   {
     "session": 33,
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "De-Sloppify audit found a real login bug — email normalization stripped whitespace on register but not on login, so padded email caused silent 401. Fixed, added test, removed dead placeholder function in hypothesis tests",
-    "files": ["backend/app/routes/auth.py", "backend/tests/test_auth.py", "backend/tests/test_hypothesis_invariants.py"],
-    "tests": {"before": 245, "after": 246, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+    "summary": "De-Sloppify audit found a real login bug \u00e2\u20ac\u201d email normalization stripped whitespace on register but not on login, so padded email caused silent 401. Fixed, added test, removed dead placeholder function in hypothesis tests",
+    "files": [
+      "backend/app/routes/auth.py",
+      "backend/tests/test_auth.py",
+      "backend/tests/test_hypothesis_invariants.py"
+    ],
+    "tests": {
+      "before": 245,
+      "after": 246,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no UI changes"
+    }
   },
   {
     "session": 34,
@@ -381,8 +766,46 @@
     "time": "03:35",
     "type": "work",
     "summary": "Fixed 2 input-validation bugs in register (empty email accepted, whitespace-only name stored as empty string), fixed flaky Hypothesis deadline, and added 4 tests locking in the fixes and two business-rule contracts",
-    "files": ["backend/app/routes/auth.py", "backend/tests/test_auth.py", "backend/tests/test_bettors.py", "backend/tests/test_follows.py", "backend/tests/test_hypothesis_invariants.py"],
-    "tests": {"before": 246, "after": 250, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+    "files": [
+      "backend/app/routes/auth.py",
+      "backend/tests/test_auth.py",
+      "backend/tests/test_bettors.py",
+      "backend/tests/test_follows.py",
+      "backend/tests/test_hypothesis_invariants.py"
+    ],
+    "tests": {
+      "before": 246,
+      "after": 250,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no UI changes"
+    }
+  },
+  {
+    "session": 35,
+    "date": "2026-03-24",
+    "time": "05:00",
+    "type": "work",
+    "summary": "Fixed empty password security bug (no min_length on RegisterRequest.password \u2014 empty string was silently hashed and accepted), then added 5 tests covering the 3 untested AlertSetting auto-create branches, PUT empty body no-op path, and name whitespace stripping behavior",
+    "files": [
+      "backend/app/routes/auth.py",
+      "backend/tests/test_auth.py",
+      "backend/tests/test_alerts.py"
+    ],
+    "tests": {
+      "before": 250,
+      "after": 255,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

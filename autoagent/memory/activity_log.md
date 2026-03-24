@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 05:00 — BUG FIX + TESTING (Session 35)
+DONE: Fixed empty password security bug and added 5 tests — (1) RegisterRequest.password had no min_length: empty string "" was accepted, hashed, and stored, allowing anyone to log in with an empty password; fixed with Field(min_length=1); (2) GET /alerts/settings auto-creates AlertSetting for user with no row (path untested since registration always creates one); (3) PUT /alerts/settings auto-creates AlertSetting for user with no row; (4) PUT /alerts/settings with empty body {} returns 200 with no field changes (all Optional fields stay None); (5) POST /auth/register with name "  Alice  " stores as "Alice" (verifies route-level name.strip() works). 250→255 tests.
+IMPACT: Empty password was a real security hole — bcrypt hash of "" is a valid credential anyone could use. Three previously untested defensive branches in alerts.py now locked in.
+FILES: backend/app/routes/auth.py, backend/tests/test_auth.py, backend/tests/test_alerts.py
+
 ## 2026-03-24 03:35 — BUG FIX + TESTING (Session 34)
 DONE: Fixed 2 input-validation bugs and added 5 tests — (1) POST /auth/register accepted empty email (field was `str`, no validation) — changed to `EmailStr`; (2) POST /auth/register accepted whitespace-only name (stored as "" after `.strip()`) — added `field_validator` that strips then rejects blank; (3) fixed Hypothesis `test_bettor_address_never_causes_500` deadline failure (340ms > 200ms default) by adding `deadline=None`; (4) added ordering test for free-tier duplicate: count check fires before duplicate check → 403 not 409; (5) added bettor detail response shape contract: both `profile` and `recent_bets` keys always present. 246→250 tests.
 IMPACT: Two silent data-corruption paths closed — registering with empty email or blank name created garbage User rows with no error. Hypothesis test now stable (was flaky on slow machines). Two invariants locked in by contract tests.

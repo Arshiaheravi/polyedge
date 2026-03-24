@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **250 passed** (as of 2026-03-24, session 34 — 2 register validation bugs fixed + 5 new tests)
+- Test count: **255 passed** (as of 2026-03-24, session 35 — empty password bug fixed + 5 new tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #35 Reflexion — 2026-03-24
+ACCOMPLISHED: Found 1 security bug: RegisterRequest.password had bare `str` with no min_length — empty string "" was accepted, hashed by bcrypt, and stored as a valid credential. Fixed with `Field(..., min_length=1)`. Added 5 tests: empty password → 422; GET /alerts/settings auto-creates AlertSetting for user without one; PUT /alerts/settings auto-creates; PUT empty body `{}` → 200 no changes; name whitespace stripped on register. 250→255.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When auditing Pydantic models for input validation, check EVERY `str` field — not just email and name. Password fields are easy to forget since they're hashed, but an empty password is a valid bcrypt hash. Pattern: `password: str` with no min_length = security hole. Add `Field(..., min_length=1)` (or min_length=8 for production) to any password field.
+RULE: [2026-03-24] AlertSetting auto-create branches in GET/PUT /alerts/settings are unreachable from normal API usage (registration always creates the row), but testable by inserting a User directly in the DB. These defensive paths should still be covered — they protect against future migration or manual DB changes that could produce users without AlertSettings.
 
 ### Session #34 Reflexion — 2026-03-24
 ACCOMPLISHED: Found 2 input-validation bugs by auditing RegisterRequest model — email was `str` (no format check, accepted `""`), name had no validator (whitespace-only stored as `""`). Fixed both: `EmailStr` for email, `field_validator` for name. Fixed flaky Hypothesis deadline (test makes real HTTP calls, 200ms default is too tight). Added 4 tests: empty email 422, whitespace name 422, free-tier duplicate ordering (403 not 409), bettor detail shape contract. 246→250.
