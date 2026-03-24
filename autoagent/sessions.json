@@ -944,5 +944,29 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 42,
+    "date": "2026-03-24",
+    "time": "12:00",
+    "type": "work",
+    "summary": "Fixed a real bcrypt DoS vulnerability (unbounded password length) and added 6 tests covering the fix, /follows/live response shape contract, VIP tier unlimited follows, and admin stats with empty database",
+    "files": [
+      "backend/app/routes/auth.py",
+      "backend/tests/test_auth.py",
+      "backend/tests/test_follows.py",
+      "backend/tests/test_admin.py"
+    ],
+    "tests": {
+      "before": 268,
+      "after": 274,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

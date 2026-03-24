@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **268 passed** (as of 2026-03-24, session 40 — 5 branch-coverage tests added)
+- Test count: **274 passed** (as of 2026-03-24, session 42 — 6 branch-coverage tests added)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -47,6 +47,11 @@ ACCOMPLISHED: (1) Curated knowledge.md — merged Sessions #13+#14 duplicate cac
 FAILED: Nothing failed.
 RULE: [2026-03-24] When a BRAIN/META session identifies a failure pattern caused by a MISSING RULE (e.g. backlog empties reactively), the fix must be implemented in the file that gets read at the exact point the failure occurs — not in knowledge.md. Backlog empties at end of WORK session → add the low-water-mark rule to PROMPT.md STEP 3 (where backlog cleanup happens). Symmetry audit fails during testing → add it to testing.md BRANCH AUDIT WORKFLOW. Rules placed in the right file at the right moment are followed; rules in knowledge.md are often forgotten.
 RULE: [2026-03-24] activity_log.md is auto-loaded into context. Archive when > 30 entries to prevent context bloat. Use BRAIN_PROMPT.md Step 1D trigger. The archive format is: move oldest 20 to activity_log_archive.md (append), add a header line to the active file noting the archive range.
+
+### Session #42 Reflexion — 2026-03-24
+ACCOMPLISHED: (1) Added max_length=128 to RegisterRequest.password — closes a real bcrypt DoS vector. (2) 2 tests for password boundary (10000-char rejected, 128-char accepted). (3) 2 tests for /follows/live response shape ({"bettors": []} contract, per-item key shape). (4) VIP tier follow cap test (6 follows succeed, limit=999999 confirmed). (5) Admin zero-users test (all 6 stats = 0/0.0). (6) Found scheduler freshness filter was already covered by test_poll_bets_skips_old_bets — grepped and confirmed before writing a duplicate.
+FAILED: test_follows_live_response_shape_per_bettor failed in the full suite (passed in isolation) due to _activity_cache stale data from the prior test. Root cause: module-level cache dict persists across tests since Python modules are singletons. Fixed by calling `follows_module._activity_cache.clear()` at the start of each /follows/live test.
+RULE: [2026-03-24] Module-level caches in route handlers (like `_activity_cache` in routes/follows.py) survive across test functions — they're module singletons. Tests that read cached routes MUST clear the cache before the GET call, or they may get a stale response from a prior test. Pattern: `import app.routes.follows as m; m._activity_cache.clear()`. Same as conftest `clear_stripe_webhook_secret` autouse fixture pattern — consider adding autouse fixture if multiple tests hit the same cache.
 
 ### Session #40 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 branch-coverage tests. Gaps found: (1) send_sms had the same gap as send_telegram from session 39 — only the False paths (missing credentials) were tested; HTTP success and exception handler were untested; (2) Scheduler VIP SMS dispatch path was completely untested — the only untested notification channel combination remaining; (3) dispatch_bet_notification phone_number=None guard (sms skipped even with sms_enabled=True when no phone) was untested. All 5 passed first run. 263→268.

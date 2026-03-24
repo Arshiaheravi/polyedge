@@ -36,3 +36,5 @@
 - **[SESSION #1] Fix 5 failing webhook tests** — Added autouse conftest fixture clearing STRIPE_WEBHOOK_SECRET so webhook tests work; committed prior-session backend bugfixes (polymarket API, follows live, notifications) and full 91-test E2E suite; fixed CLAUDE.md free tier docs.
 - **[SESSION #14] 4 coverage-gap tests** — disabled login, bettor_detail 502, basic tier message, bettor_name default
 - **[SESSION #15] 5 coverage-gap tests** — SMS 503/400/502 paths, alert settings push_subscription parsing, follows/live cache hit; 162→167 tests
+
+- **[SESSION #42] 6 branch-coverage tests** — password max_length DoS guard (added max_length=128, 2 tests), /follows/live shape contract (2 tests), VIP follow cap, admin zero-users; 268→274 tests
