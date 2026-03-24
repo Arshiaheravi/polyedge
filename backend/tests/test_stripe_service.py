@@ -139,3 +139,109 @@ async def test_webhook_invoice_payment_failed_does_not_crash(db):
         "data": {"object": {"customer": "cus_xxx"}}
     }).encode()
     await handle_webhook_event(payload=event, sig_header="", db=db)
+
+
+# ── Subscription lifecycle — downgrade path ────────────────────────────────────
+#
+# DOCUMENTED BEHAVIOR: follows are NOT automatically removed on tier downgrade.
+# A user who had 8 follows as VIP will still have 8 follows after downgrading.
+# They can no longer ADD new follows beyond the new tier's limit, but existing
+# follows remain in place and continue to trigger notifications (until manually
+# unfollowed or tier is re-upgraded).
+
+
+@pytest.mark.asyncio
+async def test_vip_downgrade_to_free_follows_not_removed(db):
+    """
+    VIP user with 8 follows is downgraded to free via subscription cancellation.
+    EXPECTED: tier becomes 'free', all 8 follows are preserved (no auto-removal).
+    """
+    from app.models import BettorFollow, User
+    from app.auth import hash_password
+    from app.services.stripe_service import handle_webhook_event
+
+    user = User(email="vip@x.com", hashed_password=hash_password("p"),
+                name="VIP", subscription_tier="vip", stripe_customer_id="cus_vip1")
+    db.add(user)
+    db.flush()
+    for i in range(8):
+        db.add(BettorFollow(user_id=user.id, bettor_address=f"0x{i:040x}"))
+    db.commit()
+
+    event = json.dumps({
+        "type": "customer.subscription.deleted",
+        "data": {"object": {"customer": "cus_vip1", "status": "canceled"}}
+    }).encode()
+    await handle_webhook_event(payload=event, sig_header="", db=db)
+
+    db.refresh(user)
+    follow_count = db.query(BettorFollow).filter(BettorFollow.user_id == user.id).count()
+
+    assert user.subscription_tier == "free"
+    assert follow_count == 8  # follows preserved — no auto-removal on downgrade
+
+
+@pytest.mark.asyncio
+async def test_vip_downgrade_to_basic_follows_not_removed(db):
+    """
+    VIP user with 8 follows is updated to basic plan via subscription update.
+    EXPECTED: tier becomes 'basic', all 8 follows are preserved.
+    """
+    from app.models import BettorFollow, User
+    from app.auth import hash_password
+    from app.services.stripe_service import handle_webhook_event
+
+    user = User(email="vip2@x.com", hashed_password=hash_password("p"),
+                name="VIP2", subscription_tier="vip", stripe_customer_id="cus_vip2")
+    db.add(user)
+    db.flush()
+    for i in range(8):
+        db.add(BettorFollow(user_id=user.id, bettor_address=f"0xb{i:039x}"))
+    db.commit()
+
+    event = json.dumps({
+        "type": "customer.subscription.updated",
+        "data": {"object": {
+            "customer": "cus_vip2",
+            "status": "active",
+            "items": {"data": [{"price": {"id": "price_basic_test"}}]},
+        }}
+    }).encode()
+
+    with patch("app.services.stripe_service.settings") as mock_settings:
+        mock_settings.stripe_webhook_secret = ""
+        mock_settings.stripe_basic_price_id = "price_basic_test"
+        mock_settings.stripe_vip_price_id = "price_vip_test"
+        await handle_webhook_event(payload=event, sig_header="", db=db)
+
+    db.refresh(user)
+    follow_count = db.query(BettorFollow).filter(BettorFollow.user_id == user.id).count()
+
+    assert user.subscription_tier == "basic"
+    assert follow_count == 8  # follows preserved after downgrade to basic
+
+
+@pytest.mark.asyncio
+async def test_downgraded_user_blocked_from_adding_new_follow(client, db):
+    """
+    After downgrade to basic (already at 8 follows > basic limit of 5),
+    POST /follows returns 403 — new follows blocked at the new tier's limit.
+    """
+    from app.models import BettorFollow, User
+    from app.auth import hash_password, create_access_token
+
+    user = User(email="downgraded@x.com", hashed_password=hash_password("p"),
+                name="DG", subscription_tier="basic")
+    db.add(user)
+    db.flush()
+    for i in range(5):  # exactly at basic limit
+        db.add(BettorFollow(user_id=user.id, bettor_address=f"0xc{i:039x}"))
+    db.commit()
+
+    token = create_access_token(data={"sub": str(user.id)})
+    headers = {"Authorization": f"Bearer {token}"}
+
+    resp = client.post("/follows", json={"bettor_address": "0xnewbettor"},
+                       headers=headers)
+    assert resp.status_code == 403
+    assert "Basic" in resp.json()["detail"] or "basic" in resp.json()["detail"].lower()
