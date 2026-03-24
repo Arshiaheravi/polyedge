@@ -82,6 +82,7 @@ def test_normalise_bet_missing_fields():
     assert result["market_question"] == "Unknown Market"
     assert result["amount_usd"] == 0.0
     assert result["price"] == 0.0
+    assert result["type"] == "BUY"  # raw.get("side") or "BUY" — absent side defaults to BUY
 
 
 # ── blockies URL ──────────────────────────────────────────────────────────────
@@ -449,6 +450,56 @@ async def test_get_active_positions_non_list_response_returns_empty():
         result = await get_active_positions("0xtest")
 
     assert result == []
+
+
+# ── get_live_trades anon name when proxyWallet empty ─────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_live_trades_empty_proxy_wallet_generates_anon_name():
+    """When proxyWallet is '' and no name/pseudonym, get_live_trades uses 'anon'."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    trades = [{"proxyWallet": "", "usdcSize": "10"}]
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = trades
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_live_trades
+        result = await get_live_trades(limit=10)
+
+    assert len(result) == 1
+    assert result[0]["name"] == "anon"
+    assert result[0]["amount_usd"] == 10.0
+
+
+# ── get_leaderboard empty first page ─────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_leaderboard_empty_first_page_returns_empty_list():
+    """When first API page is [], get_leaderboard returns [] without a second call."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = []
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_leaderboard
+        result = await get_leaderboard(sort_by="profit", time_period="week", limit=100)
+
+    assert result == []
+    assert mock_client.get.call_count == 1  # breaks on first empty page, no second call
 
 
 # ── get_recent_bets "activity" key fallback ───────────────────────────────────
