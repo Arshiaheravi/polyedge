@@ -107,6 +107,32 @@ def test_login_with_uppercase_email_succeeds(client):
     assert "access_token" in resp.json()
 
 
+def test_register_uppercase_email_is_treated_as_duplicate(client):
+    """Registering UPPER@EXAMPLE.COM after user@example.com already exists returns 400."""
+    client.post("/auth/register", json={
+        "email": "dupcase@example.com", "password": "pass", "name": "DupCase"
+    })
+    resp = client.post("/auth/register", json={
+        "email": "DUPCASE@EXAMPLE.COM", "password": "pass2", "name": "DupCase2"
+    })
+    assert resp.status_code == 400
+    assert "already registered" in resp.json()["detail"].lower()
+
+
+def test_get_me_returns_all_user_fields(client, auth_headers):
+    """GET /auth/me response includes id, email, name, subscription_tier, telegram_verified, telegram_chat_id, created_at."""
+    resp = client.get("/auth/me", headers=auth_headers)
+    assert resp.status_code == 200
+    user = resp.json()["user"]
+    assert "id" in user
+    assert "email" in user
+    assert "name" in user
+    assert "subscription_tier" in user
+    assert "telegram_verified" in user
+    assert "telegram_chat_id" in user
+    assert "created_at" in user
+
+
 def test_get_me_reflects_updated_subscription_tier(client, db, auth_headers, registered_user):
     """GET /auth/me returns the current subscription_tier after a Stripe webhook upgrades the user."""
     from app.models import User

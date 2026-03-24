@@ -88,6 +88,25 @@ def test_admin_stats_mrr_calculation(client, db):
     assert abs(resp.json()["mrr_estimate"] - expected_mrr) < 0.01
 
 
+def test_admin_stats_follows_total_reflects_actual_follows(client, db):
+    """admin/stats follows.total reflects the actual number of BettorFollow rows."""
+    from app.config import get_settings
+    from app.models import BettorFollow, User
+    from app.auth import hash_password
+
+    pw = get_settings().admin_password
+    user = User(email="adminfollow@x.com", hashed_password=hash_password("p"), name="AF")
+    db.add(user)
+    db.flush()
+    db.add(BettorFollow(user_id=user.id, bettor_address="0xfollow1", bettor_name="w1"))
+    db.add(BettorFollow(user_id=user.id, bettor_address="0xfollow2", bettor_name="w2"))
+    db.commit()
+
+    resp = client.get("/admin/stats", headers={"x-admin-password": pw})
+    assert resp.status_code == 200
+    assert resp.json()["follows"]["total"] == 2
+
+
 def test_admin_stats_bet_events_count(client, db):
     """admin/stats bet_events.total and bet_events.notified reflect actual BetEvent rows."""
     from app.config import get_settings

@@ -467,6 +467,36 @@ def test_poll_bets_orphaned_follow_is_skipped(sched_db):
     mock_notify.assert_not_called()
 
 
+def test_poll_bets_dispatches_with_telegram_chat_id_when_enabled(sched_db):
+    """When a basic user has telegram_enabled=True and telegram_verified=True,
+    dispatch_bet_notification is called with the user's telegram_chat_id, not None."""
+    from app.models import AlertSetting
+    session, Session = sched_db
+
+    user = User(
+        email="tg@x.com", hashed_password=hash_password("p"),
+        name="TG", subscription_tier="basic",
+        telegram_chat_id="chat_12345",
+        telegram_verified=True,
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xtg", bettor_name="tgwhale"))
+    alert = AlertSetting(user_id=user.id, telegram_enabled=True, web_push_enabled=False)
+    session.add(alert)
+    session.commit()
+
+    mock_dispatch = AsyncMock()
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=mock_dispatch):
+        run(_poll_bets())
+
+    mock_dispatch.assert_called_once()
+    call_kwargs = mock_dispatch.call_args[1]
+    assert call_kwargs["telegram_chat_id"] == "chat_12345"
+
+
 def test_poll_bets_multiple_followers_each_notified(sched_db):
     """When two users follow the same bettor, dispatch_bet_notification is called once per follower."""
     session, Session = sched_db

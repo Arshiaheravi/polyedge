@@ -169,3 +169,27 @@ def test_post_follows_response_body_includes_all_fields(client, auth_headers):
     assert data["bettor_address"] == BETTOR_A
     assert data["bettor_name"] == "AlphaTrader"
     assert "created_at" in data
+
+
+def test_delete_follow_by_different_user_returns_404(client, db):
+    """User B cannot delete User A's follow — the route filters by current_user.id."""
+    from app.auth import hash_password, create_access_token
+    from app.models import BettorFollow, User
+
+    # Create user A and have them follow a bettor
+    user_a = User(email="usera@x.com", hashed_password=hash_password("p"), name="A")
+    db.add(user_a)
+    db.flush()
+    db.add(BettorFollow(user_id=user_a.id, bettor_address="0xshared_bettor", bettor_name="whale"))
+    db.commit()
+
+    # Create user B with their own token
+    user_b = User(email="userb@x.com", hashed_password=hash_password("p"), name="B")
+    db.add(user_b)
+    db.commit()
+    token_b = create_access_token(data={"sub": str(user_b.id)})
+    headers_b = {"Authorization": f"Bearer {token_b}"}
+
+    # User B tries to delete user A's follow — must get 404
+    resp = client.delete("/follows/0xshared_bettor", headers=headers_b)
+    assert resp.status_code == 404
