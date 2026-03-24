@@ -56,6 +56,21 @@ def test_portal_no_stripe_customer(client, auth_headers):
     assert "Subscribe first" in resp.json()["detail"]
 
 
+def test_portal_stripe_error_returns_502(client, db, auth_headers, registered_user):
+    """When Stripe raises an exception, portal must return 502."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.stripe_customer_id = "cus_test_err"
+    db.commit()
+
+    with patch("app.routes.payments.create_billing_portal_session",
+               new=AsyncMock(side_effect=Exception("Stripe is down"))):
+        resp = client.get("/payments/portal", headers=auth_headers)
+    assert resp.status_code == 502
+    assert "Stripe" in resp.json()["detail"]
+
+
 def test_portal_with_stripe_customer(client, db, auth_headers, registered_user):
     from app.models import User
     _, user_data = registered_user

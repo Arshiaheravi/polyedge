@@ -1,5 +1,6 @@
 """Tests for /bettors endpoints — leaderboard and bettor detail (mocked)."""
 from unittest.mock import AsyncMock, patch
+import pytest
 
 
 MOCK_LEADERBOARD = [
@@ -62,6 +63,39 @@ def test_recent_trades_public(client):
     data = resp.json()
     assert "trades" in data
     assert data["trades"][0]["name"] == "Alice"
+
+
+def test_leaderboard_api_error_returns_502(client):
+    """When Polymarket API fails on leaderboard, route must return 502."""
+    # Use time_period=day to avoid colliding with any cached profit_month_* entry
+    with patch("app.routes.bettors.get_leaderboard", new=AsyncMock(side_effect=Exception("API down"))):
+        resp = client.get("/bettors?sort=profit&time_period=day")
+    assert resp.status_code == 502
+    assert "Polymarket" in resp.json()["detail"]
+
+
+def test_recent_trades_limit_too_low_returns_422(client):
+    """limit < 5 is below ge=5 constraint — FastAPI returns 422."""
+    resp = client.get("/bettors/trades/recent?limit=4")
+    assert resp.status_code == 422
+
+
+def test_recent_trades_limit_too_high_returns_422(client):
+    """limit > 50 is above le=50 constraint — FastAPI returns 422."""
+    resp = client.get("/bettors/trades/recent?limit=51")
+    assert resp.status_code == 422
+
+
+def test_recent_trades_api_error_returns_502(client):
+    """When Polymarket API fails on live trades, route must return 502."""
+    import app.routes.bettors as bettors_mod
+    # Clear the trades cache so we don't get a cached 200 from a prior test
+    bettors_mod._trades_cache["data"] = None
+    bettors_mod._trades_cache["ts"] = 0
+    with patch("app.routes.bettors.get_live_trades", new=AsyncMock(side_effect=Exception("feed down"))):
+        resp = client.get("/bettors/trades/recent")
+    assert resp.status_code == 502
+    assert "Polymarket" in resp.json()["detail"]
 
 
 def test_bettor_detail_public(client):
