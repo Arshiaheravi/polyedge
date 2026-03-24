@@ -42,6 +42,11 @@
 
 ## Session Reflexions
 
+### Session #17 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 2 tests: test_leaderboard_sort_accuracy (verifies sort=accuracy passes correct arg) and test_poll_bets_multiple_followers_each_notified (verifies both followers get dispatch_bet_notification called). 167 → 169 tests. All 6 high-priority backlog testing tasks are now complete.
+FAILED: Nothing failed. Both tests passed first run.
+RULE: [2026-03-24] When checking backlog items, always verify against existing tests first with grep — several "backlog" tasks (telegram/start, DELETE /follows 404, follows/live error, admin MRR) were already implemented in prior sessions. Grepping saves a full read of each test file.
+
 ### Session #15 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 tests covering previously untested branches: SMS start 503 (Twilio not configured), 400 (invalid phone format), 502 (send_sms returns False); GET /alerts/settings returns parsed push_subscription dict; /follows/live cache-hit path (API called once, second call served from cache). 162 → 167 tests.
 FAILED: Transient failure of test_tampered_signature_returns_401 on first full-suite run — passed in isolation and on second run. Likely a test ordering flake unrelated to changes.

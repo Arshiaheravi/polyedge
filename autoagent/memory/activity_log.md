@@ -1,5 +1,15 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 17)
+DONE: Added 2 coverage-gap tests — GET /bettors sort=accuracy passes correct arg to service; scheduler dispatches to all N followers of same bettor. 167→169 tests.
+IMPACT: sort=accuracy was the only sort param without a test; multi-follower notification path is the core revenue mechanic (more followers → more upgrades) and was untested.
+FILES: backend/tests/test_bettors.py, backend/tests/test_scheduler.py
+
+## 2026-03-24 — META SESSION (Session 16)
+IMPROVED: (1) Added PolyEdge-specific cache isolation and module settings monkeypatch patterns to skills/testing.md. (2) Replenished backlog with 6 concrete testing tasks. (3) Relabeled feature backlog items as "FEATURE MODE ONLY". (4) Added "FEATURE MODE ONLY" to skip list in PROMPT.md step 3.
+PATTERNS FOUND: Sessions 13-15 repeatedly hit module-level cache isolation (_trades_cache, _profile_cache) and module-level settings binding issues — both documented in knowledge.md but absent from testing.md where WORK agents actually look. Backlog was empty of test tasks, forcing next session to derive them from PROJECT.md.
+PREDICTED IMPACT: WORK agents will find cache isolation and settings monkeypatch patterns before they fail; next WORK session starts with 6 ready testing tasks instead of spending turns on task discovery; DEBUG MODE agents won't accidentally pick feature tasks.
+
 ## 2026-03-24 — TESTING (Session 15)
 DONE: Added 5 coverage-gap tests — SMS start 503/400/502 error paths, GET /alerts/settings returns parsed push_subscription dict, /follows/live cache-hit path. 162→167 tests.
 IMPACT: Four previously untested SMS error branches now verified (Twilio unconfigured, bad phone format, send failure); alert settings push_subscription parsing confirmed; follows live cache behaviour locked in.

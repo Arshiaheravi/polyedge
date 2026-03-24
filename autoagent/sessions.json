@@ -204,5 +204,15 @@
     "files": ["backend/tests/test_alerts.py", "backend/tests/test_follows_live.py"],
     "tests": {"before": 162, "after": 167, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+  },
+  {
+    "session": 17,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added sort=accuracy leaderboard test and multi-follower notification test — two uncovered branches in bettors and scheduler now locked in",
+    "files": ["backend/tests/test_bettors.py", "backend/tests/test_scheduler.py"],
+    "tests": {"before": 167, "after": 169, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
   }
 ]

@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #17] sort=accuracy + multi-follower notify tests** — 2 new tests: GET /bettors sort=accuracy passes correct arg to service; scheduler notifies all N followers of same bettor; 167 → 169 tests.
 - **[SESSION #13] Error-path + boundary tests** — 5 new tests: portal Stripe 502, leaderboard API 502, trades API 502, trades limit 422 (low/high); 153 → 158 tests.
 - **[SESSION #12] Playwright E2E — leaderboard sort tabs + account tab + browse view** — 9-check Playwright suite; all pass; confirms sort/period toggles update active class + re-render data, account tab shows correct tier label, public browse view loads bettors without login.
 - **[SESSION #10] Field-coverage tests** — 2 new tests: GET /follows returns bettor_address/bettor_name/created_at; GET /auth/me reflects updated tier; 151 → 153 tests.
