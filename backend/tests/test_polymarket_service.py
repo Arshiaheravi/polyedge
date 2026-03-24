@@ -146,3 +146,139 @@ async def test_get_active_positions_empty_on_api_error():
         result = await get_active_positions("0xtest")
 
     assert result == []
+
+
+# ── get_bettor_profile ────────────────────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_bettor_profile_returns_normalised_profile():
+    """get_bettor_profile builds profile from activity: name, volume, trade_count."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    activity = [
+        {"proxyWallet": "0xwhale", "name": "Whale", "usdcSize": "500.0"},
+        {"proxyWallet": "0xwhale", "name": "Whale", "usdcSize": "300.0"},
+    ]
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = activity
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_bettor_profile
+        result = await get_bettor_profile("0xwhale")
+
+    assert result["name"] == "Whale"
+    assert result["volume_usd"] == 800.0
+    assert result["avg_bet_usd"] == 400.0
+    assert result["address"] == "0xwhale"
+
+
+# ── get_recent_bets ───────────────────────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_recent_bets_returns_normalised_bets():
+    """get_recent_bets fetches activity and normalises each entry into a bet dict."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    activity = [
+        {
+            "conditionId": "cond1",
+            "title": "Will X win?",
+            "outcome": "Yes",
+            "usdcSize": "100.0",
+            "price": "0.65",
+            "side": "BUY",
+            "transactionHash": "0xtxhash",
+        }
+    ]
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = activity
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_recent_bets
+        result = await get_recent_bets("0xwhale", limit=20)
+
+    assert len(result) == 1
+    assert result[0]["market_id"] == "cond1"
+    assert result[0]["market_question"] == "Will X win?"
+    assert result[0]["amount_usd"] == 100.0
+    assert result[0]["type"] == "BUY"
+
+
+# ── get_live_trades ───────────────────────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_live_trades_returns_normalised_trades():
+    """get_live_trades fetches /trades and returns name/market/side/amount_usd per entry."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    trades = [
+        {
+            "proxyWallet": "0xabc",
+            "name": "Alice",
+            "title": "Market A",
+            "outcome": "Yes",
+            "usdcSize": "200.0",
+            "side": "buy",
+            "timestamp": "2026-03-24T10:00:00",
+            "slug": "market-a",
+        }
+    ]
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = trades
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_live_trades
+        result = await get_live_trades(limit=20)
+
+    assert len(result) == 1
+    assert result[0]["name"] == "Alice"
+    assert result[0]["market"] == "Market A"
+    assert result[0]["side"] == "BUY"
+    assert result[0]["amount_usd"] == 200.0
+
+
+# ── get_leaderboard pagination ────────────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_leaderboard_paginates_when_first_page_full():
+    """When first page returns page_size (50) items a second API call is made."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    page1 = [{"rank": str(i), "proxyWallet": f"0x{i:04x}", "vol": "100", "pnl": "10"} for i in range(50)]
+    page2 = [{"rank": str(50 + i), "proxyWallet": f"0x{50+i:04x}", "vol": "50", "pnl": "5"} for i in range(10)]
+
+    def make_resp(data):
+        r = MagicMock()
+        r.json.return_value = data
+        r.raise_for_status = MagicMock()
+        return r
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(side_effect=[make_resp(page1), make_resp(page2)])
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_leaderboard
+        result = await get_leaderboard(sort_by="profit", time_period="week", limit=100)
+
+    assert mock_client.get.call_count == 2
+    assert len(result) == 60

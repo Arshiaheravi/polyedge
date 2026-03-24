@@ -95,6 +95,18 @@ def test_login_disabled_account(client, db):
     assert "disabled" in resp.json()["detail"].lower()
 
 
+def test_login_with_uppercase_email_succeeds(client):
+    """Login email is lowercased before lookup — UPPER@EXAMPLE.COM matches user@example.com."""
+    client.post("/auth/register", json={
+        "email": "casetest@example.com", "password": "mypass", "name": "CaseUser"
+    })
+    resp = client.post("/auth/login", json={
+        "email": "CASETEST@EXAMPLE.COM", "password": "mypass"
+    })
+    assert resp.status_code == 200
+    assert "access_token" in resp.json()
+
+
 def test_get_me_reflects_updated_subscription_tier(client, db, auth_headers, registered_user):
     """GET /auth/me returns the current subscription_tier after a Stripe webhook upgrades the user."""
     from app.models import User
