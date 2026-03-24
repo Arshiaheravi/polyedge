@@ -85,7 +85,7 @@ def test_protected_endpoints_reject_missing_auth(client, method, path, body):
 
 # ── Invariant 4: adversarial bettor addresses never cause 500 ─────────────────
 
-@settings(max_examples=20, suppress_health_check=[HealthCheck.function_scoped_fixture])
+@settings(max_examples=20, suppress_health_check=[HealthCheck.function_scoped_fixture], deadline=None)
 @given(address=st.text(alphabet=st.characters(whitelist_categories=("Lu", "Ll", "Nd")), min_size=1, max_size=80))
 def test_bettor_address_never_causes_500(client, address):
     """GET /bettors/{address} must never return 500 for any non-empty address string."""

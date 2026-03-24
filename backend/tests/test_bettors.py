@@ -183,6 +183,24 @@ def test_leaderboard_limit_zero_returns_422(client):
     assert resp.status_code == 422
 
 
+def test_bettor_detail_response_shape_has_required_keys(client):
+    """GET /bettors/{address} always returns both 'profile' and 'recent_bets' keys."""
+    import app.routes.bettors as bettors_mod
+    addr = "0xSHAPE_CHECK"
+    bettors_mod._profile_cache.pop(addr, None)
+    mock_profile = {"address": addr, "name": "ShapeChecker", "volume_usd": 100.0,
+                    "total_bets": 1, "avg_bet_usd": 100.0, "avatar_url": ""}
+    mock_bets = [{"market_id": "m1", "outcome": "Yes", "amount_usd": 50.0, "timestamp": "2026-01-01"}]
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=mock_profile)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=mock_bets)):
+        resp = client.get(f"/bettors/{addr}")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "profile" in data, "bettor detail must always include 'profile' key"
+    assert "recent_bets" in data, "bettor detail must always include 'recent_bets' key"
+    assert isinstance(data["recent_bets"], list)
+
+
 def test_bettor_detail_cache_hit_returns_cached_data(client):
     """Second call to GET /bettors/{address} within TTL returns cached data without re-calling API."""
     import app.routes.bettors as bettors_mod

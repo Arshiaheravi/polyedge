@@ -177,6 +177,17 @@ def test_post_follows_empty_bettor_address_rejected(client, auth_headers):
     assert resp.status_code == 422
 
 
+def test_free_tier_duplicate_at_limit_returns_403_not_409(client, auth_headers):
+    """When a free-tier user is already at their follow limit and tries to re-follow the same
+    bettor, they must get 403 (tier limit hit), NOT 409 (duplicate), because the count check
+    happens before the duplicate check in add_follow()."""
+    # Free tier: add the one allowed follow
+    client.post("/follows", json={"bettor_address": BETTOR_A}, headers=auth_headers)
+    # Try to re-follow the same bettor — count is now at max, so 403 fires before the 409 check
+    resp = client.post("/follows", json={"bettor_address": BETTOR_A}, headers=auth_headers)
+    assert resp.status_code == 403
+
+
 def test_delete_follow_by_different_user_returns_404(client, db):
     """User B cannot delete User A's follow — the route filters by current_user.id."""
     from app.auth import hash_password, create_access_token

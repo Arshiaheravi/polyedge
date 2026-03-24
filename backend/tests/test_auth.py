@@ -176,6 +176,18 @@ def test_login_with_whitespace_padded_email_works(client):
     assert "access_token" in resp.json()
 
 
+def test_register_empty_email_returns_422(client):
+    """POST /auth/register with empty email string must return 422, not create a user."""
+    resp = client.post("/auth/register", json={"email": "", "password": "pass123", "name": "Alice"})
+    assert resp.status_code == 422
+
+
+def test_register_whitespace_only_name_returns_422(client):
+    """POST /auth/register with whitespace-only name must return 422, not store an empty name."""
+    resp = client.post("/auth/register", json={"email": "user@example.com", "password": "pass123", "name": "   "})
+    assert resp.status_code == 422
+
+
 def test_get_me_reflects_updated_subscription_tier(client, db, auth_headers, registered_user):
     """GET /auth/me returns the current subscription_tier after a Stripe webhook upgrades the user."""
     from app.models import User
