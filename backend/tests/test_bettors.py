@@ -138,3 +138,19 @@ def test_leaderboard_response_includes_cached_field(client):
     assert "cached" in data
     assert isinstance(data["cached"], bool)
     assert data["cached"] is False  # First call to this combo — not cached
+
+
+def test_leaderboard_cached_field_is_true_on_second_call(client):
+    """Second leaderboard call with the same params within TTL returns cached=True."""
+    import app.routes.bettors as bettors_mod
+    # Clear the specific cache key so the first call is guaranteed fresh
+    bettors_mod._leaderboard_cache.pop("profit_all_7", None)
+    mock_lb = AsyncMock(return_value=MOCK_LEADERBOARD)
+    with patch("app.routes.bettors.get_leaderboard", new=mock_lb):
+        resp1 = client.get("/bettors?sort=profit&time_period=all&limit=7")
+        resp2 = client.get("/bettors?sort=profit&time_period=all&limit=7")
+    assert resp1.status_code == 200
+    assert resp2.status_code == 200
+    assert resp1.json()["cached"] is False  # First call — live
+    assert resp2.json()["cached"] is True   # Second call — served from cache
+    assert mock_lb.call_count == 1          # API called only once

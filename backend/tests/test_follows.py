@@ -135,3 +135,9 @@ def test_delete_follows_requires_auth(client):
     """DELETE /follows/{address} without a token returns 403, not 500."""
     resp = client.delete("/follows/0xsomeaddress")
     assert resp.status_code == 403
+
+
+def test_post_follows_requires_auth(client):
+    """POST /follows without an auth token returns 403, not 201 or 500."""
+    resp = client.post("/follows", json={"bettor_address": "0xtest"})
+    assert resp.status_code == 403

@@ -157,8 +157,29 @@ def test_telegram_start_for_basic(client, db, auth_headers, registered_user):
     assert len(data["code"]) == 8  # 8-char hex
 
 
+def test_telegram_start_for_vip(client, db, auth_headers, registered_user):
+    """VIP tier can also call /alerts/telegram/start and receives a code."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "vip"
+    db.commit()
+
+    resp = client.post("/alerts/telegram/start", headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "code" in data
+    assert len(data["code"]) == 8
+
+
 def test_alerts_require_auth(client):
     resp = client.get("/alerts/settings")
+    assert resp.status_code == 403
+
+
+def test_put_alert_settings_requires_auth(client):
+    """PUT /alerts/settings without an auth token returns 403, not 200 or 500."""
+    resp = client.put("/alerts/settings", json={"web_push_enabled": True})
     assert resp.status_code == 403
 
 
@@ -315,6 +336,16 @@ def test_sms_start_invalid_phone_format_returns_400(client, db, auth_headers, re
         alerts_module.settings.twilio_auth_token = original_tok
     assert resp.status_code == 400
     assert "E.164" in resp.json()["detail"]
+
+
+def test_get_alert_settings_includes_phone_and_telegram_fields(client, auth_headers):
+    """GET /alerts/settings response includes telegram_chat_id, phone_number, and phone_verified fields."""
+    resp = client.get("/alerts/settings", headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "telegram_chat_id" in data
+    assert "phone_number" in data
+    assert "phone_verified" in data
 
 
 def test_sms_start_send_fails_returns_502(client, db, auth_headers, registered_user):
