@@ -264,5 +264,15 @@
     "files": ["backend/tests/test_bettors.py", "backend/tests/test_stripe_service.py", "backend/tests/test_admin.py", "backend/tests/test_follows.py"],
     "tests": {"before": 184, "after": 189, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+  },
+  {
+    "session": 23,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 5 tests for core polymarket service functions (get_bettor_profile, get_recent_bets, get_live_trades, get_leaderboard pagination) and auth email case-insensitivity — these were the only core data pipeline functions with zero coverage",
+    "files": ["backend/tests/test_polymarket_service.py", "backend/tests/test_auth.py"],
+    "tests": {"before": 189, "after": 194, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]

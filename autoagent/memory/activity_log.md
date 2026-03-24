@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — TESTING (Session 23)
+DONE: Added 5 coverage-gap tests — get_bettor_profile normalised profile (name/volume/avg_bet from activity), get_recent_bets normalised list (market_id/amount_usd/type), get_live_trades normalised trades (name/market/side/amount_usd), get_leaderboard pagination (2 API calls when first page is full), login email case-insensitivity (UPPER@EMAIL.COM matches lowercase user). 189→194 tests.
+IMPACT: Covers all four core async Polymarket service functions that were previously untested — these power bettor profile pages, live ticker, and leaderboard; email case test confirms login UX doesn't confuse users who type uppercase.
+FILES: backend/tests/test_polymarket_service.py, backend/tests/test_auth.py
+
 ## 2026-03-24 — TESTING (Session 22)
 DONE: Added 5 coverage-gap tests — bettor_detail cache-hit path (second call served from _profile_cache), past_due subscription status downgrades VIP→free, subscription.updated active status upgrades free→basic, admin/stats bet_events.total+notified verified with real BetEvent rows, POST /follows response body includes id+bettor_name+created_at. 184→189 tests.
 IMPACT: Closes the last uncovered branches in bettor profile caching (a hot path), confirms two billing downgrade/upgrade scenarios not previously tested (past_due and sub.updated→basic), and locks in the admin observability query and the POST /follows contract.

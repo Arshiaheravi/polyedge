@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **189 passed** (as of 2026-03-24, session 22 added 5 coverage-gap tests)
+- Test count: **194 passed** (as of 2026-03-24, session 23 added 5 coverage-gap tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #23 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 5 coverage-gap tests for previously untested async polymarket service functions and auth email lowercasing. All 5 passed first run. 189→194.
+FAILED: Nothing failed. Full suite showed the known ordering flake on test_tampered_signature_returns_401 (passes in isolation — documented in Session #15).
+RULE: [2026-03-24] Polymarket async service functions (get_bettor_profile, get_recent_bets, get_live_trades, get_leaderboard) had zero direct unit tests despite being the core data pipeline. When testing async httpx functions use AsyncMock with __aenter__/__aexit__ returning mock_client; for multi-call pagination tests use side_effect list on .get(). For email auth tests, register with lowercase then login with UPPERCASE to verify the lowercasing guard.
 
 ### Session #22 Reflexion — 2026-03-24
 ACCOMPLISHED: Added 5 coverage-gap tests. Gaps found by reading every route's branches vs. existing tests: _profile_cache hit was the only cache-hit path not tested (leaderboard + trades were); past_due and unpaid statuses in _handle_subscription_change were untested; subscription.updated basic upgrade had no test (only VIP); admin/stats bet_events fields were presence-checked but never value-verified; POST /follows response body only asserted bettor_address, not the other 3 fields. All 5 passed first run. 184→189.
