@@ -879,7 +879,7 @@
     "date": "2026-03-24",
     "time": "09:00",
     "type": "work",
-    "summary": "Added 5 branch-coverage tests: send_telegram happy path (HTTP success returns True), scheduler dispatch exception is caught and event still marked notified, telegram/start response shape verified (code+instructions+bot_link), telegram/verify accepts lowercase code, PUT alerts settings response includes telegram_verified and phone_verified fields — 258→263 tests",
+    "summary": "Added 5 branch-coverage tests: send_telegram happy path (HTTP success returns True), scheduler dispatch exception is caught and event still marked notified, telegram/start response shape verified (code+instructions+bot_link), telegram/verify accepts lowercase code, PUT alerts settings response includes telegram_verified and phone_verified fields \u00e2\u20ac\u201d 258\u00e2\u2020\u2019263 tests",
     "files": [
       "backend/tests/test_notifications.py",
       "backend/tests/test_scheduler.py",
@@ -895,6 +895,28 @@
       "checks": 0,
       "failures": 0,
       "notes": "no frontend code changed"
+    }
+  },
+  {
+    "session": 40,
+    "date": "2026-03-24",
+    "time": "10:00",
+    "type": "work",
+    "summary": "Added 5 branch-coverage tests for send_sms (3 direct unit paths), scheduler SMS dispatch for VIP users, and dispatch phone_number guard \u2014 closes the last untested paths in the SMS notification stack",
+    "files": [
+      "backend/tests/test_notifications.py",
+      "backend/tests/test_scheduler.py"
+    ],
+    "tests": {
+      "before": 263,
+      "after": 268,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
     }
   }
 ]

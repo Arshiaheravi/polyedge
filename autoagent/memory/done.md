@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #40] 5 branch-coverage tests — send_sms unit (3 paths), scheduler SMS dispatch for VIP, dispatch phone guard — 263→268** — locked in send_sms missing-credentials early return, HTTP success path, and exception handler; scheduler now tested for VIP+phone_verified+sms_enabled dispatching with correct phone args; dispatch phone_number=None guard verified.
 - **[SESSION #39] 5 branch-coverage tests — send_telegram happy path, dispatch exception safety, telegram shape/verify/response — 258→263** — locked in send_telegram HTTP success path, scheduler dispatch exception resilience (event.notified=True even when dispatch throws), telegram/start full response shape, telegram/verify case-insensitive match, PUT alerts settings response shape contract.
 - **[SESSION #38] De-Sloppify audit — remove 2 duplicate tier/limit tests + dead var — 260→258** — removed unused BETTOR_C constant, removed two exact-duplicate per-tier tests already covered by parametrized invariant test in test_hypothesis_invariants.py, logged _activity_cache unbounded growth to tech_debt.md.
 - **[SESSION #37] 5 tests — DELETE shape, checkout shape, dual-channel dispatch — 255→260** — tested DELETE /follows 204 body is empty and 404 exact detail; checkout response key set is exactly {"checkout_url"}; scheduler dispatches both Telegram+web_push simultaneously; scheduler dispatches web_push-only correctly (telegram_chat_id=None). Two backlog tasks (invoice.payment_failed, sort=volume) were already covered by prior sessions and skipped.
