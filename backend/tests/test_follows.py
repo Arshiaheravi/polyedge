@@ -76,3 +76,17 @@ def test_basic_tier_allows_5_follows(client, db, auth_headers, registered_user):
 def test_follows_require_auth(client):
     resp = client.get("/follows")
     assert resp.status_code == 403
+
+
+def test_follows_list_contains_bettor_fields(client, auth_headers):
+    """GET /follows returns bettor_address and bettor_name for each follow."""
+    client.post("/follows",
+                json={"bettor_address": BETTOR_A, "bettor_name": "Alpha Trader"},
+                headers=auth_headers)
+    resp = client.get("/follows", headers=auth_headers)
+    assert resp.status_code == 200
+    follows = resp.json()["follows"]
+    assert len(follows) == 1
+    assert follows[0]["bettor_address"] == BETTOR_A
+    assert follows[0]["bettor_name"] == "Alpha Trader"
+    assert "created_at" in follows[0]

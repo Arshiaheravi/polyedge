@@ -59,3 +59,16 @@ def test_get_me_authenticated(client, auth_headers):
 def test_get_me_unauthenticated(client):
     resp = client.get("/auth/me")
     assert resp.status_code == 403
+
+
+def test_get_me_reflects_updated_subscription_tier(client, db, auth_headers, registered_user):
+    """GET /auth/me returns the current subscription_tier after a Stripe webhook upgrades the user."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
+    resp = client.get("/auth/me", headers=auth_headers)
+    assert resp.status_code == 200
+    assert resp.json()["user"]["subscription_tier"] == "basic"
