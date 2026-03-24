@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 — DE-SLOPPIFY AUDIT (Session 33)
+DONE: Audited last 5 work sessions' changed files for coupling, test specificity, and agent smells — found 1 real bug, 1 dead code, 1 doc inconsistency. Fixed login email strip bug (auth.py line 73 was .lower() only, not .lower().strip()); removed dead @given(st.nothing()) _placeholder from test_hypothesis_invariants.py; added test_login_with_whitespace_padded_email_works. 245→246 tests.
+IMPACT: Login with whitespace-padded email now works correctly (was returning 401). Dead placeholder test removed. VIP price mismatch (CLAUDE.md=$14.99 vs code=$9.99) logged to tech_debt.md.
+FILES: backend/app/routes/auth.py, backend/tests/test_auth.py, backend/tests/test_hypothesis_invariants.py
+
 ## 2026-03-24 03:05 — TESTING + BUG FIX (Session 32)
 DONE: Fixed 2 bugs and added 6 tests — (1) FollowRequest.bettor_address now has min_length=1 (empty string was silently stored in DB), (2) /auth/register duplicate check now strips whitespace (padded email bypassed check and crashed with 500 on second attempt), (3-6) tests: empty address → 422, MRR 3 basic + 2 VIP decimal precision (not integer-rounded), whitespace email strips + deduplicates, login works after whitespace-padded registration, web_push_enabled independent of push_subscription, telegram/start second call overwrites code (old code invalid). 239→245 tests.
 IMPACT: Two silent data-corruption/crash paths closed — empty bettor_address would create garbage rows; whitespace email would cause a 500 on duplicate registration attempts. All 5 backlog edge-case tasks completed.

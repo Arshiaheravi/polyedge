@@ -364,5 +364,15 @@
     "files": ["backend/app/routes/follows.py", "backend/app/routes/auth.py", "backend/tests/test_follows.py", "backend/tests/test_admin.py", "backend/tests/test_auth.py", "backend/tests/test_alerts.py"],
     "tests": {"before": 239, "after": 245, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
+  },
+  {
+    "session": 33,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "De-Sloppify audit found a real login bug — email normalization stripped whitespace on register but not on login, so padded email caused silent 401. Fixed, added test, removed dead placeholder function in hypothesis tests",
+    "files": ["backend/app/routes/auth.py", "backend/tests/test_auth.py", "backend/tests/test_hypothesis_invariants.py"],
+    "tests": {"before": 245, "after": 246, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no UI changes"}
   }
 ]

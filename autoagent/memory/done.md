@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #33] De-Sloppify audit — login strip fix + dead code removal** — found login email wasn't stripped (.lower() only, not .lower().strip()); fixed, added test; removed dead @given(st.nothing()) placeholder; logged VIP price doc mismatch to tech_debt.md; 245→246 tests.
 - **[SESSION #32] 2 bug fixes + 6 tests — empty bettor_address, whitespace email, MRR precision, web_push independence, telegram regen** — fixed empty address stored in DB (min_length=1) and whitespace email bypassing duplicate check (500 crash); 6 tests verify all fixes and behaviors; 239→245 tests.
 - **[SESSION #31] BRAIN — De-Sloppify trigger + testing backlog replenishment** — added periodic 5-session tech-debt audit rule to PROMPT.md; replenished empty testing backlog with 5 edge-case tests; logged 9 new research sources covering agentic reliability and Polymarket competitor features.
 - **[SESSION #30] 5 branch-coverage tests — cross-user unfollow blocked, register dup email uppercase, /auth/me fields, admin follows.total, scheduler telegram args** — closes 5 gaps: security invariant (cross-user delete), email normalization on register, response contract for /me, data accuracy for admin, and scheduler arg-passing for Telegram; 234→239 tests.

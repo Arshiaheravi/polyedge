@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **245 passed** (as of 2026-03-24, session 32 added 6 tests — empty bettor_address, MRR precision, whitespace email, web_push independence, telegram regen)
+- Test count: **246 passed** (as of 2026-03-24, session 33 — De-Sloppify audit fixed login strip bug + 1 new test)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #33 Reflexion — 2026-03-24 (De-Sloppify Audit)
+ACCOMPLISHED: Ran the De-Sloppify audit across the last 5 work sessions' changed files. Found 1 real bug: `auth.py` login used `.lower()` but not `.strip()` — registration strips emails before storing, so a user who typed `" user@example.com "` in the login form would get 401. Fixed with `.lower().strip()`. Found 1 dead code: `@given(st.nothing())` `_placeholder` function in test_hypothesis_invariants.py (agent draft artifact). Found 1 doc inconsistency: CLAUDE.md shows VIP at $14.99 but code/tests use $9.99 — logged to tech_debt.md. Added test_login_with_whitespace_padded_email_works. 245→246.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When a session adds whitespace-stripping to register (`.strip()`), immediately check all OTHER places the same field is normalized — especially login. It's a systematic mistake to fix input normalization in one path (register) and miss the parallel path (login). After any normalization fix, grep for the same field in all routes that accept it.
 
 ### Session #32 Reflexion — 2026-03-24
 ACCOMPLISHED: Fixed 2 input-validation bugs and added 6 tests. Bug 1: `FollowRequest.bettor_address: str` had no min_length — empty string was silently stored in DB; fixed with `Field(..., min_length=1)`. Bug 2: `/auth/register` duplicate check used `.lower()` but not `.strip()` — registering with `" user@example.com "` would bypass the check and crash with 500 (DB unique constraint) on a second attempt; fixed by adding `.strip()` to the check. All 6 new tests passed first run (after fixing a test isolation issue where extra assertions from a prior test leaked into mine due to imprecise old_string in Edit call). 239→245.
