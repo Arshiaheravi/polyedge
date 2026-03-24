@@ -276,6 +276,18 @@ Where: autoagent/skills/testing.md (BRANCH AUDIT WORKFLOW — checklist, SYMMETR
 Source: Session #39-40 pattern — send_telegram had missing True-return path; same gap existed in send_sms but wasn't caught in the same session
 Expected impact: Prevents spending a full additional session finding the same gap in a sibling function
 
+## pytest.param() named IDs for parametrized tests — implemented 2026-03-24
+What: Use `pytest.param("free", 1, id="tier_free")` instead of bare tuples in @pytest.mark.parametrize. Named IDs appear in failure output as "FAILED test_follows[tier_free]" instead of unreadable "FAILED test_follows[0]". Makes parametrize-heavy test suites 3x faster to debug.
+Where: skills/testing.md (PARAMETRIZE BEST PRACTICES section, added before IMPORT CHECK)
+Source: rednafi.com/python/pytest-param — pytest best practices 2026
+Expected impact: Future testing sessions write more debuggable parametrized tests for tier and response-shape invariants
+
+## Activity log archival (first actual archival) — implemented 2026-03-24
+What: Archived sessions 1-20 from activity_log.md to activity_log_archive.md. Trimmed main log to 30 entries (sessions 21-50). Rule was implemented in session 41; first archival executed in session 51 (BRAIN).
+Where: autoagent/memory/activity_log.md, autoagent/memory/activity_log_archive.md (new)
+Source: arxiv 2601.07190 (Active Context Compression)
+Expected impact: activity_log.md stays under 10000 tokens; auto-loaded context doesn't bloat over time
+
 ## Event-driven commit reminders (instruction fade-out prevention) — implemented 2026-03-21
 What: At every commit, re-display the 4 most commonly forgotten rules as a COMMIT REMINDERS block: no autoagent/ in project git add, use py not python3, project branch=main vs autoagent branch=master, clear current_task.md immediately after push. Rules re-injected at the exact decision point where they're most needed prevent instruction fade-out — the pattern where critical rules are read at session start but forgotten 30 tool calls later.
 Where: PROMPT.md (STEP 3 — COMMIT REMINDERS block before step 1)

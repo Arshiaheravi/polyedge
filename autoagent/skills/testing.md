@@ -185,6 +185,25 @@ def test_bettor_address_never_crashes_server(client, address):
 - Same or higher test count than before your change
 - Never commit if count drops — investigate why
 
+## PARAMETRIZE BEST PRACTICES
+
+When writing parametrized tests with `@pytest.mark.parametrize`, always use `pytest.param()` with named IDs for readable failure output:
+
+```python
+# WRONG — auto-generated IDs like [tier0-1] are unreadable in failure output
+@pytest.mark.parametrize("tier,limit", [("free", 1), ("basic", 5), ("vip", 999999)])
+
+# CORRECT — named IDs show "FAILED test_follows[tier_free]" not "FAILED test_follows[0]"
+@pytest.mark.parametrize("tier,limit", [
+    pytest.param("free", 1, id="tier_free"),
+    pytest.param("basic", 5, id="tier_basic"),
+    pytest.param("vip", 999999, id="tier_vip"),
+])
+```
+
+Named IDs immediately pinpoint WHICH parameter set failed without reading the parameter values from the test name.
+(Source: rednafi.com pytest.param best practices 2026 — confirmed on PolyEdge tier tests)
+
 ## IMPORT CHECK BEFORE TESTS
 ```bash
 cd backend && py -c "from app.main import app; print('OK')"

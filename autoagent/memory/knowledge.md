@@ -23,6 +23,7 @@
 - Price IDs not yet configured — STRIPE_BASIC_PRICE_ID and STRIPE_VIP_PRICE_ID are still `price_REPLACE_ME`
 - VIP price: **$9.99/mo**
 - Polymarket API base: `https://data-api.polymarket.com`
+- Polymarket API rate limits (from docs.polymarket.com/api-reference/rate-limits): `/markets/0x` = 50 req/10s; `/price` = 100 req/10s; `/books` = 300 req/10s. Cloudflare throttling queues requests rather than rejecting. PolyEdge's 30s poll of ~100 bettor addresses is well within limits (≤5 req/sec on `/activity`).
 
 ## Test Infrastructure
 
@@ -41,6 +42,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### BRAIN Session #51 Reflexion — 2026-03-24
+ACCOMPLISHED: (1) Archived activity_log.md sessions 1-20 to activity_log_archive.md — first actual archival execution (rule was added in session 41, now triggered at 50+ entries). (2) Curated knowledge.md — no merges needed, already clean after session 41 pass. (3) Searched 7+ topics, evaluated 8 new sources. (4) Implemented pytest.param(id=...) pattern in testing.md — names parametrize IDs for readable failure output. (5) Added Polymarket API rate limits to knowledge.md as project fact. (6) Backlogged SSE notification endpoint and ARQ scheduler migration path. (7) No new failure patterns found in last 10 sessions (41-50 — all clean).
+FAILED: Nothing failed.
+RULE: [2026-03-24] When using @pytest.mark.parametrize with multiple tier or status values, always use pytest.param(..., id="name") instead of bare tuples. Named IDs appear directly in test failure output ("tier_free" vs "[0]"), cutting debug time significantly on parametrize-heavy test suites like PolyEdge's tier-limit tests.
 
 ### Session #50 Reflexion — 2026-03-24
 ACCOMPLISHED: Added test_poll_bets_last_check_updated_after_poll — captures a `before_poll` timestamp, runs _poll_bets() with an empty get_recent_bets return (no BetEvents needed), asserts `scheduler_module._last_check >= before_poll`. Added test_delete_follow_with_multiple_follows_removes_only_correct_one — upgrades to basic tier, creates 2 follows, deletes one, verifies the other remains in GET /follows. Also discovered the sort=accuracy/volume backlog task was already covered (tests existed at test_bettors.py:29-40). 293→295 stable.
