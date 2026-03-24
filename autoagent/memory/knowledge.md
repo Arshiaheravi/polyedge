@@ -30,7 +30,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **258 passed** (as of 2026-03-24, session 38 — De-Sloppify removed 2 duplicate tier/limit tests)
+- Test count: **263 passed** (as of 2026-03-24, session 39 — 5 branch-coverage tests added)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -41,6 +41,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #39 Reflexion — 2026-03-24
+ACCOMPLISHED: Added 5 branch-coverage tests. Key gaps found: (1) send_telegram had only False-path tests (early return for empty bot_token/chat_id) — the HTTP success path returning True was untested; (2) scheduler try/except around dispatch_bet_notification had no test confirming exception is caught and event.notified=True still set; (3) telegram/start response shape only asserted "code" in prior test — instructions and bot_link were unverified; (4) telegram/verify .upper() normalization for lowercase codes was untested; (5) PUT /alerts/settings response telegram_verified and phone_verified keys were never asserted. All 5 passed first run. 258→263.
+FAILED: Nothing failed.
+RULE: [2026-03-24] For any service function that returns bool (send_telegram, send_web_push, send_sms), verify BOTH the True path (success) AND every False path (early returns + exception handlers). Only testing the False paths leaves the success branch uncovered and can mask regressions where the function silently returns False on success.
+RULE: [2026-03-24] For any try/except block in a scheduler or background job, write a test that confirms: (a) the exception is swallowed (no propagation), and (b) code AFTER the except block still executes correctly. A caught exception that silently prevents subsequent state changes (like event.notified=True) is a silent bug.
 
 ### Session #38 Reflexion — 2026-03-24 (De-Sloppify Audit)
 ACCOMPLISHED: Ran De-Sloppify audit across sessions 32–37 changed files. Found 3 issues: (1) dead module-level var `BETTOR_C` in test_follows.py — defined at top but never referenced in any test; (2) two duplicate tier/limit tests in test_follows.py (`test_list_follows_basic_tier_reports_tier_and_limit`, `test_list_follows_vip_tier_reports_tier_and_limit`) that are exact duplicates of the parametrized `test_follows_always_returns_tier_and_limit` invariant already in test_hypothesis_invariants.py; (3) `_activity_cache` in follows.py grows unboundedly (logged to tech_debt.md). Fixed 1+2, logged 3. 260→258.

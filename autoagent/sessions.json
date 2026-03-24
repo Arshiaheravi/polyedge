@@ -873,5 +873,28 @@
       "failures": 0,
       "notes": "no frontend code changed"
     }
+  },
+  {
+    "session": 39,
+    "date": "2026-03-24",
+    "time": "09:00",
+    "type": "work",
+    "summary": "Added 5 branch-coverage tests: send_telegram happy path (HTTP success returns True), scheduler dispatch exception is caught and event still marked notified, telegram/start response shape verified (code+instructions+bot_link), telegram/verify accepts lowercase code, PUT alerts settings response includes telegram_verified and phone_verified fields — 258→263 tests",
+    "files": [
+      "backend/tests/test_notifications.py",
+      "backend/tests/test_scheduler.py",
+      "backend/tests/test_alerts.py"
+    ],
+    "tests": {
+      "before": 258,
+      "after": 263,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend code changed"
+    }
   }
 ]

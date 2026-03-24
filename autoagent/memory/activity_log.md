@@ -1,5 +1,10 @@
 # Activity Log
 
+## 2026-03-24 09:00 — TESTING (Session 39)
+DONE: Added 5 branch-coverage tests — (1) send_telegram returns True when HTTP call succeeds (only the early-return False paths were tested before); (2) scheduler dispatch exception is caught and loop continues, event.notified=True still set (the try/except around dispatch_bet_notification was untested); (3) POST /alerts/telegram/start response shape includes all 3 keys: code, instructions, bot_link (only code was asserted); (4) POST /alerts/telegram/verify accepts lowercase code via .upper() normalization; (5) PUT /alerts/settings response shape includes telegram_verified and phone_verified fields. 258→263 tests.
+IMPACT: Five previously untested branches now locked in — send_telegram success path, scheduler resilience to notification failures, and three response shape contracts. The scheduler dispatch exception test is particularly important: confirms that a single user's notification failure never prevents other users from receiving notifications or the event from being marked notified.
+FILES: backend/tests/test_notifications.py, backend/tests/test_scheduler.py, backend/tests/test_alerts.py
+
 ## 2026-03-24 — DE-SLOPPIFY AUDIT (Session 38)
 DONE: Ran De-Sloppify audit across sessions 32–37 changed files — found and fixed 3 issues: (1) dead module-level constant BETTOR_C in test_follows.py never used in any test; (2) test_list_follows_basic_tier_reports_tier_and_limit and test_list_follows_vip_tier_reports_tier_and_limit were exact duplicates of the parametrized test_follows_always_returns_tier_and_limit invariant in test_hypothesis_invariants.py; (3) _activity_cache in routes/follows.py grows unboundedly (no eviction, logged to tech_debt.md). 260→258 tests.
 IMPACT: Removes test duplication that will accumulate into noise — when both parametrized invariants AND individual tests exist for the same logic, the individual tests create false confidence that branches are "double-covered" while actually reducing the signal-to-noise ratio for test failures. Dead vars are micro-clutter that slows down future readers.
