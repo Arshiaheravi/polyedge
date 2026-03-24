@@ -182,3 +182,18 @@ def test_webhook_subscription_cancelled_downgrades_user(client, db):
     asyncio.run(handle_webhook_event(payload=event, sig_header="", db=db))
     db.refresh(user)
     assert user.subscription_tier == "free"
+
+
+def test_checkout_response_shape_is_checkout_url_only(client, auth_headers):
+    """POST /payments/checkout response body contains exactly one key: 'checkout_url'."""
+    from unittest.mock import AsyncMock, patch
+
+    mock_url = "https://checkout.stripe.com/pay/cs_shape_test"
+    with patch("app.routes.payments.create_checkout_session",
+               new=AsyncMock(return_value=mock_url)):
+        resp = client.post("/payments/checkout", json={"plan": "basic"}, headers=auth_headers)
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert set(body.keys()) == {"checkout_url"}
+    assert body["checkout_url"] == mock_url

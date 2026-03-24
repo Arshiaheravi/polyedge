@@ -516,3 +516,77 @@ def test_poll_bets_multiple_followers_each_notified(sched_db):
         run(_poll_bets())
 
     assert mock_notify.call_count == 2
+
+
+def test_poll_bets_dispatches_both_channels_when_both_enabled(sched_db):
+    """When a user has BOTH telegram_enabled AND web_push_enabled, dispatch is called
+    with both telegram_chat_id and push_subscription_json set simultaneously."""
+    from app.models import AlertSetting
+    session, Session = sched_db
+
+    push_sub = '{"endpoint": "https://push.example.com/sub123"}'
+    user = User(
+        email="both@x.com", hashed_password=hash_password("p"),
+        name="Both", subscription_tier="basic",
+        telegram_chat_id="chat_both999",
+        telegram_verified=True,
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xboth", bettor_name="dualwhale"))
+    alert = AlertSetting(
+        user_id=user.id,
+        telegram_enabled=True,
+        web_push_enabled=True,
+        push_subscription=push_sub,
+    )
+    session.add(alert)
+    session.commit()
+
+    mock_dispatch = AsyncMock()
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=mock_dispatch):
+        run(_poll_bets())
+
+    mock_dispatch.assert_called_once()
+    call_kwargs = mock_dispatch.call_args[1]
+    assert call_kwargs["telegram_chat_id"] == "chat_both999"
+    assert call_kwargs["push_subscription_json"] == push_sub
+
+
+def test_poll_bets_dispatches_web_push_only_when_telegram_disabled(sched_db):
+    """When telegram_enabled=False but web_push_enabled=True, dispatch is called
+    with push_subscription_json set but telegram_chat_id=None."""
+    from app.models import AlertSetting
+    session, Session = sched_db
+
+    push_sub = '{"endpoint": "https://push.example.com/webonly"}'
+    user = User(
+        email="webonly@x.com", hashed_password=hash_password("p"),
+        name="WebOnly", subscription_tier="basic",
+        telegram_chat_id="chat_webonly",
+        telegram_verified=True,
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xwebonly", bettor_name="webwhale"))
+    alert = AlertSetting(
+        user_id=user.id,
+        telegram_enabled=False,
+        web_push_enabled=True,
+        push_subscription=push_sub,
+    )
+    session.add(alert)
+    session.commit()
+
+    mock_dispatch = AsyncMock()
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=mock_dispatch):
+        run(_poll_bets())
+
+    mock_dispatch.assert_called_once()
+    call_kwargs = mock_dispatch.call_args[1]
+    assert call_kwargs["telegram_chat_id"] is None
+    assert call_kwargs["push_subscription_json"] == push_sub

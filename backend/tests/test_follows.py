@@ -210,3 +210,18 @@ def test_delete_follow_by_different_user_returns_404(client, db):
     # User B tries to delete user A's follow — must get 404
     resp = client.delete("/follows/0xshared_bettor", headers=headers_b)
     assert resp.status_code == 404
+
+
+def test_delete_follow_success_response_body_is_empty(client, auth_headers):
+    """DELETE /follows/{address} returns 204 NO CONTENT — response body must be empty bytes."""
+    client.post("/follows", json={"bettor_address": "0xbody_check"}, headers=auth_headers)
+    resp = client.delete("/follows/0xbody_check", headers=auth_headers)
+    assert resp.status_code == 204
+    assert resp.content == b""
+
+
+def test_delete_follow_not_found_detail_message(client, auth_headers):
+    """DELETE /follows/{address} for an address not followed returns 404 with exact detail."""
+    resp = client.delete("/follows/0xnever_followed_addr", headers=auth_headers)
+    assert resp.status_code == 404
+    assert resp.json()["detail"] == "Follow not found"
