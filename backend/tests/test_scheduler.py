@@ -715,3 +715,42 @@ def test_poll_bets_multiple_bets_per_address_all_saved(sched_db):
     assert len(events) == 2
     market_ids = {e.market_id for e in events}
     assert market_ids == {"mkt_a", "mkt_b"}
+
+
+def test_poll_bets_outer_exception_leaves_last_check_unchanged(sched_db):
+    """When db.commit() raises, the outer except fires and _last_check must NOT advance.
+    _last_check = check_time is placed AFTER db.commit(), so any exception there
+    must leave _last_check at its pre-poll value — preventing bets from being skipped
+    on the next run."""
+    session, Session = sched_db
+
+    user = User(
+        email="outerexc@x.com", hashed_password=hash_password("p"),
+        name="OE", subscription_tier="basic",
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xoeaddr", bettor_name="whale"))
+    session.commit()
+
+    # Wrap a real session but override commit() to raise
+    inner = Session()
+
+    def _fail_commit():
+        raise RuntimeError("forced commit failure")
+
+    inner.commit = _fail_commit
+
+    def failing_factory():
+        return inner
+
+    before = scheduler_module._last_check  # datetime(2000,1,1,utc) from autouse fixture
+
+    with patch("app.services.scheduler.SessionLocal", failing_factory), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[])):
+        run(_poll_bets())
+
+    assert scheduler_module._last_check == before, (
+        f"_last_check should not advance after outer exception; "
+        f"got {scheduler_module._last_check!r}, expected {before!r}"
+    )

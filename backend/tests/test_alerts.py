@@ -608,3 +608,23 @@ def test_put_alerts_settings_invalid_push_subscription_returns_422(client, auth_
     )
 
     assert resp.status_code == 422
+
+
+def test_put_alerts_settings_valid_push_subscription_stores_and_get_retrieves(client, auth_headers):
+    """PUT /alerts/settings with a valid JSON push_subscription string must store it,
+    and GET /alerts/settings must return it as a parsed dict with the 'endpoint' key.
+    Guards against the json.loads() validation/store path breaking silently."""
+    sub_json = '{"endpoint": "https://push.example.com/sub/xyz", "keys": {"auth": "aaa", "p256dh": "bbb"}}'
+
+    put_resp = client.put(
+        "/alerts/settings",
+        json={"push_subscription": sub_json},
+        headers=auth_headers,
+    )
+    assert put_resp.status_code == 200
+
+    get_resp = client.get("/alerts/settings", headers=auth_headers)
+    assert get_resp.status_code == 200
+    result = get_resp.json()["push_subscription"]
+    assert isinstance(result, dict)
+    assert result["endpoint"] == "https://push.example.com/sub/xyz"
