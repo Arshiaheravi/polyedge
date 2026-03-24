@@ -350,20 +350,28 @@
     .blur-row td { filter: blur(5px); user-select: none; pointer-events: none; }
 
     /* Pricing */
-    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 20px; max-width: 980px; margin: 0 auto; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 20px; max-width: 980px; margin: 0 auto; align-items: start; padding-top: 16px; }
     .pricing-card {
       background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 36px 32px; position: relative; transition: transform 0.2s, border-color 0.2s;
+      padding: 36px 32px; position: relative; transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
     }
     .pricing-card:hover { transform: translateY(-4px); }
     .pricing-card.featured {
       border-color: var(--accent); background: linear-gradient(160deg, var(--card) 0%, rgba(0,201,122,0.1) 100%);
-      box-shadow: var(--glow);
+      transform: translateY(-8px);
+      animation: pricing-glow-pulse 3.5s ease-in-out infinite;
+    }
+    .pricing-card.featured:hover { transform: translateY(-12px); }
+    .pricing-vip { border-color: rgba(245,158,11,0.35) !important; }
+    .pricing-vip:hover { border-color: rgba(245,158,11,0.65) !important; box-shadow: 0 0 24px rgba(245,158,11,0.12); }
+    @keyframes pricing-glow-pulse {
+      0%, 100% { box-shadow: 0 0 28px rgba(0,201,122,0.18), 0 0 0 1px rgba(0,201,122,0.4); }
+      50%       { box-shadow: 0 0 52px rgba(0,201,122,0.32), 0 0 0 2px var(--accent); }
     }
     .pricing-badge {
       position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
       background: linear-gradient(135deg, var(--accent), var(--accent3));
-      color: #fff; padding: 4px 18px; border-radius: 100px; font-size: 11px; font-weight: 700;
+      color: #000; padding: 4px 18px; border-radius: 100px; font-size: 11px; font-weight: 800;
       text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap;
       box-shadow: 0 0 16px rgba(0,201,122,0.5);
     }
@@ -376,6 +384,7 @@
     .pricing-features li:last-child { border-bottom: none; }
     .check { color: var(--green2); font-size: 15px; flex-shrink: 0; }
     .cross { color: var(--text3); font-size: 15px; flex-shrink: 0; }
+    .pricing-cta-note { font-size: 12px; color: var(--text3); text-align: center; margin-top: 10px; line-height: 1.5; }
 
     /* Testimonials */
     .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
@@ -806,6 +815,7 @@
           <li><span class="cross">&#10007;</span> <span style="color:var(--text3);">Priority speed</span></li>
         </ul>
         <button class="btn btn-secondary w-full btn-lg" onclick="showView('auth', 'register')">Get Started Free</button>
+        <div class="pricing-cta-note">No credit card required</div>
       </div>
       <!-- Basic — featured -->
       <div class="pricing-card featured">
@@ -819,11 +829,13 @@
           <li><span class="check">&#10003;</span> Follow up to <strong>5 bettors</strong></li>
           <li><span class="check">&#10003;</span> Web push notifications</li>
           <li><span class="check">&#10003;</span> Telegram alerts</li>
+          <li><span class="cross">&#10007;</span> <span style="color:var(--text3);">SMS alerts</span></li>
         </ul>
         <button class="btn btn-primary w-full btn-lg" onclick="showView('auth', 'register')">Start Basic &rarr;</button>
+        <div class="pricing-cta-note">Cancel anytime &middot; Billed monthly</div>
       </div>
       <!-- VIP -->
-      <div class="pricing-card" style="border-color:rgba(245,158,11,0.3);">
+      <div class="pricing-card pricing-vip">
         <div class="pricing-name" style="color:var(--gold2);">VIP</div>
         <div class="pricing-price" style="color:var(--gold2);">$9.99<sub>/mo</sub></div>
         <div class="pricing-period">For serious traders</div>
@@ -837,6 +849,7 @@
           <li><span class="check">&#10003;</span> <strong>Priority speed</strong> (fastest alerts)</li>
         </ul>
         <button class="btn btn-gold w-full btn-lg" onclick="showView('auth', 'register')">Go VIP &rarr;</button>
+        <div class="pricing-cta-note">Cancel anytime &middot; Billed monthly</div>
       </div>
     </div>
   </div>
