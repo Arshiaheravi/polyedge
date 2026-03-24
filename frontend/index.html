@@ -1547,7 +1547,12 @@ function toast(msg, type = 'info') {
   const el = document.createElement('div');
   el.className = `toast toast-${type}`;
   const icons = { success: '&#10003;', error: '&#9888;', info: 'ℹ' };
-  el.innerHTML = `<span>${icons[type] || ''}</span><span>${msg}</span>`;
+  const iconSpan = document.createElement('span');
+  iconSpan.innerHTML = icons[type] || '';  // safe: hardcoded HTML entities only
+  const msgSpan = document.createElement('span');
+  msgSpan.textContent = msg;              // safe: API-sourced strings via textContent
+  el.appendChild(iconSpan);
+  el.appendChild(msgSpan);
   document.getElementById('toast-container').appendChild(el);
   setTimeout(() => el.remove(), 4000);
 }
@@ -1824,51 +1829,6 @@ function fmtPnl(pnl) {
   const abs = Math.abs(pnl);
   const sign = pnl >= 0 ? '+' : '-';
   return sign + '$' + abs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function renderBettorRow(b, i) {
-  const addr = b.address || '';
-  const name = b.name || shortAddr(addr);
-  const eName = escapeHtml(name);
-  const safeAddr = escapeHtml(addr);
-  const isFollowing = followedAddresses.has(addr);
-  const avatarUrl = b.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${addr}`;
-  const delay = Math.min(i, 9) * 80;
-  const pnl = b.pnl_usd ?? null;
-  const pnlCell = pnl !== null
-    ? `<td style="color:${pnlColor(pnl)};font-weight:800;font-size:15px;">${fmtPnl(pnl)}</td>`
-    : `<td style="color:var(--text3);">—</td>`;
-  return `
-    <tr class="row-animate" style="animation-delay:${delay}ms">
-      <td>${rankBadge(b.rank ? b.rank - 1 : i)}</td>
-      <td>
-        <div class="bettor-row">
-          <img class="avatar" src="${avatarUrl}" alt="${eName} avatar" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${safeAddr}'" />
-          <div>
-            <div class="bettor-name truncate" style="max-width:160px;" title="${eName}">${eName}</div>
-            <div class="bettor-addr">${escapeHtml(shortAddr(addr))}</div>
-          </div>
-        </div>
-      </td>
-      ${pnlCell}
-      <td style="color:var(--text2);">${fmtUSD(b.volume_usd || 0)}</td>
-      <td>
-        <button class="follow-btn ${isFollowing ? 'following' : ''}"
-                onclick="toggleFollow('${safeAddr}', '${eName}', this)"
-                aria-label="${isFollowing ? 'Unfollow' : 'Follow'} ${eName}"
-                aria-pressed="${isFollowing}">
-          ${isFollowing ? '&#10003; Following' : '+ Follow'}
-        </button>
-      </td>
-    </tr>`;
-}
-
-function renderSkeletonRows(rows, cols) {
-  return Array.from({ length: rows }, () =>
-    `<tr>${Array.from({ length: cols }, () =>
-      `<td><div class="skeleton" style="height:18px;width:${60 + Math.random() * 40}%;"></div></td>`
-    ).join('')}</tr>`
-  ).join('');
 }
 
 function renderBettorCard(b, i) {
