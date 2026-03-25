@@ -1409,51 +1409,177 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Hero section background upgraded to premium CSS — dot grid texture fades at edges, three ambient glows (green top, blue bottom-right, soft green bottom-left), bg-image hook added for when a hero photo is available; NovaBanana API key invalid so documented in ASSETS_NEEDED.md",
-    "files": ["frontend/index.html", "autoagent/ASSETS_NEEDED.md"],
-    "tests": {"before": 303, "after": 303, "status": "pass"},
-    "frontend": {"status": "pass", "checks": 7, "failures": 0, "notes": "hero overflow:hidden verified, no JS errors"}
+    "summary": "Hero section background upgraded to premium CSS \u00e2\u20ac\u201d dot grid texture fades at edges, three ambient glows (green top, blue bottom-right, soft green bottom-left), bg-image hook added for when a hero photo is available; NovaBanana API key invalid so documented in ASSETS_NEEDED.md",
+    "files": [
+      "frontend/index.html",
+      "autoagent/ASSETS_NEEDED.md"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 7,
+      "failures": 0,
+      "notes": "hero overflow:hidden verified, no JS errors"
+    }
   },
   {
-    "session": 65, "date": "2026-03-24", "time": "00:00", "type": "work",
-    "summary": "Empty state illustrations added — follows page now shows a chart+follow SVG instead of a plain star emoji, alerts page shows a bell+lightning banner when no notifications are active, leaderboard errors show a styled warning triangle instead of a raw HTML entity",
-    "files": ["frontend/index.html"],
-    "tests": {"before": 303, "after": 303, "status": "pass"},
-    "frontend": {"status": "pass", "checks": 7, "failures": 0, "notes": "follows empty state SVG verified, no JS errors"}
+    "session": 65,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Empty state illustrations added \u00e2\u20ac\u201d follows page now shows a chart+follow SVG instead of a plain star emoji, alerts page shows a bell+lightning banner when no notifications are active, leaderboard errors show a styled warning triangle instead of a raw HTML entity",
+    "files": [
+      "frontend/index.html"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 7,
+      "failures": 0,
+      "notes": "follows empty state SVG verified, no JS errors"
+    }
   },
   {
-    "session": 67, "date": "2026-03-24", "time": "00:00", "type": "work",
-    "summary": "Code quality audit — fixed XSS in toast() where API-sourced bettor names and server error strings were injected via innerHTML (now uses textContent); deleted 46 lines of dead code (renderBettorRow + renderSkeletonRows, unreachable since session 58)",
-    "files": ["frontend/index.html"],
-    "tests": {"before": 303, "after": 303, "status": "pass"},
-    "frontend": {"status": "pass", "checks": 9, "failures": 0, "notes": "9/9 registry checks pass, no JS errors"}
+    "session": 67,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Code quality audit \u00e2\u20ac\u201d fixed XSS in toast() where API-sourced bettor names and server error strings were injected via innerHTML (now uses textContent); deleted 46 lines of dead code (renderBettorRow + renderSkeletonRows, unreachable since session 58)",
+    "files": [
+      "frontend/index.html"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 9,
+      "failures": 0,
+      "notes": "9/9 registry checks pass, no JS errors"
+    }
   },
   {
-    "session": 68, "date": "2026-03-24", "time": "00:00", "type": "work",
-    "summary": "Mobile responsiveness audit — mobile users can now navigate all dashboard tabs via a fixed bottom nav; landing page 2-column sections no longer overflow at 375px; search is full-width, tab bar scrolls horizontally, live ticker hidden on mobile",
-    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
-    "tests": {"before": 303, "after": 303, "status": "pass"},
-    "frontend": {"status": "pass", "checks": 12, "failures": 0, "notes": "3 new mobile checks: 375px overflow, bottom nav, topbar — all pass"}
+    "session": 68,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Mobile responsiveness audit \u00e2\u20ac\u201d mobile users can now navigate all dashboard tabs via a fixed bottom nav; landing page 2-column sections no longer overflow at 375px; search is full-width, tab bar scrolls horizontally, live ticker hidden on mobile",
+    "files": [
+      "frontend/index.html",
+      "autoagent/playwright_registry.py"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 12,
+      "failures": 0,
+      "notes": "3 new mobile checks: 375px overflow, bottom nav, topbar \u00e2\u20ac\u201d all pass"
+    }
   },
   {
-    "session": 69, "date": "2026-03-24", "time": "00:00", "type": "work",
-    "summary": "Added bettor profile page — clicking a bettor's name/avatar on the leaderboard now opens a full profile with stats, recent bets timeline (YES/NO outcome colors, price in cents, Copy-bet links), and a Follow/Unfollow button that stays in sync",
-    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
-    "tests": {"before": 303, "after": 303, "status": "pass"},
-    "frontend": {"status": "pass", "checks": 14, "failures": 0, "notes": "2 new checks: #tab-profile in DOM and hidden, lb-card-header-click class present"}
+    "session": 69,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added bettor profile page \u00e2\u20ac\u201d clicking a bettor's name/avatar on the leaderboard now opens a full profile with stats, recent bets timeline (YES/NO outcome colors, price in cents, Copy-bet links), and a Follow/Unfollow button that stays in sync",
+    "files": [
+      "frontend/index.html",
+      "autoagent/playwright_registry.py"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 14,
+      "failures": 0,
+      "notes": "2 new checks: #tab-profile in DOM and hidden, lb-card-header-click class present"
+    }
   },
   {
-    "session": 70, "date": "2026-03-24", "time": "19:40", "type": "work",
-    "summary": "Polished the login/register form — password fields now have eye-icon visibility toggle, validation errors appear inline below each field (not in a toast), and the auth card slides in with a fadeUp animation on every show",
-    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
-    "tests": {"before": 303, "after": 303, "status": "pass"},
-    "frontend": {"status": "pass", "checks": 17, "failures": 0, "notes": "3 new checks: .auth-box in DOM, >=2 .pass-toggle buttons, >=5 .form-error divs"}
+    "session": 70,
+    "date": "2026-03-24",
+    "time": "19:40",
+    "type": "work",
+    "summary": "Polished the login/register form \u00e2\u20ac\u201d password fields now have eye-icon visibility toggle, validation errors appear inline below each field (not in a toast), and the auth card slides in with a fadeUp animation on every show",
+    "files": [
+      "frontend/index.html",
+      "autoagent/playwright_registry.py"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 17,
+      "failures": 0,
+      "notes": "3 new checks: .auth-box in DOM, >=2 .pass-toggle buttons, >=5 .form-error divs"
+    }
   },
   {
-    "session": 71, "date": "2026-03-24", "time": "19:44", "type": "brain",
-    "summary": "Brain session — found 6 new ECC skills; added toast stack pattern, probability chip CSS, 10-dimension visual audit checklist, and accessibility check patterns; added 2 new backlog tasks; 12 sources evaluated",
-    "files": ["autoagent/skills/design.md", "autoagent/skills/playwright.md", "autoagent/memory/backlog.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md", "autoagent/memory/knowledge.md"],
-    "tests": {"before": 303, "after": 303, "status": "skip"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "brain session — no code changed"}
+    "session": 71,
+    "date": "2026-03-24",
+    "time": "19:44",
+    "type": "brain",
+    "summary": "Brain session \u00e2\u20ac\u201d found 6 new ECC skills; added toast stack pattern, probability chip CSS, 10-dimension visual audit checklist, and accessibility check patterns; added 2 new backlog tasks; 12 sources evaluated",
+    "files": [
+      "autoagent/skills/design.md",
+      "autoagent/skills/playwright.md",
+      "autoagent/memory/backlog.md",
+      "autoagent/brain/sources.md",
+      "autoagent/brain/techniques.md",
+      "autoagent/memory/knowledge.md"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "brain session \u00e2\u20ac\u201d no code changed"
+    }
+  },
+  {
+    "session": 72,
+    "date": "2026-03-24",
+    "time": "20:00",
+    "type": "work",
+    "summary": "Upgraded toast notifications to a Sonner-style stacked deck \u2014 toasts fan behind each other when idle and expand on hover, with a new bet-alert type that fires automatically when followed traders place new bets",
+    "files": [
+      "frontend/index.html",
+      "autoagent/playwright_registry.py"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 22,
+      "failures": 0,
+      "notes": "5 new checks: toast stack layout, toast() creation, toastBet(), betAlert event, Test alert button"
+    }
   }
 ]

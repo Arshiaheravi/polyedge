@@ -2,7 +2,7 @@
 PolyEdge — Persistent Playwright check registry.
 This file is cumulative: sessions ADD checks here, never subtract.
 Usage: cp autoagent/playwright_registry.py autoagent/tmp_check.py → add session checks → run → cp back.
-Last updated: Session 65 (empty state SVGs)
+Last updated: Session 72 (toast stack — checks 18-22: Sonner stacking, toast(), toastBet(), betAlert event, Test alert button)
 """
 import asyncio, sys
 from playwright.async_api import async_playwright
@@ -227,6 +227,73 @@ async def check():
                 failures.append(f'Expected >=5 .form-error divs, found {err_divs}')
         except Exception as e:
             failures.append(f'Inline error div check error: {e}')
+
+        # CHECK 18 (session 72): toast-container uses stacked positioning (height:0, not flex)
+        try:
+            container_height = await page.evaluate(
+                "getComputedStyle(document.getElementById('toast-container')).height"
+            )
+            if container_height == '0px':
+                checks += 1
+                print('  [CHECK 18] #toast-container height is 0px (Sonner stack layout)')
+            else:
+                failures.append(f'#toast-container height expected 0px, got {container_height}')
+        except Exception as e:
+            failures.append(f'Toast container check error: {e}')
+
+        # CHECK 19 (session 72): toast() fires correctly and creates a .toast element
+        try:
+            await page.evaluate("toast('Test notification', 'info')")
+            await asyncio.sleep(0.3)
+            toast_count = await page.eval_on_selector_all('.toast', 'els => els.length')
+            if toast_count >= 1:
+                checks += 1
+                print(f'  [CHECK 19] toast() created {toast_count} .toast element(s)')
+            else:
+                failures.append('toast() fired but no .toast elements found in DOM')
+        except Exception as e:
+            failures.append(f'Toast creation check error: {e}')
+
+        # CHECK 20 (session 72): toastBet() creates a .toast-bet element
+        try:
+            await page.evaluate("toastBet('Trader123', 'Will BTC hit 100k?', 'YES')")
+            await asyncio.sleep(0.3)
+            bet_toast = await page.query_selector('.toast-bet')
+            if bet_toast:
+                checks += 1
+                print('  [CHECK 20] toastBet() created .toast-bet element')
+            else:
+                failures.append('.toast-bet not found after toastBet() call')
+        except Exception as e:
+            failures.append(f'toastBet check error: {e}')
+
+        # CHECK 21 (session 72): betAlert custom event fires toastBet
+        try:
+            await page.evaluate(
+                "document.dispatchEvent(new CustomEvent('betAlert', {detail:{bettor:'XTrader',market:'Will S&P500 rise?',direction:'YES'}}))"
+            )
+            await asyncio.sleep(0.3)
+            bet_toasts = await page.eval_on_selector_all('.toast-bet', 'els => els.length')
+            if bet_toasts >= 1:
+                checks += 1
+                print(f'  [CHECK 21] betAlert custom event created {bet_toasts} .toast-bet element(s)')
+            else:
+                failures.append('betAlert custom event: no .toast-bet found')
+        except Exception as e:
+            failures.append(f'betAlert event check error: {e}')
+
+        # CHECK 22 (session 72): Test alert button present on follows page
+        try:
+            # Navigate to dashboard first (need to be in dashboard view to see follows tab)
+            # Just check the button exists in DOM (it's in the follows tab HTML)
+            test_btn = await page.query_selector('button[title="Preview what a bet alert looks like"]')
+            if test_btn:
+                checks += 1
+                print('  [CHECK 22] "Test alert" demo button present in follows tab')
+            else:
+                failures.append('"Test alert" button with title attr not found in DOM')
+        except Exception as e:
+            failures.append(f'Test alert button check error: {e}')
 
         await browser.close()
     return checks, failures

@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 72)
+DONE: Upgraded toast system to Sonner/Emil Kowalski stacked pattern. Collapsed state: newest toast full-size, older toasts peek behind at 14px vertical offsets with 5% scale reductions per step. Hover expands the full stack with 8px gaps and real heights. Auto-dismiss after 5s (timer paused on hover). Max 5 toasts; close button on each. New toast-bet type (green left border, ⚡ icon). toastBet() helper + betAlert CustomEvent listener so scheduler can fire alerts. refreshFollowsActivity() detects new positions via _seenBetIds and fires toastBet() on subsequent refreshes. "Test alert" demo button added to follows page header. 303 tests stable. 22/22 Playwright checks pass (5 new: checks 18-22).
+IMPACT: Users on the follows page now get real-time "New bet detected" toasts — a stacked notification deck shows up to 5 queued alerts without covering the screen. The 30s refresh-and-detect loop means they see a bet toast within 30s of a followed trader placing it, directly enabling the copy-trade loop. The Sonner stack pattern is premium and distinctive (vs the generic append-and-fade that most apps use).
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-24 19:44 — BRAIN SESSION (Session 71)
 RESEARCHED: autonomous agent best practices arxiv 2026, toast notification stack vanilla JS, probability chip UI fintech, dark theme CSS best practices, copy-trading platform UX conversion; checked anthropics/skills + affaan-m/everything-claude-code for new releases
 DOWNLOADED: 6 new ECC skills found (browser-qa, design-system, benchmark, canary-watch, product-lens, safety-guard); integrated browser-qa accessibility patterns and design-system audit patterns
