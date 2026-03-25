@@ -215,6 +215,14 @@
     .sort-count.loaded { opacity: 1; }
     .sort-pill.active .sort-count { background: rgba(0,0,0,0.22); }
 
+    /* Trust signal row */
+    .trust-signal-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .trust-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text3); background: var(--card2); border: 1px solid var(--border); border-radius: 100px; padding: 4px 12px; }
+    .trust-live-count { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--green); background: rgba(0,201,122,0.08); border: 1px solid rgba(0,201,122,0.2); border-radius: 100px; padding: 4px 12px; opacity: 0; transition: opacity 0.4s; }
+    .trust-live-count.visible { opacity: 1; }
+    .live-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; box-shadow: 0 0 6px rgba(0,201,122,0.7); animation: pulse-dot 2s ease-in-out infinite; flex-shrink: 0; }
+    @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+
     /* Custom tooltip for sort pills */
     [data-tooltip] { position: relative; }
     [data-tooltip]::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: var(--card3); color: var(--text); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 6px 10px; font-size: 12px; font-weight: 400; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 200; }
@@ -1590,6 +1598,10 @@
       <h1>Leaderboard</h1>
       <p>Top 100 Polymarket bettors by real profit &mdash; same data as Polymarket's own leaderboard. <strong style="color:var(--accent);">Sign up free</strong> to follow and get alerts.</p>
     </div>
+    <div class="trust-signal-row">
+      <span class="trust-badge"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.5 1.5L7.8 4.2L10.8 4.6L8.65 6.7L9.1 9.7L6.5 8.3L3.9 9.7L4.35 6.7L2.2 4.6L5.2 4.2L6.5 1.5Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>Built on real Polymarket data</span>
+      <span class="trust-live-count" id="browse-live-count"><span class="live-dot"></span><span id="browse-live-count-text">0</span> traders tracked live</span>
+    </div>
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
       <div class="tab-bar" style="gap:6px;flex-wrap:wrap;margin-bottom:0;">
         <div class="sort-pill-group">
@@ -1657,6 +1669,10 @@
       <div class="page-header">
         <h1>Leaderboard</h1>
         <p>Top 100 Polymarket bettors by real profit &mdash; live data</p>
+      </div>
+      <div class="trust-signal-row">
+        <span class="trust-badge"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.5 1.5L7.8 4.2L10.8 4.6L8.65 6.7L9.1 9.7L6.5 8.3L3.9 9.7L4.35 6.7L2.2 4.6L5.2 4.2L6.5 1.5Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>Built on real Polymarket data</span>
+        <span class="trust-live-count" id="dash-live-count"><span class="live-dot"></span><span id="dash-live-count-text">0</span> traders tracked live</span>
       </div>
 
       <!-- What is this? explainer -->
@@ -2737,6 +2753,13 @@ async function loadLeaderboard(sort = currentSort, period = currentPeriod) {
       const badge = document.getElementById(`sort-count-${s}`);
       if (badge) { badge.textContent = bettors.length; badge.classList.add('loaded'); }
     });
+    // Update trust signal live count
+    const dashLiveEl = document.getElementById('dash-live-count');
+    const dashLiveText = document.getElementById('dash-live-count-text');
+    if (dashLiveEl && dashLiveText) {
+      dashLiveText.textContent = bettors.length;
+      dashLiveEl.classList.add('visible');
+    }
   } catch (e) {
     container.innerHTML = '<div class="empty-state es-card" style="grid-column:1/-1;"><div class="es-illustration es-illustration-gold"><svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M26 5L3 47H49L26 5Z" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="26" y1="21" x2="26" y2="33" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/><circle cx="26" cy="40" r="2.2" fill="#f59e0b"/></svg></div><h3>Could not load leaderboard</h3><p></p></div>';
     container.querySelector('.empty-state p').textContent = e.message;
@@ -2969,6 +2992,13 @@ async function loadBrowseLeaderboard(sort = browseSort, period = browsePeriod) {
       const badge = document.getElementById(`browse-sort-count-${s}`);
       if (badge) { badge.textContent = bettors.length; badge.classList.add('loaded'); }
     });
+    // Update trust signal live count
+    const liveCountEl = document.getElementById('browse-live-count');
+    const liveCountText = document.getElementById('browse-live-count-text');
+    if (liveCountEl && liveCountText) {
+      liveCountText.textContent = bettors.length;
+      liveCountEl.classList.add('visible');
+    }
   } catch (e) {
     container.innerHTML = '<div class="empty-state es-card" style="grid-column:1/-1;"><div class="es-illustration es-illustration-gold"><svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M26 5L3 47H49L26 5Z" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="26" y1="21" x2="26" y2="33" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/><circle cx="26" cy="40" r="2.2" fill="#f59e0b"/></svg></div><h3>Could not load leaderboard</h3><p></p></div>';
     container.querySelector('.empty-state p').textContent = e.message;
