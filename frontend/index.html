@@ -722,6 +722,24 @@
 
     .account-tier-card { background: linear-gradient(160deg, var(--card) 0%, rgba(0,201,122,0.1) 100%); border: 1px solid var(--accent); border-radius: var(--radius); padding: 28px; margin-bottom: 16px; box-shadow: var(--glow); }
 
+    /* Account profile hero card */
+    .acct-profile-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .acct-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--accent3), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: #000; letter-spacing: -0.5px; flex-shrink: 0; box-shadow: 0 0 20px rgba(0,201,122,0.25); }
+    .acct-profile-info { flex: 1; min-width: 0; }
+    .acct-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+    .acct-name-text { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+    .acct-plan-badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .acct-plan-badge.tier-free  { background: rgba(161,161,170,0.15); color: var(--text2); border: 1px solid var(--border2); }
+    .acct-plan-badge.tier-basic { background: rgba(74,158,255,0.15); color: #60a5fa; border: 1px solid rgba(74,158,255,0.4); }
+    .acct-plan-badge.tier-vip   { background: rgba(245,158,11,0.15); color: var(--gold2); border: 1px solid rgba(245,158,11,0.4); }
+    .acct-email-text { font-size: 13px; color: var(--text2); margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .acct-created-text { font-size: 12px; color: var(--text3); }
+    .acct-logout-btn { margin-left: auto; flex-shrink: 0; }
+    .acct-upgrade-inline { margin-top: 14px; padding: 14px 16px; background: rgba(0,201,122,0.07); border: 1px dashed rgba(0,201,122,0.35); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .acct-upgrade-inline p { font-size: 13px; color: var(--text2); margin: 0; }
+    .acct-upgrade-inline strong { color: var(--text); }
+    @media (max-width: 480px) { .acct-profile-card { flex-direction: column; align-items: flex-start; } .acct-logout-btn { margin-left: 0; width: 100%; } .acct-avatar { width: 56px; height: 56px; font-size: 18px; } }
+
     /* Empty state */
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text2); }
     .empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
@@ -1898,6 +1916,30 @@
         <h1>Account</h1>
         <p>Manage your subscription and profile.</p>
       </div>
+
+      <!-- Profile hero card -->
+      <div class="acct-profile-card">
+        <div class="acct-avatar" id="acct-avatar">??</div>
+        <div class="acct-profile-info">
+          <div class="acct-name-row">
+            <span class="acct-name-text" id="acct-name"></span>
+            <span class="acct-plan-badge tier-free" id="acct-plan-badge">Free</span>
+          </div>
+          <div class="acct-email-text" id="acct-email"></div>
+          <div class="acct-created-text" id="acct-created"></div>
+        </div>
+        <button class="btn btn-danger acct-logout-btn" onclick="logout()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out
+        </button>
+      </div>
+
+      <!-- Upgrade nudge (shown for free tier only) -->
+      <div class="acct-upgrade-inline hidden" id="acct-upgrade-nudge">
+        <p><strong>You're on the Free plan.</strong> Follow up to 5 bettors and get instant alerts with Basic.</p>
+        <button class="btn btn-primary" onclick="openUpgradeModal()">Upgrade &rarr;</button>
+      </div>
+
+      <!-- Current plan card -->
       <div class="account-tier-card">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
           <div>
@@ -1906,21 +1948,10 @@
             <div style="font-size:13px;color:var(--text2);margin-top:6px;" id="acct-tier-desc">You can follow 1 bettor. Upgrade for more follows &amp; alerts.</div>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-            <button class="btn btn-primary" id="acct-upgrade-btn" onclick="openUpgradeModal()">Upgrade Plan &rarr;</button>
+            <button class="btn btn-primary hidden" id="acct-upgrade-btn" onclick="openUpgradeModal()">Upgrade Plan &rarr;</button>
             <button class="btn btn-secondary hidden" id="acct-billing-btn" onclick="openBillingPortal()">Manage Billing</button>
           </div>
         </div>
-      </div>
-      <div class="settings-card">
-        <h3>Profile</h3>
-        <div style="display:grid;gap:14px;">
-          <div><div class="form-label">Name</div><div id="acct-name" style="font-size:15px;font-weight:700;"></div></div>
-          <div><div class="form-label">Email</div><div id="acct-email" style="font-size:15px;"></div></div>
-          <div><div class="form-label">Member Since</div><div id="acct-created" style="font-size:14px;color:var(--text2);"></div></div>
-        </div>
-      </div>
-      <div style="margin-top:16px;">
-        <button class="btn btn-secondary" onclick="logout()">Log Out</button>
       </div>
     </div>
 
@@ -3523,11 +3554,20 @@ async function verifySmsOtp() {
 
 function renderAccount() {
   if (!currentUser) return;
-  document.getElementById('acct-name').textContent = currentUser.name || '';
-  document.getElementById('acct-email').textContent = currentUser.email || '';
+  const name = currentUser.name || '';
+  const email = currentUser.email || '';
+  document.getElementById('acct-name').textContent = name;
+  document.getElementById('acct-email').textContent = email;
   document.getElementById('acct-created').textContent = currentUser.created_at
-    ? new Date(currentUser.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    ? 'Member since ' + new Date(currentUser.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     : '';
+
+  // Avatar initials (up to 2 characters from name, fallback to email first letter)
+  const initials = name
+    ? name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase()
+    : (email ? email[0].toUpperCase() : '?');
+  document.getElementById('acct-avatar').textContent = initials;
+
   const tier = currentUser.subscription_tier || 'free';
   const labels = { free: 'Free', basic: 'Basic — $4.99/mo', vip: 'VIP — $9.99/mo' };
   const descs = {
@@ -3537,6 +3577,18 @@ function renderAccount() {
   };
   document.getElementById('acct-tier-label').textContent = labels[tier] || tier;
   document.getElementById('acct-tier-desc').textContent = descs[tier] || '';
+
+  // Plan badge — update class and text
+  const badge = document.getElementById('acct-plan-badge');
+  badge.className = 'acct-plan-badge tier-' + tier;
+  const badgeLabels = { free: 'Free', basic: 'Basic', vip: 'VIP' };
+  badge.textContent = badgeLabels[tier] || tier;
+
+  // Upgrade nudge (free tier only)
+  const nudge = document.getElementById('acct-upgrade-nudge');
+  if (tier === 'free') nudge.classList.remove('hidden');
+  else nudge.classList.add('hidden');
+
   const upgradeBtn = document.getElementById('acct-upgrade-btn');
   const billingBtn = document.getElementById('acct-billing-btn');
   if (tier === 'vip') {
@@ -3544,9 +3596,11 @@ function renderAccount() {
     billingBtn.classList.remove('hidden');
   } else if (tier === 'basic') {
     upgradeBtn.textContent = 'Upgrade to VIP →';
+    upgradeBtn.classList.remove('hidden');
     billingBtn.classList.remove('hidden');
   } else {
     upgradeBtn.textContent = 'Upgrade Plan →';
+    upgradeBtn.classList.remove('hidden');
     billingBtn.classList.add('hidden');
   }
 }
