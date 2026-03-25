@@ -826,9 +826,34 @@
       font-size: var(--fs-sm); color: var(--text); font-weight: 500;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px;
     }
-    .bet-row-meta { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
-    .bet-outcome { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.04em; }
-    .bet-price { font-size: var(--fs-xs); color: var(--text2); font-family: monospace; }
+    .bet-row-meta { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
+    .bet-outcome {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 8px; border-radius: 9999px;
+      font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.02em;
+      cursor: default; white-space: nowrap;
+    }
+    .bet-outcome.yes {
+      background: rgba(0,201,122,0.12); color: #4ade80;
+      border: 1px solid rgba(0,201,122,0.35);
+    }
+    .bet-outcome.no {
+      background: rgba(240,62,62,0.12); color: #f87171;
+      border: 1px solid rgba(240,62,62,0.35);
+    }
+    .bet-outcome.other {
+      background: rgba(161,161,170,0.1); color: var(--text2);
+      border: 1px solid var(--border);
+    }
+    .bet-outcome-price { opacity: 0.72; font-size: 0.68rem; font-family: monospace; }
+    .bet-active-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 7px; border-radius: 9999px;
+      font-size: var(--fs-xs); font-weight: 500;
+      background: rgba(0,201,122,0.08); color: var(--accent2);
+      border: 1px solid rgba(0,201,122,0.25);
+    }
+    .bet-active-badge::before { content: ''; display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--accent2); }
     .bet-date { font-size: var(--fs-xs); color: var(--text3); }
     .bet-copy-link { font-size: var(--fs-xs); color: var(--accent); text-decoration: none; margin-left: auto; }
     .bet-copy-link:hover { text-decoration: underline; }
@@ -3175,18 +3200,29 @@ function renderProfileData(profile, bets) {
 
 function renderBetRow(bet) {
   const question = escapeHtml(bet.market_question || 'Unknown Market');
-  const outcome = escapeHtml(bet.outcome || '');
+  const rawOutcome = (bet.outcome || '').toUpperCase();
+  const isYes = rawOutcome === 'YES';
+  const isNo  = rawOutcome === 'NO';
+  const outcomeClass = isYes ? 'yes' : isNo ? 'no' : 'other';
+  const outcomeLabel = escapeHtml(bet.outcome || rawOutcome || '—');
   const amount = fmtUSD(bet.amount_usd || 0);
-  const price = bet.price ? Math.round(bet.price * 100) + '\u00a2' : '\u2014';
-  const isYes = (bet.outcome || '').toUpperCase() === 'YES';
-  const isNo  = (bet.outcome || '').toUpperCase() === 'NO';
-  const outcomeColor = isYes ? 'var(--green)' : isNo ? 'var(--red)' : 'var(--text2)';
+  const priceVal = bet.price ? Math.round(bet.price * 100) : null;
+  const priceHtml = priceVal !== null ? ` <span class="bet-outcome-price">${priceVal}\u00a2</span>` : '';
+
   let dateStr = '';
+  let betAge = Infinity;
   if (bet.timestamp) {
     const raw = bet.timestamp;
     const d = typeof raw === 'string' ? new Date(raw) : new Date(Number(raw) * 1000);
-    if (!isNaN(d.getTime())) dateStr = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: '2-digit' });
+    if (!isNaN(d.getTime())) {
+      dateStr = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: '2-digit' });
+      betAge = (Date.now() - d.getTime()) / (1000 * 60 * 60 * 24); // days
+    }
   }
+
+  // Show "Active" badge only for bets placed in last 14 days — high confidence market still live
+  const activeBadge = betAge < 14 ? `<span class="bet-active-badge">Active</span>` : '';
+
   const polyLink = bet.market_slug ? `https://polymarket.com/event/${encodeURIComponent(bet.market_slug)}` : '';
   const iconHtml = bet.market_icon
     ? `<img src="${escapeHtml(bet.market_icon)}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="bet-row-icon-placeholder" style="display:none;"></div>`
@@ -3197,8 +3233,8 @@ function renderBetRow(bet) {
     <div class="bet-row-info">
       <div class="bet-row-question">${question}</div>
       <div class="bet-row-meta">
-        <span class="bet-outcome" style="color:${outcomeColor}">${outcome}</span>
-        <span class="bet-price">${price}</span>
+        <span class="bet-outcome ${outcomeClass}">${outcomeLabel}${priceHtml}</span>
+        ${activeBadge}
         ${dateStr ? `<span class="bet-date">${dateStr}</span>` : ''}
         ${polyLink ? `<a href="${escapeHtml(polyLink)}" target="_blank" rel="noopener noreferrer" class="bet-copy-link">Copy bet &#8599;</a>` : ''}
       </div>
