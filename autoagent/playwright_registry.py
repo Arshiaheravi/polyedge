@@ -888,6 +888,39 @@ async def check():
         except Exception as e:
             failures.append(f"_disclosureCache shape check error: {e}")
 
+        # CHECK 67 (session 99): trust-signal-row exists in browse leaderboard view
+        try:
+            trust_page = await browser.new_page()
+            await trust_page.goto(FRONTEND_URL, timeout=12000)
+            await trust_page.wait_for_load_state("networkidle")
+            await trust_page.evaluate("showView('browse')")
+            await asyncio.sleep(0.5)
+            trust_row = await trust_page.query_selector(".trust-signal-row")
+            trust_badge = await trust_page.query_selector(".trust-badge")
+            if trust_row and trust_badge:
+                checks += 1
+                print("  [CHECK 67] trust-signal-row and .trust-badge present in browse leaderboard")
+            else:
+                failures.append(f"trust-signal-row or trust-badge missing (trust_row={bool(trust_row)}, trust_badge={bool(trust_badge)})")
+            await trust_page.close()
+        except Exception as e:
+            failures.append(f"Trust signal row check error: {e}")
+
+        # CHECK 68 (session 99): browse-live-count element exists
+        try:
+            live_count_ok = await page.evaluate("""() => {
+                const el = document.getElementById('browse-live-count');
+                const textEl = document.getElementById('browse-live-count-text');
+                return !!(el && textEl);
+            }""")
+            if live_count_ok:
+                checks += 1
+                print("  [CHECK 68] #browse-live-count and #browse-live-count-text elements present")
+            else:
+                failures.append("#browse-live-count or #browse-live-count-text not found in DOM")
+        except Exception as e:
+            failures.append(f"Live count element check error: {e}")
+
         await browser.close()
     return checks, failures
 

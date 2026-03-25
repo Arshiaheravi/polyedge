@@ -2,11 +2,15 @@
 
 ---
 
+## META TASK (scheduled — session 99, 75 work sessions = multiple of 5)
+
+- [ ] Code quality audit — scan sessions 94–98 changed files (frontend/index.html, playwright_registry.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits
+
+---
+
 ## HIGH PRIORITY — UI/UX Tasks (doable in current UI/UX-only mode)
 
 - [ ] Nav/header improvements — add active state to nav links, smooth scroll behavior, add a subtle top progress bar on page load
-- [ ] Trust signals section — add "Built on real Polymarket data" text badge near leaderboard header; show live total bet count (fetch from `/admin/stats` if available or derive from leaderboard data). **Note**: "How it works 3-step section" was completed in session 84 — do NOT re-implement it.
-- [ ] Color-coded profit/loss — verify renderPositionItem (follows activity grid) colors P&L correctly. Sessions 75/80/83 added green/red badges on leaderboard, profile, and follow cards. If renderPositionItem already applies color, remove this item.
 
 ---
 

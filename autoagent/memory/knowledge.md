@@ -45,6 +45,14 @@
 
 ## Session Reflexions
 
+### Session #99 Reflexion — 2026-03-25 (UI/UX — Trust Signals Section)
+ACCOMPLISHED: Added `.trust-signal-row` below the leaderboard `page-header` on both browse and dashboard views. Two elements: (1) `.trust-badge` — star SVG + "Built on real Polymarket data" always-visible pill; (2) `.trust-live-count` — pulsing dot + "N traders tracked live" that fades in via `opacity: 0 → 1 / .visible` after `loadBrowseLeaderboard` / `loadLeaderboard` populates data. Pulse animation via `@keyframes pulse-dot`. Live count uses `textContent = bettors.length` (safe integer, not innerHTML). 2 Playwright checks (67-68). Also removed the already-done "color-coded profit/loss" backlog item after confirming `renderPositionItem` already applies `var(--green)`/`var(--red)` coloring.
+FAILED: Nothing. First run clean.
+RULE: [2026-03-25] For "live" or "real-time" indicators, use a small dot with `@keyframes` pulse (scale 0.8↔1 + opacity 0.5↔1, 2s ease-in-out infinite) rather than a blinking cursor or spinner — pulse feels alive without being distracting. Pair it with an `opacity: 0 → 1` fade on the containing badge so the element doesn't flash a "0 traders" state before data loads.
+RULE: [2026-03-25] Before starting a session, check each backlog item by reading the relevant code section — "color-coded P&L" was already implemented but remained in backlog 3 sessions too long. A 30-second grep for the described variable (`pnlColor = p.cash_pnl >= 0`) would have caught this. Always grep before implementing a "verify/add" backlog item.
+
+- Test count: **303 passed** (as of 2026-03-25, session 99 — no new backend tests, frontend-only change)
+
 ### Session #98 Reflexion — 2026-03-25 (UI/UX — _disclosureCache TTL Fix)
 ACCOMPLISHED: Changed `_disclosureCache` from `Map<addr, string[]>` to `Map<addr, {titles: string[], ts: number}>`. Added `_DISCLOSURE_TTL_MS = 5 * 60 * 1000`. Cache hit check now validates `(Date.now() - cached.ts) < _DISCLOSURE_TTL_MS` before serving; stale entries trigger a fresh fetch. Error path also stores `{titles: [], ts: Date.now()}` so errors don't permanently lock an address. 2 Playwright checks (65-66) verify the TTL constant value and entry shape. Zero tests changed.
 FAILED: Nothing. Clean first run.

@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-25
+- **[SESSION #99] Trust signals — data source badge + live trader count** — added .trust-signal-row below leaderboard header on both browse and dashboard views: "Built on real Polymarket data" pill badge + animated green pulsing dot "N traders tracked live" badge that fades in after data loads; 2 new Playwright checks (67-68); 303 tests pass, 68 checks pass
 - **[SESSION #98] _disclosureCache TTL fix** — leaderboard card disclosure cache now expires after 5 minutes; re-fetches market titles transparently on next expand; 2 new Playwright checks (65-66); 303 tests pass, 66 checks pass
 - **[SESSION #97] Leaderboard sort controls upgrade** — replaced flat tab-btn sort buttons with a pill-style segmented control (.sort-pill-group); active pill gets green background with 0.2s transition; custom CSS [data-tooltip] tooltips explain each metric on hover; count badge fades in after data loads showing bettors.length; applied to both dashboard and browse leaderboard; 2 new Playwright checks (63-64); 303 tests pass, 64 checks pass
 

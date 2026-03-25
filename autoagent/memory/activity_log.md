@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-25 — UI/UX (Session 99)
+DONE: Trust signals section — added .trust-signal-row below leaderboard page-header on both browse (/leaderboard) and dashboard views. Two pill badges: (1) star SVG + "Built on real Polymarket data" (subtle card background, always visible); (2) animated pulsing green dot + "N traders tracked live" (fades in with opacity transition after API data loads, count = bettors.length). Pulse dot uses @keyframes pulse-dot. Also removed the already-done color-coded profit/loss backlog item (renderPositionItem already applied green/red coloring). 2 new Playwright checks (67-68).
+IMPACT: Visitors and logged-in users now see an immediate data-credibility signal at the leaderboard header — "Built on real Polymarket data" reduces skepticism; the live trader count creates social proof that other people are actively tracked right now, increasing conversion confidence.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-25 — UI/UX (Session 98)
 DONE: _disclosureCache TTL fix — leaderboard card progressive disclosure now caches market titles for 5 minutes only; entries store `{titles, ts}` instead of a bare array; re-fetches stale data transparently on next card expand; 2 new Playwright checks (65-66).
 IMPACT: Fixes stale market titles persisting indefinitely — users who leave the leaderboard open will see fresh market data after 5 minutes instead of the titles from when they first opened the page, keeping the "recent markets" preview accurate for active traders.

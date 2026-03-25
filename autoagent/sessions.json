@@ -1905,5 +1905,10 @@
    "summary": "Fixed stale leaderboard card market titles — disclosure cache now expires after 5 minutes so users who leave the page open see fresh bettor activity instead of the titles from initial load.",
    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
    "tests": {"before": 303, "after": 303, "status": "pass"},
-   "frontend": {"status": "pass", "checks": 66, "failures": 0, "notes": "2 new checks (65-66): _DISCLOSURE_TTL_MS=300000, _disclosureCache entry shape {titles, ts}"}}
+   "frontend": {"status": "pass", "checks": 66, "failures": 0, "notes": "2 new checks (65-66): _DISCLOSURE_TTL_MS=300000, _disclosureCache entry shape {titles, ts}"}},
+  {"session": 99, "date": "2026-03-25", "time": "12:00", "type": "work",
+   "summary": "Added trust signals to the leaderboard — visitors now see a 'Built on real Polymarket data' badge and a live animated dot showing how many traders are being tracked, which builds credibility and social proof at the point of decision.",
+   "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+   "tests": {"before": 303, "after": 303, "status": "pass"},
+   "frontend": {"status": "pass", "checks": 68, "failures": 0, "notes": "2 new checks (67-68): .trust-signal-row present in browse view, #browse-live-count elements in DOM"}}
 ]
