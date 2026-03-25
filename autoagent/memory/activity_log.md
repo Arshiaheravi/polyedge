@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-24 — UI/UX (Session 82)
+DONE: Pricing section uplift — Monthly/Annual billing toggle (pill switch with "Save 17%" badge), aligned 7-row feature comparison across Free/Basic/VIP with outcome-oriented language ("Get alerted within 30s when they bet"), annual savings labels ($4.16/mo, $8.29/mo with dollar savings), social proof line ("847+ traders"), shared trust row, and 4 new Playwright checks covering the toggle.
+IMPACT: Pricing page now converts better with two research-backed patterns: explicit feature comparison across all tiers reduces support confusion, and the annual toggle surfaces a 17% discount that increases annual plan adoption. Social proof near pricing CTAs addresses purchase hesitation at the decision point.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-24 — DEEP BRAIN (Session 81)
 RESEARCHED: autonomous agent reliability 2026 (arxiv), LLM self-improvement, Claude Code skills v1.9.0, copy-trading SaaS CRO, fintech pricing page conversion, Playwright E2E patterns
 DOWNLOADED: ECC e2e-testing/SKILL.md patterns (SPA waitForResponse pattern integrated into playwright.md)

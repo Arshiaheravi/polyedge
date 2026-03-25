@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #82 Reflexion — 2026-03-24 (UI/UX)
+ACCOMPLISHED: Pricing section uplift + annual billing toggle. (1) Monthly/Annual pill toggle above pricing cards — `setPricingPeriod()` adds/removes `body.annual-billing` class; CSS `body.annual-billing .pricing-price-monthly { display:none }` / `.pricing-price-annual { display:inline }` swaps prices without JS DOM mutation. (2) 7-row aligned feature comparison across all 3 tiers — same rows in same order, check/cross per tier, outcome-oriented language. (3) Social proof line + shared trust row under pricing grid. (4) 4 new Playwright checks (29-32): billing toggle DOM, `setPricingPeriod` fn, body class toggle, social/trust elements. 32/32 checks pass. 303 backend tests stable (frontend-only session).
+FAILED: Nothing.
+RULE: [2026-03-24] For binary UI state toggles (monthly/annual, dark/light, tab A/B), prefer body-class CSS pattern over JS innerHTML swaps: `body.annual-billing .price-monthly { display:none }` is simpler, transition-friendly, and SSR-safe. The JS only adds/removes a class — no DOM queries, no innerHTML, no XSS surface. JS complexity stays linear with states; CSS handles all the conditional display logic.
+
 ### Session #81 Reflexion — 2026-03-24 (DEEP Brain)
 ACCOMPLISHED: (1) Archived activity_log.md sessions 41-60 to activity_log_archive.md — log trimmed from 210 lines to 107 lines. (2) Curated knowledge.md — no duplicates found (already clean after session 61+76 curation passes). (3) META analysis of sessions 61-80: found STEP 0 skip condition "zero Python code" silently skipped self-critique for ALL UI/UX sessions — root cause of 4 XSS audit cycles. (4) Fixed STEP 0: changed skip condition to "zero files changed" + added Q6 (frontend XSS grep gate). (5) Updated audit.md to include session 79 in the recurring failure note. (6) Logged technique in brain/techniques.md. (7) Web searches: evaluated 8+ sources. (8) Backlog confirmed 3 HIGH PRIORITY items remain.
 FAILED: Nothing failed.

@@ -366,6 +366,56 @@ async def check():
         except Exception as e:
             failures.append(f'_bettorCache check error: {e}')
 
+        # CHECK 29 (session 82): Billing toggle present with both tabs
+        try:
+            toggle = await page.query_selector('.pricing-billing-toggle')
+            monthly_tab = await page.query_selector('[data-period="monthly"]')
+            annual_tab = await page.query_selector('[data-period="annual"]')
+            if toggle and monthly_tab and annual_tab:
+                checks += 1
+                print('  [CHECK 29] Billing toggle present with monthly/annual tabs')
+            else:
+                failures.append(f'Billing toggle missing — toggle={bool(toggle)}, monthly={bool(monthly_tab)}, annual={bool(annual_tab)}')
+        except Exception as e:
+            failures.append(f'Billing toggle check error: {e}')
+
+        # CHECK 30 (session 82): setPricingPeriod function defined
+        try:
+            fn_exists = await page.evaluate("typeof setPricingPeriod === 'function'")
+            if fn_exists:
+                checks += 1
+                print('  [CHECK 30] setPricingPeriod function defined')
+            else:
+                failures.append('setPricingPeriod function not found in page JS')
+        except Exception as e:
+            failures.append(f'setPricingPeriod check error: {e}')
+
+        # CHECK 31 (session 82): Annual billing toggle switches body class
+        try:
+            await page.evaluate("setPricingPeriod('annual')")
+            has_class = await page.evaluate("document.body.classList.contains('annual-billing')")
+            await page.evaluate("setPricingPeriod('monthly')")
+            class_removed = await page.evaluate("!document.body.classList.contains('annual-billing')")
+            if has_class and class_removed:
+                checks += 1
+                print('  [CHECK 31] setPricingPeriod toggles body.annual-billing class correctly')
+            else:
+                failures.append(f'setPricingPeriod body class toggle failed: added={has_class}, removed={class_removed}')
+        except Exception as e:
+            failures.append(f'Annual billing toggle class check error: {e}')
+
+        # CHECK 32 (session 82): Pricing social proof and trust row present
+        try:
+            social = await page.query_selector('.pricing-social-proof')
+            trust = await page.query_selector('.pricing-trust-row')
+            if social and trust:
+                checks += 1
+                print('  [CHECK 32] Pricing social proof + trust row present')
+            else:
+                failures.append(f'Pricing copy missing — social={bool(social)}, trust={bool(trust)}')
+        except Exception as e:
+            failures.append(f'Pricing copy check error: {e}')
+
         await browser.close()
     return checks, failures
 

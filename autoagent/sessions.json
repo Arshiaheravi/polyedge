@@ -1783,5 +1783,15 @@
       "failures": 0,
       "notes": "brain session \u2014 no code changed"
     }
+  },
+  {
+    "session": 82,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Upgraded the pricing section with an annual billing toggle (Monthly/Annual pill), aligned 7-row feature comparison across all 3 tiers with outcome-oriented language, social proof line, and a shared trust row — making the pricing page clearer and more conversion-ready",
+    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 32, "failures": 0, "notes": "4 new checks: billing toggle, setPricingPeriod fn, body class toggle, social proof+trust row"}
   }
 ]
