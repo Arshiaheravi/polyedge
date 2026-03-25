@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — AUDIT (Session 73)
+DONE: Code quality audit of sessions 68–72 — found and fixed 3 XSS vulnerabilities. (1) `renderBettorCard`: `b.avatar_url` was injected as `src="${avatarUrl}"` inside a template literal used as innerHTML — attacker could add onerror= handler by crafting avatar_url with `"`. Fixed: `safeAvatarUrl = escapeHtml(avatarUrl)`. (2) `loadLandingPreview`: same avatar_url issue. (3) `loadLandingPreview`: `b.name` unescaped in innerHTML — visible on landing page to all unauthenticated visitors. Fixed with `safeName = escapeHtml(b.name || shortAddr(b.address))`. No dead code. Nav consistent (4 desktop = 4 mobile). 303 tests stable. 22/22 Playwright checks pass.
+IMPACT: Closes XSS attack surface on the landing page leaderboard preview — a malicious Polymarket API response with an HTML-injected bettor name or crafted avatar URL could have executed arbitrary JS in a visitor's browser. The landing page is public (no auth), making this a high-severity exposure for any visitor.
+FILES: frontend/index.html
+
 ## 2026-03-24 — UI/UX (Session 72)
 DONE: Upgraded toast system to Sonner/Emil Kowalski stacked pattern. Collapsed state: newest toast full-size, older toasts peek behind at 14px vertical offsets with 5% scale reductions per step. Hover expands the full stack with 8px gaps and real heights. Auto-dismiss after 5s (timer paused on hover). Max 5 toasts; close button on each. New toast-bet type (green left border, ⚡ icon). toastBet() helper + betAlert CustomEvent listener so scheduler can fire alerts. refreshFollowsActivity() detects new positions via _seenBetIds and fires toastBet() on subsequent refreshes. "Test alert" demo button added to follows page header. 303 tests stable. 22/22 Playwright checks pass (5 new: checks 18-22).
 IMPACT: Users on the follows page now get real-time "New bet detected" toasts — a stacked notification deck shows up to 5 queued alerts without covering the screen. The 30s refresh-and-detect loop means they see a bet toast within 30s of a followed trader placing it, directly enabling the copy-trade loop. The Sonner stack pattern is premium and distinctive (vs the generic append-and-fade that most apps use).

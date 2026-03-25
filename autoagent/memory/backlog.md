@@ -2,12 +2,6 @@
 
 ---
 
-## META (auto-generated at session 72 — 55 work sessions milestone)
-
-- [ ] Code quality audit — scan last 5 work sessions' changed files for cross-file coupling, test specificity degradation, and smells introduced by agent edits (sessions 68–71: mobile responsiveness, bettor profile, auth UX polish, brain session)
-
----
-
 ## HIGH PRIORITY — UI/UX Tasks
 
 - [ ] Bet activity feed enhancements — add probability pill (YES 72¢ green / NO 28¢ red) to each bet row in bettor profile; add market status badge (Open/Closed/Resolved) using CSS date comparison; helps user judge if trade is still copyable

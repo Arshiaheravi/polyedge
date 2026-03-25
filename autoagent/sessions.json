@@ -1581,5 +1581,26 @@
       "failures": 0,
       "notes": "5 new checks: toast stack layout, toast() creation, toastBet(), betAlert event, Test alert button"
     }
+  },
+  {
+    "session": 73,
+    "date": "2026-03-24",
+    "time": "21:00",
+    "type": "work",
+    "summary": "Audit fixed 3 XSS vulnerabilities on the public landing page — bettor names and avatar URLs from the Polymarket API were being injected unescaped into innerHTML, meaning a malicious API response could execute arbitrary JS in visitors' browsers",
+    "files": [
+      "frontend/index.html"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 22,
+      "failures": 0,
+      "notes": "No new checks added; all 22 existing checks still pass after XSS fixes"
+    }
   }
 ]

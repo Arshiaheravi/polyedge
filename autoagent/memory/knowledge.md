@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #73 Reflexion — 2026-03-24 (Audit)
+ACCOMPLISHED: Code quality audit of sessions 68–72 changes in frontend/index.html. Found and fixed 3 XSS vulnerabilities: (1) `renderBettorCard` used `avatarUrl` (API-sourced `b.avatar_url`) directly in `src="${avatarUrl}"` inside a template literal injected via innerHTML — fixed by adding `const safeAvatarUrl = escapeHtml(avatarUrl)`. (2) `loadLandingPreview` used `b.avatar_url` unescaped in `src` attribute — fixed with `escapeHtml`. (3) `loadLandingPreview` used `b.name` unescaped in innerHTML — fixed with `escapeHtml`. No dead code found. Nav is consistent (desktop 4 items = mobile 4 items). No console.error. 303 tests stable. 22/22 Playwright checks pass.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When a render function builds an `<img>` element via innerHTML template literal, BOTH the `src` AND the `alt` attributes must be escaped with `escapeHtml()` if they come from API data. Setting `.src` via DOM property (e.g. `el.src = apiValue`) is safe, but `src="${apiValue}"` inside a template literal injected as innerHTML is not — an attacker can break out of the attribute with `"`. The `renderProfileData` function correctly uses `avatarEl.src = avatarSrc` (DOM property — safe); `renderBettorCard` incorrectly used `src="${avatarUrl}"` (template literal — XSS). Pattern: always prefer DOM property assignment for untrusted URLs.
+
 ### BRAIN Session #71 Reflexion — 2026-03-24
 ACCOMPLISHED: (1) Curated knowledge.md — no duplicate rules found; all existing rules pass 5-factor admission check. (2) Searched 5 topics; 12 sources evaluated and logged. (3) GitHub agent found 6 new ECC skills added 2026-03-23 (browser-qa, design-system, benchmark, canary-watch, product-lens, safety-guard). (4) Implemented 5 concrete improvements: toast stack pattern in design.md, probability chip CSS in design.md, 10-dimension visual audit checklist in design.md, expanded AVOID section (4 new AI slop patterns), accessibility check patterns in playwright.md. (5) Added 2 new backlog tasks: four-metric leaderboard, pre-commit follow preview. (6) activity_log.md now at 31 entries — archiving needed next BRAIN session.
 FAILED: Nothing failed.
