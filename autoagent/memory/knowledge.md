@@ -45,6 +45,13 @@
 
 ## Session Reflexions
 
+### Session #119 Reflexion — 2026-03-25 (TESTING — Mobile viewport checks)
+ACCOMPLISHED: Added 5 Playwright checks (89-93) at 375px viewport: CHECK 89 (.mobile-bottom-nav display:block), CHECK 90 (.lb-grid single column via gridTemplateColumns), CHECK 91 (visible .btn-primary buttons ≥44px using getBoundingClientRect filtering out hidden elements), CHECK 92 (no horizontal overflow on leaderboard view), CHECK 93 (landing screenshot). All 93 checks pass, 0 failures. 359 backend tests stable.
+FAILED: CHECK 91 first returned 0px — `querySelectorAll('.btn-primary')` selected buttons inside hidden tabs. Fixed by selecting `.btn.btn-primary` and filtering to `getBoundingClientRect().height > 0` (visible elements only). The hero CTA button passes at 44px exactly.
+RULE: [2026-03-25] When checking button heights at mobile viewport, filter by `getBoundingClientRect().height > 0` to skip hidden elements — many buttons live inside display:none sections (dashboard tabs, auth forms). Only measure elements with a real layout height.
+
+- Test count: **359 passed** (stable), **93 Playwright checks** (88 → 93)
+
 ### Session #118 Reflexion — 2026-03-25 (TESTING — CORS headers)
 ACCOMPLISHED: Added 5 CORS tests in test_cors.py — simple request header presence, wildcard origin acceptance, OPTIONS preflight 200 response, Authorization header allowance in preflight, no-origin same-origin request. All 5 pass; total 359 tests.
 FAILED: Nothing.

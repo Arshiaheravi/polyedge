@@ -2615,5 +2615,26 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 119,
+    "date": "2026-03-25",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 5 mobile viewport Playwright checks (89-93) at 375px — proves mobile nav is visible, bettor cards stack vertically, buttons are tappable (≥44px), no horizontal overflow on leaderboard view, and landing screenshot captured",
+    "files": [
+      "autoagent/playwright_registry.py"
+    ],
+    "tests": {
+      "before": 359,
+      "after": 359,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 93,
+      "failures": 0,
+      "notes": "checks 89-93 added: mobile-bottom-nav visible, lb-grid single column, buttons >=44px, no leaderboard overflow, landing screenshot"
+    }
   }
 ]

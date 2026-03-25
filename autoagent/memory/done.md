@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-25
+- **[SESSION #119] Mobile viewport Playwright tests (checks 89-93)** — 5 new checks at 375px: mobile bottom nav visible, lb-grid single column, visible buttons ≥44px, no horizontal overflow on leaderboard view, landing screenshot saved; 93 total checks, 0 failures; 359 backend tests stable
 - **[SESSION #118] CORS header tests — 5 tests covering preflight, wildcard origin, Authorization header allowance** — proves the CORSMiddleware is correctly configured; last security coverage gap closed; 359 tests pass
 - **[SESSION #115] Code quality audit (sessions 108-113) + 3 new security/payment tests** — audit passed all 9 team checks (Marcus XSS greps clean); added bcrypt hash storage test (verify $2b$ prefix, no plaintext), rate-limit stability test (10 rapid logins, none 500), and Stripe basic-tier upgrade + follow-limit chain test (free→basic→verify 5 follows allowed, 6th rejected); 354 tests pass
 - **[SESSION #114] Playwright checks 84-88: auth form, login error, sort toggle, search filter, profile nav** — 5 new Playwright checks cover register form completeness, login wrong-password inline error (real API call), sort button active class toggle, search filter hiding non-matching cards, profile tab navigation; 88 total checks, 0 failures; 351 backend tests stable
