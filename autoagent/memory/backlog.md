@@ -12,6 +12,12 @@
 
 - [ ] Playwright checks 114-116 — follows dashboard DOM: (114) #follows-empty element exists in DOM, (115) #follows-container element exists in DOM, (116) #follows-subtitle element exists in DOM with text content
 
+- [ ] Playwright checks 117-119 — toast + demo mode JS API: (117) #toast-container element exists in DOM, (118) typeof window.toastBet === 'function', (119) typeof window.enterDemoMode === 'function'
+
+- [ ] Playwright checks 120-122 — animation helpers + page progress: (120) typeof window.animateCounter === 'function', (121) typeof window.runLandingCounters === 'function', (122) #page-progress element exists in DOM
+
+- [ ] Playwright checks 123-125 — hero section + leaderboard card wiring: (123) .hero-live-stats element exists on landing page, (124) .hero-cycle element exists on landing page, (125) .follow-btn elements on lb-cards have data-address attribute set (at least 1 card with non-empty data-address)
+
 ---
 
 ## HIGH PRIORITY — Backend Coverage Gaps
