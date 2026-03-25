@@ -522,6 +522,9 @@
     .pricing-features { list-style: none; margin-bottom: 32px; }
     .pricing-features li { font-size: 14px; padding: 9px 0; border-bottom: 1px solid rgba(35,40,64,0.5); display: flex; align-items: center; gap: 10px; color: var(--text); }
     .pricing-features li.dim { color: var(--text3); }
+    .pricing-features li[data-tip] { position: relative; cursor: help; }
+    .pricing-features li[data-tip]::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 4px); left: 0; right: 0; background: var(--card3); color: var(--accent2); font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 6px; border: 1px solid rgba(0,201,122,0.25); opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 20; text-align: center; white-space: nowrap; }
+    .pricing-features li[data-tip]:hover::after { opacity: 1; }
     .pricing-features li:last-child { border-bottom: none; }
     .check { color: var(--green2); font-size: 15px; flex-shrink: 0; }
     .cross { color: var(--text3); font-size: 15px; flex-shrink: 0; }
@@ -637,6 +640,8 @@
     .follow-btn:hover { background: linear-gradient(135deg, var(--accent), var(--accent3)); color: #fff; border-color: transparent; box-shadow: 0 0 12px rgba(0,201,122,0.3); }
     .follow-btn.following { background: rgba(16,185,129,0.1); color: var(--green2); border-color: rgba(16,185,129,0.25); }
     .follow-btn.following:hover { background: rgba(239,68,68,0.1); color: var(--red); border-color: rgba(239,68,68,0.25); }
+    @keyframes followBtnPulse { 0%,100% { box-shadow: 0 0 10px rgba(0,201,122,0.3); } 50% { box-shadow: 0 0 22px rgba(0,201,122,0.65); } }
+    .follow-btn:not(.following):hover { animation: followBtnPulse 1.2s ease-in-out infinite; }
 
     /* Follow preview tooltip on leaderboard cards */
     .lb-follow-wrap { position: relative; }
@@ -681,6 +686,8 @@
     .lb-card-identity { flex: 1; min-width: 0; }
     .lb-card-name { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .lb-card-addr { font-size: 11px; color: var(--text3); font-family: monospace; margin-top: 2px; }
+    .lb-card-last-active { font-size: 10px; color: var(--text3); margin-top: 3px; display: flex; align-items: center; gap: 4px; }
+    .lb-card-last-active::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.7; flex-shrink: 0; }
     .lb-card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
     .lb-stat { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; }
     .lb-stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
@@ -1258,7 +1265,7 @@
       <button class="btn btn-demo btn-lg" onclick="enterDemoMode()">Try the demo</button>
     </div>
     <p class="animate-fade-up delay-4" style="font-size:13px;color:var(--text3);text-align:center;margin-top:16px;">
-      Join <strong style="color:var(--text2);">847+</strong> traders already copying top bettors
+      Join <strong id="hero-user-count" style="color:var(--text2);">847+</strong> traders already copying top bettors
     </p>
     <div class="hero-live-stats animate-fade-up delay-4" aria-label="Live platform statistics">
       <span><strong><span id="hlstat-traders">100</span></strong> traders tracked</span>
@@ -1486,10 +1493,10 @@
           <li><span class="check">&#10003;</span> Top 100 leaderboard + bettor profiles</li>
           <li><span class="check">&#10003;</span> Full bet history &amp; stats</li>
           <li><span class="check">&#10003;</span> Follow <strong>1 bettor</strong></li>
-          <li class="dim"><span class="cross">&#10007;</span> Instant bet alerts (within 30s)</li>
-          <li class="dim"><span class="cross">&#10007;</span> Web push &amp; Telegram notifications</li>
-          <li class="dim"><span class="cross">&#10007;</span> SMS text alerts</li>
-          <li class="dim"><span class="cross">&#10007;</span> Priority speed (fastest alerts)</li>
+          <li class="dim" data-tip="Unlock with Basic $4.99/mo →"><span class="cross">&#10007;</span> Instant bet alerts (within 30s)</li>
+          <li class="dim" data-tip="Unlock with Basic $4.99/mo →"><span class="cross">&#10007;</span> Web push &amp; Telegram notifications</li>
+          <li class="dim" data-tip="Unlock with VIP $9.99/mo →"><span class="cross">&#10007;</span> SMS text alerts</li>
+          <li class="dim" data-tip="Unlock with VIP $9.99/mo →"><span class="cross">&#10007;</span> Priority speed (fastest alerts)</li>
         </ul>
         <button class="btn btn-secondary w-full btn-lg" onclick="showView('auth', 'register')">Get Started Free</button>
         <div class="pricing-cta-note">No credit card required</div>
@@ -1510,8 +1517,8 @@
           <li><span class="check">&#10003;</span> Follow up to <strong>5 bettors</strong></li>
           <li><span class="check">&#10003;</span> <strong>Get alerted within 30s</strong> when they bet</li>
           <li><span class="check">&#10003;</span> Web push &amp; Telegram notifications</li>
-          <li class="dim"><span class="cross">&#10007;</span> SMS text alerts</li>
-          <li class="dim"><span class="cross">&#10007;</span> Priority speed (fastest alerts)</li>
+          <li class="dim" data-tip="Unlock with VIP $9.99/mo →"><span class="cross">&#10007;</span> SMS text alerts</li>
+          <li class="dim" data-tip="Unlock with VIP $9.99/mo →"><span class="cross">&#10007;</span> Priority speed (fastest alerts)</li>
         </ul>
         <button class="btn btn-primary w-full btn-lg" onclick="showView('auth', 'register')">Start Basic &rarr;</button>
         <div class="pricing-cta-note">Cancel anytime &middot; Billed monthly</div>
@@ -2940,6 +2947,9 @@ function renderBettorCard(b, i) {
 
   const eName = escapeHtml(name);
   const safeAddr = escapeHtml(addr);
+  const lastActiveHtml = b.last_active_ts
+    ? `<div class="lb-card-last-active">Active ${escapeHtml(timeAgo(b.last_active_ts))}</div>`
+    : '';
   return `<div class="lb-card animate-fade-in-up" style="animation-delay:${delay}ms"
     role="listitem" tabindex="0"
     data-name="${escapeHtml(name.toLowerCase())}" data-addr="${escapeHtml(addr.toLowerCase())}"
@@ -2952,6 +2962,7 @@ function renderBettorCard(b, i) {
       <div class="lb-card-identity">
         <div class="lb-card-name" title="${eName}">${eName}</div>
         <div class="lb-card-addr">${escapeHtml(shortAddr(addr))}</div>
+        ${lastActiveHtml}
       </div>
       <span class="lb-card-chevron" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -3090,12 +3101,13 @@ function renderFollowSkeletonCards(count) {
 
 let _demoMode = false;
 
+const _now = Math.floor(Date.now() / 1000);
 const DEMO_BETTORS = [
-  { address: '0xd3a0cafe0001111111111111111111111111aaaa', name: 'CryptoSage',    rank: 1, pnl_usd: 142850, volume_usd: 310000 },
-  { address: '0xd3a0cafe0002222222222222222222222222bbbb', name: 'PredictKing',   rank: 2, pnl_usd: 98320,  volume_usd: 225000 },
-  { address: '0xd3a0cafe0003333333333333333333333333cccc', name: 'OddsBreaker',   rank: 3, pnl_usd: 67450,  volume_usd: 180000 },
-  { address: '0xd3a0cafe0004444444444444444444444444dddd', name: 'AlphaTrader7',  rank: 4, pnl_usd: 45200,  volume_usd: 140000 },
-  { address: '0xd3a0cafe0005555555555555555555555555eeee', name: 'MarketOracle',  rank: 5, pnl_usd: 31750,  volume_usd: 95000  },
+  { address: '0xd3a0cafe0001111111111111111111111111aaaa', name: 'CryptoSage',    rank: 1, pnl_usd: 142850, volume_usd: 310000, last_active_ts: _now - 2*60 },
+  { address: '0xd3a0cafe0002222222222222222222222222bbbb', name: 'PredictKing',   rank: 2, pnl_usd: 98320,  volume_usd: 225000, last_active_ts: _now - 8*60 },
+  { address: '0xd3a0cafe0003333333333333333333333333cccc', name: 'OddsBreaker',   rank: 3, pnl_usd: 67450,  volume_usd: 180000, last_active_ts: _now - 19*60 },
+  { address: '0xd3a0cafe0004444444444444444444444444dddd', name: 'AlphaTrader7',  rank: 4, pnl_usd: 45200,  volume_usd: 140000, last_active_ts: _now - 34*60 },
+  { address: '0xd3a0cafe0005555555555555555555555555eeee', name: 'MarketOracle',  rank: 5, pnl_usd: 31750,  volume_usd: 95000,  last_active_ts: _now - 52*60 },
 ];
 
 function enterDemoMode() {
@@ -3895,6 +3907,20 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.add('hidden'); });
 });
 
+// Escape key closes any open modal; Enter triggers primary button in active modal
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay:not(.hidden)').forEach(m => m.classList.add('hidden'));
+  }
+  if (e.key === 'Enter') {
+    const openModal = document.querySelector('.modal-overlay:not(.hidden)');
+    if (openModal) {
+      const primary = openModal.querySelector('.btn-primary');
+      if (primary && document.activeElement !== primary) { e.preventDefault(); primary.click(); }
+    }
+  }
+});
+
 // ── Landing preview ───────────────────────────────────────────
 
 async function loadLandingPreview() {
@@ -3991,6 +4017,8 @@ function runLandingCounters() {
       const profitEl  = document.getElementById('hlstat-profit');
       if (tradersEl) { tradersEl.textContent = '0'; animateCounter(tradersEl, 100, '', ''); }
       if (profitEl)  { profitEl.textContent = '0';  animateCounter(profitEl, 2.4, '', ''); }
+      const userCountEl = document.getElementById('hero-user-count');
+      if (userCountEl) { animateCounter(userCountEl, 847, '', '+'); }
       if (betsEl) {
         const startBets = 1247;
         betsEl.textContent = '0'; animateCounter(betsEl, startBets, '', '');
