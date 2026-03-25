@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **303 passed** (as of 2026-03-24, session 90 — no new tests, frontend-only session)
+- Test count: **303 passed** (as of 2026-03-24, session 92 — no new tests, frontend CSS-only session)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +44,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #92 Reflexion — 2026-03-24 (UI/UX — Mobile Audit)
+ACCOMPLISHED: Audited all 7 screens at 375px. Found and fixed 8 concrete issues: (1) .tab-btn height ~33px → min-height 40px, (2) .follow-btn height ~30px → min-height 44px, (3) .section padding 80px → 48px on mobile, (4) .modal padding 36px → 28px 24px, (5) pricing-card compact padding, (6) follows-stat-divider hidden ≤480px, (7) preview table Volume column hidden ≤480px, (8) preview-card overflow-x auto. 3 new Playwright checks (56-58). 303 tests, 58 checks, 0 failures.
+FAILED: Nothing failed.
+RULE: [2026-03-24] When auditing mobile tap targets: custom button classes (`.tab-btn`, `.follow-btn`, `.sort-btn`) don't inherit from `.btn` which has `min-height: 44px`. Always check EVERY button class independently for `min-height` — only the `.btn` base class has it. Secondary filter/sort buttons should have min-height 40px; primary actions (follow, CTA) need 44px.
+RULE: [2026-03-24] Mobile audit order: (1) landing section padding, (2) tap targets on all button variants, (3) table overflow (preview tables are clipped, not scrollable), (4) follow/stat strip dividers at narrow widths, (5) modal padding. These 5 areas catch 80% of mobile issues in a typical SPA dark dashboard.
 
 ### BRAIN Session #91 Reflexion — 2026-03-24
 ACCOMPLISHED: (1) Curated knowledge.md — no duplicates found, already clean. (2) Checked activity_log.md — 30 entries, below 30 threshold, no archival triggered. (3) Searched 5+ topics, 11 new sources. (4) Found 3 new ECC skills (click-path-audit, santa-method, skill-comply) added 2026-03-22/23. (5) Implemented 3 improvements: playwright.md SPA hidden-element navigation rule (from session 90 failure), coding.md stale-path fix + FRAGILE ZONES guard (from arxiv 2603.06847 fault taxonomy), new click-path-audit.md skill. (6) Added 3 backlog items.

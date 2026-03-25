@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #92] Mobile UX audit** — fixed 8 issues at 375px: tab-btn min-height 40px, follow-btn min-height 44px (core action tap targets), landing section padding 48px (was 80px), modal padding compact, pricing card padding for stacked layout, follows summary dividers hidden on ≤480px, preview table Volume column hidden on ≤480px, preview-card overflow-x auto; 3 new Playwright checks (56-58); 303 backend tests pass, 58/58 checks pass
 - **[SESSION #90] Playwright screenshot gallery** — captured all 7 major screens (landing, leaderboard, profile, follows, alerts, pricing, auth) as PNGs in autoagent/reports/screenshots/; added 7 Playwright checks (49-55) verifying each screen renders correctly; 55/55 checks pass
 - **[SESSION #89] Leaderboard follow preview tooltip** — `.lb-follow-wrap` + `.lb-follow-tooltip` added to `renderBettorCard()`; "You'll be notified within 30s when [Name] bets" appears on hover/focus of the follow button (not-following state only); absent when already following; 3 new Playwright checks (46–48)
 - **[SESSION #88] Leaderboard card progressive disclosure** — clicking any lb-card (except the follow button) now expands it via CSS max-height transition to reveal recent market titles (lazy-fetched from /bettors/{address} on first expand) and a "View profile →" CTA; chevron rotates 180° on expand; market titles cached to avoid re-fetching

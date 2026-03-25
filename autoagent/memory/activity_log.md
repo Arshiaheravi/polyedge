@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-24 — UI/UX (Session 92)
+DONE: Mobile UX audit — fixed 8 tap target, overflow, and padding issues across all 7 screens at 375px. Tab buttons: min-height 40px (was ~33px). Follow buttons: min-height 44px (was ~30px, core action). Landing sections: padding 48px (was 80px, excessive whitespace). Modal compact on mobile. Preview table Volume column hidden at ≤480px; overflow-x auto on preview card. Follows stat dividers hidden at ≤480px. 3 new Playwright checks (56-58).
+IMPACT: iPhone users can now tap the filter and follow buttons reliably (both were below WCAG 2.5.8 minimum). Landing page wastes 32px less vertical whitespace per section on mobile. Leaderboard preview table no longer clips content — scrollable instead.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-24 — BRAIN SESSION (Session 91)
 RESEARCHED: autonomous AI agent reliability (arxiv 2603.06847 fault taxonomy, 2603.15401 SWE-Skills-Bench, 2603.09619 context quality criteria), new ECC skills (click-path-audit, santa-method, skill-comply), copy-trading UX improvements 2026, FastAPI production patterns
 DOWNLOADED: affaan-m/everything-claude-code skills/click-path-audit (2026-03-22) — adapted as PolyEdge vanilla JS skill

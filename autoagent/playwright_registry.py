@@ -697,6 +697,60 @@ async def check():
         except Exception as e:
             failures.append(f"Auth screen check error: {e}")
 
+        # ── Session 92 mobile UX checks — 375px viewport ──────────────────────
+        mob_page = await browser.new_page(viewport={"width": 375, "height": 812})
+        js_errors_mob = []
+        mob_page.on("pageerror", lambda e: js_errors_mob.append(str(e)))
+
+        # CHECK 56: page loads on 375px viewport without JS errors
+        try:
+            await mob_page.goto("http://localhost:3000", timeout=12000)
+            await asyncio.sleep(0.5)
+            if not js_errors_mob:
+                checks += 1
+                print("  [CHECK 56] Page loads on 375px viewport, no JS errors")
+            else:
+                failures.append(f"JS errors on 375px load: {js_errors_mob}")
+        except Exception as e:
+            failures.append(f"375px viewport load error: {e}")
+
+        # CHECK 57: .tab-btn min-height >= 40px on mobile
+        try:
+            h = await mob_page.evaluate("""() => {
+                const btn = document.querySelector('.tab-btn');
+                if (!btn) return null;
+                return parseFloat(getComputedStyle(btn).minHeight);
+            }""")
+            if h is not None and h >= 40:
+                checks += 1
+                print(f"  [CHECK 57] .tab-btn min-height={h}px (>= 40px touch target)")
+            elif h is None:
+                failures.append(".tab-btn not found in DOM for touch target check")
+            else:
+                failures.append(f".tab-btn min-height={h}px < 40px — tap target too small")
+        except Exception as e:
+            failures.append(f"tab-btn touch target check error: {e}")
+
+        # CHECK 58: .section top padding <= 60px on mobile (reduced from 80px)
+        try:
+            await mob_page.evaluate("showView('landing')")
+            await asyncio.sleep(0.2)
+            pt = await mob_page.evaluate("""() => {
+                const sec = document.querySelector('.section');
+                if (!sec) return null;
+                return parseFloat(getComputedStyle(sec).paddingTop);
+            }""")
+            if pt is not None and pt <= 60:
+                checks += 1
+                print(f"  [CHECK 58] .section padding-top={pt}px on mobile (<= 60px, reduced from 80px)")
+            elif pt is None:
+                failures.append(".section not found for padding check")
+            else:
+                failures.append(f".section padding-top={pt}px on mobile — expected <= 60px")
+        except Exception as e:
+            failures.append(f"section padding mobile check error: {e}")
+
+        await mob_page.close()
         await browser.close()
     return checks, failures
 

@@ -1870,5 +1870,10 @@
     "files": ["autoagent/skills/playwright.md", "autoagent/skills/coding.md", "autoagent/skills/click-path-audit.md", "autoagent/skills/INDEX.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md", "autoagent/memory/activity_log.md", "autoagent/memory/knowledge.md", "autoagent/memory/backlog.md"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "brain session — no code changes"}
-  }
+  },
+  {"session": 92, "date": "2026-03-24", "time": "14:00", "type": "work",
+   "summary": "Mobile UX audit — fixed 8 issues at 375px: tap targets on tab and follow buttons (were too small for iPhone), landing section padding reduced from 80px to 48px, modal compact, preview table Volume column hidden on narrow screens, preview card overflow-x scrollable, follows stat dividers hidden at 480px.",
+   "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+   "tests": {"before": 303, "after": 303, "status": "pass"},
+   "frontend": {"status": "pass", "checks": 58, "failures": 0, "notes": "3 new checks (56-58): 375px viewport load, tab-btn min-height, section padding"}}
 ]
