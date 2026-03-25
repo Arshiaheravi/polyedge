@@ -139,12 +139,17 @@ Any dimension that fails = fix before committing. Log issues that require a full
 - Creates "live feed" feel — signals real-time activity
 - Use CSS `@keyframes fadeInUp` (translate + opacity)
 
-### Pricing page: Most Popular tier elevation
-- Apply `transform: translateY(-8px)` to the Basic ($4.99) card
-- Add `box-shadow: 0 0 0 2px var(--accent)` glowing border
-- Add "Most Popular" badge: `position: absolute; top: -12px`
-- Research: elevating middle tier increases that tier's conversion 20-30%
+### Pricing page: Most Popular tier elevation + 2026 CRO patterns
+- Apply `transform: translateY(-8px)` to the Basic ($4.99) card (permanent elevation, not just hover)
+- Add `box-shadow: 0 0 0 2px var(--accent)` + animated glow border: `@keyframes pricing-glow-pulse`
+- Add "Most Popular" badge: `position: absolute; top: -12px; background: var(--accent); color: #000`
+- Research: elevating middle tier increases that tier's conversion 20-30% (PolyEdge design.md data)
+- **Lead with outcomes, not features**: "Get alerted within 30s when top traders bet" beats "Telegram notifications enabled". Pages leading with outcomes convert 34% better. (InfluenceFlow 2026)
+- **Explicit feature comparisons**: Use checkmarks ✓ and ✗ per tier (NOT vague bullets). "Explicit comparisons reduce support inquiries by 31%." ✓ Web Push, ✓ Telegram, ✗ SMS for Basic.
+- **Mobile pricing stack**: Stack cards vertically on mobile (not horizontal scroll). Mobile-optimized pricing converts 2.3x better. Already handled by flexbox wrapping.
+- **Social proof on the pricing page**: Add "Join 847+ traders" or live count near the CTA buttons — not just on the hero. "Visible social proof increases conversion 15-25%." (InfluenceFlow 2026)
 - Add inline under CTA buttons: "Cancel anytime · No credit card for Free tier"
+(Source: InfluenceFlow SaaS Pricing Page Best Practices 2026, Aimers CRO Trends 2026)
 
 ## TOAST NOTIFICATION STACK (vanilla JS — Emil Kowalski / Sonner pattern)
 For the "toast notification stack" backlog task. No libraries — pure CSS + JS.
@@ -207,6 +212,44 @@ For the "bet activity feed enhancements" backlog task.
 **Rule:** Direction (YES/NO) and price stay in one atomic pill — don't split into two separate elements.
 
 (Source: 2026 fintech dark-mode research; badges-vs-chips pattern analysis)
+
+## FOLLOWS TAB DASHBOARD FEEL (summary strip + richer cards)
+For the "Follows tab dashboard feel" backlog task.
+
+**Summary strip (pinned above follow cards):**
+```html
+<div class="follows-summary-strip">
+  <div class="follows-stat">
+    <span class="follows-stat-value" id="follows-count">0</span>
+    <span class="follows-stat-label">Following</span>
+  </div>
+  <div class="follows-stat">
+    <span class="follows-stat-value" id="active-bets-count">0</span>
+    <span class="follows-stat-label">Active bets 24h</span>
+  </div>
+  <div class="follows-stat pnl-positive" id="follows-pnl">
+    <span class="follows-stat-value">+$0</span>
+    <span class="follows-stat-label">Cumulative P&L</span>
+  </div>
+</div>
+```
+```css
+.follows-summary-strip {
+  display: flex; gap: 16px; padding: 12px 16px;
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+.follows-stat { display: flex; flex-direction: column; gap: 2px; }
+.follows-stat-value { font-size: 1.25rem; font-weight: 700; color: var(--text); }
+.follows-stat-label { font-size: 0.7rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+.follows-stat.pnl-positive .follows-stat-value { color: var(--green); }
+.follows-stat.pnl-negative .follows-stat-value { color: var(--red); }
+```
+
+**Rules:**
+- Cumulative P&L must be computed from the bettor cards' profit data (sum of followed bettor profits). Do NOT show fake static numbers.
+- If no follows: hide the strip entirely (show empty state instead)
+- "Active bets 24h" = count of bettors who had activity in last 24h; derive from `followed_at` or last seen bet timestamp if available
 
 ## EXTERNAL ASSET APIS (NovaBanana, Unsplash, etc.)
 Before calling any third-party media/image API:

@@ -342,6 +342,30 @@ Where: autoagent/skills/design.md (PROBABILITY CHIP section)
 Source: 2026 fintech dark-mode research; badges-vs-chips UI pattern analysis
 Expected impact: The backlog bet-activity-feed enhancement task can copy the pill CSS directly — no research needed
 
+## SPA wait strategies in Playwright (waitForResponse pattern) — implemented 2026-03-24 (session 81)
+What: Added "SPA WAIT STRATEGIES" section to playwright.md with `waitForResponse()` (precise, waits for specific API call) and `networkidle` (coarser) patterns for PolyEdge's API-loaded content. Includes working Python code snippet.
+Where: autoagent/skills/playwright.md (new section at end)
+Source: affaan-m/everything-claude-code skills/e2e-testing/SKILL.md (v1.9.0, March 2026)
+Expected impact: Eliminates intermittent Playwright race conditions where checks pass/fail randomly because they don't wait for the /bettors API response before asserting on leaderboard cards.
+
+## 2026 SaaS pricing page CRO patterns — implemented 2026-03-24 (session 81)
+What: Added outcomes-over-features rule (+34% conversion), explicit checkmark/X comparisons (-31% support inquiries), social proof on pricing page (+15-25%), and mobile stack note (2.3x better) to the "Pricing page" section of design.md.
+Where: autoagent/skills/design.md (Pricing page section, expanded with InfluenceFlow 2026 research)
+Source: InfluenceFlow SaaS Pricing Page Best Practices 2026; Aimers CRO Trends 2026
+Expected impact: Next WORK session on pricing section uplift has concrete 2026 research-backed copy and layout rules without needing its own research phase.
+
+## Follows tab dashboard feel pattern — implemented 2026-03-24 (session 81)
+What: Added "FOLLOWS TAB DASHBOARD FEEL" section to design.md with a concrete summary strip HTML/CSS pattern (total follows, active bets 24h, cumulative P&L) and rules for when to show/hide it.
+Where: autoagent/skills/design.md (new section)
+Source: Backlog task analysis + copy-trading UX research
+Expected impact: Next WORK session on follows tab can copy the summary strip pattern directly without design research.
+
+## STEP 0 skip condition fix + frontend XSS gate — implemented 2026-03-24 (session 81)
+What: Changed STEP 0 self-critique skip condition from "zero Python code changed" to "zero files changed" so it runs for frontend-only sessions. Added Q6 (frontend XSS gate) that requires running both audit.md greps inline in STEP 0 whenever frontend/index.html is changed.
+Where: PROMPT.md (STEP 0 self-critique, skip condition + Q6)
+Source: Session 81 META analysis — STEP 0 was silently skipped for ALL UI/UX sessions (no Python touched). XSS audit cycle (sessions 59→67→73→79) happened because STEP 0.5's audit.md wasn't always run either. Moving the grep to STEP 0 Q6 makes it impossible to miss.
+Expected impact: XSS introduced in UI/UX sessions is caught by the author session (not 3-4 sessions later by a dedicated AUDIT session). Breaks the recurring 4-session XSS cycle permanently.
+
 ## Event-driven commit reminders (instruction fade-out prevention) — implemented 2026-03-21
 What: At every commit, re-display the 4 most commonly forgotten rules as a COMMIT REMINDERS block: no autoagent/ in project git add, use py not python3, project branch=main vs autoagent branch=master, clear current_task.md immediately after push. Rules re-injected at the exact decision point where they're most needed prevent instruction fade-out — the pattern where critical rules are read at session start but forgotten 30 tool calls later.
 Where: PROMPT.md (STEP 3 — COMMIT REMINDERS block before step 1)

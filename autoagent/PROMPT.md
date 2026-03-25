@@ -123,8 +123,14 @@ Re-read the 3 most-changed functions/sections you just wrote. Ask:
 3. Did I wire all return values through? (model field → route → frontend)
 4. **Global consistency check**: Does what I just built invalidate any remaining steps in current_task.md? If yes, update the plan before continuing — a mid-task discovery can make a future step wrong. (Source: PARC arxiv 2512.03549)
 5. **Irreversibility check**: Does this session touch any irreversible actions — DB deletes, Stripe charges, Telegram sends, email sends, git pushes? If yes, confirm these were explicitly requested and tested with a mock/guard before going live. Agents consistently underweight the cost of irreversible actions — name them explicitly. (Source: arxiv 2601.02749 — "The Path Ahead for Agentic AI")
+6. **Frontend XSS gate** (if `frontend/index.html` was changed): Run BOTH greps NOW — do not defer to an audit session:
+   ```
+   grep -n 'innerHTML.*\${' frontend/index.html
+   grep -n 'innerHTML\s*=\s*[a-zA-Z_]' frontend/index.html
+   ```
+   Every match must be verified: API-sourced variables (`name`, `market`, `url`, `message`, `detail`, `outcome`, `title`, `addr`) MUST use `escapeHtml()`. Only safe unescaped: integers, floats, hex wallet addresses. **This step alone has prevented 4 recurring XSS cycles (sessions 59, 67, 73, 79 — all found XSS that should have been caught at write time).** (Source: PolyEdge session 81 META analysis)
 Fix anything found BEFORE running tests. This catches a class of bugs that tests miss.
-Skip only if: zero Python code was changed this session.
+Skip only if: zero files were changed this session.
 
 **IMMEDIATELY after self-critique, write your reflexion RULE into knowledge.md** — do this NOW, before tests, before commit. If the session runs out of context later, the rule is already saved. The full reflexion (ACCOMPLISHED/FAILED/RULE) can be completed in Step 4, but the RULE line must be captured here. Format: `RULE: [2026-MM-DD] [concrete rule learned]`
 

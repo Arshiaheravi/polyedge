@@ -313,3 +313,30 @@ else:
 **Rule**: accessibility checks are non-blocking for this project (PolyEdge is not public-accessibility-required yet) — log failures as warnings, don't fail the check. Change `failures.append` to `print(f"  [WARN] ...")` for a11y checks.
 
 (Source: affaan-m/everything-claude-code skills/browser-qa/SKILL.md, 2026-03-23)
+
+---
+
+## SPA WAIT STRATEGIES (for PolyEdge's dynamic API content)
+
+From ECC e2e-testing/SKILL.md (2026). PolyEdge loads leaderboard data from the `/bettors` API after page load — checks that test for card content must wait for the API response, not just page load.
+
+**Use `waitForResponse()` for API-dependent assertions:**
+```python
+# Wait for a specific API call to complete before asserting its result
+async with page.expect_response(lambda r: "/bettors" in r.url and r.ok) as resp_info:
+    await page.goto("http://localhost:3000")
+await resp_info.value  # response is done
+# Now safe to check for .lb-card elements
+cards = await page.query_selector_all(".lb-card")
+```
+
+**Use `waitForLoadState('networkidle')` for general dynamic content:**
+```python
+await page.goto("http://localhost:3000")
+await page.wait_for_load_state("networkidle", timeout=10000)
+# Now safe to check for any dynamically-loaded elements
+```
+
+**Rule**: When a Playwright check randomly passes/fails, the root cause is almost always a race condition between the check's DOM query and the API response. Use `waitForResponse()` (preferred, precise) or `networkidle` (acceptable, coarser) before asserting on API-loaded content.
+
+(Source: affaan-m/everything-claude-code skills/e2e-testing/SKILL.md, 2026-03-24)

@@ -6,7 +6,7 @@
 
 - [ ] Pricing section uplift — elevate the Basic card (translateY(-8px), 2px accent glow border, "Most Popular" badge), add a feature comparison list per card, add "Cancel anytime · No credit card for Free" trust line under the CTAs
 - [ ] Follows tab dashboard feel — add a summary row at the top (total followed, active bets in last 24h, P&L indicator), style the bettor cards on the follows page with a richer layout matching the leaderboard card quality
-- [ ] Win Rate computation — session 75 added the Win Rate slot in the 2x2 leaderboard grid but it shows "—"; compute win rate from activity data in `polymarket.py` (profitable bets / total bets from the last 20 activity records), expose as `win_rate_pct` in bettor profile API response, and render it in the card
+- [ ] Win Rate computation — session 75 added the Win Rate slot in the 2x2 leaderboard grid but it shows "—"; compute win rate from activity data in `polymarket.py` (profitable bets / total bets from the last 20 activity records), expose as `win_rate_pct` in bettor profile API response, and render it in the card. **Note: backend change required (polymarket.py) — skip in UI/UX-only mode; pick this when backend mode resumes**
 
 ---
 

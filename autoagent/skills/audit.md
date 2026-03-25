@@ -58,7 +58,7 @@ Mandate: zero security regressions. One vuln ships = company trust destroyed.
     1. `grep -n 'innerHTML.*\${' frontend/index.html` — catches same-line template literal injections in all functions (renderXxx, buildXxx, createXxx, formatXxx, loadXxx — all equally dangerous)
     2. `grep -n 'innerHTML\s*=\s*[a-zA-Z_]' frontend/index.html` — catches variable-assigned innerHTML (e.g. `el.innerHTML = html` where `html` was built with `${vars}` above). For each match, trace the variable to its definition and verify every API-sourced `${}` uses `escapeHtml()`.
   - Any match with an API-sourced variable (name, url, market, message, addr, question, detail) MUST use `escapeHtml()`. Only safe unescaped: integers, floats, wallet hex (0x...).
-  - **Two-line patterns are the recurring failure mode** (sessions 59, 67, 73 all found these). The grep catches them only with grep #2 above — that second grep is mandatory.
+  - **Two-line patterns are the recurring failure mode** (sessions 59, 67, 73, 79 all found these). The grep catches them only with grep #2 above — that second grep is mandatory. Note: Session 81 META analysis confirmed the cycle is broken as of session 76 (sessions 77, 78, 80 introduced zero XSS). The greps must still be run per-session to maintain this.
 - [ ] All DB queries use SQLAlchemy ORM or parameterized statements — never f-string SQL (injection)
 - [ ] No IDOR: every DB query that returns user data filters by `current_user.id` — users cannot access other users' data
 - [ ] Admin routes check password/JWT — never accessible unauthenticated

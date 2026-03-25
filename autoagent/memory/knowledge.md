@@ -45,6 +45,12 @@
 
 ## Session Reflexions
 
+### Session #81 Reflexion — 2026-03-24 (DEEP Brain)
+ACCOMPLISHED: (1) Archived activity_log.md sessions 41-60 to activity_log_archive.md — log trimmed from 210 lines to 107 lines. (2) Curated knowledge.md — no duplicates found (already clean after session 61+76 curation passes). (3) META analysis of sessions 61-80: found STEP 0 skip condition "zero Python code" silently skipped self-critique for ALL UI/UX sessions — root cause of 4 XSS audit cycles. (4) Fixed STEP 0: changed skip condition to "zero files changed" + added Q6 (frontend XSS grep gate). (5) Updated audit.md to include session 79 in the recurring failure note. (6) Logged technique in brain/techniques.md. (7) Web searches: evaluated 8+ sources. (8) Backlog confirmed 3 HIGH PRIORITY items remain.
+FAILED: Nothing failed.
+RULE: [2026-03-24] STEP 0 skip condition must be "zero files changed", NOT "zero Python code changed". When the project is in frontend-only mode (all sessions edit index.html, no Python), the "zero Python" condition skips STEP 0 for every session — silently eliminating the self-critique gate that catches XSS, logic errors, and intent drift. This was the root cause of 4 consecutive XSS audit cycles (sessions 59, 67, 73, 79). The correct skip condition is always language-agnostic.
+RULE: [2026-03-24] XSS write-time protocol (session 76) + two-grep audit (session 76) confirmed working: sessions 77, 78, 80 introduced zero XSS. The cycle is broken. If future AUDIT sessions find new XSS, it means design.md was not read before writing — not that the protocol is ineffective. The audit sessions are now a sanity check, not a primary defense.
+
 ### Session #80 Reflexion — 2026-03-24 (UI/UX)
 ACCOMPLISHED: Bettor profile hero upgrade. Added `_bettorCache` Map populated in `loadLeaderboard` → profile page gets rank/pnl_usd instantly from cache when navigating from leaderboard. Gradient-initials avatar (deterministic palette from first char of name) sits behind the `<img>` at z-index 0; img fades in on `onload`. Rank badge (gold #1 / silver #2 / bronze #3 / grey #N) and profit badge (green pos / red neg pill) appear above name. 4-stat grid: Profit, PnL%, Volume, Total Bets — replaced old 3-stat (Volume, Bets, Avg Bet). `_updateFollowPreview(isFollowing)` updates preview text on follow toggle. 28/28 Playwright checks pass. 303 backend tests stable (frontend-only session).
 FAILED: Nothing.
