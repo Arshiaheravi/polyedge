@@ -584,6 +584,13 @@
     .stat-box-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
     .stat-box-val { font-size: 16px; font-weight: 800; }
 
+    /* Follows summary strip */
+    .follows-summary-strip { display: flex; gap: 24px; padding: 14px 20px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+    .follows-stat { display: flex; flex-direction: column; gap: 3px; }
+    .follows-stat-value { font-size: 1.35rem; font-weight: 800; color: var(--text); font-family: var(--font-display); }
+    .follows-stat-label { font-size: 0.68rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; }
+    .follows-stat-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
+
     /* Activity feed */
     .activity-feed { display: flex; flex-direction: column; gap: 0; }
     .activity-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
@@ -1537,6 +1544,24 @@
         <h3>No traders followed yet</h3>
         <p style="max-width:340px;margin:0 auto 20px;">Browse the leaderboard, find a top performer, and click <strong style="color:var(--text);">Follow</strong> — their live bets appear here so you can copy at the same price.</p>
         <button class="btn btn-primary" onclick="showTab('leaderboard')">Browse Top Traders</button>
+      </div>
+
+      <!-- Follows dashboard summary strip (hidden until follows load) -->
+      <div id="follows-summary-strip" class="follows-summary-strip hidden">
+        <div class="follows-stat">
+          <span class="follows-stat-value" id="follows-count">0</span>
+          <span class="follows-stat-label">Following</span>
+        </div>
+        <div class="follows-stat-divider"></div>
+        <div class="follows-stat">
+          <span class="follows-stat-value" id="active-bets-count">0</span>
+          <span class="follows-stat-label">Copyable bets</span>
+        </div>
+        <div class="follows-stat-divider"></div>
+        <div class="follows-stat">
+          <span class="follows-stat-value" id="follows-pnl-value">—</span>
+          <span class="follows-stat-label">Tracked P&amp;L</span>
+        </div>
       </div>
 
       <!-- Live activity feed (per bettor) -->
@@ -2761,22 +2786,63 @@ async function loadMyFollows() {
   emptyEl.classList.add('hidden');
   document.getElementById('activity-refresh-indicator').style.display = 'flex';
 
-  // Render follow cards (quick)
+  // Show and populate summary strip
+  const summaryStrip = document.getElementById('follows-summary-strip');
+  if (summaryStrip) summaryStrip.classList.remove('hidden');
+  const followCountEl = document.getElementById('follows-count');
+  if (followCountEl) followCountEl.textContent = follows.length;
+
+  // Render follow cards (quick) — upgraded with rank badge, profit stats, View Profile button
+  const avatarPalettes = ['#059669','#0284c7','#7c3aed','#b45309','#be123c','#0891b2','#16a34a','#dc2626'];
   cardContainer.innerHTML = `<h3 style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin:8px 0 12px;">Followed Bettors</h3>
   <div class="follows-grid">${follows.map(f => {
     const name = f.bettor_name || shortAddr(f.bettor_address);
-    const avatarUrl = `https://api.dicebear.com/7.x/identicon/svg?seed=${f.bettor_address}`;
+    const avatarUrl = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(f.bettor_address)}`;
     const eName = escapeHtml(name);
     const safeAddr = escapeHtml(f.bettor_address);
-    return `<div class="follow-card">
+    const cached = _bettorCache.get(f.bettor_address);
+    // Rank badge
+    const rank = cached ? cached.rank : null;
+    const rankColor = rank === 1 ? 'var(--gold)' : rank === 2 ? '#94a3b8' : rank === 3 ? '#cd7f32' : 'var(--card3)';
+    const rankTextColor = rank && rank <= 3 ? '#000' : 'var(--text2)';
+    const rankLabel = rank ? (rank <= 3 ? ['1','2','3'][rank-1] : String(rank)) : '';
+    const rankBadge = rank ? `<div class="lb-rank-badge" style="background:${rankColor};color:${rankTextColor};">#${rankLabel}</div>` : '';
+    // Profit / PnL% stats from leaderboard cache
+    const pnlUsd = cached ? cached.pnl_usd : null;
+    const pnlPct = cached ? cached.pnl_pct : null;
+    const profitColor = pnlUsd != null ? (pnlUsd >= 0 ? 'var(--green)' : 'var(--red)') : 'var(--text2)';
+    const profitStr = pnlUsd != null ? ((pnlUsd >= 0 ? '+' : '') + fmtUSD(pnlUsd)) : '—';
+    const pnlPctColor = pnlPct != null ? (pnlPct >= 0 ? 'var(--green)' : 'var(--red)') : 'var(--text2)';
+    const pnlPctStr = pnlPct != null ? ((pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(1) + '%') : '—';
+    // Avatar initials fallback (deterministic color from address)
+    const initials = escapeHtml(name ? name[0].toUpperCase() : '?');
+    const avatarBg = avatarPalettes[(f.bettor_address || '').charCodeAt(2) % avatarPalettes.length] || '#059669';
+    return `<div class="follow-card" style="position:relative;">
+      ${rankBadge}
       <div class="follow-card-head">
-        <img class="avatar" style="width:44px;height:44px;" src="${avatarUrl}" alt="avatar" />
-        <div style="flex:1;overflow:hidden;">
+        <div style="position:relative;width:44px;height:44px;flex-shrink:0;">
+          <div style="position:absolute;inset:0;border-radius:50%;background:${avatarBg};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:#fff;">${initials}</div>
+          <img class="avatar" style="position:relative;z-index:1;width:44px;height:44px;border-radius:50%;border:2px solid var(--border);background:transparent;" src="${escapeHtml(avatarUrl)}" alt="" />
+        </div>
+        <div style="flex:1;overflow:hidden;padding-right:${rank ? '32px' : '0'};">
           <div class="font-semibold truncate" title="${eName}">${eName}</div>
           <div class="bettor-addr">${escapeHtml(shortAddr(f.bettor_address))}</div>
         </div>
       </div>
-      <button class="btn btn-danger btn-sm w-full" onclick="unfollowFromFollowsTab('${safeAddr}', this)">Unfollow</button>
+      <div class="follow-card-stats">
+        <div class="stat-box">
+          <div class="stat-box-label">Profit</div>
+          <div class="stat-box-val" style="color:${profitColor};">${profitStr}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">PnL %</div>
+          <div class="stat-box-val" style="color:${pnlPctColor};">${pnlPctStr}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="showProfile('${safeAddr}')">View Profile</button>
+        <button class="btn btn-danger btn-sm" style="flex:1;" onclick="unfollowFromFollowsTab('${safeAddr}', this)">Unfollow</button>
+      </div>
     </div>`;
   }).join('')}</div>`;
 
@@ -2800,6 +2866,8 @@ async function refreshFollowsActivity() {
 
     if (!bettors.length) {
       activityContainer.innerHTML = '';
+      const abEl = document.getElementById('active-bets-count');
+      if (abEl) abEl.textContent = '0';
       return;
     }
 
@@ -2808,6 +2876,17 @@ async function refreshFollowsActivity() {
       (b.active_positions || []).map(p => ({ ...p, _bettor: b.name, _addr: b.address,
         _avatarUrl: `https://api.dicebear.com/7.x/identicon/svg?seed=${b.address}` }))
     );
+
+    // Update summary strip: copyable bet count + cumulative P&L
+    const activeBetsEl = document.getElementById('active-bets-count');
+    if (activeBetsEl) activeBetsEl.textContent = allPositions.length;
+    const pnlValueEl = document.getElementById('follows-pnl-value');
+    if (pnlValueEl) {
+      const cumPnl = allPositions.reduce((s, p) => s + (p.cash_pnl || 0), 0);
+      const sign = cumPnl >= 0 ? '+' : '';
+      pnlValueEl.textContent = sign + fmtUSD(Math.abs(cumPnl));
+      pnlValueEl.style.color = cumPnl >= 0 ? 'var(--green)' : 'var(--red)';
+    }
 
     // Detect new positions and fire bet alert toasts (only after first load)
     const wasFirstLoad = _seenBetIds.size === 0;
