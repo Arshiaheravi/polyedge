@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **303 passed** (as of 2026-03-24, session 70 — no new tests, frontend-only session)
+- Test count: **303 passed** (as of 2026-03-24, session 90 — no new tests, frontend-only session)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +44,13 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #90 Reflexion — 2026-03-24 (UI/UX)
+ACCOMPLISHED: Playwright screenshot gallery. Captured 7 PNGs (01-07) via tmp_screenshots.py using JS `showView()`/`showTab()` calls — no click() on nav elements (they're not visible at 1280px desktop). Added 7 new checks (49-55) to playwright_registry.py using a separate `scr_page` instance so the new checks don't interfere with prior checks 1-48. 55/55 pass. 303 backend tests stable.
+FAILED: First attempt used ElementHandle.click() on #nav-leaderboard etc. — elements exist in DOM but are display:none at desktop width. Fixed by using `page.evaluate("showView(...)")` / `page.evaluate("showTab(...)")` instead. Also hit charmap encoding error from `→` unicode in print() — fixed by using plain ASCII `->` in print statements (or sys.stdout.reconfigure — but ASCII was simpler).
+RULE: [2026-03-24] SPA navigation in Playwright: never click nav elements by ID if they might be hidden (e.g. desktop vs mobile nav). Use `page.evaluate("showTab('X')")` or equivalent JS function calls instead — they always work regardless of element visibility.
+RULE: [2026-03-24] When print() raises charmap error on Windows (can't encode unicode like → \u2192): replace with ASCII equivalent (`->`) in all print statements. Alternatively add `sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')` at script top — but ASCII is simpler and avoids the import entirely.
+RULE: [2026-03-24] Playwright multi-screen check pattern: create a dedicated `scr_page = await browser.new_page(...)` for screen-navigation checks at the end of the check function. Navigate via JS evals. Close `scr_page` in the last check's block before `browser.close()`. This isolates screen-navigation side effects (tab switches, view changes) from earlier checks on the main `page`.
 
 ### Session #89 Reflexion — 2026-03-24 (UI/UX)
 ACCOMPLISHED: Follow preview tooltip on leaderboard cards. CSS: `.lb-follow-wrap` (position:relative), `.lb-follow-tooltip` (absolute, bottom:calc(100%+8px), left:50%, translateX(-50%), opacity:0 by default, transition opacity 0.15s, arrow caret via ::after). Show on `.lb-follow-wrap:hover` or `.lb-follow-wrap:focus-within`. JS: `renderBettorCard` wraps follow button in `.lb-follow-wrap`; inserts `<span class="lb-follow-tooltip">` with bettor name only when `!isFollowing` (uses already-escaped `eName`). XSS: `eName` = `escapeHtml(name)` — safe in tooltip. 3 new Playwright checks (46–48): tooltip present in not-following state, correct text content, absent when following. 48/48 pass. 303 tests stable. Also: discovered hero counter animations (animateCounter + runLandingCounters + 8s live ticker) were already committed — removed stale backlog item.

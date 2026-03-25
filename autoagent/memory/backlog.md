@@ -5,8 +5,10 @@
 ## HIGH PRIORITY — UI/UX Tasks
 
 - [ ] Win Rate computation — session 75 added the Win Rate slot in the 2x2 leaderboard grid but it shows "—"; compute win rate from activity data in `polymarket.py` (profitable bets / total bets from the last 20 activity records), expose as `win_rate_pct` in bettor profile API response, and render it in the card. **Note: backend change required (polymarket.py) — skip in UI/UX-only mode; pick this when backend mode resumes**
-- [ ] Playwright screenshot gallery — capture screenshots of all 7 major screens (landing, leaderboard, profile, follows, alerts/settings, pricing, auth form) and save to `autoagent/reports/screenshots/`. Required by NORTH_STAR.md. Add 7 Playwright checks that each screen renders without JS errors and save PNG files.
 - [ ] Mobile UX audit — test all 7 screens at 375px width: check text truncation, button tap targets (min 44px), card layout, bottom nav accessibility, and any horizontal overflow. Fix any issues found.
+- [ ] Profile page skeleton loading — `showProfile()` currently shows a blank flash while the API loads bettor data; add skeleton loading state (2 skeleton stat cards + skeleton bet rows) that shows immediately on navigate and fades out when data arrives. Match the existing `renderFollowSkeletonCards` pattern already in place for the follows tab.
+- [ ] Account tab redesign (logged-in state) — when a user is logged in, `renderAccount()` currently shows minimal info; upgrade it to show: user avatar/initials, username, current plan badge (Free/Basic/VIP with color), plan upgrade CTA if on Free, and a styled logout button. Frontend-only change to `renderAccount()`.
+- [ ] Leaderboard sort controls upgrade — the 3 sort buttons (Profit / Win Rate / Volume) currently have basic active states; upgrade with: pill-style toggle group (one visible active pill), smooth 0.2s transition, tooltip on hover explaining what each metric means (e.g. "Total USD profit on Polymarket"), and a subtle count badge showing how many bettors qualify.
 
 
 ---

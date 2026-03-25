@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #90] Playwright screenshot gallery** — captured all 7 major screens (landing, leaderboard, profile, follows, alerts, pricing, auth) as PNGs in autoagent/reports/screenshots/; added 7 Playwright checks (49-55) verifying each screen renders correctly; 55/55 checks pass
 - **[SESSION #89] Leaderboard follow preview tooltip** — `.lb-follow-wrap` + `.lb-follow-tooltip` added to `renderBettorCard()`; "You'll be notified within 30s when [Name] bets" appears on hover/focus of the follow button (not-following state only); absent when already following; 3 new Playwright checks (46–48)
 - **[SESSION #88] Leaderboard card progressive disclosure** — clicking any lb-card (except the follow button) now expands it via CSS max-height transition to reveal recent market titles (lazy-fetched from /bettors/{address} on first expand) and a "View profile →" CTA; chevron rotates 180° on expand; market titles cached to avoid re-fetching
 - **[SESSION #87] Auth form UX tightening** — animated tab switch (fade+slide when toggling Login ↔ Sign Up), mobile full-screen auth box (100vh, flush at ≤640px), "or" divider + disabled Google SSO placeholder in both forms

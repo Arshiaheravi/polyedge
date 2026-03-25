@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-24 — UI/UX (Session 90)
+DONE: Playwright screenshot gallery — captured screenshots of all 7 major screens (01_landing_hero.png, 02_leaderboard.png, 03_profile.png, 04_follows.png, 05_alerts.png, 06_pricing.png, 07_auth.png) saved to autoagent/reports/screenshots/. Added 7 new Playwright checks (49-55) that verify each screen renders correctly via showView/showTab JS calls on a dedicated page instance. 55/55 checks pass. 303 backend tests stable.
+IMPACT: Satisfies the NORTH_STAR.md requirement for screenshot documentation of all 7 major screens. Adds regression coverage ensuring each screen renders without errors — any future change that breaks a screen will be caught by checks 49-55 before commit.
+FILES: autoagent/playwright_registry.py
+
 ## 2026-03-24 — UI/UX (Session 89)
 DONE: Leaderboard follow preview tooltip — `.lb-follow-wrap` relative container + `.lb-follow-tooltip` absolute tooltip added to `renderBettorCard()`; tooltip shows "You'll be notified within 30s when [Name] bets" on hover/focus of the Follow button; tooltip is hidden when the bettor is already followed; CSS arrow caret points down to button; 3 new Playwright checks (46–48). Also discovered hero counter animations were already implemented (animateCounter + runLandingCounters, committed prior session) and removed from backlog. 303 backend tests pass. 48/48 Playwright checks pass.
 IMPACT: Users hovering the Follow button on any leaderboard card now see exactly what they're signing up for before clicking — the "30s notification" promise is shown at the precise moment of decision. This reduces uncertainty about the core value prop (instant alerts) and should increase follow conversion rate.

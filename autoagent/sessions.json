@@ -1850,5 +1850,15 @@
     "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 48, "failures": 0, "notes": "3 new checks (46-48): lb-follow-wrap present, tooltip text content, tooltip absent when already following"}
+  },
+  {
+    "session": 90,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Playwright screenshot gallery completed — captured screenshots of all 7 major screens (landing, leaderboard, profile, follows, alerts, pricing, auth) saved to autoagent/reports/screenshots/; added 7 new Playwright checks (49-55) verifying each screen renders correctly",
+    "files": ["autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 55, "failures": 0, "notes": "7 new checks (49-55): each of the 7 major screens verified via showView/showTab JS calls on a dedicated scr_page instance"}
   }
 ]

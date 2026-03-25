@@ -601,6 +601,102 @@ async def check():
         except Exception as e:
             failures.append(f'lb-follow-tooltip following-state check error: {e}')
 
+        # ── CHECK 49 (session 90): landing/hero view renders without JS errors ──
+        try:
+            scr_page = await browser.new_page(viewport={"width": 1280, "height": 800})
+            scr_js_errors = []
+            scr_page.on("pageerror", lambda e: scr_js_errors.append(str(e)))
+            await scr_page.goto(FRONTEND_URL, timeout=15000)
+            await scr_page.wait_for_load_state("networkidle", timeout=10000)
+            await scr_page.evaluate("showView('landing'); window.scrollTo(0,0)")
+            await asyncio.sleep(0.4)
+            hero = await scr_page.query_selector(".hero")
+            if hero and not scr_js_errors:
+                checks += 1
+                print("  [CHECK 49] Landing/hero view loads without JS errors")
+            else:
+                failures.append(f"Landing/hero check: hero={bool(hero)}, js_errors={scr_js_errors[:1]}")
+        except Exception as e:
+            failures.append(f"Landing/hero screen check error: {e}")
+
+        # ── CHECK 50 (session 90): leaderboard view renders ────────────────────
+        try:
+            await scr_page.evaluate("showView('dashboard'); showTab('leaderboard')")
+            await asyncio.sleep(0.4)
+            lb_grid = await scr_page.query_selector(".lb-grid")
+            if lb_grid:
+                checks += 1
+                print("  [CHECK 50] Leaderboard view renders (.lb-grid present)")
+            else:
+                failures.append("Leaderboard view: .lb-grid not found")
+        except Exception as e:
+            failures.append(f"Leaderboard screen check error: {e}")
+
+        # ── CHECK 51 (session 90): profile tab exists in DOM ──────────────────
+        try:
+            profile_tab = await scr_page.query_selector("#tab-profile")
+            if profile_tab:
+                checks += 1
+                print("  [CHECK 51] Profile tab (#tab-profile) exists in DOM")
+            else:
+                failures.append("Profile tab (#tab-profile) not found in DOM")
+        except Exception as e:
+            failures.append(f"Profile tab DOM check error: {e}")
+
+        # ── CHECK 52 (session 90): follows view renders empty state ───────────
+        try:
+            await scr_page.evaluate("showView('dashboard'); showTab('follows')")
+            await asyncio.sleep(0.4)
+            follows_tab = await scr_page.query_selector("#tab-follows:not(.hidden)")
+            if follows_tab:
+                checks += 1
+                print("  [CHECK 52] Follows view renders (#tab-follows visible)")
+            else:
+                failures.append("Follows view: #tab-follows not visible after showTab('follows')")
+        except Exception as e:
+            failures.append(f"Follows screen check error: {e}")
+
+        # ── CHECK 53 (session 90): alerts view renders ────────────────────────
+        try:
+            await scr_page.evaluate("showView('dashboard'); showTab('alerts')")
+            await asyncio.sleep(0.4)
+            alerts_tab = await scr_page.query_selector("#tab-alerts:not(.hidden)")
+            if alerts_tab:
+                checks += 1
+                print("  [CHECK 53] Alerts view renders (#tab-alerts visible)")
+            else:
+                failures.append("Alerts view: #tab-alerts not visible after showTab('alerts')")
+        except Exception as e:
+            failures.append(f"Alerts screen check error: {e}")
+
+        # ── CHECK 54 (session 90): pricing section renders on landing ─────────
+        try:
+            await scr_page.evaluate("showView('landing')")
+            await asyncio.sleep(0.3)
+            pricing_el = await scr_page.query_selector("#pricing")
+            if pricing_el:
+                checks += 1
+                print("  [CHECK 54] Pricing section (#pricing) present on landing view")
+            else:
+                failures.append("Pricing section (#pricing) not found on landing view")
+        except Exception as e:
+            failures.append(f"Pricing screen check error: {e}")
+
+        # ── CHECK 55 (session 90): auth view renders auth-box ─────────────────
+        try:
+            await scr_page.evaluate("showView('auth', 'login')")
+            await asyncio.sleep(0.3)
+            auth_view = await scr_page.query_selector("#view-auth:not(.hidden)")
+            auth_box  = await scr_page.query_selector(".auth-box")
+            if auth_view and auth_box:
+                checks += 1
+                print("  [CHECK 55] Auth view renders (view-auth visible + .auth-box present)")
+            else:
+                failures.append(f"Auth view check: view={bool(auth_view)}, box={bool(auth_box)}")
+            await scr_page.close()
+        except Exception as e:
+            failures.append(f"Auth screen check error: {e}")
+
         await browser.close()
     return checks, failures
 
