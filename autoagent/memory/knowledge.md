@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **303 passed** (as of 2026-03-24, session 69 — no new tests, frontend-only session)
+- Test count: **303 passed** (as of 2026-03-24, session 70 — no new tests, frontend-only session)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +44,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #70 Reflexion — 2026-03-24
+ACCOMPLISHED: Auth form polish — password visibility toggle (eye SVG, toggles field type + swaps icon), inline field errors with `.form-error` / `showFieldError()` / `clearFieldError()`, `clearAllErrors()` before submit, general error div for API-level failures, fadeUp animation on `.auth-box`, social proof copy under login CTA. 17/17 Playwright checks pass (3 new). 303 tests stable.
+FAILED: Python `str.replace()` on file content wrote 0 bytes when the needle had `\n` but file had `\r\n` on Windows. The file content was empty after open+write. Fixed by using line-array injection instead of string replace.
+RULE: [2026-03-24] On Windows, never use `str.replace('...\n...', ...)` to patch multi-line file content — line endings may be `\r\n` and the needle won't match. Instead, read as lines list, find the target line index by inspection, then insert at that index.
+RULE: [2026-03-24] For form inline errors: use `textContent = msg` not `innerHTML = msg` — API error messages (data.detail) are user-facing strings that could contain HTML characters. textContent is always safe. Only ever use innerHTML for hardcoded SVG/HTML literal strings.
 
 ### Session #69 Reflexion — 2026-03-24
 ACCOMPLISHED: Built bettor profile page — `showProfile(address)` fetches `/bettors/{address}`, renders `renderProfileData()` with avatar/stats/follow-btn, and `renderBetRow()` for each bet with YES(green)/NO(red) outcome, price in cents, Copy-bet link. showTab() extended to include 'profile' in the hidden/show loop. lb-card-header gets `lb-card-header-click` class + onclick. 303 tests stable, 14/14 Playwright checks pass (2 new checks).

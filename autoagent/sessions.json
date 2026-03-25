@@ -1441,5 +1441,12 @@
     "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 14, "failures": 0, "notes": "2 new checks: #tab-profile in DOM and hidden, lb-card-header-click class present"}
+  },
+  {
+    "session": 70, "date": "2026-03-24", "time": "19:40", "type": "work",
+    "summary": "Polished the login/register form — password fields now have eye-icon visibility toggle, validation errors appear inline below each field (not in a toast), and the auth card slides in with a fadeUp animation on every show",
+    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 17, "failures": 0, "notes": "3 new checks: .auth-box in DOM, >=2 .pass-toggle buttons, >=5 .form-error divs"}
   }
 ]

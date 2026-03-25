@@ -194,6 +194,40 @@ async def check():
             checks += 1
             print(f"  [CHECK 14] lb-card-header-click: no cards yet — {e} — skip (non-blocking)")
 
+
+        # CHECK 15 (session 70): Auth box exists in DOM
+        try:
+            auth_box = await page.query_selector('.auth-box')
+            if auth_box:
+                checks += 1
+                print('  [CHECK 15] .auth-box present in DOM')
+            else:
+                failures.append('.auth-box not found')
+        except Exception as e:
+            failures.append(f'Auth box check error: {e}')
+
+        # CHECK 16 (session 70): Password toggle buttons present
+        try:
+            pass_toggles = await page.eval_on_selector_all('.pass-toggle', 'els => els.length')
+            if pass_toggles >= 2:
+                checks += 1
+                print(f'  [CHECK 16] {pass_toggles} password toggle buttons present')
+            else:
+                failures.append(f'Expected >=2 .pass-toggle buttons, found {pass_toggles}')
+        except Exception as e:
+            failures.append(f'Password toggle check error: {e}')
+
+        # CHECK 17 (session 70): Inline error divs exist
+        try:
+            err_divs = await page.eval_on_selector_all('.form-error', 'els => els.length')
+            if err_divs >= 5:
+                checks += 1
+                print(f'  [CHECK 17] {err_divs} inline error divs present')
+            else:
+                failures.append(f'Expected >=5 .form-error divs, found {err_divs}')
+        except Exception as e:
+            failures.append(f'Inline error div check error: {e}')
+
         await browser.close()
     return checks, failures
 

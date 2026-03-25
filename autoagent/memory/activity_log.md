@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 70)
+DONE: Login/Register form UX polish — added password visibility toggle (eye icon) to all password fields, inline field-level error messages (red text below field) replacing toast-based validation errors, fadeUp slide-in animation on auth-box, social proof copy under login CTA. API errors shown in centred general error div. Errors auto-clear as user types. 17/17 Playwright checks pass (3 new: auth-box DOM, pass-toggle count, form-error count). 303 tests stable.
+IMPACT: Auth form now gives clear, contextual feedback exactly where the error is (not a dismissible toast in the corner), password can be revealed before submitting, and the form slides in with a premium feel — reduces registration friction for new users entering the conversion funnel.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-24 — UI/UX (Session 69)
 DONE: Added bettor profile page — leaderboard card headers now open a full profile on click (showProfile(address)). Profile shows: large avatar, name, wallet address, Polymarket link, Follow/Unfollow CTA, 3 stat cards (volume/total bets/avg bet), and recent bets timeline. Each bet row: market question, YES (green) / NO (red) outcome, price in cents, date, Copy-bet ↗ link. Skeleton loading state, empty state, timestamp handling for both ISO and Unix formats. 14/14 Playwright checks pass (2 new: #tab-profile hidden, lb-card-header-click).
 IMPACT: Users can now click any bettor to see their detailed profile and recent bets before deciding to follow — reduces follow friction and gives traders more context to make copy decisions. Core loop step (LEADERBOARD → FOLLOWS) now has an intermediate "evaluate this bettor" step.
