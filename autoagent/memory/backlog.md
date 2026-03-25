@@ -28,6 +28,12 @@
 
 - [ ] Plankton write-time code quality enforcement — install ruff+biome+plankton hooks via settings.json; auto-formats Python (ruff) and HTML/JS (biome) on every file edit; blocks config tampering; delegates unfixable violations to subprocesses by tier. Requires: `pip install plankton-code-quality`, hooks in settings.json. See ECC skills/plankton-code-quality/SKILL.md.
 
+## FEATURE MODE ONLY — Competitive Intelligence (from ericaai.tech.blog + coincodecap, 2026-03-25)
+
+- [ ] Copy-ratio per bettor follow — add `copy_ratio` column (0.1x–1x float) to `BettorFollow` model; notifications include suggested position size = whale_size × copy_ratio; lets users size bets relative to whale's stake (PolyAlertHub, ericaai 2026 production pattern)
+- [ ] Min-odds + max-exposure filters — add `min_odds_threshold` and `max_exposure_usd` columns to `AlertSetting`; notification dispatch skips bets below min odds or above max exposure (prevents pings on near-certain bets or whales going all-in)
+- [ ] Market-launch alerts — separate notification category for NEW markets (not just new bets); bettors who follow a whale get alerted when a new market opens that whale has bet in; competitors advertise this as a distinct feature
+
 ## FEATURE MODE ONLY — Competitive Intelligence (from awesome-prediction-market-tools, 2026-03-25)
 
 - [ ] Discord notification channel — add Discord webhook support to alert settings (competitors: Nevua Markets, PolyAlertHub all offer Discord; VIP differentiator alongside Telegram)
