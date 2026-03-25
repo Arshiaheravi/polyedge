@@ -981,7 +981,53 @@
     .bet-copy-link:hover { text-decoration: underline; }
     .bet-row-amount { font-size: var(--fs-md); font-weight: 700; color: var(--text); font-family: monospace; white-space: nowrap; flex-shrink: 0; }
     .lb-card-header-click { cursor: pointer; }
-    .lb-card-header-click:hover .lb-card-name { color: var(--accent); }
+    .lb-card:hover .lb-card-name { color: var(--accent); }
+
+    /* Leaderboard card progressive disclosure */
+    .lb-card { cursor: pointer; }
+    .lb-card-chevron {
+      display: flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; flex-shrink: 0;
+      color: var(--text3); transition: transform 0.28s ease, color 0.2s;
+      margin-left: auto;
+    }
+    .lb-card.lb-expanded .lb-card-chevron { transform: rotate(180deg); color: var(--accent); }
+    .lb-card-disclosure {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.3s ease, opacity 0.25s ease;
+      opacity: 0;
+    }
+    .lb-card.lb-expanded .lb-card-disclosure { max-height: 220px; opacity: 1; }
+    .lb-disclosure-inner {
+      border-top: 1px solid var(--border);
+      padding: 12px 0 14px;
+      margin-top: -2px;
+    }
+    .lb-disclosure-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--text3); margin-bottom: 7px;
+    }
+    .lb-disclosure-market {
+      font-size: 12px; color: var(--text2);
+      padding: 3px 0; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .lb-disclosure-market::before {
+      content: ''; display: inline-block;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0; opacity: 0.7;
+    }
+    .lb-disclosure-loading { font-size: 12px; color: var(--text3); font-style: italic; padding: 3px 0; }
+    .lb-view-profile-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      margin-top: 12px; padding: 8px 14px;
+      border: 1px solid var(--accent); border-radius: var(--radius-sm);
+      color: var(--accent); font-size: 13px; font-weight: 600;
+      background: transparent; cursor: pointer; width: 100%;
+      transition: background 0.15s, box-shadow 0.15s;
+    }
+    .lb-view-profile-btn:hover { background: rgba(0,201,122,0.08); box-shadow: 0 0 12px rgba(0,201,122,0.12); }
   </style>
 </head>
 <body>
@@ -2632,19 +2678,21 @@ function renderBettorCard(b, i) {
   const eName = escapeHtml(name);
   const safeAddr = escapeHtml(addr);
   return `<div class="lb-card animate-fade-in-up" style="animation-delay:${delay}ms"
-    role="listitem" data-name="${escapeHtml(name.toLowerCase())}" data-addr="${escapeHtml(addr.toLowerCase())}">
+    role="listitem" tabindex="0"
+    data-name="${escapeHtml(name.toLowerCase())}" data-addr="${escapeHtml(addr.toLowerCase())}"
+    onclick="toggleLbCardExpand(event, this)"
+    onkeydown="if(event.key==='Enter'||event.key===' ')toggleLbCardExpand(event,this)">
     ${rankBadgeEl}
-    <div class="lb-card-header lb-card-header-click"
-         onclick="showProfile('${safeAddr}')"
-         role="button" tabindex="0"
-         title="View ${eName}'s profile"
-         onkeydown="if(event.key==='Enter')showProfile('${safeAddr}')">
+    <div class="lb-card-header lb-card-header-click">
       <img class="lb-card-avatar" src="${safeAvatarUrl}" alt="${eName}"
            onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${safeAddr}'" />
       <div class="lb-card-identity">
         <div class="lb-card-name" title="${eName}">${eName}</div>
         <div class="lb-card-addr">${escapeHtml(shortAddr(addr))}</div>
       </div>
+      <span class="lb-card-chevron" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
     </div>
     <div class="lb-card-stats">
       <div class="lb-stat">
@@ -2664,13 +2712,73 @@ function renderBettorCard(b, i) {
         <div class="lb-stat-val" style="color:var(--text3);">—</div>
       </div>
     </div>
+    <div class="lb-card-disclosure" data-addr="${safeAddr}">
+      <div class="lb-disclosure-inner">
+        <div class="lb-disclosure-label">Recent Markets</div>
+        <div class="lb-disclosure-markets">
+          <div class="lb-disclosure-loading">Loading recent bets…</div>
+        </div>
+        <button class="lb-view-profile-btn"
+                onclick="event.stopPropagation();showProfile('${safeAddr}')"
+                aria-label="View full profile for ${eName}">
+          View profile
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
     <button class="follow-btn w-full ${isFollowing ? 'following' : ''}"
-            onclick="toggleFollow('${safeAddr}', '${eName}', this)"
+            onclick="event.stopPropagation();toggleFollow('${safeAddr}', '${eName}', this)"
             aria-label="${isFollowing ? 'Unfollow' : 'Follow'} ${eName}"
             aria-pressed="${isFollowing}">
       ${isFollowing ? '&#10003; Following' : '+ Follow'}
     </button>
   </div>`;
+}
+
+const _disclosureCache = new Map(); // address → array of market title strings (max 2)
+
+async function _loadDisclosureMarkets(addr, disclosureEl) {
+  const marketsDiv = disclosureEl.querySelector('.lb-disclosure-markets');
+  if (!marketsDiv) return;
+
+  if (_disclosureCache.has(addr)) {
+    _renderDisclosureMarkets(marketsDiv, _disclosureCache.get(addr));
+    return;
+  }
+
+  try {
+    const token = getToken();
+    const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+    const res = await fetch(`${API}/bettors/${encodeURIComponent(addr)}`, { headers });
+    if (!res.ok) throw new Error('fetch failed');
+    const data = await res.json();
+    const bets = (data.recent_bets || data.bets || []).slice(0, 2);
+    const titles = bets.map(bet => bet.market_question || bet.market || bet.title || '').filter(Boolean);
+    _disclosureCache.set(addr, titles);
+    _renderDisclosureMarkets(marketsDiv, titles);
+  } catch (_) {
+    _disclosureCache.set(addr, []);
+    marketsDiv.innerHTML = `<div class="lb-disclosure-loading">No recent data available</div>`;
+  }
+}
+
+function _renderDisclosureMarkets(marketsDiv, titles) {
+  if (!titles.length) {
+    marketsDiv.innerHTML = `<div class="lb-disclosure-loading">No recent markets found</div>`;
+    return;
+  }
+  marketsDiv.innerHTML = titles.map(t => `<div class="lb-disclosure-market">${escapeHtml(t)}</div>`).join('');
+}
+
+function toggleLbCardExpand(event, cardEl) {
+  if (event.target.closest('.follow-btn') || event.target.closest('.lb-view-profile-btn')) return;
+  const willExpand = !cardEl.classList.contains('lb-expanded');
+  cardEl.classList.toggle('lb-expanded', willExpand);
+  if (willExpand) {
+    const disclosureEl = cardEl.querySelector('.lb-card-disclosure');
+    const addr = disclosureEl ? disclosureEl.dataset.addr : null;
+    if (addr && disclosureEl) _loadDisclosureMarkets(addr, disclosureEl);
+  }
 }
 
 function renderSkeletonCards(count) {
