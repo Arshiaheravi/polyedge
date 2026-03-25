@@ -766,6 +766,7 @@
       .live-ticker-wrap { display: none; }
       /* Profile page mobile */
       .profile-hero-card { flex-direction: column; align-items: flex-start; }
+      .profile-cta-wrap { width: 100%; }
       .profile-follow-cta { width: 100%; }
       .profile-stats-row { grid-template-columns: repeat(2, 1fr); }
       .profile-stat-val { font-size: var(--fs-3xl); }
@@ -797,14 +798,48 @@
       flex-wrap: wrap;
     }
     .profile-hero-left { display: flex; align-items: center; gap: var(--sp-4); flex: 1; min-width: 0; }
+    /* Avatar: container holds img + gradient-initials fallback */
+    .profile-avatar-wrap {
+      position: relative; width: 72px; height: 72px; flex-shrink: 0;
+    }
     .profile-avatar-lg {
       width: 72px; height: 72px;
       border-radius: 50%;
-      flex-shrink: 0;
       border: 2px solid var(--border2);
       background: var(--card2);
+      object-fit: cover;
+      position: relative; z-index: 1;
+    }
+    .profile-avatar-initials {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: var(--fs-2xl); font-weight: 800; color: #fff;
+      font-family: var(--font-display);
+      background: linear-gradient(135deg, #1a3a4a, #0e4d3a);
+      z-index: 0;
     }
     .profile-hero-info { min-width: 0; }
+    /* Badges row above name */
+    .profile-hero-badges { display: flex; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-2); flex-wrap: wrap; }
+    .profile-rank-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 3px 10px; border-radius: 99px;
+      font-size: var(--fs-xs); font-weight: 800;
+      font-family: var(--font-display);
+    }
+    .profile-rank-badge.rank-1 { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; box-shadow: 0 0 10px rgba(245,158,11,0.35); }
+    .profile-rank-badge.rank-2 { background: linear-gradient(135deg, #cbd5e1, #94a3b8); color: #000; }
+    .profile-rank-badge.rank-3 { background: linear-gradient(135deg, #cd7f32, #a0522d); color: #fff; }
+    .profile-rank-badge.rank-n { background: var(--card3); color: var(--text3); border: 1px solid var(--border2); }
+    .profile-profit-badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 10px; border-radius: 99px;
+      font-size: var(--fs-xs); font-weight: 700;
+      font-family: var(--font-display);
+    }
+    .profile-profit-badge.pos { background: rgba(0,201,122,0.15); color: var(--green); border: 1px solid rgba(0,201,122,0.3); }
+    .profile-profit-badge.neg { background: rgba(240,62,62,0.12); color: var(--red); border: 1px solid rgba(240,62,62,0.25); }
     .profile-name-heading {
       font-size: var(--fs-4xl); font-weight: 700; color: var(--text);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -816,10 +851,18 @@
     }
     .profile-poly-link { font-size: var(--fs-xs); color: var(--accent); text-decoration: none; }
     .profile-poly-link:hover { text-decoration: underline; }
-    .profile-follow-cta { flex-shrink: 0; min-width: 120px; }
+    /* CTA column: button + preview text */
+    .profile-cta-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: var(--sp-2); flex-shrink: 0; }
+    .profile-follow-cta { min-width: 130px; }
+    .profile-follow-preview {
+      font-size: var(--fs-xs); color: var(--text3);
+      text-align: center; max-width: 160px;
+      line-height: 1.4;
+    }
+    .profile-follow-preview.hidden-preview { visibility: hidden; }
     .profile-stats-row {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: var(--sp-3);
       margin-bottom: var(--sp-5);
     }
@@ -1663,27 +1706,41 @@
       </div>
       <div class="profile-hero-card">
         <div class="profile-hero-left">
-          <img id="profile-avatar" class="profile-avatar-lg" src="" alt="" />
+          <div class="profile-avatar-wrap">
+            <img id="profile-avatar" class="profile-avatar-lg" src="" alt="" />
+            <div id="profile-avatar-initials" class="profile-avatar-initials" aria-hidden="true"></div>
+          </div>
           <div class="profile-hero-info">
+            <div class="profile-hero-badges">
+              <span id="profile-rank-badge" class="profile-rank-badge" style="display:none;"></span>
+              <span id="profile-profit-badge" class="profile-profit-badge" style="display:none;"></span>
+            </div>
             <h1 id="profile-name" class="profile-name-heading">&#8212;</h1>
             <div id="profile-addr-display" class="profile-addr-mono"></div>
             <a id="profile-polylink" class="profile-poly-link" href="#" target="_blank" rel="noopener noreferrer">View on Polymarket &#8599;</a>
           </div>
         </div>
-        <button id="profile-follow-btn" class="follow-btn profile-follow-cta" onclick="profileToggleFollow()">+ Follow</button>
+        <div class="profile-cta-wrap">
+          <button id="profile-follow-btn" class="follow-btn profile-follow-cta" onclick="profileToggleFollow()">+ Follow</button>
+          <p class="profile-follow-preview" id="profile-follow-preview">You&#8217;ll be notified within 30s when they bet</p>
+        </div>
       </div>
       <div class="profile-stats-row">
         <div class="profile-stat-card">
-          <div class="profile-stat-label">Volume Traded</div>
+          <div class="profile-stat-label">Profit</div>
+          <div class="profile-stat-val" id="pstat-profit">&#8212;</div>
+        </div>
+        <div class="profile-stat-card">
+          <div class="profile-stat-label">PnL%</div>
+          <div class="profile-stat-val" id="pstat-pnl">&#8212;</div>
+        </div>
+        <div class="profile-stat-card">
+          <div class="profile-stat-label">Volume</div>
           <div class="profile-stat-val" id="pstat-volume">&#8212;</div>
         </div>
         <div class="profile-stat-card">
           <div class="profile-stat-label">Total Bets</div>
           <div class="profile-stat-val" id="pstat-bets">&#8212;</div>
-        </div>
-        <div class="profile-stat-card">
-          <div class="profile-stat-label">Avg Bet Size</div>
-          <div class="profile-stat-val" id="pstat-avg">&#8212;</div>
         </div>
       </div>
       <div class="profile-bets-section">
@@ -1905,6 +1962,7 @@ let currentUser = null;
 let followedAddresses = new Set();
 let alertSettings = {};
 let currentSort = 'profit';
+const _bettorCache = new Map(); // address → bettor data (rank, pnl_usd, etc.) from leaderboard
 
 function getToken() { return localStorage.getItem('pe_token'); }
 function setToken(t) { localStorage.setItem('pe_token', t); }
@@ -2351,6 +2409,7 @@ async function loadLeaderboard(sort = currentSort, period = currentPeriod) {
     if (!res.ok) throw new Error('Failed to load leaderboard');
     const data = await res.json();
     const bettors = data.bettors || [];
+    bettors.forEach(b => { if (b.address) _bettorCache.set(b.address, b); });
     if (!bettors.length) {
       container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="icon">&#127942;</div><h3>No data yet</h3><p>Leaderboard is loading from Polymarket.</p></div>`;
       return;
@@ -3295,6 +3354,16 @@ let _profileFromTab = 'leaderboard';
 let _profileAddress = null;
 let _profileName = '';
 
+function _profileInitialsGradient(name) {
+  // Deterministic gradient based on first char of name
+  const palettes = [
+    ['#1a3a4a','#0e4d3a'], ['#2d1b4e','#1a3a6e'], ['#4a1a1a','#3a2d0e'],
+    ['#1a4a2d','#0e3a4a'], ['#3a1a4a','#1a2d4a'], ['#4a3a1a','#2d4a1a'],
+  ];
+  const idx = (name || 'A').charCodeAt(0) % palettes.length;
+  return `linear-gradient(135deg, ${palettes[idx][0]}, ${palettes[idx][1]})`;
+}
+
 async function showProfile(address) {
   _profileFromTab = 'leaderboard';
   _profileAddress = address;
@@ -3307,14 +3376,36 @@ async function showProfile(address) {
   // Reset to loading state
   document.getElementById('profile-name').textContent = 'Loading\u2026';
   document.getElementById('profile-addr-display').textContent = address;
-  document.getElementById('profile-avatar').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(address)}`;
   document.getElementById('profile-polylink').href = `https://polymarket.com/profile/${encodeURIComponent(address)}`;
+  document.getElementById('pstat-profit').textContent = '\u2014';
+  document.getElementById('pstat-pnl').textContent = '\u2014';
+  document.getElementById('pstat-profit').style.color = '';
+  document.getElementById('pstat-pnl').style.color = '';
   document.getElementById('pstat-volume').textContent = '\u2014';
   document.getElementById('pstat-bets').textContent = '\u2014';
-  document.getElementById('pstat-avg').textContent = '\u2014';
+  document.getElementById('profile-rank-badge').style.display = 'none';
+  document.getElementById('profile-profit-badge').style.display = 'none';
+
+  // Show initials avatar while loading (avatar img will load async)
+  const avatarEl = document.getElementById('profile-avatar');
+  const initialsEl = document.getElementById('profile-avatar-initials');
+  const shortName = shortAddr(address).charAt(0).toUpperCase();
+  initialsEl.textContent = shortName;
+  initialsEl.style.background = _profileInitialsGradient(shortName);
+  avatarEl.src = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(address)}`;
+  avatarEl.style.opacity = '0';
+
+  // Pre-fill from cache if available (rank + pnl_usd show immediately)
+  const cached = _bettorCache.get(address);
+  if (cached) {
+    _renderProfileBadges(cached.rank, cached.pnl_usd, cached.volume_usd);
+  }
+
   const followBtn = document.getElementById('profile-follow-btn');
-  followBtn.className = 'follow-btn profile-follow-cta';
-  followBtn.innerHTML = '+ Follow';
+  const isFollowingNow = followedAddresses.has(address);
+  followBtn.className = `follow-btn profile-follow-cta${isFollowingNow ? ' following' : ''}`;
+  followBtn.innerHTML = isFollowingNow ? '&#10003; Following' : '+ Follow';
+  _updateFollowPreview(isFollowingNow);
   document.getElementById('profile-bets-list').innerHTML = renderProfileSkeletons(5);
 
   try {
@@ -3328,30 +3419,91 @@ async function showProfile(address) {
   }
 }
 
+function _updateFollowPreview(isFollowing) {
+  const previewEl = document.getElementById('profile-follow-preview');
+  if (!previewEl) return;
+  if (isFollowing) {
+    previewEl.textContent = 'You are following \u2014 alerts active';
+    previewEl.style.color = 'var(--green)';
+  } else {
+    previewEl.textContent = 'You\u2019ll be notified within 30s when they bet';
+    previewEl.style.color = '';
+  }
+}
+
+function _renderProfileBadges(rank, pnlUsd, volumeUsd) {
+  const rankEl = document.getElementById('profile-rank-badge');
+  const profitEl = document.getElementById('profile-profit-badge');
+
+  if (rank && rank > 0) {
+    rankEl.textContent = rank <= 3 ? ['#1', '#2', '#3'][rank - 1] : `#${rank}`;
+    rankEl.className = `profile-rank-badge rank-${rank <= 3 ? rank : 'n'}`;
+    rankEl.style.display = '';
+  } else {
+    rankEl.style.display = 'none';
+  }
+
+  if (pnlUsd !== undefined && pnlUsd !== null) {
+    const isPos = pnlUsd >= 0;
+    profitEl.textContent = (isPos ? '+' : '') + fmtPnl(pnlUsd);
+    profitEl.className = `profile-profit-badge ${isPos ? 'pos' : 'neg'}`;
+    profitEl.style.display = '';
+  } else {
+    profitEl.style.display = 'none';
+  }
+}
+
 function renderProfileData(profile, bets) {
   if (!profile) return;
   _profileAddress = profile.address;
   _profileName = profile.name || profile.address;
   const isFollowing = followedAddresses.has(profile.address);
 
+  // Avatar: show img, fade in on load; initials stay behind as fallback
   const avatarEl = document.getElementById('profile-avatar');
+  const initialsEl = document.getElementById('profile-avatar-initials');
+  const displayName = profile.name || shortAddr(profile.address);
+  const initials = displayName.charAt(0).toUpperCase();
+  initialsEl.textContent = initials;
+  initialsEl.style.background = _profileInitialsGradient(initials);
   const avatarSrc = profile.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(profile.address)}`;
-  avatarEl.src = avatarSrc;
-  avatarEl.alt = escapeHtml(profile.name || profile.address);
-  avatarEl.onerror = () => { avatarEl.src = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(profile.address)}`; avatarEl.onerror = null; };
+  avatarEl.alt = escapeHtml(displayName);
+  avatarEl.style.opacity = '0';
+  avatarEl.onload = () => { avatarEl.style.opacity = '1'; avatarEl.style.transition = 'opacity 0.3s'; };
+  avatarEl.onerror = () => { avatarEl.style.opacity = '0'; avatarEl.onerror = null; };
+  avatarEl.src = escapeHtml(avatarSrc);
 
-  document.getElementById('profile-name').textContent = profile.name || profile.address;
+  document.getElementById('profile-name').textContent = displayName;
   document.getElementById('profile-addr-display').textContent = profile.address;
   document.getElementById('profile-polylink').href = `https://polymarket.com/profile/${encodeURIComponent(profile.address)}`;
 
-  document.getElementById('pstat-volume').textContent = fmtUSD(profile.volume_usd || 0);
+  // Badges: use cached leaderboard data if available (more complete), else derive from profile
+  const cached = _bettorCache.get(profile.address);
+  const rank = cached ? cached.rank : null;
+  const pnlUsd = cached ? cached.pnl_usd : null;
+  _renderProfileBadges(rank, pnlUsd, profile.volume_usd);
+
+  // 4-stat strip
+  const vol = profile.volume_usd || 0;
+  const pnlForDisplay = pnlUsd !== null ? pnlUsd : null;
+  const pnlPct = (vol > 0 && pnlForDisplay !== null) ? (pnlForDisplay / vol * 100).toFixed(1) : null;
+
+  const profitEl = document.getElementById('pstat-profit');
+  profitEl.textContent = pnlForDisplay !== null ? fmtPnl(pnlForDisplay) : '\u2014';
+  profitEl.style.color = pnlForDisplay !== null ? pnlColor(pnlForDisplay) : '';
+
+  const pnlEl = document.getElementById('pstat-pnl');
+  pnlEl.textContent = pnlPct !== null ? (pnlPct > 0 ? '+' : '') + pnlPct + '%' : '\u2014';
+  pnlEl.style.color = pnlPct !== null ? (pnlPct > 0 ? 'var(--green)' : pnlPct < 0 ? 'var(--red)' : '') : '';
+
+  document.getElementById('pstat-volume').textContent = fmtUSD(vol);
   document.getElementById('pstat-bets').textContent = profile.total_bets || '\u2014';
-  document.getElementById('pstat-avg').textContent = profile.avg_bet_usd ? fmtUSD(profile.avg_bet_usd) : '\u2014';
 
   const followBtn = document.getElementById('profile-follow-btn');
   followBtn.className = `follow-btn profile-follow-cta${isFollowing ? ' following' : ''}`;
   followBtn.innerHTML = isFollowing ? '&#10003; Following' : '+ Follow';
   followBtn.setAttribute('aria-pressed', String(isFollowing));
+  _updateFollowPreview(isFollowing);
 
   const list = document.getElementById('profile-bets-list');
   if (!bets || !bets.length) {
@@ -3426,6 +3578,8 @@ async function profileToggleFollow() {
   if (!_profileAddress) return;
   const btn = document.getElementById('profile-follow-btn');
   await toggleFollow(_profileAddress, _profileName || _profileAddress, btn);
+  // Update preview text to reflect new follow state
+  _updateFollowPreview(followedAddresses.has(_profileAddress));
 }
 
 // ── Bootstrap ─────────────────────────────────────────────────

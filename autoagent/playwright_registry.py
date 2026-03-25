@@ -317,6 +317,55 @@ async def check():
         except Exception as e:
             failures.append(f'renderFollowSkeletonCards output check error: {e}')
 
+        # CHECK 25 (session 80): profile page has new 4-stat grid (pstat-profit, pstat-pnl)
+        try:
+            profit_el = await page.query_selector('#pstat-profit')
+            pnl_el = await page.query_selector('#pstat-pnl')
+            if profit_el and pnl_el:
+                checks += 1
+                print('  [CHECK 25] Profile page has pstat-profit and pstat-pnl stat slots')
+            else:
+                failures.append(f'Profile page missing new stat slots: profit={bool(profit_el)}, pnl={bool(pnl_el)}')
+        except Exception as e:
+            failures.append(f'Profile stat slots check error: {e}')
+
+        # CHECK 26 (session 80): profile-avatar-initials element exists
+        try:
+            initials_el = await page.query_selector('#profile-avatar-initials')
+            if initials_el:
+                checks += 1
+                print('  [CHECK 26] profile-avatar-initials element present')
+            else:
+                failures.append('profile-avatar-initials element not found')
+        except Exception as e:
+            failures.append(f'profile-avatar-initials check error: {e}')
+
+        # CHECK 27 (session 80): profile-follow-preview element exists with notification text
+        try:
+            preview_el = await page.query_selector('#profile-follow-preview')
+            if preview_el:
+                text = await preview_el.inner_text()
+                if 'notified' in text or 'bet' in text:
+                    checks += 1
+                    print('  [CHECK 27] profile-follow-preview element present with notification text')
+                else:
+                    failures.append(f'profile-follow-preview found but text unexpected: {text}')
+            else:
+                failures.append('profile-follow-preview element not found')
+        except Exception as e:
+            failures.append(f'profile-follow-preview check error: {e}')
+
+        # CHECK 28 (session 80): _bettorCache is defined and is a Map
+        try:
+            is_map = await page.evaluate("typeof _bettorCache !== 'undefined' && _bettorCache instanceof Map")
+            if is_map:
+                checks += 1
+                print('  [CHECK 28] _bettorCache is defined as a Map')
+            else:
+                failures.append('_bettorCache not defined or not a Map')
+        except Exception as e:
+            failures.append(f'_bettorCache check error: {e}')
+
         await browser.close()
     return checks, failures
 
