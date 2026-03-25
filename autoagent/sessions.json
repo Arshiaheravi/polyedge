@@ -1803,5 +1803,15 @@
     "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 35, "failures": 0, "notes": "3 new checks: #follows-summary-strip, stat elements, function defs"}
+  },
+  {
+    "session": 84,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Upgraded the How it Works landing section — replaced emoji icons with inline SVGs (bar chart, user-plus, bell), added step connector arrows between the 3 step cards on desktop, green numbered badges on each card, and a CTA button with trust sub-line at the end of the section",
+    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 39, "failures": 0, "notes": "4 new checks: .steps-flow, 2 connectors, .steps-cta button, 3 SVG icons"}
   }
 ]

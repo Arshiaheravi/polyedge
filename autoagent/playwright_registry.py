@@ -453,6 +453,50 @@ async def check():
         except Exception as e:
             failures.append(f'Follows function check error: {e}')
 
+        # CHECK 36 (session 84): steps-flow element exists on landing page
+        try:
+            steps_flow = await page.query_selector('.steps-flow')
+            if steps_flow:
+                checks += 1
+                print('  [CHECK 36] .steps-flow element present on landing page')
+            else:
+                failures.append('.steps-flow not found in DOM')
+        except Exception as e:
+            failures.append(f'steps-flow check error: {e}')
+
+        # CHECK 37 (session 84): 2 step connectors present (arrows between cards)
+        try:
+            connectors = await page.eval_on_selector_all('.step-connector', 'els => els.length')
+            if connectors == 2:
+                checks += 1
+                print('  [CHECK 37] 2 .step-connector arrow elements present')
+            else:
+                failures.append(f'Expected 2 step connectors, found {connectors}')
+        except Exception as e:
+            failures.append(f'Step connector check error: {e}')
+
+        # CHECK 38 (session 84): steps-cta button present
+        try:
+            cta = await page.query_selector('.steps-cta .btn-primary')
+            if cta:
+                checks += 1
+                print('  [CHECK 38] .steps-cta CTA button present')
+            else:
+                failures.append('.steps-cta .btn-primary not found')
+        except Exception as e:
+            failures.append(f'Steps CTA check error: {e}')
+
+        # CHECK 39 (session 84): step icons use SVG not emoji (no text content in step-icon)
+        try:
+            svg_count = await page.eval_on_selector_all('.step-icon svg', 'els => els.length')
+            if svg_count == 3:
+                checks += 1
+                print('  [CHECK 39] 3 step icons use inline SVG (no emoji)')
+            else:
+                failures.append(f'Expected 3 SVG step icons, found {svg_count}')
+        except Exception as e:
+            failures.append(f'Step icon SVG check error: {e}')
+
         await browser.close()
     return checks, failures
 

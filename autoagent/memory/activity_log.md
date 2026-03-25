@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-24 — UI/UX (Session 84)
+DONE: Upgraded the "How It Works" landing section — replaced 3 HTML entity emoji icons with purposeful inline SVGs (bar chart for leaderboard, user-plus for follow, bell for alerts); added 2 step connector arrow elements (green, desktop-only, hidden on mobile); added green numbered step badges (1/2/3 circles); added a "Start Following Top Traders" CTA button with "Free forever — no credit card required" trust sub-line after the section.
+IMPACT: The How It Works section now satisfies the design rule ("no emojis in UI text") and guides first-time visitors through the copy-trading flow with visual connectors showing progression. The CTA at the end of the flow converts visitors at the exact moment they understand the value proposition — before they scroll to pricing.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-24 — UI/UX (Session 83)
 DONE: Follows tab upgraded to dashboard feel — 3-stat summary strip (Following count, Copyable bets, Tracked P&L) pinned above the live feed; follow cards now show rank badge (gold/silver/bronze), gradient-initials avatar fallback, 2-stat mini-grid (Profit + PnL%), and a View Profile button alongside Unfollow.
 IMPACT: Users on the follows tab now see at a glance how many bets they can copy and their cumulative tracked P&L — the key decision metrics before clicking through to copy a bet. Richer follow cards surface bettor performance data (rank + profit) so users can evaluate who they're following without leaving the page.

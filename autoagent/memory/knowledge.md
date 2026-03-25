@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #84 Reflexion — 2026-03-24 (UI/UX)
+ACCOMPLISHED: "How It Works" landing section upgrade. (1) CSS: `.steps-flow` flex container (column on mobile), `.step-card` with `flex: 1`, `.step-connector` (40px wide, padding-top 56px to vertically centre vs card icon), `.step-num` (22px green circle), `.steps-cta` + `.steps-cta-sub`. (2) HTML: removed the old `.steps-grid` wrapper and emoji HTML entities; replaced with 3 `.step-card` elements in `.steps-flow` with 2 `.step-connector` divs between them; each card now has step-num, step-icon with inline SVG, step-title, step-desc. (3) SVGs: bar chart (leaderboard), user-plus (follow), bell (alerts). (4) CTA button + trust sub-line after steps-flow. (5) 4 new Playwright checks (36-39). 39/39 pass. 303 backend tests stable.
+FAILED: First attempt put cards inside a `.steps-grid` grid container inside `.steps-flow`, which meant connector arrows (sibling to the grid) couldn't interleave with cards. Fixed by removing `.steps-grid` and putting all 3 cards + 2 connectors directly in `.steps-flow` as flex children.
+RULE: [2026-03-24] When building a "steps with arrows" layout: connector arrows must be SIBLINGS of the step cards in a flex container, not inside a separate CSS grid. Grid handles placement internally — you can't inject arbitrary elements between grid cells.
+
 ### Session #83 Reflexion — 2026-03-24 (UI/UX)
 ACCOMPLISHED: Follows tab dashboard upgrade. (1) CSS: `.follows-summary-strip`, `.follows-stat`, `.follows-stat-value`, `.follows-stat-label`, `.follows-stat-divider` — strip pinned above live feed with 3 stats. (2) Static HTML for `#follows-summary-strip` + 3 child elements (`#follows-count`, `#active-bets-count`, `#follows-pnl-value`). (3) `loadMyFollows()` updated: shows strip + sets `#follows-count`, upgraded card template to rank badge + gradient-initials avatar + 2-stat mini-grid (Profit/PnL%) from `_bettorCache` + View Profile/Unfollow button row. (4) `refreshFollowsActivity()` updated: sets `#active-bets-count` to `allPositions.length`, computes `cumPnl` via reduce, updates `#follows-pnl-value` text + color. (5) XSS: `initials` from `name[0]` wrapped in `escapeHtml()`. (6) 3 new Playwright checks (33-35). 35/35 pass. 303 backend tests stable.
 FAILED: Nothing.
