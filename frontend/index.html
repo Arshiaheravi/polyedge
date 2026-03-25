@@ -231,6 +231,20 @@
     .btn-danger:hover { background: rgba(240,62,62,0.22); }
     .btn-outline { background: transparent; color: var(--accent2); border: 1px solid var(--accent); }
     .btn-outline:hover { background: rgba(0,201,122,0.1); }
+    .btn-demo { background: transparent; color: var(--text3); border: 1px dashed var(--border2); }
+    .btn-demo:hover { color: var(--text); border-color: var(--accent); background: rgba(0,201,122,0.06); }
+
+    /* Demo mode banner */
+    .demo-banner {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+      background: rgba(0,201,122,0.07); border: 1px solid rgba(0,201,122,0.28);
+      border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px;
+    }
+    .demo-banner-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .demo-badge { background: var(--accent); color: #000; font-size: 11px; font-weight: 700;
+      padding: 2px 8px; border-radius: 100px; letter-spacing: 0.04em; text-transform: uppercase; flex-shrink: 0; }
+    .demo-banner p { margin: 0; font-size: 13px; color: var(--text2); }
+    .demo-banner-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
     /* Hero CTA shimmer sweep */
     @keyframes btn-shimmer {
@@ -1212,6 +1226,7 @@
     <div class="hero-cta animate-fade-up delay-3">
       <button class="btn btn-primary btn-lg btn-hero" onclick="showView('auth', 'register')">Get Started Free &rarr;</button>
       <button class="btn btn-secondary btn-lg" onclick="showView('browse')">View Live Leaderboard</button>
+      <button class="btn btn-demo btn-lg" onclick="enterDemoMode()">Try the demo</button>
     </div>
     <p class="animate-fade-up delay-4" style="font-size:13px;color:var(--text3);text-align:center;margin-top:16px;">
       Join <strong style="color:var(--text2);">847+</strong> traders already copying top bettors
@@ -3041,6 +3056,47 @@ function renderFollowSkeletonCards(count) {
   <div class="follows-grid">${cards}</div>`;
 }
 
+// ── Demo Mode ─────────────────────────────────────────────────
+
+let _demoMode = false;
+
+const DEMO_BETTORS = [
+  { address: '0xd3a0cafe0001111111111111111111111111aaaa', name: 'CryptoSage',    rank: 1, pnl_usd: 142850, volume_usd: 310000 },
+  { address: '0xd3a0cafe0002222222222222222222222222bbbb', name: 'PredictKing',   rank: 2, pnl_usd: 98320,  volume_usd: 225000 },
+  { address: '0xd3a0cafe0003333333333333333333333333cccc', name: 'OddsBreaker',   rank: 3, pnl_usd: 67450,  volume_usd: 180000 },
+  { address: '0xd3a0cafe0004444444444444444444444444dddd', name: 'AlphaTrader7',  rank: 4, pnl_usd: 45200,  volume_usd: 140000 },
+  { address: '0xd3a0cafe0005555555555555555555555555eeee', name: 'MarketOracle',  rank: 5, pnl_usd: 31750,  volume_usd: 95000  },
+];
+
+function enterDemoMode() {
+  _demoMode = true;
+  showView('browse');
+  // Inject banner above lb-grid (after showView renders the DOM)
+  const lbGrid = document.getElementById('browse-leaderboard-body');
+  if (lbGrid && !document.getElementById('demo-banner')) {
+    const banner = document.createElement('div');
+    banner.id = 'demo-banner';
+    banner.className = 'demo-banner';
+    banner.innerHTML = `
+      <div class="demo-banner-left">
+        <span class="demo-badge">Demo</span>
+        <p>You're viewing 5 sample bettors. <strong style="color:var(--text);">Sign up free</strong> to follow all 100 real traders and get instant alerts.</p>
+      </div>
+      <div class="demo-banner-actions">
+        <button class="btn btn-primary btn-sm" onclick="showView('auth','register')">Sign Up Free</button>
+        <button class="btn btn-ghost btn-sm" onclick="exitDemoMode()">Exit Demo</button>
+      </div>`;
+    lbGrid.parentNode.insertBefore(banner, lbGrid);
+  }
+}
+
+function exitDemoMode() {
+  _demoMode = false;
+  const banner = document.getElementById('demo-banner');
+  if (banner) banner.remove();
+  showView('landing');
+}
+
 // ── Public Browse Leaderboard (no auth) ───────────────────────
 
 let browseSort = 'profit';
@@ -3067,6 +3123,13 @@ async function loadBrowseLeaderboard(sort = browseSort, period = browsePeriod) {
   const container = document.getElementById('browse-leaderboard-body');
   if (!container) return;
   clearSearch('browse-leaderboard-body');
+
+  // Demo mode: render mock bettors without an API call
+  if (_demoMode) {
+    container.innerHTML = DEMO_BETTORS.map((b, i) => renderBettorCard(b, i)).join('');
+    return;
+  }
+
   container.innerHTML = renderSkeletonCards(10);
 
   try {
