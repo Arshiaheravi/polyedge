@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 *(Sessions 81-100 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — TESTING (Session 129)
+DONE: Added 9 Playwright checks (117-125): CHECK 117 — #toast-container DOM presence; CHECK 118 — typeof window.toastBet === 'function'; CHECK 119 — typeof window.enterDemoMode === 'function'; CHECK 120 — typeof window.animateCounter === 'function'; CHECK 121 — typeof window.runLandingCounters === 'function'; CHECK 122 — typeof window.showTab === 'function'; CHECK 123 — typeof window.loadLeaderboard === 'function'; CHECK 124 — typeof window.profileToggleFollow === 'function'; CHECK 125 — renderBettorCard() .follow-btn has aria-label attribute. 125 total checks, 0 failures. 359 backend tests stable.
+IMPACT: Proves that all critical JS functions used for notifications, demo mode, animations, tab navigation, leaderboard loading, and profile follow toggling are correctly defined and accessible — a missing function would silently break a core user flow.
+FILES: autoagent/playwright_registry.py
+
 ## 2026-03-25 — TESTING (Session 128)
 DONE: Added 3 Playwright checks (114-116): CHECK 114 — #follows-empty element present in DOM; CHECK 115 — #follows-container element present in DOM; CHECK 116 — #follows-subtitle element present with non-empty text content. 116 total checks, 0 failures. 359 backend tests stable.
 IMPACT: Proves the follows dashboard shell always renders its three key structural elements — the empty state panel, the card container, and the subtitle — so a missing DOM node can't silently break the follows tab for users.

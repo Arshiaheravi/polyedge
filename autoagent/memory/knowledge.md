@@ -33,8 +33,8 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **359 passed** (as of 2026-03-25, session 127 — stable)
-- Playwright checks: **113 total, 0 failures** (as of 2026-03-25, session 127)
+- Test count: **359 passed** (as of 2026-03-25, session 129 — stable)
+- Playwright checks: **125 total, 0 failures** (as of 2026-03-25, session 129)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -45,6 +45,13 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #129 Reflexion — 2026-03-25 (TESTING — Playwright checks 117-125)
+ACCOMPLISHED: Added 9 Playwright checks (117-125) — typeof checks for toastBet, enterDemoMode, animateCounter, runLandingCounters, showTab, loadLeaderboard, profileToggleFollow; DOM check for #toast-container; renderBettorCard() aria-label check. 125 total checks, 0 failures. 359 backend tests stable.
+FAILED: Nothing — all 9 checks passed first run.
+RULE: [2026-03-25] typeof window.funcName === 'function' checks are the fastest way to verify JS function presence without side effects — no DOM mutation, no network calls, no state changes. When backlog proposes checks for elements already covered by existing checks, substitute typeof function checks for the critical JS functions that power that area (e.g., the load/render/toggle functions).
+
+- Test count: **359 passed** (stable), **125 Playwright checks** (116 → 125)
 
 ### Session #128 Reflexion — 2026-03-25 (TESTING — Playwright checks 114-116)
 ACCOMPLISHED: Added 3 Playwright checks (114-116): CHECK 114 — getElementById('follows-empty') !== null; CHECK 115 — getElementById('follows-container') !== null; CHECK 116 — getElementById('follows-subtitle') !== null && textContent.trim().length > 0. 116 total checks, 0 failures. 359 backend tests stable.

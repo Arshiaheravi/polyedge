@@ -8,12 +8,12 @@
 
 ## HIGH PRIORITY — Frontend Playwright Tests
 
+- [ ] Playwright checks 126-128 — follows + alerts JS API: (126) typeof window.loadFollowedAddresses === 'function', (127) typeof window.loadAlertSettings === 'function', (128) typeof window.followBettor === 'function'
 
-- [ ] Playwright checks 117-119 — toast + demo mode JS API: (117) #toast-container element exists in DOM, (118) typeof window.toastBet === 'function', (119) typeof window.enterDemoMode === 'function'
+- [ ] Playwright checks 129-131 — search + follows activity: (129) typeof window.clearSearch === 'function', (130) typeof window.loadMyFollows === 'function', (131) typeof window.refreshFollowsActivity === 'function'
 
-- [ ] Playwright checks 120-122 — animation helpers + page progress: (120) typeof window.animateCounter === 'function', (121) typeof window.runLandingCounters === 'function', (122) #page-progress element exists in DOM
+- [ ] Playwright checks 132-134 — unfollow + profile wiring: (132) typeof window.unfollowBettor === 'function', (133) typeof window.unfollowFromFollowsTab === 'function', (134) typeof window.updateFollowCountBadge === 'function'
 
-- [ ] Playwright checks 123-125 — hero section + leaderboard card wiring: (123) .hero-live-stats element exists on landing page, (124) .hero-cycle element exists on landing page, (125) .follow-btn elements on lb-cards have data-address attribute set (at least 1 card with non-empty data-address)
 
 ---
 

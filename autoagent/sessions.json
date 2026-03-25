@@ -2810,5 +2810,15 @@
     "files": ["autoagent/playwright_registry.py"],
     "tests": {"before": 359, "after": 359, "status": "pass"},
     "frontend": {"status": "pass", "checks": 116, "failures": 0, "notes": ""}
+  },
+  {
+    "session": 129,
+    "date": "2026-03-25",
+    "time": "14:00",
+    "type": "work",
+    "summary": "Added 9 Playwright checks (117-125) verifying JS function presence for toast, demo mode, animation, tab nav, leaderboard, profile follow toggle, and aria-label on follow buttons",
+    "files": ["autoagent/playwright_registry.py"],
+    "tests": {"before": 359, "after": 359, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 125, "failures": 0, "notes": ""}
   }
 ]
