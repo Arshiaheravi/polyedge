@@ -1687,6 +1687,44 @@ async def check():
         except Exception as e:
             failures.append(f"back-to-top-fab check error: {e}")
 
+        # ── CHECKS 114-116: follows dashboard DOM (Session 128) ──
+
+        # CHECK 114: #follows-empty element exists in DOM
+        try:
+            follows_empty_ok = await page.evaluate("document.getElementById('follows-empty') !== null")
+            if follows_empty_ok:
+                checks += 1
+                print("  [CHECK 114] #follows-empty element present in DOM")
+            else:
+                failures.append("#follows-empty element missing from DOM")
+        except Exception as e:
+            failures.append(f"follows-empty check error: {e}")
+
+        # CHECK 115: #follows-container element exists in DOM
+        try:
+            follows_container_ok = await page.evaluate("document.getElementById('follows-container') !== null")
+            if follows_container_ok:
+                checks += 1
+                print("  [CHECK 115] #follows-container element present in DOM")
+            else:
+                failures.append("#follows-container element missing from DOM")
+        except Exception as e:
+            failures.append(f"follows-container check error: {e}")
+
+        # CHECK 116: #follows-subtitle element exists in DOM with text content
+        try:
+            follows_subtitle_ok = await page.evaluate("""() => {
+                const el = document.getElementById('follows-subtitle');
+                return el !== null && el.textContent.trim().length > 0;
+            }""")
+            if follows_subtitle_ok:
+                checks += 1
+                print("  [CHECK 116] #follows-subtitle present in DOM with text content")
+            else:
+                failures.append("#follows-subtitle missing from DOM or has empty text content")
+        except Exception as e:
+            failures.append(f"follows-subtitle check error: {e}")
+
         await browser.close()
     return checks, failures
 
