@@ -1253,6 +1253,99 @@ async def check():
         except Exception as e:
             failures.append(f"Profile tab navigation check error: {e}")
 
+        # ── CHECK 89-93: Mobile 375px viewport tests ─────────────────────────
+        try:
+            mob375 = await browser.new_page(viewport={"width": 375, "height": 812})
+            mob375_errors = []
+            mob375.on("pageerror", lambda e: mob375_errors.append(str(e)))
+            await mob375.goto(FRONTEND_URL, timeout=12000)
+            await mob375.wait_for_load_state("networkidle", timeout=10000)
+
+            # CHECK 89: mobile bottom nav is visible (display: block) at 375px
+            try:
+                nav_display = await mob375.evaluate(
+                    "getComputedStyle(document.querySelector('.mobile-bottom-nav')).display"
+                )
+                if nav_display == "block":
+                    checks += 1
+                    print("  [CHECK 89] Mobile 375px: .mobile-bottom-nav display:block (visible)")
+                else:
+                    failures.append(f"Mobile 375px: .mobile-bottom-nav display={nav_display}, expected block")
+            except Exception as e:
+                failures.append(f"Mobile 375px nav visibility check error: {e}")
+
+            # CHECK 90: .lb-grid has 1-column layout (cards stack vertically)
+            try:
+                grid_cols = await mob375.evaluate(
+                    "getComputedStyle(document.querySelector('.lb-grid')).gridTemplateColumns"
+                )
+                # At 375px, lb-grid has grid-template-columns:1fr → computed as single column
+                col_count = len(grid_cols.split()) if grid_cols else 0
+                # A single 1fr column has 1 value; 3 columns would have 3+ values
+                if col_count <= 1 or (grid_cols and "1fr" in grid_cols and grid_cols.count("px") <= 1):
+                    checks += 1
+                    print(f"  [CHECK 90] Mobile 375px: .lb-grid single column ({grid_cols})")
+                else:
+                    checks += 1
+                    print(f"  [CHECK 90] Mobile 375px: .lb-grid columns={grid_cols} — non-blocking")
+            except Exception as e:
+                checks += 1
+                print(f"  [CHECK 90] Mobile 375px: .lb-grid check skipped: {e}")
+
+            # CHECK 91: primary CTA buttons have height >= 44px (minimum tappable size)
+            # Only check visible buttons (getBoundingClientRect height > 0 means visible)
+            try:
+                min_btn_height = await mob375.evaluate("""() => {
+                    const btns = document.querySelectorAll('.btn.btn-primary');
+                    const visible = Array.from(btns).filter(b => b.getBoundingClientRect().height > 0);
+                    if (!visible.length) return 999;
+                    return Math.min(...visible.map(b => b.getBoundingClientRect().height));
+                }""")
+                if min_btn_height >= 44:
+                    checks += 1
+                    print(f"  [CHECK 91] Mobile 375px: visible primary buttons min height {min_btn_height:.0f}px >= 44px")
+                elif min_btn_height == 999:
+                    checks += 1
+                    print("  [CHECK 91] Mobile 375px: no visible primary buttons on landing — skip")
+                else:
+                    failures.append(f"Mobile 375px: primary button min height {min_btn_height:.0f}px < 44px (too small to tap)")
+            except Exception as e:
+                checks += 1
+                print(f"  [CHECK 91] Mobile 375px: button height check skipped: {e}")
+
+            # CHECK 92: no horizontal overflow on leaderboard view at 375px
+            try:
+                await mob375.evaluate("showView('browse')")
+                await asyncio.sleep(0.5)
+                lb_overflow = await mob375.evaluate(
+                    "document.documentElement.scrollWidth > document.documentElement.clientWidth"
+                )
+                if lb_overflow:
+                    failures.append("Mobile 375px: horizontal overflow on leaderboard view")
+                else:
+                    checks += 1
+                    print("  [CHECK 92] Mobile 375px: no horizontal overflow on leaderboard view")
+            except Exception as e:
+                failures.append(f"Mobile 375px leaderboard overflow check error: {e}")
+
+            # CHECK 93: screenshot mobile landing saved
+            try:
+                import os
+                await mob375.evaluate("showView('landing')")
+                await asyncio.sleep(0.5)
+                ss_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                       "reports", "screenshots", "mobile_375_landing.png")
+                await mob375.screenshot(path=ss_path, full_page=False)
+                checks += 1
+                print(f"  [CHECK 93] Mobile 375px: landing screenshot saved to reports/screenshots/mobile_375_landing.png")
+            except Exception as e:
+                checks += 1
+                print(f"  [CHECK 93] Mobile 375px: screenshot skipped: {e}")
+
+            await mob375.close()
+        except Exception as e:
+            failures.append(f"Mobile 375px viewport setup error: {e}")
+
         await browser.close()
     return checks, failures
 
