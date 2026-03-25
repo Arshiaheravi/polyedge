@@ -41,6 +41,16 @@ Current card class: `.lb-card`
 Key elements: `.lb-rank-badge`, `.lb-card-name`, `.lb-stat`, follow button
 When modifying any card: check `renderBettorCard()` in the `<script>` block — highest-leverage function for leaderboard UX.
 
+### Conviction / Edge Score badge (FEATURE MODE — competitive standard)
+Competitors (future.fun Edge Score, PolyVision Copy Score 1-10) show a composite score on leaderboard cards.
+Design pattern when implementing:
+- Small pill badge: `<span class="edge-score edge-score--high">8.2</span>`
+- Three tiers via class: `--high` (8-10, green), `--mid` (5-7, blue), `--low` (<5, gray)
+- Positioned top-right of card, same row as rank badge
+- Score derivation: weighted composite of win_rate (40%) + profit_rank (40%) + trade_count (20%)
+- Show "—" until win_rate data is available (honest placeholder, not fake data)
+Source: Awesome-Prediction-Market-Tools repo competitive analysis, 2026-03-25
+
 ## ANIMATION RULES (PolyEdge)
 High-impact only:
 - Counter animations: `countUp()` on hero stats (count from 0 to final value on scroll/load)

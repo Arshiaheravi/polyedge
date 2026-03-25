@@ -2,23 +2,56 @@
 
 ---
 
-## HIGH PRIORITY — UI/UX Tasks (doable in current UI/UX-only mode)
+## HIGH PRIORITY — Security & Vulnerability Tests
 
-*(all previous tasks completed in sessions 109-110 — generating new tasks)*
-
-- [ ] Bettor profile page visual upgrade — (1) add animated sparkline SVG under profit stat (fake data for now); (2) add "Copy Address" button next to wallet address with clipboard feedback; (3) add bet history row color coding (green row for YES bets, red for NO bets); (4) add a "Performance" section with win/loss ratio bar
-- [ ] Landing page testimonials section upgrade — (1) replace plain testimonial cards with carousel/slider (auto-scroll every 5s, pause on hover); (2) add star rating display (⭐⭐⭐⭐⭐) to each testimonial; (3) add avatar placeholder circle to each testimonial card
-- [ ] Mobile follow flow friction reduction — (1) on mobile, tapping a bettor card opens a bottom sheet (slide-up panel) with profile preview + Follow CTA instead of navigating away; (2) after following, show a ✓ confetti micro-animation for 0.8s; (3) add swipe-to-unfollow gesture on follows list items
+- [ ] SQL injection tests — try `' OR '1'='1`, `; DROP TABLE users; --` in email/address/name fields on register, login, follows, bettors endpoints — assert 4xx returned, never 500, DB intact after
+- [ ] XSS payload tests — inject `<script>alert(1)</script>` and `"><img src=x onerror=alert(1)>` into name field on register, market_question stored in BetEvent — assert stored safely (escaped), never executed
+- [ ] Auth bypass tests — call every protected endpoint with: no token, wrong token, token from deleted user, token with tampered payload, token with modified tier claim — all must return 401 or 403
+- [ ] Tier enforcement bypass — create free user, manually craft POST /follows requests to exceed limit=1 — assert 403 on 2nd follow regardless of request manipulation
 
 ---
 
-## BACKEND PENDING (blocked — current mission is UI/UX-only; pick when backend mode resumes)
+## HIGH PRIORITY — Frontend Playwright Tests
 
-- [ ] Win Rate computation — compute from activity data in `polymarket.py` (profitable bets / total bets from last 20 records), expose as `win_rate_pct` in bettor profile API, render in the 2×2 leaderboard card slot currently showing "—".
-- [ ] Empowerment-framed bet notification copy — change `dispatch_bet_notification()` in `services/notifications.py` from "0xABCD placed a bet on [Market]" to "Top bettor you follow just moved on [Market] — 68% win rate this month".
-- [ ] @lru_cache on get_settings() — add `@functools.lru_cache()` to `get_settings()` in `backend/app/config.py`. 2-line change, zero risk.
-- [ ] Per-bettor notification budget — add `max_alerts_per_bettor_per_day` to `AlertSetting` model; scheduler skips if daily limit reached per bettor.
-- [ ] WebSocket real-time notifications — replace 30s APScheduler polling with Polymarket's `/v1/ws/markets` WebSocket. Reduces detection latency from ~30s to ~1s; key VIP differentiator. Change in `scheduler.py`.
+- [ ] Full register → login → follow flow — Playwright: open http://localhost:3000, click Sign Up, fill form, submit, assert redirected to dashboard, assert leaderboard loads with bettor cards, click Follow on first bettor, assert follow confirmed
+- [ ] Login error states — Playwright: try wrong password → assert inline error shown (not alert box), try empty fields → assert validation error, assert no redirect on failure
+- [ ] Leaderboard interactions — Playwright: assert bettor cards render, click sort buttons and assert order changes, type in search box and assert filtering works, scroll to bottom and assert back-to-top FAB appears
+- [ ] Profile page flow — Playwright: click View Profile on any bettor card, assert profile page loads with name + stats + recent bets, assert recent bets show outcome (Yes/No) not empty, click Back and assert return to leaderboard
+
+---
+
+## HIGH PRIORITY — Backend Coverage Gaps
+
+- [ ] GET /bettors/{address} — assert response includes `rank`, `pnl_usd` fields (recently added — no test yet), assert recent_bets filtered to TRADE type only (no REDEEM), assert outcome/price fields populated
+- [ ] GET /follows/live — test with VIP user following 3 bettors where get_active_positions raises for all 3 — assert still returns 3 entries with empty active_positions, not a 500
+- [ ] Admin MRR formula — assert `basic_users * 4.99 + vip_users * 9.99` (not old 14.99 formula), test with 2 basic + 3 VIP users
+
+---
+
+## MEDIUM PRIORITY — Frontend Playwright (More Screens)
+
+- [ ] Mobile viewport tests — Playwright at 375px: assert landing page no horizontal scroll, assert nav renders correctly, assert bettor cards stack vertically, assert buttons >= 44px height, screenshot each screen
+- [ ] Alerts/settings page — Playwright: login, navigate to Alerts tab, assert toggle switches present, assert Telegram section visible, assert no JS errors on page
+- [ ] Pricing section — Playwright: scroll to pricing on landing, assert 3 pricing cards visible, assert Basic card has "Most Popular" badge, hover locked features and assert tooltip appears
+- [ ] Empty follows state — Playwright: login as new user with no follows, navigate to My Follows, assert empty state card shown with CTA button, assert clicking CTA navigates to leaderboard
+
+---
+
+## MEDIUM PRIORITY — Business Logic Tests
+
+- [ ] Subscription tier upgrade flow — simulate Stripe webhook `checkout.session.completed` event with valid payload, assert user tier upgraded from free → basic, assert follow limit now 5
+- [ ] Subscription downgrade — simulate `customer.subscription.deleted` webhook, assert tier reverts to free, assert follow limit back to 1
+- [ ] Notification gating — create free tier user with alert settings enabled, trigger bet notification, assert notification NOT sent (free tier blocked)
+- [ ] JWT expiry — generate token with exp=1 second, wait 2 seconds, call /auth/me, assert 401 returned
+
+---
+
+## FEATURE MODE ONLY — Competitive Intelligence (from awesome-prediction-market-tools, 2026-03-25)
+
+- [ ] Discord notification channel — add Discord webhook support to alert settings (competitors: Nevua Markets, PolyAlertHub all offer Discord; VIP differentiator alongside Telegram)
+- [ ] Trade size minimum filter — let users set a minimum USD trade size threshold for alerts (e.g. only notify for bets >$500); reduces notification fatigue from frequent small bets (PolyTrack, Polycool both offer this)
+- [ ] "Edge Score" composite bettor metric — add a 1-10 conviction/edge score to leaderboard cards combining win rate + profit + volume; replaces Win Rate placeholder with actionable composite (future.fun Edge Score, PolyVision Copy Score both have this)
+- [ ] Delayed free tier alerts — offer 15-min delayed alerts to free users as "upgrade preview" (Whale Tracker Livid model: $0 = 1-hour delay, $29/mo = real-time); shows users what they're missing
 
 ---
 

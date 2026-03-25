@@ -2414,7 +2414,7 @@
     "date": "2026-03-25",
     "time": "18:10",
     "type": "work",
-    "summary": "Added 5 UI polish features: Escape/Enter keyboard shortcuts for modals, 'Active Xm ago' green-dot badge on leaderboard cards, animated follow button glow pulse, social proof counter animating 0→847+ on landing, and upgrade tooltips on locked pricing features",
+    "summary": "Added 5 UI polish features: Escape/Enter keyboard shortcuts for modals, 'Active Xm ago' green-dot badge on leaderboard cards, animated follow button glow pulse, social proof counter animating 0\u00e2\u2020\u2019847+ on landing, and upgrade tooltips on locked pricing features",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -2429,6 +2429,31 @@
       "checks": 83,
       "failures": 0,
       "notes": "CHECK 81: Escape closes modal; CHECK 82: demo lb cards show last-active; CHECK 83: #hero-user-count exists"
+    }
+  },
+  {
+    "session": 111,
+    "date": "2026-03-25",
+    "time": "14:00",
+    "type": "brain",
+    "summary": "Brain session \u2014 competitive intelligence from 40+ Polymarket copy-trading tools, merged duplicate XSS streak rule, added Edge Score design pattern for leaderboard cards, and backlogged 4 feature-mode items (Discord, trade-size filter, Edge Score, delayed free-tier alerts)",
+    "files": [
+      "autoagent/memory/knowledge.md",
+      "autoagent/memory/backlog.md",
+      "autoagent/skills/design.md",
+      "autoagent/brain/sources.md",
+      "autoagent/brain/techniques.md"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 83,
+      "failures": 0,
+      "notes": "brain session \u2014 no code changes"
     }
   }
 ]

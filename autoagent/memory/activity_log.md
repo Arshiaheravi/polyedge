@@ -1,6 +1,13 @@
 # Activity Log
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — BRAIN SESSION (Session 111)
+RESEARCHED: autonomous AI agent reliability 2026, LLM self-improvement techniques, Claude Code skills (ECC still v1.9.0 — no new skills), prediction market copy trading SaaS (coindesk AI agents article), FastAPI production 2026, Awesome-Prediction-Market-Tools (40+ competitors analyzed), arxiv ABC-Bench (agentic backend coding), VoltAgent awesome-ai-agent-papers (no March 2026 papers yet)
+DOWNLOADED: Nothing new — ECC still at v1.9.0; no new applicable skills found
+IMPLEMENTED: (1) knowledge.md curation — merged duplicate XSS streak rules (line 67 session 107 vs line 156 session 93); updated streak to 77–110 = 34+; merged grep patterns into canonical rule. (2) design.md — added Conviction/Edge Score badge design pattern to CARD ANATOMY section (3-tier pill, score formula, honest placeholder). (3) backlog.md — added 4 FEATURE MODE items from competitive analysis: Discord notifications, trade-size filter, Edge Score composite metric, delayed free-tier alerts.
+BACKLOGGED: Discord channel, trade size minimum filter, Edge Score composite metric, delayed free-tier alerts — all from Awesome-Prediction-Market-Tools competitive analysis
+SOURCES: 7 new sources logged in brain/sources.md
+
 ## 2026-03-25 — UI/UX (Session 110)
 DONE: Modal keyboard shortcuts, leaderboard "last active" badge, follow button glow pulse, social proof counter animation, pricing locked-feature tooltips — 5 polish features that improve accessibility and conversion signals across the landing and leaderboard screens.
 IMPACT: Escape key and Enter work on all modals (WAI-ARIA dialog pattern); the "Active Xm ago" green-dot badge on demo leaderboard cards makes the app feel alive/real-time; the follow button pulse draws the eye to the primary action on each card; the 0→847+ counter animation reinforces social proof; hover tooltips on locked pricing rows surface the upgrade path at the exact moment curiosity peaks.

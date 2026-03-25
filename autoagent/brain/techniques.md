@@ -401,3 +401,15 @@ What: Before picking any "add/implement/build" backlog task, run a one-line grep
 Where: PROMPT.md (EVERY SESSION — WHAT TO DO, step 3 — GREP-BEFORE-PICKING block)
 Source: Sessions 89+99 — "animateCounter" and "color-coded P&L" were already implemented but remained in backlog, wasting a full implementation turn each time
 Expected impact: Eliminates the "stale backlog item" waste (2+ occurrences in sessions 89-99); 10-second grep saves 20-minute re-implementation
+
+## Edge Score design pattern + competitive intelligence backlog — implemented 2026-03-25 (session 111 BRAIN)
+What: (1) Added "Conviction / Edge Score badge" design pattern to design.md CARD ANATOMY section — 3-tier pill (green/blue/gray), score derivation formula, honest "—" placeholder until win_rate data available. (2) Added 4 competitive intelligence backlog items: Discord channel, trade-size filter, Edge Score, delayed-free-tier alerts.
+Where: autoagent/skills/design.md (CARD ANATOMY section), autoagent/memory/backlog.md (FEATURE MODE ONLY section)
+Source: github.com/aarora4/Awesome-Prediction-Market-Tools (40+ competitors); coindesk.com/tech/2026/03/15/ai-agents-are-quietly-rewriting-prediction-market-trading
+Expected impact: Next feature-mode leaderboard session has a concrete design spec for the Edge Score badge without research; competitive intelligence backlog prevents feature drift relative to market
+
+## knowledge.md curation — XSS streak rule merge (session 111 BRAIN)
+What: Merged duplicate XSS streak rules (line 67 session 107 vs line 156 session 93). Updated to reflect sessions 77–110 = 34+ sessions. Merged the specific grep patterns (`innerHTML.*\${` AND `innerHTML\s*=\s*[a-zA-Z_]`) from the older rule into the newer one. Marked old entry as superseded.
+Where: autoagent/memory/knowledge.md (Session #107 Reflexion section)
+Source: BRAIN_PROMPT.md Step 1C curation + A-MAC 5-factor admission control
+Expected impact: Removes one duplicate rule that could confuse agents seeing two different streak counts for the same invariant
