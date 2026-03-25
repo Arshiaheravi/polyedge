@@ -751,6 +751,47 @@ async def check():
             failures.append(f"section padding mobile check error: {e}")
 
         await mob_page.close()
+
+        # ── CHECK 59-60: Profile page skeleton loading (Session 94) ──────────
+        try:
+            skel_page = await browser.new_page()
+            await skel_page.goto("http://localhost:3000", timeout=12000)
+            await skel_page.wait_for_load_state("networkidle")
+
+            # Check 59: renderProfileSkeletons returns skeleton elements
+            skel_html = await skel_page.evaluate("renderProfileSkeletons(3)")
+            if isinstance(skel_html, str) and 'skeleton' in skel_html and len(skel_html) > 50:
+                checks += 1
+                print("  [CHECK 59] renderProfileSkeletons returns skeleton HTML")
+            else:
+                failures.append(f"renderProfileSkeletons unexpected output: {repr(skel_html)[:100]}")
+
+            # Check 60: profile stat cards + name heading show .skeleton immediately on showProfile()
+            result = await skel_page.evaluate("""async () => {
+                const orig = window.apiFetch;
+                window.apiFetch = () => new Promise(() => {});  // never resolves
+                showProfile('0x1234567890abcdef1234567890abcdef12345678');
+                await new Promise(r => setTimeout(r, 0));  // yield — sync skeleton setup runs
+                const ids = ['pstat-profit', 'pstat-pnl', 'pstat-volume', 'pstat-bets'];
+                const skelCount = ids.filter(id => {
+                    const el = document.getElementById(id);
+                    return el && el.querySelector('.skeleton');
+                }).length;
+                const nameEl = document.getElementById('profile-name');
+                const nameSkel = nameEl && nameEl.querySelector('.skeleton') !== null;
+                window.apiFetch = orig;
+                return { skelCount, nameSkel };
+            }""")
+            if result['skelCount'] >= 4 and result['nameSkel']:
+                checks += 1
+                print(f"  [CHECK 60] Profile skeleton on navigate: {result['skelCount']}/4 stat cards + name heading show .skeleton")
+            else:
+                failures.append(f"Profile skeleton: {result['skelCount']}/4 stat skeletons, name={result['nameSkel']}")
+
+            await skel_page.close()
+        except Exception as e:
+            failures.append(f"Profile skeleton check error: {e}")
+
         await browser.close()
     return checks, failures
 

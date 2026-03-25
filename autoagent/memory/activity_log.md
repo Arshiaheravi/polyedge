@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-24 — UI/UX (Session 94)
+DONE: Profile page skeleton loading — replaced the static em-dash placeholder with animated .skeleton shimmer on all 4 stat card values (Profit, PnL%, Volume, Total Bets) and the name heading when navigating to a bettor profile. Bet-row skeletons were already in place. 2 new Playwright checks (59-60) confirm the skeleton state appears immediately on navigate. 303 backend tests + 60 Playwright checks pass.
+IMPACT: Users navigating to a bettor profile page now see a polished shimmer loading state immediately instead of a jarring blank/dash flash while the API loads — consistent with the rest of the app's skeleton loading pattern.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-24 — META (Session 93)
 DONE: Code quality audit of sessions 88–92 (leaderboard progressive disclosure, follow tooltip, screenshot gallery, auth UX, mobile audit). All 9 virtual team checks passed. Marcus: zero XSS — both greps run; all API-sourced vars in renderPositionItem, buildTickerItem, renderBetRow, _renderDisclosureMarkets, and chatId display use escapeHtml(). Sarah: no console.error, CSS vars used, loading states present. Nina: no removed features reappeared, nav unchanged. One tech debt logged: _disclosureCache has no TTL — stale market titles can show after bettor makes new bets.
 IMPACT: Confirms XSS-free cycle continues through sessions 88–92 (zero issues found, 5th consecutive clean audit). Stale cache debt logged before it grows into a UX bug.
