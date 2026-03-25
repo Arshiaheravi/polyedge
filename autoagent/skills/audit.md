@@ -54,7 +54,11 @@ Mandate: zero security regressions. One vuln ships = company trust destroyed.
 **Checklist**:
 - [ ] No hardcoded secrets, API keys, passwords, or tokens anywhere in source files
 - [ ] All user-supplied input rendered via `textContent` or escaped — never `innerHTML` with user data (XSS)
-  - **Run this grep before every commit**: `grep -n 'innerHTML.*\${' frontend/index.html` — check EVERY match, not just renderXxx functions. Template helpers (buildXxx, createXxx, formatXxx) are equally dangerous. Any match with an API-sourced variable (name, market, message, addr) must use `escapeHtml()`. Only structural values (hardcoded strings, numbers, wallet hex) are safe unescaped.
+  - **Run BOTH greps before every commit**:
+    1. `grep -n 'innerHTML.*\${' frontend/index.html` — catches same-line template literal injections in all functions (renderXxx, buildXxx, createXxx, formatXxx, loadXxx — all equally dangerous)
+    2. `grep -n 'innerHTML\s*=\s*[a-zA-Z_]' frontend/index.html` — catches variable-assigned innerHTML (e.g. `el.innerHTML = html` where `html` was built with `${vars}` above). For each match, trace the variable to its definition and verify every API-sourced `${}` uses `escapeHtml()`.
+  - Any match with an API-sourced variable (name, url, market, message, addr, question, detail) MUST use `escapeHtml()`. Only safe unescaped: integers, floats, wallet hex (0x...).
+  - **Two-line patterns are the recurring failure mode** (sessions 59, 67, 73 all found these). The grep catches them only with grep #2 above — that second grep is mandatory.
 - [ ] All DB queries use SQLAlchemy ORM or parameterized statements — never f-string SQL (injection)
 - [ ] No IDOR: every DB query that returns user data filters by `current_user.id` — users cannot access other users' data
 - [ ] Admin routes check password/JWT — never accessible unauthenticated

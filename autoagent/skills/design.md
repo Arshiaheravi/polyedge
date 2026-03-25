@@ -9,7 +9,16 @@
 - Dark theme always — deep navy/charcoal, never pure black (#000)
 - Mobile-first: test at 375px mentally before committing
 - No emojis in UI text
-- XSS: any API-sourced data (bettor names, market names, messages) in `innerHTML` MUST use `escapeHtml()` — run `grep -n 'innerHTML.*\${' frontend/index.html` before every commit
+
+### XSS PREVENTION — apply at the point of WRITING, not just at audit
+Every time you write a template literal `` `...${var}...` `` that will end up in innerHTML (directly or via a variable):
+1. Ask: does `var` come from API data or user input? (bettor name, market question, avatar URL, message, address display, any server string)
+2. If yes → wrap it: `escapeHtml(var)`. No exceptions.
+3. Attribute injections are equally dangerous: `src="${escapeHtml(url)}"` not `src="${url}"` — even inside a template literal assigned to innerHTML.
+4. Only safe unescaped: hex wallet addresses (0x... never contains HTML), integer/float numbers.
+5. **The audit grep will catch obvious cases but MISSES two-line patterns** where a template literal builds a string into a variable and that variable is later assigned to innerHTML. Do not rely on the grep — apply escapeHtml() at write time.
+
+Run before every commit: `grep -n 'innerHTML.*\${' frontend/index.html` AND `grep -n 'innerHTML\s*=\s*[a-zA-Z_]' frontend/index.html` (second grep catches variable-assigned innerHTML — trace each variable to its definition and verify API-sourced `${}` uses escapeHtml).
 
 ## COLOR SYSTEM (PolyEdge — actual `:root` values)
 CSS variables defined at `:root` in `frontend/index.html` (line ~13):
