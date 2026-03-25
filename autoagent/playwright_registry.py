@@ -1101,6 +1101,54 @@ async def check():
         except Exception as e:
             failures.append(f"Logo img check error: {e}")
 
+        # CHECK 81 (session 110): Escape key closes an open modal
+        try:
+            esc_closes = await page.evaluate("""() => {
+                const modal = document.getElementById('upgrade-modal');
+                if (!modal) return false;
+                modal.classList.remove('hidden');
+                document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+                return modal.classList.contains('hidden');
+            }""")
+            if esc_closes:
+                checks += 1
+                print("  [CHECK 81] Escape key closes open upgrade-modal")
+            else:
+                failures.append("Escape key did not close upgrade-modal")
+        except Exception as e:
+            failures.append(f"Escape key modal close check error: {e}")
+
+        # CHECK 82 (session 110): demo mode renders .lb-card-last-active elements
+        try:
+            last_active_ok = await page.evaluate("""() => {
+                enterDemoMode();
+                const els = document.querySelectorAll('.lb-card-last-active');
+                exitDemoMode();
+                return els.length > 0;
+            }""")
+            if last_active_ok:
+                checks += 1
+                print("  [CHECK 82] Demo mode lb cards show .lb-card-last-active timestamp")
+            else:
+                failures.append(".lb-card-last-active not rendered in demo mode")
+        except Exception as e:
+            failures.append(f"lb-card-last-active check error: {e}")
+
+        # CHECK 83 (session 110): #hero-user-count element exists on landing
+        try:
+            hero_count_ok = await page.evaluate("""() => {
+                showView('landing');
+                const el = document.getElementById('hero-user-count');
+                return el !== null;
+            }""")
+            if hero_count_ok:
+                checks += 1
+                print("  [CHECK 83] #hero-user-count element exists on landing")
+            else:
+                failures.append("#hero-user-count element missing on landing")
+        except Exception as e:
+            failures.append(f"hero-user-count check error: {e}")
+
         await browser.close()
     return checks, failures
 

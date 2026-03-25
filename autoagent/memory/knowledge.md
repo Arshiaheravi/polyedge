@@ -618,3 +618,14 @@ ACCOMPLISHED: Toast notification stack — Sonner/Emil Kowalski pattern. Replace
 FAILED: Nothing failed. All checks passed first run.
 RULE: [2026-03-24] Sonner toast stack — use height:0 on the container so toasts overflow upward via position:absolute; bottom:0. In collapsed mode the front toast is translateY(0), each background toast gets translateY(+14px*i) scale(0.95^i) — pushed DOWN (toward screen bottom) creating the "peeking cards" illusion. In expanded mode accumulate real heights + 8px gap and use negative translateY to push each toast UP. Never use flex-column for stacked toasts — it breaks the visual overlap.
 RULE: [2026-03-24] To detect genuinely new items in a polling function: track seen IDs in a Set; on each refresh, filter for unseen items and add them to the Set. Guard with a wasFirstLoad flag (Set was empty before this call) to suppress toasts on the very first poll that just populates the Set.
+
+### Session #110 Reflexion — 2026-03-25
+ACCOMPLISHED: Completed 3 backlog tasks (leaderboard card overhaul remaining items + empty state modal polish + keyboard accessibility). Implemented: Escape/Enter keyboard shortcuts for all modals via document.addEventListener with `querySelectorAll('.modal-overlay:not(.hidden)')`; "Active Xm ago" green-dot badge on lb cards using `last_active_ts` field (added to DEMO_BETTORS with `Date.now()/1000 - N*60` offsets); animated follow button glow pulse via `@keyframes followBtnPulse`; social proof counter `animateCounter(el, 847, '', '+')` in `runLandingCounters()`; pricing locked feature tooltips via `data-tip` attrs + `::after { content: attr(data-tip) }` CSS. 83 Playwright checks (3 new), 303 backend tests stable.
+FAILED: Nothing failed — all 3 checks passed first run.
+RULE: [2026-03-25] For `data-tip` CSS tooltips: use `content: attr(data-tip)` with `position: absolute; bottom: calc(100% + 4px); opacity: 0; transition: opacity 0.15s` on `::after`, set `opacity: 1` on `:hover::after`. Add `position: relative` and `cursor: help` to the parent. This requires zero JS and works for any inline element. Pitfall: `white-space: nowrap` is needed on the ::after to prevent tooltip text wrapping — without it, tooltips on short parent elements collapse to a single character width.
+RULE: [2026-03-25] When DEMO_BETTORS array needs dynamic values (e.g. timestamps), compute them at module load time by declaring `const _now = Math.floor(Date.now() / 1000)` BEFORE the DEMO_BETTORS const, then reference `_now - N*60` inside the object literals. This avoids making DEMO_BETTORS a function call and keeps the array serializable.
+
+## Test Suite History
+| Session | Backend Tests | Frontend Checks |
+|---------|--------------|-----------------|
+| 110     | 303          | 83              |

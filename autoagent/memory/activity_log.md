@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — UI/UX (Session 110)
+DONE: Modal keyboard shortcuts, leaderboard "last active" badge, follow button glow pulse, social proof counter animation, pricing locked-feature tooltips — 5 polish features that improve accessibility and conversion signals across the landing and leaderboard screens.
+IMPACT: Escape key and Enter work on all modals (WAI-ARIA dialog pattern); the "Active Xm ago" green-dot badge on demo leaderboard cards makes the app feel alive/real-time; the follow button pulse draws the eye to the primary action on each card; the 0→847+ counter animation reinforces social proof; hover tooltips on locked pricing rows surface the upgrade path at the exact moment curiosity peaks.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 
 ## 2026-03-25 — UI/UX (Session 109)
 DONE: Hero background + AI logo — generated hero-bg.jpg (dark cinematic fintech with green neon data streams) and logo.png (PE monogram) via NovaBanana API; wired hero-bg.jpg as background-image with a dark scrim overlay (.hero-scrim) for text legibility; added logo.png img to landing nav alongside text wordmark with onerror fallback; fixed CHECK 78 to correctly test FAB with window.scrollY simulation; updated novabana.md skill with correct poll endpoint (record-info?taskId=..., successFlag=1). 80 Playwright checks, 303 backend tests stable.

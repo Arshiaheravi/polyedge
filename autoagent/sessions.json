@@ -2408,5 +2408,27 @@
       "failures": 0,
       "notes": "fixed CHECK 78 FAB scroll test (window.scrollY not mc.scrollTop); added CHECK 79 hero-scrim, CHECK 80 logo img in nav"
     }
+  },
+  {
+    "session": 110,
+    "date": "2026-03-25",
+    "time": "18:10",
+    "type": "work",
+    "summary": "Added 5 UI polish features: Escape/Enter keyboard shortcuts for modals, 'Active Xm ago' green-dot badge on leaderboard cards, animated follow button glow pulse, social proof counter animating 0→847+ on landing, and upgrade tooltips on locked pricing features",
+    "files": [
+      "frontend/index.html",
+      "autoagent/playwright_registry.py"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 83,
+      "failures": 0,
+      "notes": "CHECK 81: Escape closes modal; CHECK 82: demo lb cards show last-active; CHECK 83: #hero-user-count exists"
+    }
   }
 ]

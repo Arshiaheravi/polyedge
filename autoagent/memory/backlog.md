@@ -4,9 +4,11 @@
 
 ## HIGH PRIORITY — UI/UX Tasks (doable in current UI/UX-only mode)
 
-- [ ] Bettor card rank badge + leaderboard card visual overhaul — (1) add gold/silver/bronze rank badge pill to top-3 cards, green accent for 4-10, subdued for 11+; (2) add hover lift + glow effect on all leaderboard cards; (3) add "Last active X mins ago" relative timestamp to each card using bet timestamp data; (4) make Follow button on each card more prominent with animated pulse on hover
-- [ ] Empty state illustrations + modal polish — (1) when follows tab is empty show centered card: inline SVG bell icon + "You're not following anyone yet" + "Browse Leaderboard →" CTA; (2) add `backdrop-filter: blur(4px)` to all modal overlays; (3) add Escape key to close any open modal; (4) add pricing tier tooltip on hover of locked features ("Unlock with Basic →"); (5) animate hero social proof counter from 800→847 on page load
-- [ ] Keyboard accessibility — add `document.addEventListener('keydown', e => { if (e.key === 'Escape') closeUpgradeModal() })` and wire it to any open modal overlay. Also add `Enter` key support for the primary action button in any open modal. Catches WAI-ARIA pattern for dialogs.
+*(all previous tasks completed in sessions 109-110 — generating new tasks)*
+
+- [ ] Bettor profile page visual upgrade — (1) add animated sparkline SVG under profit stat (fake data for now); (2) add "Copy Address" button next to wallet address with clipboard feedback; (3) add bet history row color coding (green row for YES bets, red for NO bets); (4) add a "Performance" section with win/loss ratio bar
+- [ ] Landing page testimonials section upgrade — (1) replace plain testimonial cards with carousel/slider (auto-scroll every 5s, pause on hover); (2) add star rating display (⭐⭐⭐⭐⭐) to each testimonial; (3) add avatar placeholder circle to each testimonial card
+- [ ] Mobile follow flow friction reduction — (1) on mobile, tapping a bettor card opens a bottom sheet (slide-up panel) with profile preview + Follow CTA instead of navigating away; (2) after following, show a ✓ confetti micro-animation for 0.8s; (3) add swipe-to-unfollow gesture on follows list items
 
 ---
 
