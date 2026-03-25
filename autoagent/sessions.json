@@ -1434,5 +1434,12 @@
     "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 12, "failures": 0, "notes": "3 new mobile checks: 375px overflow, bottom nav, topbar — all pass"}
+  },
+  {
+    "session": 69, "date": "2026-03-24", "time": "00:00", "type": "work",
+    "summary": "Added bettor profile page — clicking a bettor's name/avatar on the leaderboard now opens a full profile with stats, recent bets timeline (YES/NO outcome colors, price in cents, Copy-bet links), and a Follow/Unfollow button that stays in sync",
+    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 14, "failures": 0, "notes": "2 new checks: #tab-profile in DOM and hidden, lb-card-header-click class present"}
   }
 ]

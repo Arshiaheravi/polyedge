@@ -67,3 +67,5 @@
 - **[SESSION #67] Code quality audit — XSS in toast() + dead code removal** — Fixed XSS where API-sourced bettor names/error strings were injected via innerHTML in toast(); deleted dead renderBettorRow + renderSkeletonRows functions (46 lines gone) that predated session 58's card grid.
 
 - **[SESSION #68] Mobile responsiveness audit** — added mobile bottom nav + topbar to dashboard/browse, fixed 2-col landing grids, full-width search, scrollable tab bar, CTA banner compact, hero padding, featured card no-elevate on mobile
+
+- **[SESSION #69] Bettor profile page** — Added click-through from leaderboard cards to a full profile page: stats strip (volume/bets/avg bet), recent bets timeline with YES/NO outcome colors, price-in-cents, date, Copy-bet links, and a Follow/Unfollow CTA that stays in sync with the leaderboard

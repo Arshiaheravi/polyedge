@@ -4,7 +4,6 @@
 
 ## HIGH PRIORITY — UI/UX Tasks
 
-- [ ] Bettor profile page — add click-through from leaderboard cards to a profile page showing bettor stats, recent bets timeline, and a prominent Follow/Unfollow CTA
 - [ ] Login/Register modal polish — clean up form design, add smooth open/close animation, add password visibility toggle, improve error message styling (red inline, not alert box)
 - [ ] Toast notification stack — vanilla JS custom event dispatcher; push trade alert toasts from bottom-right; stack with 8px gap, auto-dismiss after 5s; use for "New bet detected" events on follows page
 - [ ] Bet activity feed enhancements — add probability pill (YES 72¢ green / NO 28¢ red) to each bet row in bettor profile; add market status badge (Open/Closed/Resolved) using CSS date comparison; helps user judge if trade is still copyable

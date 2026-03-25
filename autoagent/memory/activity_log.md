@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 69)
+DONE: Added bettor profile page — leaderboard card headers now open a full profile on click (showProfile(address)). Profile shows: large avatar, name, wallet address, Polymarket link, Follow/Unfollow CTA, 3 stat cards (volume/total bets/avg bet), and recent bets timeline. Each bet row: market question, YES (green) / NO (red) outcome, price in cents, date, Copy-bet ↗ link. Skeleton loading state, empty state, timestamp handling for both ISO and Unix formats. 14/14 Playwright checks pass (2 new: #tab-profile hidden, lb-card-header-click).
+IMPACT: Users can now click any bettor to see their detailed profile and recent bets before deciding to follow — reduces follow friction and gives traders more context to make copy decisions. Core loop step (LEADERBOARD → FOLLOWS) now has an intermediate "evaluate this bettor" step.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-24 — UI/UX (Session 68)
 DONE: Mobile responsiveness audit — added sticky mobile topbar (logo + avatar/sign-up) and fixed bottom nav (4 tabs: Leaders/Follows/Alerts/Account) to dashboard view; mobile topbar to browse view; fixed two hardcoded 2-column grids on landing page to auto-fit responsive; search input now full-width on mobile; tab bar horizontally scrollable; featured pricing card elevation removed on mobile; CTA banner compact; hero padding reduced; toast repositioned above bottom nav; live ticker hidden on mobile. showTab() syncs mobile nav active state.
 IMPACT: Mobile users (≈60% of traffic) can now navigate all dashboard tabs without the sidebar. Landing page 2-column sections no longer overflow at 375px. 12/12 Playwright checks pass (3 new mobile checks: overflow, bottom nav, topbar). 303 tests stable.

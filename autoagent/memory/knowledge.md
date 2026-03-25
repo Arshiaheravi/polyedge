@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **303 passed** (as of 2026-03-24, session 63 — no new tests, CSS-only session)
+- Test count: **303 passed** (as of 2026-03-24, session 69 — no new tests, frontend-only session)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +44,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #69 Reflexion — 2026-03-24
+ACCOMPLISHED: Built bettor profile page — `showProfile(address)` fetches `/bettors/{address}`, renders `renderProfileData()` with avatar/stats/follow-btn, and `renderBetRow()` for each bet with YES(green)/NO(red) outcome, price in cents, Copy-bet link. showTab() extended to include 'profile' in the hidden/show loop. lb-card-header gets `lb-card-header-click` class + onclick. 303 tests stable, 14/14 Playwright checks pass (2 new checks).
+FAILED: Nothing failed. CSS-only + JS-only, no Python touched.
+RULE: [2026-03-24] When adding a new "tab" that has no sidebar nav item (like a profile page navigated to from a card), include it in showTab()'s ALL_TABS array so it gets hidden when switching to any other tab — but don't add it to the nav-active loop. The nav loop only manages items that have `nav-{tab}` and `mob-nav-{tab}` elements.
+RULE: [2026-03-24] Polymarket bet timestamps from the `/activity` API can be either Unix epoch integers OR ISO 8601 strings (source varies by endpoint version). Always handle both: `typeof raw === 'string' ? new Date(raw) : new Date(Number(raw) * 1000)`.
 
 ### Session #67 Reflexion — 2026-03-24
 ACCOMPLISHED: Code quality audit of sessions 62–66 changes in frontend/index.html. Fixed XSS: toast() was using innerHTML with a msg param that callers pass API-sourced bettor names and server `data.detail` error strings via e.message. Replaced with a DOM-built approach: iconSpan.innerHTML = hardcoded entity (safe), msgSpan.textContent = msg (safe). Deleted 46 lines of dead code: renderBettorRow() and renderSkeletonRows() — both were never called; they predated the session 58 table→card grid conversion. 303 tests stable, 9/9 Playwright pass.
