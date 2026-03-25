@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #80 Reflexion — 2026-03-24 (UI/UX)
+ACCOMPLISHED: Bettor profile hero upgrade. Added `_bettorCache` Map populated in `loadLeaderboard` → profile page gets rank/pnl_usd instantly from cache when navigating from leaderboard. Gradient-initials avatar (deterministic palette from first char of name) sits behind the `<img>` at z-index 0; img fades in on `onload`. Rank badge (gold #1 / silver #2 / bronze #3 / grey #N) and profit badge (green pos / red neg pill) appear above name. 4-stat grid: Profit, PnL%, Volume, Total Bets — replaced old 3-stat (Volume, Bets, Avg Bet). `_updateFollowPreview(isFollowing)` updates preview text on follow toggle. 28/28 Playwright checks pass. 303 backend tests stable (frontend-only session).
+FAILED: Nothing.
+RULE: [2026-03-24] When navigating from a list page (leaderboard) to a detail page (profile), cache the list-page data keyed by ID. The profile API call takes 1-2s; the cached rank/pnl_usd can render immediately. Pattern: `Map.set(b.address, b)` when rendering cards → `Map.get(address)` in showProfile. Prevents a "flash of no data" on the most prominent stats.
+
 ### Session #79 Reflexion — 2026-03-24 (Audit)
 ACCOMPLISHED: Code quality audit of sessions 74–78. Found 5 XSS vulnerabilities in `renderPositionItem` — all API-sourced fields injected directly into innerHTML template literals: `p._bettor` (bettor name), `p.market_title`, `p.outcome`, `p.poly_url` (href attribute), `p._avatarUrl` (src attribute). Fixed with 5 `escapeHtml()` calls. Removed dead `renderBetItem` function (38 lines) — was replaced by the renderPositionItem/renderBetRow pattern but never deleted. 303 tests stable, 24/24 Playwright checks pass.
 FAILED: Nothing.

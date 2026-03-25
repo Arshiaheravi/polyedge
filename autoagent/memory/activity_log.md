@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 80)
+DONE: Bettor profile page hero upgrade — rank badge (gold/silver/bronze/# pill) and profit badge (green/red with +/- prefix) above the bettor name; gradient-initials circle behind the avatar img as a fallback so there's never a blank flash; 4-stat grid replacing the old 3-stat row (Profit, PnL%, Volume, Total Bets — the copy-trader decision metrics); follow CTA wrapped in a column with preview text "You'll be notified within 30s when they bet" that updates to green "alerts active" when following. Added _bettorCache Map to provide rank/pnl_usd instantly from leaderboard data when navigating to profile. 28/28 Playwright checks pass, 303 tests stable.
+IMPACT: The profile page now functions as a rich decision card — a user evaluating whether to follow a bettor sees rank, profit, and PnL% at a glance, and the follow preview removes uncertainty about how notifications work. These are the exact friction points before the follow action in the core copy-trading loop.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-24 — AUDIT (Session 79)
 DONE: Code quality audit of sessions 74–78 — found and fixed 5 XSS vulnerabilities in `renderPositionItem`: `p._bettor` (bettor name), `p.market_title`, `p.outcome`, `p.poly_url` (href), and `p._avatarUrl` (img src) were all injected unescaped via innerHTML template literals. Fixed by adding 5 `escapeHtml()` calls. Also removed dead function `renderBetItem` (38 lines, defined but never called — superseded by the renderPositionItem/renderBetRow split). 303 tests stable, 24/24 Playwright checks pass.
 IMPACT: Closes XSS attack surface on the follows tab activity grid — a malicious Polymarket API response containing HTML in a bettor name, market title, outcome label, or poly_url could have executed arbitrary JS for any logged-in user viewing their followed bettors' live positions.

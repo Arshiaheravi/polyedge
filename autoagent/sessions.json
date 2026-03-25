@@ -1662,5 +1662,15 @@
     "files": ["frontend/index.html"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 24, "failures": 0, "notes": "24/24 existing checks still pass after audit fixes"}
+  },
+  {
+    "session": 80,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Bettor profile page hero upgrade — profile now shows rank badge, profit badge, gradient-initials avatar fallback, 4-stat strip (Profit/PnL%/Volume/Bets), and follow preview text so users know they'll be notified within 30s when the bettor bets",
+    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 28, "failures": 0, "notes": "Added CHECK 25-28: pstat-profit/pnl slots, profile-avatar-initials, profile-follow-preview, _bettorCache Map"}
   }
 ]

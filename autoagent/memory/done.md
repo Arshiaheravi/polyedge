@@ -81,3 +81,6 @@
 - **[SESSION #78] Loading skeleton screens** — Added renderFollowSkeletonCards() with follow-card shaped skeletons (avatar circle + name/addr lines + button bar), replacing blank space in follows grid during load. Replaced 2 flat bars with 4 structured position-card skeletons in activity container. 24 Playwright checks pass (2 new).
 
 - **[SESSION #79] Code quality audit (sessions 74-78)** — Fixed 5 XSS vulnerabilities in renderPositionItem (bettor name, market title, outcome, poly_url, avatarUrl all unescaped from Polymarket API data). Removed dead renderBetItem function (38 lines, never called). 303 tests + 24 Playwright checks stable.
+
+## 2026-03-24
+- **[SESSION #80] Bettor profile hero upgrade** — rank/profit badges, gradient-initials avatar fallback, 4-stat strip (Profit/PnL%/Volume/Bets), and follow preview text with 30s notification promise
