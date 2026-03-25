@@ -718,7 +718,107 @@
       .page-header.flex { flex-direction: column; align-items: flex-start; }
       /* Live ticker hidden on mobile (too narrow to read) */
       .live-ticker-wrap { display: none; }
+      /* Profile page mobile */
+      .profile-hero-card { flex-direction: column; align-items: flex-start; }
+      .profile-follow-cta { width: 100%; }
+      .profile-stats-row { grid-template-columns: repeat(2, 1fr); }
+      .profile-stat-val { font-size: var(--fs-3xl); }
+      .profile-name-heading { font-size: var(--fs-3xl); }
     }
+
+    /* ── Bettor Profile Page ───────────────────────────────────── */
+    .profile-back-bar { margin-bottom: var(--sp-5); }
+    .profile-back-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      padding: var(--sp-2) var(--sp-4);
+      border-radius: var(--radius-sm);
+      font-size: var(--fs-sm);
+      cursor: pointer;
+      transition: color var(--duration), border-color var(--duration);
+    }
+    .profile-back-btn:hover { color: var(--text); border-color: var(--border2); }
+    .profile-hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--sp-6);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-5);
+      margin-bottom: var(--sp-5);
+      flex-wrap: wrap;
+    }
+    .profile-hero-left { display: flex; align-items: center; gap: var(--sp-4); flex: 1; min-width: 0; }
+    .profile-avatar-lg {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid var(--border2);
+      background: var(--card2);
+    }
+    .profile-hero-info { min-width: 0; }
+    .profile-name-heading {
+      font-size: var(--fs-4xl); font-weight: 700; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+    .profile-addr-mono {
+      font-family: monospace; font-size: var(--fs-xs);
+      color: var(--text3); margin-bottom: 6px; word-break: break-all;
+    }
+    .profile-poly-link { font-size: var(--fs-xs); color: var(--accent); text-decoration: none; }
+    .profile-poly-link:hover { text-decoration: underline; }
+    .profile-follow-cta { flex-shrink: 0; min-width: 120px; }
+    .profile-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-5);
+    }
+    .profile-stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: var(--sp-4) var(--sp-5);
+    }
+    .profile-stat-label {
+      font-size: var(--fs-xs); color: var(--text3);
+      margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .profile-stat-val { font-size: var(--fs-4xl); font-weight: 700; color: var(--text); font-family: var(--font-display); }
+    .profile-bets-section { margin-top: var(--sp-5); }
+    .profile-section-title { font-size: var(--fs-xl); font-weight: 700; color: var(--text); margin-bottom: var(--sp-3); }
+    .profile-bets-list { display: flex; flex-direction: column; gap: var(--sp-2); }
+    .bet-row {
+      display: flex; align-items: center; gap: var(--sp-3);
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: var(--sp-3) var(--sp-4);
+      transition: border-color var(--duration);
+    }
+    .bet-row:hover { border-color: var(--border2); }
+    .bet-row-icon {
+      width: 36px; height: 36px; border-radius: var(--radius-xs);
+      overflow: hidden; flex-shrink: 0; background: var(--card2);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .bet-row-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .bet-row-icon-placeholder { width: 18px; height: 18px; border-radius: 50%; background: var(--border2); }
+    .bet-row-info { flex: 1; min-width: 0; }
+    .bet-row-question {
+      font-size: var(--fs-sm); color: var(--text); font-weight: 500;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px;
+    }
+    .bet-row-meta { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
+    .bet-outcome { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.04em; }
+    .bet-price { font-size: var(--fs-xs); color: var(--text2); font-family: monospace; }
+    .bet-date { font-size: var(--fs-xs); color: var(--text3); }
+    .bet-copy-link { font-size: var(--fs-xs); color: var(--accent); text-decoration: none; margin-left: auto; }
+    .bet-copy-link:hover { text-decoration: underline; }
+    .bet-row-amount { font-size: var(--fs-md); font-weight: 700; color: var(--text); font-family: monospace; white-space: nowrap; flex-shrink: 0; }
+    .lb-card-header-click { cursor: pointer; }
+    .lb-card-header-click:hover .lb-card-name { color: var(--accent); }
   </style>
 </head>
 <body>
@@ -1418,6 +1518,42 @@
       </div>
     </div>
 
+    <!-- BETTOR PROFILE TAB -->
+    <div id="tab-profile" class="hidden">
+      <div class="profile-back-bar">
+        <button class="profile-back-btn" id="profile-back-btn" onclick="showTab('leaderboard')">&#8592; Back to Leaderboard</button>
+      </div>
+      <div class="profile-hero-card">
+        <div class="profile-hero-left">
+          <img id="profile-avatar" class="profile-avatar-lg" src="" alt="" />
+          <div class="profile-hero-info">
+            <h1 id="profile-name" class="profile-name-heading">&#8212;</h1>
+            <div id="profile-addr-display" class="profile-addr-mono"></div>
+            <a id="profile-polylink" class="profile-poly-link" href="#" target="_blank" rel="noopener noreferrer">View on Polymarket &#8599;</a>
+          </div>
+        </div>
+        <button id="profile-follow-btn" class="follow-btn profile-follow-cta" onclick="profileToggleFollow()">+ Follow</button>
+      </div>
+      <div class="profile-stats-row">
+        <div class="profile-stat-card">
+          <div class="profile-stat-label">Volume Traded</div>
+          <div class="profile-stat-val" id="pstat-volume">&#8212;</div>
+        </div>
+        <div class="profile-stat-card">
+          <div class="profile-stat-label">Total Bets</div>
+          <div class="profile-stat-val" id="pstat-bets">&#8212;</div>
+        </div>
+        <div class="profile-stat-card">
+          <div class="profile-stat-label">Avg Bet Size</div>
+          <div class="profile-stat-val" id="pstat-avg">&#8212;</div>
+        </div>
+      </div>
+      <div class="profile-bets-section">
+        <h2 class="profile-section-title">Recent Bets</h2>
+        <div id="profile-bets-list" class="profile-bets-list"></div>
+      </div>
+    </div>
+
   </main>
   </div><!-- end inner flex wrapper -->
 
@@ -1712,8 +1848,11 @@ function showView(view, sub) {
 }
 
 function showTab(tab) {
+  ['leaderboard', 'follows', 'alerts', 'account', 'profile'].forEach(t => {
+    const el = document.getElementById(`tab-${t}`);
+    if (el) el.classList.toggle('hidden', t !== tab);
+  });
   ['leaderboard', 'follows', 'alerts', 'account'].forEach(t => {
-    document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
     const nav = document.getElementById(`nav-${t}`);
     if (nav) nav.classList.toggle('active', t === tab);
     const mob = document.getElementById(`mob-nav-${t}`);
@@ -1965,7 +2104,11 @@ function renderBettorCard(b, i) {
   return `<div class="lb-card animate-fade-in-up" style="animation-delay:${delay}ms"
     role="listitem" data-name="${escapeHtml(name.toLowerCase())}" data-addr="${escapeHtml(addr.toLowerCase())}">
     ${rankBadgeEl}
-    <div class="lb-card-header">
+    <div class="lb-card-header lb-card-header-click"
+         onclick="showProfile('${safeAddr}')"
+         role="button" tabindex="0"
+         title="View ${eName}'s profile"
+         onkeydown="if(event.key==='Enter')showProfile('${safeAddr}')">
       <img class="lb-card-avatar" src="${avatarUrl}" alt="${eName}"
            onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${safeAddr}'" />
       <div class="lb-card-identity">
@@ -2743,6 +2886,134 @@ async function refreshLiveTicker() {
       inner.style.animation = '';
     }
   } catch (_) { /* silently ignore — ticker is decorative */ }
+}
+
+// ── Bettor Profile ────────────────────────────────────────────
+
+let _profileFromTab = 'leaderboard';
+let _profileAddress = null;
+let _profileName = '';
+
+async function showProfile(address) {
+  _profileFromTab = 'leaderboard';
+  _profileAddress = address;
+
+  const backBtn = document.getElementById('profile-back-btn');
+  if (backBtn) backBtn.onclick = () => showTab(_profileFromTab);
+
+  showTab('profile');
+
+  // Reset to loading state
+  document.getElementById('profile-name').textContent = 'Loading\u2026';
+  document.getElementById('profile-addr-display').textContent = address;
+  document.getElementById('profile-avatar').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(address)}`;
+  document.getElementById('profile-polylink').href = `https://polymarket.com/profile/${encodeURIComponent(address)}`;
+  document.getElementById('pstat-volume').textContent = '\u2014';
+  document.getElementById('pstat-bets').textContent = '\u2014';
+  document.getElementById('pstat-avg').textContent = '\u2014';
+  const followBtn = document.getElementById('profile-follow-btn');
+  followBtn.className = 'follow-btn profile-follow-cta';
+  followBtn.innerHTML = '+ Follow';
+  document.getElementById('profile-bets-list').innerHTML = renderProfileSkeletons(5);
+
+  try {
+    const res = await apiFetch(`/bettors/${encodeURIComponent(address)}`);
+    if (!res.ok) throw new Error(`Could not load profile (${res.status})`);
+    const data = await res.json();
+    renderProfileData(data.profile, data.recent_bets);
+  } catch (e) {
+    document.getElementById('profile-bets-list').innerHTML =
+      `<div class="empty-state"><p>${escapeHtml(e.message)}</p></div>`;
+  }
+}
+
+function renderProfileData(profile, bets) {
+  if (!profile) return;
+  _profileAddress = profile.address;
+  _profileName = profile.name || profile.address;
+  const isFollowing = followedAddresses.has(profile.address);
+
+  const avatarEl = document.getElementById('profile-avatar');
+  const avatarSrc = profile.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(profile.address)}`;
+  avatarEl.src = avatarSrc;
+  avatarEl.alt = escapeHtml(profile.name || profile.address);
+  avatarEl.onerror = () => { avatarEl.src = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(profile.address)}`; avatarEl.onerror = null; };
+
+  document.getElementById('profile-name').textContent = profile.name || profile.address;
+  document.getElementById('profile-addr-display').textContent = profile.address;
+  document.getElementById('profile-polylink').href = `https://polymarket.com/profile/${encodeURIComponent(profile.address)}`;
+
+  document.getElementById('pstat-volume').textContent = fmtUSD(profile.volume_usd || 0);
+  document.getElementById('pstat-bets').textContent = profile.total_bets || '\u2014';
+  document.getElementById('pstat-avg').textContent = profile.avg_bet_usd ? fmtUSD(profile.avg_bet_usd) : '\u2014';
+
+  const followBtn = document.getElementById('profile-follow-btn');
+  followBtn.className = `follow-btn profile-follow-cta${isFollowing ? ' following' : ''}`;
+  followBtn.innerHTML = isFollowing ? '&#10003; Following' : '+ Follow';
+  followBtn.setAttribute('aria-pressed', String(isFollowing));
+
+  const list = document.getElementById('profile-bets-list');
+  if (!bets || !bets.length) {
+    list.innerHTML = `<div class="empty-state" style="padding:var(--sp-8) 0;grid-column:1/-1;">
+      <div style="font-size:32px;margin-bottom:8px;">&#128203;</div>
+      <h3>No recent bets found</h3>
+      <p>This bettor has no recent activity on record.</p>
+    </div>`;
+    return;
+  }
+  list.innerHTML = bets.map(bet => renderBetRow(bet)).join('');
+}
+
+function renderBetRow(bet) {
+  const question = escapeHtml(bet.market_question || 'Unknown Market');
+  const outcome = escapeHtml(bet.outcome || '');
+  const amount = fmtUSD(bet.amount_usd || 0);
+  const price = bet.price ? Math.round(bet.price * 100) + '\u00a2' : '\u2014';
+  const isYes = (bet.outcome || '').toUpperCase() === 'YES';
+  const isNo  = (bet.outcome || '').toUpperCase() === 'NO';
+  const outcomeColor = isYes ? 'var(--green)' : isNo ? 'var(--red)' : 'var(--text2)';
+  let dateStr = '';
+  if (bet.timestamp) {
+    const raw = bet.timestamp;
+    const d = typeof raw === 'string' ? new Date(raw) : new Date(Number(raw) * 1000);
+    if (!isNaN(d.getTime())) dateStr = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: '2-digit' });
+  }
+  const polyLink = bet.market_slug ? `https://polymarket.com/event/${encodeURIComponent(bet.market_slug)}` : '';
+  const iconHtml = bet.market_icon
+    ? `<img src="${escapeHtml(bet.market_icon)}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="bet-row-icon-placeholder" style="display:none;"></div>`
+    : `<div class="bet-row-icon-placeholder"></div>`;
+
+  return `<div class="bet-row">
+    <div class="bet-row-icon">${iconHtml}</div>
+    <div class="bet-row-info">
+      <div class="bet-row-question">${question}</div>
+      <div class="bet-row-meta">
+        <span class="bet-outcome" style="color:${outcomeColor}">${outcome}</span>
+        <span class="bet-price">${price}</span>
+        ${dateStr ? `<span class="bet-date">${dateStr}</span>` : ''}
+        ${polyLink ? `<a href="${escapeHtml(polyLink)}" target="_blank" rel="noopener noreferrer" class="bet-copy-link">Copy bet &#8599;</a>` : ''}
+      </div>
+    </div>
+    <div class="bet-row-amount">${amount}</div>
+  </div>`;
+}
+
+function renderProfileSkeletons(count) {
+  return Array.from({ length: count }, () => `
+    <div class="bet-row">
+      <div class="bet-row-icon"><div class="skeleton" style="width:36px;height:36px;border-radius:var(--radius-xs);"></div></div>
+      <div class="bet-row-info">
+        <div class="skeleton" style="height:13px;width:70%;margin-bottom:6px;border-radius:4px;"></div>
+        <div class="skeleton" style="height:11px;width:40%;border-radius:4px;"></div>
+      </div>
+      <div class="bet-row-amount"><div class="skeleton" style="height:16px;width:60px;border-radius:4px;"></div></div>
+    </div>`).join('');
+}
+
+async function profileToggleFollow() {
+  if (!_profileAddress) return;
+  const btn = document.getElementById('profile-follow-btn');
+  await toggleFollow(_profileAddress, _profileName || _profileAddress, btn);
 }
 
 // ── Bootstrap ─────────────────────────────────────────────────
