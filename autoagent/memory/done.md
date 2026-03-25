@@ -89,3 +89,5 @@
 ## 2026-03-24
 
 - **[SESSION #81] DEEP Brain Session** — Fixed STEP 0 silent skip for UI/UX sessions (wrong skip condition), added frontend XSS grep gate to self-critique, archived activity_log sessions 41-60, integrated 2026 pricing CRO research into design.md, added Playwright SPA wait strategies
+- **[SESSION #82] Pricing section uplift** — Monthly/Annual billing toggle, aligned 7-row feature comparison across tiers, social proof line, and trust row for conversion lift
+- **[SESSION #83] Follows tab dashboard upgrade** — 3-stat summary strip (Following/Copyable bets/Tracked P&L) + richer follow cards with rank badge, gradient avatar, profit stats, View Profile button

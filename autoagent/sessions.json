@@ -1793,5 +1793,15 @@
     "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 32, "failures": 0, "notes": "4 new checks: billing toggle, setPricingPeriod fn, body class toggle, social proof+trust row"}
+  },
+  {
+    "session": 83,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Upgraded the follows tab to feel like a dashboard — added a 3-stat summary strip (Following count, Copyable bets, Tracked P&L) and richer follow cards with rank badge, gradient avatar fallback, profit/PnL% stats, and View Profile button",
+    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 35, "failures": 0, "notes": "3 new checks: #follows-summary-strip, stat elements, function defs"}
   }
 ]

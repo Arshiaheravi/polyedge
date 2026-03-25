@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #83 Reflexion — 2026-03-24 (UI/UX)
+ACCOMPLISHED: Follows tab dashboard upgrade. (1) CSS: `.follows-summary-strip`, `.follows-stat`, `.follows-stat-value`, `.follows-stat-label`, `.follows-stat-divider` — strip pinned above live feed with 3 stats. (2) Static HTML for `#follows-summary-strip` + 3 child elements (`#follows-count`, `#active-bets-count`, `#follows-pnl-value`). (3) `loadMyFollows()` updated: shows strip + sets `#follows-count`, upgraded card template to rank badge + gradient-initials avatar + 2-stat mini-grid (Profit/PnL%) from `_bettorCache` + View Profile/Unfollow button row. (4) `refreshFollowsActivity()` updated: sets `#active-bets-count` to `allPositions.length`, computes `cumPnl` via reduce, updates `#follows-pnl-value` text + color. (5) XSS: `initials` from `name[0]` wrapped in `escapeHtml()`. (6) 3 new Playwright checks (33-35). 35/35 pass. 303 backend tests stable.
+FAILED: Nothing.
+RULE: [2026-03-24] When adding a single-char initial from an API-sourced name (e.g. `name[0].toUpperCase()`) into innerHTML, STILL wrap in `escapeHtml()`. A bettor name starting with `<` would produce an unescaped `<` — a single character doesn't escape the XSS rule. Always: `escapeHtml(name ? name[0].toUpperCase() : '?')`.
+
 ### Session #82 Reflexion — 2026-03-24 (UI/UX)
 ACCOMPLISHED: Pricing section uplift + annual billing toggle. (1) Monthly/Annual pill toggle above pricing cards — `setPricingPeriod()` adds/removes `body.annual-billing` class; CSS `body.annual-billing .pricing-price-monthly { display:none }` / `.pricing-price-annual { display:inline }` swaps prices without JS DOM mutation. (2) 7-row aligned feature comparison across all 3 tiers — same rows in same order, check/cross per tier, outcome-oriented language. (3) Social proof line + shared trust row under pricing grid. (4) 4 new Playwright checks (29-32): billing toggle DOM, `setPricingPeriod` fn, body class toggle, social/trust elements. 32/32 checks pass. 303 backend tests stable (frontend-only session).
 FAILED: Nothing.

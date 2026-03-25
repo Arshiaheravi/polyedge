@@ -4,7 +4,6 @@
 
 ## HIGH PRIORITY — UI/UX Tasks
 
-- [ ] Follows tab dashboard feel — add a summary row at the top (total followed, active bets in last 24h, P&L indicator), style the bettor cards on the follows page with a richer layout matching the leaderboard card quality
 - [ ] Win Rate computation — session 75 added the Win Rate slot in the 2x2 leaderboard grid but it shows "—"; compute win rate from activity data in `polymarket.py` (profitable bets / total bets from the last 20 activity records), expose as `win_rate_pct` in bettor profile API response, and render it in the card. **Note: backend change required (polymarket.py) — skip in UI/UX-only mode; pick this when backend mode resumes**
 - [ ] "How it works" landing section — add a 3-step horizontal visual section between the hero and leaderboard preview: "1. Browse top 100 traders → 2. Follow in one click → 3. Get instant alerts — copy their bet". Each step: icon (inline SVG), number, bold 1-line headline, sub-line. Section ends with a CTA button. Reduces first-visit cognitive friction — visitors understand the flow before they see the leaderboard.
 - [ ] Auth form UX tightening — (1) add focus ring on the currently active input field (highlight the input border with --accent on :focus); (2) add show/hide animation when switching between Login and Register tabs (fade + translateY); (3) on mobile, the modal should be full-screen (100vh) not a floating card; (4) add a divider "or" with horizontal rules between the form submit and a future social login slot (pure UI placeholder, no backend needed)

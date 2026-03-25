@@ -416,6 +416,43 @@ async def check():
         except Exception as e:
             failures.append(f'Pricing copy check error: {e}')
 
+        # CHECK 33 (session 83): Follows summary strip element exists in DOM
+        try:
+            strip = await page.query_selector('#follows-summary-strip')
+            if strip:
+                checks += 1
+                print('  [CHECK 33] #follows-summary-strip element present in DOM')
+            else:
+                failures.append('#follows-summary-strip not found')
+        except Exception as e:
+            failures.append(f'Follows summary strip check error: {e}')
+
+        # CHECK 34 (session 83): Summary strip has all 3 stat elements
+        try:
+            count_el = await page.query_selector('#follows-count')
+            bets_el  = await page.query_selector('#active-bets-count')
+            pnl_el   = await page.query_selector('#follows-pnl-value')
+            if count_el and bets_el and pnl_el:
+                checks += 1
+                print('  [CHECK 34] Summary strip has follows-count, active-bets-count, follows-pnl-value')
+            else:
+                failures.append(f'Summary strip stat elements missing — count={bool(count_el)}, bets={bool(bets_el)}, pnl={bool(pnl_el)}')
+        except Exception as e:
+            failures.append(f'Summary strip stat elements check error: {e}')
+
+        # CHECK 35 (session 83): loadMyFollows and refreshFollowsActivity functions exist
+        try:
+            fns_exist = await page.evaluate(
+                "typeof loadMyFollows === 'function' && typeof refreshFollowsActivity === 'function'"
+            )
+            if fns_exist:
+                checks += 1
+                print('  [CHECK 35] loadMyFollows and refreshFollowsActivity functions defined')
+            else:
+                failures.append('loadMyFollows or refreshFollowsActivity function not found')
+        except Exception as e:
+            failures.append(f'Follows function check error: {e}')
+
         await browser.close()
     return checks, failures
 
