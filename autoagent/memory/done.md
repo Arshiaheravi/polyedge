@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #85] META code quality audit — sessions 77–83** — zero XSS, no dead code, upgrade CTAs wired, nav consistent; all 9 team checks passed across 5 work sessions of frontend changes
 - **[SESSION #82] Pricing section uplift + annual billing toggle** — Monthly/Annual pill toggle with savings badges, aligned 7-row feature comparison (outcome-oriented language) across all 3 tiers, social proof line ("847+ traders"), shared trust row, 32/32 Playwright checks.
 - **[SESSION #77] Alerts settings redesign** — Three channel cards (Web Push/Telegram/SMS) with live status dots, Test buttons, speed banner, and plan-tier badges replacing the flat toggle-row list.
 - **[SESSION #75] Leaderboard four-metric 2x2 grid** — Replaced cramped 3-stat layout with a clean 2×2 grid: PnL%, Profit, Volume, Win Rate with "90d" confidence-horizon badge; skeleton cards updated to match; sets up the win rate slot for future data.

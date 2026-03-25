@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #85 Reflexion — 2026-03-24 (META audit)
+ACCOMPLISHED: Code quality audit of sessions 77–83. Ran Marcus two-grep XSS check, Sarah UI consistency, Jordan conversion, Nina regression, Leo dead-code checks. Zero issues found across 5 work sessions.
+FAILED: Nothing.
+RULE: [2026-03-24] The XSS prevention protocol established in session 76 is confirmed effective — 5 consecutive frontend sessions (77–83) produced zero XSS. The two-grep check at write-time (applied before building, not just at audit-time) is the key factor. Continue running both greps at every audit.
+
 ### Session #84 Reflexion — 2026-03-24 (UI/UX)
 ACCOMPLISHED: "How It Works" landing section upgrade. (1) CSS: `.steps-flow` flex container (column on mobile), `.step-card` with `flex: 1`, `.step-connector` (40px wide, padding-top 56px to vertically centre vs card icon), `.step-num` (22px green circle), `.steps-cta` + `.steps-cta-sub`. (2) HTML: removed the old `.steps-grid` wrapper and emoji HTML entities; replaced with 3 `.step-card` elements in `.steps-flow` with 2 `.step-connector` divs between them; each card now has step-num, step-icon with inline SVG, step-title, step-desc. (3) SVGs: bar chart (leaderboard), user-plus (follow), bell (alerts). (4) CTA button + trust sub-line after steps-flow. (5) 4 new Playwright checks (36-39). 39/39 pass. 303 backend tests stable.
 FAILED: First attempt put cards inside a `.steps-grid` grid container inside `.steps-flow`, which meant connector arrows (sibling to the grid) couldn't interleave with cards. Fixed by removing `.steps-grid` and putting all 3 cards + 2 connectors directly in `.steps-flow` as flex children.
