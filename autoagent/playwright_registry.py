@@ -1048,28 +1048,58 @@ async def check():
         except Exception as e:
             failures.append(f"Back-to-top FAB existence check error: {e}")
 
-        # CHECK 78 (session 108): FAB becomes visible when browse main-content scrollTop > 300
+        # CHECK 78 (session 108, fixed 109): FAB becomes visible when browse visible + window.scrollY > 300
         try:
             fab_shows = await page.evaluate("""() => {
-                const mc = document.querySelector('#view-browse .main-content');
                 const fab = document.getElementById('back-to-top-fab');
-                if (!mc || !fab) return false;
-                // Simulate scroll > 300
-                Object.defineProperty(mc, 'scrollTop', { get: () => 350, configurable: true });
-                mc.dispatchEvent(new Event('scroll'));
+                if (!fab) return false;
+                // Show browse view so onLeaderboard() returns true
+                showView('browse');
+                // Simulate window.scrollY > 300
+                Object.defineProperty(window, 'scrollY', { get: () => 350, configurable: true });
+                window.dispatchEvent(new Event('scroll'));
                 const visible = fab.classList.contains('fab-visible');
                 // Reset
-                Object.defineProperty(mc, 'scrollTop', { get: () => 0, configurable: true });
-                mc.dispatchEvent(new Event('scroll'));
+                Object.defineProperty(window, 'scrollY', { get: () => 0, configurable: true });
+                window.dispatchEvent(new Event('scroll'));
+                showView('landing');
                 return visible;
             }""")
             if fab_shows:
                 checks += 1
-                print("  [CHECK 78] FAB becomes visible when browse main-content scrollTop > 300")
+                print("  [CHECK 78] FAB becomes visible when browse visible + window.scrollY > 300")
             else:
-                failures.append("FAB did not show when browseMC scrollTop > 300")
+                failures.append("FAB did not show when browse visible + window.scrollY > 300")
         except Exception as e:
             failures.append(f"Back-to-top FAB scroll check error: {e}")
+
+        # CHECK 79 (session 109): .hero-scrim div exists inside .hero (hero background image scrim)
+        try:
+            scrim_ok = await page.evaluate("""() => {
+                const scrim = document.querySelector('.hero .hero-scrim');
+                return scrim !== null;
+            }""")
+            if scrim_ok:
+                checks += 1
+                print("  [CHECK 79] .hero-scrim div present inside .hero")
+            else:
+                failures.append(".hero-scrim div not found inside .hero — hero background scrim missing")
+        except Exception as e:
+            failures.append(f"Hero scrim check error: {e}")
+
+        # CHECK 80 (session 109): landing nav .logo contains an img tag (logo.png)
+        try:
+            logo_img = await page.evaluate("""() => {
+                const logo = document.querySelector('.landing-nav .logo img');
+                return logo !== null;
+            }""")
+            if logo_img:
+                checks += 1
+                print("  [CHECK 80] Landing nav .logo contains img element (logo.png)")
+            else:
+                failures.append("Landing nav .logo does not contain an img tag")
+        except Exception as e:
+            failures.append(f"Logo img check error: {e}")
 
         await browser.close()
     return checks, failures

@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-25
+- **[SESSION #109] Hero background image + AI logo via NovaBanana** — generated hero-bg.jpg (dark fintech cinematic) and logo.png (PE monogram) via NovaBanana API; wired hero-bg.jpg as CSS background with dark scrim overlay; added logo.png to landing nav; fixed CHECK 78 FAB scroll test (window.scrollY not mc.scrollTop); 80 Playwright checks, 303 tests pass
 - **[SESSION #108] Back-to-top FAB on browse leaderboard** — green ↑ FAB appears when scrolled >300px in the 100-item leaderboard, smoothly scrolls back to top; stays above mobile nav on small screens; hidden on view change; 2 new Playwright checks (77-78); 303 tests pass, 78 checks pass
 - **[SESSION #107] Code quality audit — sessions 99–105** — all 9 virtual team checks passed clean (Marcus XSS greps: 0 issues, 29-session streak confirmed; Sarah/Priya/Jordan/Nina/Leo all pass); DEMO_BETTORS, _setProfileTrend, hero-cycle, progress bar all audited; 303 tests pass, 78 Playwright checks
 - **[SESSION #105] Demo mode landing page** — added "Try the demo" button to hero; activates demo mode showing 5 anonymised mock bettors in browse leaderboard (zero backend), dismissable sign-up banner, Exit Demo button; 2 new Playwright checks (75-76); 303 tests pass, 76 checks pass

@@ -2367,9 +2367,46 @@
     "date": "2026-03-25",
     "time": "00:00",
     "type": "work",
-    "summary": "Added a floating back-to-top button to the 100-item leaderboard — a green arrow button fades in when you scroll down, taps to return to the top instantly, and hides when you switch views",
-    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
-    "tests": {"before": 303, "after": 303, "status": "pass"},
-    "frontend": {"status": "pass", "checks": 78, "failures": 0, "notes": "Checks 77-78: FAB exists/hidden on load, FAB shows when browseMC scrollTop > 300"}
+    "summary": "Added a floating back-to-top button to the 100-item leaderboard \u00e2\u20ac\u201d a green arrow button fades in when you scroll down, taps to return to the top instantly, and hides when you switch views",
+    "files": [
+      "frontend/index.html",
+      "autoagent/playwright_registry.py"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 78,
+      "failures": 0,
+      "notes": "Checks 77-78: FAB exists/hidden on load, FAB shows when browseMC scrollTop > 300"
+    }
+  },
+  {
+    "session": 109,
+    "date": "2026-03-25",
+    "time": "17:45",
+    "type": "work",
+    "summary": "Wired AI-generated hero background image (dark cinematic fintech) and logo into the frontend \u2014 the landing page hero now has a premium image instead of a plain gradient, giving visitors a stronger first impression",
+    "files": [
+      "frontend/index.html",
+      "frontend/assets/hero-bg.jpg",
+      "frontend/assets/logo.png",
+      "autoagent/playwright_registry.py",
+      "autoagent/skills/novabana.md"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 303,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 80,
+      "failures": 0,
+      "notes": "fixed CHECK 78 FAB scroll test (window.scrollY not mc.scrollTop); added CHECK 79 hero-scrim, CHECK 80 logo img in nav"
+    }
   }
 ]

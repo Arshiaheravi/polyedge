@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
 
+## 2026-03-25 — UI/UX (Session 109)
+DONE: Hero background + AI logo — generated hero-bg.jpg (dark cinematic fintech with green neon data streams) and logo.png (PE monogram) via NovaBanana API; wired hero-bg.jpg as background-image with a dark scrim overlay (.hero-scrim) for text legibility; added logo.png img to landing nav alongside text wordmark with onerror fallback; fixed CHECK 78 to correctly test FAB with window.scrollY simulation; updated novabana.md skill with correct poll endpoint (record-info?taskId=..., successFlag=1). 80 Playwright checks, 303 backend tests stable.
+IMPACT: The hero section now has a premium AI-generated dark fintech background image instead of a plain gradient — gives the landing page immediate visual credibility and "wow" factor for first-time visitors. The logo mark adds a brand icon to the nav that reinforces identity at glance.
+FILES: frontend/index.html, frontend/assets/hero-bg.jpg, frontend/assets/logo.png, autoagent/playwright_registry.py, autoagent/skills/novabana.md
+
 ## 2026-03-25 — UI/UX (Session 108)
 DONE: Back-to-top FAB on browse leaderboard — added a fixed green ↑ button that fades in (opacity + translateY animation) when the browse leaderboard's main-content scrolls past 300px and smoothly scrolls back to top on click. Above mobile nav on small screens (bottom: 88px). Resets to hidden on every showView() call. 2 new Playwright checks (77-78).
 IMPACT: The 100-item leaderboard becomes much easier to navigate — users can jump back to the top and switch sort modes without scrolling all the way up manually. Reduces friction in the "scan the leaderboard → find a bettor → follow" core loop.

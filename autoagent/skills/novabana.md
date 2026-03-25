@@ -1,18 +1,19 @@
-# Skill: Nano Banana (nanobnana.com) Image Generation
+# Skill: Nano Banana Image Generation (nanobananaapi.ai)
 
-Nano Banana is Google Gemini-powered AI image generation.
-Docs: https://nanobnana.com/docs/api/v2-generate
+CONFIRMED WORKING. API key is valid. Use this skill for all image generation tasks.
+
+API Docs: https://docs.nanobananaapi.ai/quickstart
+Base URL: https://api.nanobananaapi.ai/api/v1/nanobanana
 
 ---
 
 ## API Key
 
-Read from credentials.env:
 ```
 NANO_BANANA_API_KEY=458ef44f91c6cbcc614a31573b7f15fe
 ```
 
-All requests use: `Authorization: Bearer 458ef44f91c6cbcc614a31573b7f15fe`
+Auth header: `Authorization: Bearer 458ef44f91c6cbcc614a31573b7f15fe`
 
 ---
 
@@ -22,107 +23,106 @@ All requests use: `Authorization: Bearer 458ef44f91c6cbcc614a31573b7f15fe`
 import httpx, time, os
 
 API_KEY = "458ef44f91c6cbcc614a31573b7f15fe"
+BASE = "https://api.nanobananaapi.ai/api/v1/nanobanana"
 HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
 
-def generate_image(prompt: str, aspect_ratio: str = "1:1", save_path: str = None) -> str:
-    """Generate image with Nano Banana. Returns image URL or saves to save_path."""
+def generate_image(prompt: str, save_path: str) -> str:
+    """Generate image and save to save_path. Returns save_path on success."""
 
-    # STEP 1 — Submit generation job (async)
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+
+    # STEP 1 — Submit job
     resp = httpx.post(
-        "https://nanobnana.com/api/v2/generate",
+        f"{BASE}/generate",
         headers=HEADERS,
         json={
             "prompt": prompt,
-            "aspect_ratio": aspect_ratio,   # "1:1", "2:3", "3:2", "16:9", "9:16"
-            "mode": "sync"                  # use "sync" for simplicity
+            "type": "TEXTTOIAMGE",   # note: their typo, must be exactly this
+            "numImages": 1,
+            "callBackUrl": "http://localhost:3000"  # required field, dummy ok
         },
-        timeout=60
+        timeout=30
     )
     resp.raise_for_status()
-    data = resp.json()
+    task_id = resp.json()["data"]["taskId"]
 
-    # STEP 2 — If sync, image URL is in response directly
-    image_url = data.get("image_url") or data.get("url")
+    # STEP 2 — Poll for result (correct endpoint: record-info?taskId=...)
+    for _ in range(30):
+        time.sleep(3)
+        poll = httpx.get(
+            f"{BASE}/record-info?taskId={task_id}",
+            headers=HEADERS,
+            timeout=15
+        )
+        data = poll.json().get("data", {})
+        flag = data.get("successFlag")
+        if flag == 1:
+            image_url = data.get("response", {}).get("resultImageUrl")
+            if image_url:
+                # Download and save
+                img = httpx.get(image_url, timeout=30)
+                with open(save_path, "wb") as f:
+                    f.write(img.content)
+                return save_path
+        elif flag in (2, 3):
+            raise RuntimeError(f"Generation failed (flag={flag}): {data}")
 
-    # STEP 3 — If async (task_id), poll until done
-    if not image_url and "task_id" in data:
-        task_id = data["task_id"]
-        for _ in range(30):  # poll up to 30 times (60 seconds)
-            time.sleep(2)
-            poll = httpx.get(
-                f"https://nanobnana.com/api/v2/task/{task_id}",
-                headers=HEADERS,
-                timeout=15
-            )
-            poll_data = poll.json()
-            if poll_data.get("status") == "completed":
-                image_url = poll_data.get("image_url") or poll_data.get("url")
-                break
+    raise RuntimeError("Timed out waiting for image generation")
+```
 
-    if not image_url:
-        raise RuntimeError(f"Image generation failed or timed out: {data}")
+---
 
-    # STEP 4 — Optionally download and save
-    if save_path:
-        img_resp = httpx.get(image_url, timeout=30)
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        with open(save_path, "wb") as f:
-            f.write(img_resp.content)
-        return save_path
+## Check Task Status
 
-    return image_url
+```python
+# Poll endpoint — check until successFlag == 1
+GET https://api.nanobananaapi.ai/api/v1/nanobanana/record-info?taskId={taskId}
+Authorization: Bearer 458ef44f91c6cbcc614a31573b7f15fe
 
-
-# Example usage:
-# generate_image(
-#     prompt="Dark cinematic hero background, crypto trading platform, glowing green data lines, deep navy blue",
-#     aspect_ratio="16:9",
-#     save_path="frontend/assets/hero-bg.jpg"
-# )
+# successFlag values: 0=generating, 1=success, 2=creation failed, 3=generation failed
+# Image URL is in: data.response.resultImageUrl
 ```
 
 ---
 
 ## Prompts for PolyEdge Assets
 
-| Asset | Prompt | Aspect Ratio | Save Path |
-|-------|--------|-------------|-----------|
-| Hero background | "Dark cinematic background, financial trading platform, glowing green neon data streams, deep navy blue, abstract, premium fintech aesthetic, no text" | 16:9 | `frontend/assets/hero-bg.jpg` |
-| Logo mark | "PE monogram logo, minimal geometric, electric green on dark, fintech crypto style, clean vector look" | 1:1 | `frontend/assets/logo.png` |
-| Empty state — no follows | "Person at desk looking at empty screen, minimal flat illustration, dark blue theme, subtle green accent" | 4:3 | `frontend/assets/empty-follows.png` |
-| Trader avatar (x8 variants) | "Abstract geometric avatar for crypto trader, colorful gradient, dark background, minimal, variant N" | 1:1 | `frontend/assets/avatar-N.png` |
-| Notification illustration | "Smartphone with glowing notification bell, minimal flat art, dark theme, green glow" | 4:3 | `frontend/assets/notif-illustration.png` |
+| Asset | Prompt | Save Path |
+|-------|--------|-----------|
+| Hero background | "Dark cinematic background, financial trading platform, glowing green neon data streams, deep navy blue, abstract, premium fintech aesthetic, no text, no people" | `frontend/assets/hero-bg.jpg` |
+| Logo mark | "PE monogram logo, minimal geometric, electric green on dark background, fintech crypto style, clean vector look, square format" | `frontend/assets/logo.png` |
+| Empty state — no follows | "Person at desk looking at empty screen, minimal flat illustration, dark blue theme, subtle green accent" | `frontend/assets/empty-follows.png` |
+| Notification illustration | "Smartphone with glowing notification bell, minimal flat art, dark theme, green glow accent" | `frontend/assets/notif-illustration.png` |
 
 ---
 
 ## Rules
 
-- **Each generation costs 24 credits** — don't generate unnecessarily. Generate once, save file, reuse.
-- **Always save to `frontend/assets/`** — never use remote URLs directly in production HTML
-- **Always provide CSS fallback** — gradient background in case image fails:
+- `"type": "TEXTTOIAMGE"` — this is their typo in the API, use it exactly or you get 400
+- `callBackUrl` is required — use `"http://localhost:3000"` as dummy value
+- Poll every 3 seconds, up to 30 tries (90 seconds max)
+- Save all images to `frontend/assets/` — never hotlink remote URLs
+- Always add CSS fallback gradient in case image fails to load:
   ```css
   background-image: url('assets/hero-bg.jpg');
   background: linear-gradient(135deg, #0a1628 0%, #0d2137 100%); /* fallback */
   ```
-- **Use `loading="lazy"` on all `<img>` tags**
-- **If the API call fails** — log to ASSETS_NEEDED.md and use CSS fallback. Never crash the UI.
 
 ---
 
-## CSS-Only Alternatives (zero credits)
+## CSS Avatar Alternative (zero API credits)
 
-For bettor avatars — CSS gradient circles are often better than generated images:
+For bettor avatars — CSS gradient circles are faster and look great:
 ```javascript
 function getAvatarStyle(address) {
-    const colors = [
-        ['#00FF88', '#00AAFF'], ['#FF6B35', '#FF1744'],
-        ['#7C4DFF', '#00BCD4'], ['#FFD740', '#FF6D00']
+    const palettes = [
+        ['#00FF88','#00AAFF'], ['#FF6B35','#FF1744'],
+        ['#7C4DFF','#00BCD4'], ['#FFD740','#FF6D00']
     ];
-    const idx = parseInt(address.slice(2, 4), 16) % colors.length;
-    return `background: linear-gradient(135deg, ${colors[idx][0]}, ${colors[idx][1]})`;
+    const idx = parseInt(address.slice(2,4), 16) % palettes.length;
+    return `background:linear-gradient(135deg,${palettes[idx][0]},${palettes[idx][1]})`;
 }
+// Usage: <div class="avatar" style="${getAvatarStyle(bettor.address)}">
+//          ${bettor.address.slice(2,4).toUpperCase()}
+//        </div>
 ```
-
-Sources:
-- [Nano Bnana API Documentation](https://nanobnana.com/docs)
-- [Nano Bnana Pro Generate API (V2)](https://nanobnana.com/docs/api/v2-generate)
