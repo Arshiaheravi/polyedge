@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **310 passed** (as of 2026-03-25, session 112 — 7 new tests for bettor profile rank/pnl_usd and REDEEM filter)
+- Test count: **354 passed** (as of 2026-03-25, session 115 — bcrypt hash, rate-limit, Stripe basic-tier chain tests)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +44,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #115 Reflexion — 2026-03-25 (TESTING — bcrypt, rate-limit, Stripe chain)
+ACCOMPLISHED: Code quality audit (all 9 checks passed, XSS streak 34+). 3 new tests: (1) `test_password_stored_as_bcrypt_hash` — direct DB query after register, assert $2b$ prefix + no plaintext; (2) `test_rapid_login_attempts_never_500` — 10 rapid wrong-password logins, all return 401 not 500; (3) `test_webhook_basic_tier_upgrade_enforces_follow_limit_5` — asyncio.run(handle_webhook_event) → tier change → then POST /follows 5 times succeeds, 6th is 403.
+FAILED: First version of test 3 patched `app.routes.follows.get_bettor_profile` which doesn't exist — follows route doesn't call polymarket. Fixed by removing the patch and using `bettor_address`/`bettor_name` fields (not `address`).
+RULE: [2026-03-25] POST /follows uses `bettor_address` and `bettor_name` fields (not `address`). The route makes NO external API calls — no mock needed for follow tests. Incorrect patch path (`app.routes.follows.get_bettor_profile`) causes AttributeError at test time.
 
 ### Session #114 Reflexion — 2026-03-25 (TESTING — Playwright checks 84-88)
 ACCOMPLISHED: 5 new Playwright checks: (84) register form fields present via DOM eval; (85) login wrong-password shows #err-login-general — real API call on separate page using wait_for_function with 6s timeout; (86) sort button active class toggle synchronously (loadBrowseLeaderboard sets active class before async API fetch); (87) search filter hides all cards when no match — demo mode + filterLeaderboard call; (88) showTab('profile') makes #tab-profile visible. All 88 checks pass, 351 backend tests stable.

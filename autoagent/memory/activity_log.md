@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — TESTING (Session 115)
+DONE: Code quality audit passed all 9 team checks (Marcus XSS greps: 0 issues, 34+ session streak); then added 3 new tests — bcrypt hash storage ($2b$ prefix, no plaintext), rate-limit stability (10 rapid logins all 401 not 500), Stripe basic-tier upgrade chain (webhook → tier change → follow limit 5 enforced). 354 tests pass, up from 351.
+IMPACT: Proves passwords are stored securely (bcrypt), server is stable under auth abuse, and the entire Stripe→tier→permissions chain works end-to-end for basic subscribers. These are the last 3 uncovered items in the HIGH PRIORITY security/backend gaps.
+FILES: backend/tests/test_security.py, backend/tests/test_payments.py
+
 ## 2026-03-25 — TESTING (Session 114)
 DONE: 5 new Playwright checks (84-88) covering register form field presence, login wrong-password inline error (real API call), sort button active class toggle, search filter hiding non-matching cards, and profile tab navigation — total 88 Playwright checks, 0 failures.
 IMPACT: Frontend E2E coverage now proves the full auth form is wired correctly, login errors surface to users (not silently fail), leaderboard sort is responsive, search filtering works on any bettor list, and profile navigation is functional. These are all user-facing flows that were untested.
