@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 77)
+DONE: Redesigned the alerts settings page — replaced the flat toggle-row list inside one card with three distinct channel cards (Web Push, Telegram, SMS), each showing a live status dot + label (Active / Connected / Not linked yet / VIP required) and a "Test" button that appears only when the channel is fully configured and connected. Added speed-importance banner with left accent border. Added --blue CSS variable, updateChannelStatus() and testChannel() JS helpers. XSS-safe: telegram_chat_id escaped via escapeHtml(). 303 tests stable, 22/22 Playwright checks pass.
+IMPACT: Users can now see at a glance which notification channels are working vs. misconfigured — no more guessing if Telegram is actually linked. The Test button provides immediate feedback so users trust their alerts will fire before they need them. Three separate cards with plan-tier badges (Free / Basic / VIP) also reinforce the upgrade value proposition inline on the settings page.
+FILES: frontend/index.html
+
 ## 2026-03-24 — META SESSION (Session 76)
 IMPROVED: (1) design.md RULES — expanded XSS line into a full write-time prevention protocol: when writing any template literal that ends up in innerHTML, apply escapeHtml() at the point of writing; named the two-line failure mode (template builds var, var assigned to innerHTML separately) that the existing grep misses; added second grep `innerHTML\s*=\s*[a-zA-Z_]`. (2) audit.md Marcus XSS check — now runs two mandatory greps (same-line + variable-assigned innerHTML); added explicit note that sessions 59/67/73 all found two-line patterns. (3) backlog.md — added Win Rate computation task (session 75 left the slot as "—", ready to populate from activity data).
 PATTERNS FOUND: XSS was introduced and then found by audit in 3 consecutive cycles (sessions 58→59, 62-66→67, 68-72→73). The existing grep `innerHTML.*\${` missed the two-line pattern (template literal builds a string variable; that variable later assigned to innerHTML). The rule was audit-time (read after building) not write-time (applied while writing).

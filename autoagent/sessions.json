@@ -1632,5 +1632,15 @@
     "files": ["autoagent/skills/design.md", "autoagent/skills/audit.md", "autoagent/memory/backlog.md"],
     "tests": {"before": 303, "after": 303, "status": "skip"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "META session — no code changed"}
+  },
+  {
+    "session": 77,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Redesigned the alerts settings page so users can see at a glance which notification channels are active — each channel now has its own card with a live status dot (Active / Connected / Not linked / VIP required) and a Test button that only appears when the channel is fully set up",
+    "files": ["frontend/index.html"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 22, "failures": 0, "notes": "22/22 existing checks pass; no new checks needed for settings page redesign"}
   }
 ]

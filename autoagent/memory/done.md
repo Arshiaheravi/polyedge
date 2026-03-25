@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #77] Alerts settings redesign** — Three channel cards (Web Push/Telegram/SMS) with live status dots, Test buttons, speed banner, and plan-tier badges replacing the flat toggle-row list.
 - **[SESSION #75] Leaderboard four-metric 2x2 grid** — Replaced cramped 3-stat layout with a clean 2×2 grid: PnL%, Profit, Volume, Win Rate with "90d" confidence-horizon badge; skeleton cards updated to match; sets up the win rate slot for future data.
 - **[SESSION #74] Bet row probability pill + active badge** — Replaced flat YES/NO text with styled pills (green/red tint, rounded border, price inline as "72¢"); added "Active" badge for bets < 14 days old — honest proxy for market copyability.
 - **[SESSION #73] Audit — fixed 3 XSS vulnerabilities in renderBettorCard + loadLandingPreview** — API-sourced avatar URLs and bettor names were injected unescaped into innerHTML template literals; landing page XSS closed for unauthenticated visitors.

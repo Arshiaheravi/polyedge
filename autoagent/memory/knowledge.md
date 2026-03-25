@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #77 Reflexion — 2026-03-24 (UI/UX)
+ACCOMPLISHED: Redesigned the alerts settings page — replaced the flat settings-card with 3 toggle-rows with three distinct `.acc-card` channel cards (Web Push / Telegram / SMS), each with icon, plan-tier badge, live status dot+label, and a "Test" button shown only when the channel is active. Added `updateChannelStatus()` (reads toggle DOM state + `alertSettings` global to determine Active/Connected/Not linked/VIP required) and `testChannel()` (fires real browser Notification for push; toast for Telegram/SMS). Speed banner with left accent border added. Added `--blue: #4A9EFF` to `:root`. `telegram_chat_id` escaped via `escapeHtml()`. 303 tests stable, 22/22 Playwright checks pass.
+FAILED: Nothing.
+RULE: [2026-03-24] When adding status indicators that depend on both toggle state (DOM) and API state (global object), read them separately: `toggleEl.classList.contains('on')` for "is the channel enabled" and `alertSettings.telegram_verified` for "is it connected/verified". Don't conflate enabled with connected — a channel can be toggled on but still not linked, and the status label must distinguish these states for user trust.
+
 ### Session #75 Reflexion — 2026-03-24 (UI/UX)
 ACCOMPLISHED: Replaced the leaderboard's cramped 3-stat layout (Profit | ROI | Volume-fullwidth) with a clean 2×2 metric grid: PnL% (top-left), Profit (top-right), Volume (bottom-left), Win Rate with "90d" confidence-horizon badge (bottom-right). Renamed "ROI" to "PnL%" for copy-trader clarity. Win Rate shows "—" — honest placeholder until trade-level outcome data is wired. Skeleton updated to 4 equal slots. 303 tests stable, 22/22 Playwright checks pass.
 FAILED: Nothing.

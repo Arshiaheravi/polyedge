@@ -4,8 +4,10 @@
 
 ## HIGH PRIORITY — UI/UX Tasks
 
-- [ ] Notification/alerts settings page redesign — replace raw form with toggle switches, add status indicators (connected/disconnected) for Telegram and web push, add a "Test notification" button
 - [ ] Loading skeleton screens — replace any spinner with skeleton placeholder cards while data loads (leaderboard, follows list)
+- [ ] Bettor profile page hero upgrade — rich profile header: avatar circle placeholder (gradient initials), profit badge, rank badge, a stat strip (profit, win rate, volume, bets), follow/unfollow as the dominant CTA with pre-follow preview text ("You'll be notified within 30s when they bet")
+- [ ] Pricing section uplift — elevate the Basic card (translateY(-8px), 2px accent glow border, "Most Popular" badge), add a feature comparison list per card, add "Cancel anytime · No credit card for Free" trust line under the CTAs
+- [ ] Follows tab dashboard feel — add a summary row at the top (total followed, active bets in last 24h, P&L indicator), style the bettor cards on the follows page with a richer layout matching the leaderboard card quality
 - [ ] Win Rate computation — session 75 added the Win Rate slot in the 2x2 leaderboard grid but it shows "—"; compute win rate from activity data in `polymarket.py` (profitable bets / total bets from the last 20 activity records), expose as `win_rate_pct` in bettor profile API response, and render it in the card
 
 ---
