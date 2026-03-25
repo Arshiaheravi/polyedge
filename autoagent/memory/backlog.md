@@ -2,12 +2,6 @@
 
 ---
 
-## META TASKS
-
-- [ ] Code quality audit — scan last 5 work sessions' changed files (frontend/index.html) for cross-file coupling, test specificity degradation, and smells introduced by agent edits (Session 78 trigger: 60 work sessions = multiple of 5)
-
----
-
 ## HIGH PRIORITY — UI/UX Tasks
 
 - [ ] Bettor profile page hero upgrade — rich profile header: avatar circle placeholder (gradient initials), profit badge, rank badge, a stat strip (profit, win rate, volume, bets), follow/unfollow as the dominant CTA with pre-follow preview text ("You'll be notified within 30s when they bet")

@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — AUDIT (Session 79)
+DONE: Code quality audit of sessions 74–78 — found and fixed 5 XSS vulnerabilities in `renderPositionItem`: `p._bettor` (bettor name), `p.market_title`, `p.outcome`, `p.poly_url` (href), and `p._avatarUrl` (img src) were all injected unescaped via innerHTML template literals. Fixed by adding 5 `escapeHtml()` calls. Also removed dead function `renderBetItem` (38 lines, defined but never called — superseded by the renderPositionItem/renderBetRow split). 303 tests stable, 24/24 Playwright checks pass.
+IMPACT: Closes XSS attack surface on the follows tab activity grid — a malicious Polymarket API response containing HTML in a bettor name, market title, outcome label, or poly_url could have executed arbitrary JS for any logged-in user viewing their followed bettors' live positions.
+FILES: frontend/index.html
+
 ## 2026-03-24 — UI/UX (Session 78)
 DONE: Added structured skeleton loading screens to the follows tab — `renderFollowSkeletonCards(count)` creates follow-card shaped skeletons (avatar circle + name/addr lines + button bar) that appear in the follows grid while the API call loads. Replaced 2 flat 80px bars in the activity container with 4 structured position-card skeletons matching the real card layout (top bar, title, outcome pill row, stats grid). 24/24 Playwright checks pass. 303 tests stable.
 IMPACT: The follows tab no longer shows blank space while loading — users see a skeleton that mirrors the exact layout of real follow cards, so the page feels fast and responsive rather than broken or loading from scratch. The structured activity skeletons signal "copyable bets are loading" rather than "something is happening".

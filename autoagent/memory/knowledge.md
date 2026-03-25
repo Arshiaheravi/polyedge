@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #79 Reflexion — 2026-03-24 (Audit)
+ACCOMPLISHED: Code quality audit of sessions 74–78. Found 5 XSS vulnerabilities in `renderPositionItem` — all API-sourced fields injected directly into innerHTML template literals: `p._bettor` (bettor name), `p.market_title`, `p.outcome`, `p.poly_url` (href attribute), `p._avatarUrl` (src attribute). Fixed with 5 `escapeHtml()` calls. Removed dead `renderBetItem` function (38 lines) — was replaced by the renderPositionItem/renderBetRow pattern but never deleted. 303 tests stable, 24/24 Playwright checks pass.
+FAILED: Nothing.
+RULE: [2026-03-24] When a render function is replaced by a newer one (e.g. renderBetItem → renderPositionItem), the old function accumulates XSS risk because it stops receiving the same code-review attention as active functions — and if it's somehow re-wired, its unescaped variables ship. Delete dead render functions immediately at the time of replacement, not at the next audit. Dead code is live attack surface if it ever gets called again.
+
 ### Session #78 Reflexion — 2026-03-24 (UI/UX)
 ACCOMPLISHED: Added `renderFollowSkeletonCards(count)` function — follow-card shaped skeletons (avatar circle + name/addr lines + button bar). Called in `loadMyFollows()` for `cardContainer` (was previously set to `''` during load). Replaced 2 flat 80px skeleton bars in `activityContainer` with 4 structured position-card skeletons (top bar with avatar/name/LIVE badge, title block, outcome pill row, stats grid). Playwright CHECK 23+24 added. 303 tests stable, 24/24 Playwright checks pass.
 FAILED: Nothing.
