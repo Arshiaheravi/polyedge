@@ -45,6 +45,14 @@
 
 ## Session Reflexions
 
+### Session #108 Reflexion — 2026-03-25 (UI/UX — Back-to-top FAB)
+ACCOMPLISHED: Added back-to-top floating action button (FAB) to browse leaderboard: (1) CSS `#back-to-top-fab` with `opacity:0`/`pointer-events:none` → `.fab-visible` shows it; (2) `<button id="back-to-top-fab">↑</button>` element in body alongside toast/progress; (3) scroll listener on `#view-browse .main-content` via IIFE at bootstrap — toggles `.fab-visible` when `scrollTop > 300`; (4) `showView()` always calls `classList.remove('fab-visible')` to reset FAB when leaving browse; (5) mobile breakpoint moves FAB to `bottom: 88px` to clear mobile nav. 2 Playwright checks (77-78).
+FAILED: Nothing. Zero rework.
+RULE: [2026-03-25] For a fixed FAB that only makes sense in one view: (a) attach the scroll listener to the view's `overflow-y:auto` container (not `window`) — window.scrollTop is always 0 for SPA views; (b) call `classList.remove('fab-visible')` in `showView()` to prevent stale visibility when switching views; (c) wrap the listener setup in an IIFE at bootstrap so it runs once after DOM ready.
+RULE: [2026-03-25] `.hidden { display: none !important }` stops scroll events from firing (hidden elements don't scroll), but the `fab-visible` class persists from the last scroll position. Always reset it explicitly on view change.
+
+- Test count: **303 passed** (stable, frontend-only change), **78 Playwright checks** (76 → 78)
+
 ### Session #107 Reflexion — 2026-03-25 (META — Code Quality Audit Sessions 99–105)
 ACCOMPLISHED: Full 9-member virtual team audit of sessions 99–105 changed files (frontend/index.html, playwright_registry.py). All checks passed clean. Marcus (XSS): PASS — both greps ran; 0 unescaped innerHTML patterns. Key findings: chatId wrapped with escapeHtml() at line 3624 before injection; DEMO_BETTORS is fully hardcoded static data (no API fields); _setProfileTrend uses textContent only (safe); buildTickerItem uses escapeHtml(t.name), escapeHtml(rawMarket); renderPositionItem/renderBetRow/renderBettorCard/tbody all escape every API-sourced field. Sarah: no console.error in production. Priya: follows-empty + leaderboard empty states present. Jordan: trust-signal-row on browse + dashboard. Nina: 78 Playwright checks in registry (covering demo mode, trend arrows, hero-cycle, progress bar). Leo: 0 TODO comments. XSS-free streak confirmed: sessions 77–105 = 29+ sessions.
 FAILED: Nothing. 8th consecutive clean audit.

@@ -2,7 +2,7 @@
 PolyEdge — Persistent Playwright check registry.
 This file is cumulative: sessions ADD checks here, never subtract.
 Usage: cp autoagent/playwright_registry.py autoagent/tmp_check.py → add session checks → run → cp back.
-Last updated: Session 98 (disclosureCache TTL — checks 65-66: _DISCLOSURE_TTL_MS=300000, _disclosureCache entry shape {titles, ts})
+Last updated: Session 108 (back-to-top FAB — checks 77-78: #back-to-top-fab exists/hidden on load, FAB visible when browseMC scrollTop > 300)
 """
 import asyncio, sys
 from playwright.async_api import async_playwright
@@ -1033,6 +1033,43 @@ async def check():
                 failures.append(".btn-demo button not found in .hero-cta")
         except Exception as e:
             failures.append(f"Demo button check error: {e}")
+
+        # CHECK 77 (session 108): #back-to-top-fab element exists and is initially hidden
+        try:
+            fab_state = await page.evaluate("""() => {
+                const fab = document.getElementById('back-to-top-fab');
+                return fab !== null && !fab.classList.contains('fab-visible');
+            }""")
+            if fab_state:
+                checks += 1
+                print("  [CHECK 77] #back-to-top-fab exists and is initially hidden")
+            else:
+                failures.append("#back-to-top-fab missing or already visible on load")
+        except Exception as e:
+            failures.append(f"Back-to-top FAB existence check error: {e}")
+
+        # CHECK 78 (session 108): FAB becomes visible when browse main-content scrollTop > 300
+        try:
+            fab_shows = await page.evaluate("""() => {
+                const mc = document.querySelector('#view-browse .main-content');
+                const fab = document.getElementById('back-to-top-fab');
+                if (!mc || !fab) return false;
+                // Simulate scroll > 300
+                Object.defineProperty(mc, 'scrollTop', { get: () => 350, configurable: true });
+                mc.dispatchEvent(new Event('scroll'));
+                const visible = fab.classList.contains('fab-visible');
+                // Reset
+                Object.defineProperty(mc, 'scrollTop', { get: () => 0, configurable: true });
+                mc.dispatchEvent(new Event('scroll'));
+                return visible;
+            }""")
+            if fab_shows:
+                checks += 1
+                print("  [CHECK 78] FAB becomes visible when browse main-content scrollTop > 300")
+            else:
+                failures.append("FAB did not show when browseMC scrollTop > 300")
+        except Exception as e:
+            failures.append(f"Back-to-top FAB scroll check error: {e}")
 
         await browser.close()
     return checks, failures

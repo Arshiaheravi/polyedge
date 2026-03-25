@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
 
+## 2026-03-25 — UI/UX (Session 108)
+DONE: Back-to-top FAB on browse leaderboard — added a fixed green ↑ button that fades in (opacity + translateY animation) when the browse leaderboard's main-content scrolls past 300px and smoothly scrolls back to top on click. Above mobile nav on small screens (bottom: 88px). Resets to hidden on every showView() call. 2 new Playwright checks (77-78).
+IMPACT: The 100-item leaderboard becomes much easier to navigate — users can jump back to the top and switch sort modes without scrolling all the way up manually. Reduces friction in the "scan the leaderboard → find a bettor → follow" core loop.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-25 — META (Session 107)
 DONE: Code quality audit of sessions 99–105 changed files (frontend/index.html, playwright_registry.py). All 9 virtual team checks passed: Marcus — 0 XSS issues, both greps clean, 29-session XSS-free streak confirmed (77–105); Sarah — no console.error, CSS vars used, loading states present; Priya — empty states for follows and leaderboard confirmed; Jordan — trust-signal-row on both leaderboard views; Nina — 78 Playwright checks in registry covering all new features; Leo — 0 TODO comments, _setProfileTrend is a clean shared helper. Key areas audited: DEMO_BETTORS static array, _setProfileTrend textContent-only helper, hero-cycle CSS animation, page-progress bar. Test count: 303 stable.
 IMPACT: Confirms code quality is clean through session 105. The escapeHtml discipline is deeply embedded across 29+ sessions — every new renderXxx function independently applies escapeHtml at the top before any innerHTML. Audit clears the backlog's highest-priority item and validates the sessions 99–105 work is production-safe.

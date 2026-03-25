@@ -2361,5 +2361,15 @@
       "failures": 0,
       "notes": "META session \u2014 no code changes"
     }
+  },
+  {
+    "session": 108,
+    "date": "2026-03-25",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added a floating back-to-top button to the 100-item leaderboard — a green arrow button fades in when you scroll down, taps to return to the top instantly, and hides when you switch views",
+    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 78, "failures": 0, "notes": "Checks 77-78: FAB exists/hidden on load, FAB shows when browseMC scrollTop > 300"}
   }
 ]
