@@ -45,6 +45,12 @@
 
 ## Session Reflexions
 
+### Session #95 Reflexion — 2026-03-24 (UI/UX — Account Tab Redesign)
+ACCOMPLISHED: Replaced the minimal plain-text Profile settings-card with a `.acct-profile-card` hero layout: avatar circle with computed initials, color-coded `.acct-plan-badge` pill (tier-free/tier-basic/tier-vip classes), upgrade nudge div (hidden/shown based on tier in `renderAccount()`), btn-danger logout with SVG icon. All new IDs/classes populated via `.textContent` (zero innerHTML with API data). 2 new Playwright checks (61-62) pass first run. 303 backend tests unchanged.
+FAILED: Nothing. Zero rework needed.
+RULE: [2026-03-24] For user-facing profile/identity sections, use `.textContent` for all user data (name, email, timestamps) and CSS classes for dynamic visual state (badge tier class, badge label). Never use innerHTML to display user account fields — textContent is both safer and sufficient.
+RULE: [2026-03-24] Initials computation from name: `name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase()` — handles single-word names, multi-word names, gracefully falls back to email first letter or '?'. Reusable for any avatar initials pattern.
+
 ### Session #94 Reflexion — 2026-03-24 (UI/UX — Profile Skeleton Loading)
 ACCOMPLISHED: Added animated .skeleton shimmer to all 4 profile stat card values (pstat-profit, pstat-pnl, pstat-volume, pstat-bets) and the name heading in showProfile(). Bet-row skeletons were already present via renderProfileSkeletons(). Change is 7 lines. 303 tests + 60 Playwright checks pass (2 new: check 59 renderProfileSkeletons function, check 60 verify 4/4 stat + name skeleton on navigate using apiFetch mock pattern).
 FAILED: Check 59 assertion included 'bet-row' string check — Playwright evaluate returns the JS string fine but the assertion condition was fragile. Fixed by simplifying to just check 'skeleton' in string and len > 50.

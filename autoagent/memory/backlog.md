@@ -5,7 +5,6 @@
 ## HIGH PRIORITY — UI/UX Tasks
 
 - [ ] Win Rate computation — session 75 added the Win Rate slot in the 2x2 leaderboard grid but it shows "—"; compute win rate from activity data in `polymarket.py` (profitable bets / total bets from the last 20 activity records), expose as `win_rate_pct` in bettor profile API response, and render it in the card. **Note: backend change required (polymarket.py) — skip in UI/UX-only mode; pick this when backend mode resumes**
-- [ ] Account tab redesign (logged-in state) — when a user is logged in, `renderAccount()` currently shows minimal info; upgrade it to show: user avatar/initials, username, current plan badge (Free/Basic/VIP with color), plan upgrade CTA if on Free, and a styled logout button. Frontend-only change to `renderAccount()`.
 - [ ] Leaderboard sort controls upgrade — the 3 sort buttons (Profit / Win Rate / Volume) currently have basic active states; upgrade with: pill-style toggle group (one visible active pill), smooth 0.2s transition, tooltip on hover explaining what each metric means (e.g. "Total USD profit on Polymarket"), and a subtle count badge showing how many bettors qualify.
 
 

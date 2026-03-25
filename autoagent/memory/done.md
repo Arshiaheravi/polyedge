@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #95] Account tab redesign** — replaced plain Profile card with visual hero (avatar initials circle, color-coded plan badge pill, upgrade nudge for Free users, styled Sign Out button); 2 new Playwright checks (61-62); 303 backend tests + 62 checks pass
 - **[SESSION #94] Profile page skeleton loading** — replaced static em-dash placeholders with animated .skeleton shimmer on all 4 stat card values (Profit, PnL%, Volume, Total Bets) and the name heading; bet-row skeletons were already present; 2 new Playwright checks (59-60); 303 backend tests pass, 60/60 checks pass
 - **[SESSION #93] META code quality audit — sessions 88–92** — all 9 team checks passed; zero XSS across 5 sessions; one tech debt logged (_disclosureCache no TTL); backlog META task removed
 - **[SESSION #92] Mobile UX audit** — fixed 8 issues at 375px: tab-btn min-height 40px, follow-btn min-height 44px (core action tap targets), landing section padding 48px (was 80px), modal padding compact, pricing card padding for stacked layout, follows summary dividers hidden on ≤480px, preview table Volume column hidden on ≤480px, preview-card overflow-x auto; 3 new Playwright checks (56-58); 303 backend tests pass, 58/58 checks pass

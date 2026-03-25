@@ -1885,5 +1885,10 @@
    "summary": "Profile page skeleton loading — when you click a bettor profile, stat cards (Profit, PnL%, Volume, Total Bets) and the name heading now show animated shimmer instead of a blank dash while the API loads. Users see a polished loading state immediately on navigate.",
    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
    "tests": {"before": 303, "after": 303, "status": "pass"},
-   "frontend": {"status": "pass", "checks": 60, "failures": 0, "notes": "2 new checks (59-60): renderProfileSkeletons returns skeleton HTML, profile stat+name skeleton on navigate"}}
+   "frontend": {"status": "pass", "checks": 60, "failures": 0, "notes": "2 new checks (59-60): renderProfileSkeletons returns skeleton HTML, profile stat+name skeleton on navigate"}},
+  {"session": 95, "date": "2026-03-24", "time": "15:30", "type": "work",
+   "summary": "Account tab redesign — when logged in, users now see a profile hero card with their initials in a green circle, a color-coded plan badge (gray=Free, blue=Basic, gold=VIP), a Free-tier upgrade nudge banner, and a prominent Sign Out button instead of the old minimal text layout.",
+   "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+   "tests": {"before": 303, "after": 303, "status": "pass"},
+   "frontend": {"status": "pass", "checks": 62, "failures": 0, "notes": "2 new checks (61-62): plan badge tier- class, avatar + logout btn + upgrade nudge exist"}}
 ]
