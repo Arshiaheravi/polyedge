@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-25
+- **[SESSION #127] Playwright checks 111-113 — logout + clearToken + FAB DOM** — 3 new checks: logout() defined in window scope, clearToken() removes pe_token from localStorage, #back-to-top-fab present in DOM; 113 total checks, 0 failures; 359 backend tests stable
 - **[SESSION #125] Playwright checks 108-110 — account tab content** — 3 new checks: account tab navigates without JS errors, #acct-tier-desc has non-empty text, #acct-upgrade-btn present with .btn-primary class; 110 total checks, 0 failures; 359 backend tests stable
 - **[SESSION #124] Playwright checks 105-107 — upgrade modal DOM + openUpgradeModal + mobile alerts overflow** — 3 new checks: #upgrade-modal present in DOM, openUpgradeModal() removes .hidden class, mobile 375px alerts tab has no horizontal overflow; 107 total checks, 0 failures; 359 backend tests stable
 - **[SESSION #123] Playwright checks 102-104 — profile page back button, stat elements, skeleton loader** — 3 new checks: #profile-back-btn wired to showTab('leaderboard'), all 4 pstat-* elements present, renderProfileSkeletons(5) produces ≥3 skeleton rows; 104 total checks, 0 failures; 359 backend tests stable

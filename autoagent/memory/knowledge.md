@@ -33,8 +33,8 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **359 passed** (as of 2026-03-25, session 119 — stable)
-- Playwright checks: **110 total, 0 failures** (as of 2026-03-25, session 125)
+- Test count: **359 passed** (as of 2026-03-25, session 127 — stable)
+- Playwright checks: **113 total, 0 failures** (as of 2026-03-25, session 127)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -45,6 +45,13 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #127 Reflexion — 2026-03-25 (TESTING — Playwright checks 111-113)
+ACCOMPLISHED: Added 3 Playwright checks (111-113): CHECK 111 — `typeof window.logout === 'function'`; CHECK 112 — set pe_token, call clearToken(), verify getItem returns null; CHECK 113 — getElementById('back-to-top-fab') !== null. 113 total checks, 0 failures. 359 backend tests stable.
+FAILED: Nothing — all 3 checks passed first run.
+RULE: [2026-03-25] To test localStorage cleanup, always SET the item first then verify it's gone — do not assume it was set from a prior check. The test must be self-contained: setItem → call → getItem should return null. This prevents false positives where the item was never set.
+
+- Test count: **359 passed** (stable), **113 Playwright checks** (110 → 113)
 
 ### Session #125 Reflexion — 2026-03-25 (TESTING — Playwright checks 108-110)
 ACCOMPLISHED: Added 3 Playwright checks (108-110): CHECK 108 — account tab navigation fires no JS errors (tracks pageerror count before/after showTab call); CHECK 109 — #acct-tier-desc element present with non-empty text; CHECK 110 — #acct-upgrade-btn present in DOM with .btn-primary class. 110 total checks, 0 failures. 359 backend tests stable.

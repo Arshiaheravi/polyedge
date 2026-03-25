@@ -2790,5 +2790,15 @@
       "failures": 0,
       "notes": "meta session"
     }
+  },
+  {
+    "session": 127,
+    "date": "2026-03-25",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added Playwright checks 111-113: logout() defined in window, clearToken() clears localStorage token, #back-to-top-fab in DOM. 113 total checks, 0 failures.",
+    "files": ["autoagent/playwright_registry.py"],
+    "tests": {"before": 359, "after": 359, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 113, "failures": 0, "notes": ""}
   }
 ]

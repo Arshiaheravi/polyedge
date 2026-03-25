@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 *(Sessions 81-100 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — TESTING (Session 127)
+DONE: Added 3 Playwright checks (111-113): CHECK 111 — logout() function defined in window scope; CHECK 112 — clearToken() removes pe_token from localStorage (getItem returns null after call); CHECK 113 — #back-to-top-fab element present in DOM. 113 total checks, 0 failures. 359 backend tests stable.
+IMPACT: Proves the auth logout flow is correctly wired — the logout function is globally accessible, token clearing actually works (not silently failing), and the scroll-to-top button is always rendered in the DOM.
+FILES: autoagent/playwright_registry.py
+
 ## 2026-03-25 — META (Session 126)
 IMPROVED: backlog.md — added 3 Playwright check batches (117-119: toast+demo mode JS API; 120-122: animation helpers+page progress; 123-125: hero section+leaderboard card wiring). Prevents empty HIGH PRIORITY section after sessions 127-128 complete the two existing batches (111-116).
 PATTERNS FOUND: With only 2 Playwright batches left in HIGH PRIORITY, the section will empty after ~2 sessions. LOW-WATER-MARK check relies on work sessions catching this — pre-populating now avoids an exploratory turn wasted on backlog generation mid-session.

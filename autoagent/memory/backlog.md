@@ -8,8 +8,6 @@
 
 ## HIGH PRIORITY — Frontend Playwright Tests
 
-- [ ] Playwright checks 111-113 — logout flow + localStorage: (111) logout() function defined in window scope, (112) clearToken() sets localStorage pe_token to null (call clearToken() in evaluate and confirm getItem returns null), (113) #back-to-top-fab element present in DOM
-
 - [ ] Playwright checks 114-116 — follows dashboard DOM: (114) #follows-empty element exists in DOM, (115) #follows-container element exists in DOM, (116) #follows-subtitle element exists in DOM with text content
 
 - [ ] Playwright checks 117-119 — toast + demo mode JS API: (117) #toast-container element exists in DOM, (118) typeof window.toastBet === 'function', (119) typeof window.enterDemoMode === 'function'
