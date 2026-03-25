@@ -2706,5 +2706,26 @@
       "failures": 0,
       "notes": "checks 99-101 added: pricing dim data-tip, acct-email/name, acct-tier-label"
     }
+  },
+  {
+    "session": 123,
+    "date": "2026-03-25",
+    "time": "14:30",
+    "type": "work",
+    "summary": "Added 3 Playwright checks (102-104) for the profile page: back button wired to leaderboard, 4 stat elements present, skeleton loader produces rows — 104 total checks, 0 failures",
+    "files": [
+      "autoagent/playwright_registry.py"
+    ],
+    "tests": {
+      "before": 359,
+      "after": 359,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 104,
+      "failures": 0,
+      "notes": "checks 102-104 added: profile-back-btn wiring, pstat-* elements, renderProfileSkeletons output"
+    }
   }
 ]

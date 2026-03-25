@@ -8,8 +8,6 @@
 
 ## HIGH PRIORITY — Frontend Playwright Tests
 
-- [ ] Playwright checks 102-104 — profile page DOM: (102) #profile-back-btn exists and onclick calls showTab('leaderboard'), (103) pstat-profit/pstat-pnl/pstat-volume/pstat-bets stat card elements exist in DOM, (104) #profile-bets-list element exists and showProfile() immediately populates it with skeleton rows
-
 - [ ] Playwright checks 105-107 — upgrade flow + mobile nav: (105) #upgrade-modal exists in DOM, (106) openUpgradeModal() makes #upgrade-modal visible (removes .hidden), (107) mobile 375px: no horizontal overflow on alerts tab view (extends check 92 to alerts tab)
 
 - [ ] Playwright checks 108-110 — account tab content: (108) account tab renders without JS errors (new page, navigate to account tab, no pageerror events), (109) #acct-tier-desc has non-empty text, (110) account tab has a .btn-primary upgrade button or a visible tier display

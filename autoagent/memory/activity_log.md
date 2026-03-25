@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 *(Sessions 81-100 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — TESTING (Session 123)
+DONE: Added 3 Playwright checks (102-104) for the profile page DOM — #profile-back-btn onclick wiring, all 4 pstat-* stat elements present, #profile-bets-list + renderProfileSkeletons() output. 104 total checks, 0 failures. 359 backend tests stable.
+IMPACT: Proves the profile page back button is correctly wired to return to the leaderboard, the 4 stat slots are always present in the DOM, and the skeleton loader function generates real skeleton rows (not empty output).
+FILES: autoagent/playwright_registry.py
+
 ## 2026-03-25 — TESTING (Session 122)
 DONE: Code quality audit (sessions 118-120) passed all 9 team checks — XSS-free streak confirmed 77–120; then added 3 Playwright checks (99-101): pricing locked-feature .dim items have data-tip tooltips (found 6), account tab has #acct-email and #acct-name elements, #acct-tier-label has non-empty text. 101 total checks, 0 failures.
 IMPACT: Proves locked pricing features show upgrade hints on hover (not just visually dimmed), the account tab correctly renders user identity fields, and the tier label always displays a value — all user-facing correctness checks.

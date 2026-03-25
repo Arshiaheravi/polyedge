@@ -712,6 +712,15 @@ RULE: [2026-03-25] Modified tier claim JWT test pattern: use `create_access_toke
 ## Test Suite History
 | Session | Backend Tests | Frontend Checks |
 |---------|--------------|-----------------|
+| 123     | 359          | 104             |
+| 122     | 359          | 101             |
+| 118     | 359          | 88              |
+| 115     | 354          | 88              |
 | 113     | 351          | 83              |
 | 112     | 310          | 83              |
 | 110     | 303          | 83              |
+
+### Session #123 Reflexion — 2026-03-25 (TESTING)
+ACCOMPLISHED: Added 3 Playwright checks (102-104) covering the profile page DOM: (102) #profile-back-btn exists with onclick calling showTab('leaderboard'), (103) all 4 pstat-* stat elements present, (104) #profile-bets-list exists and renderProfileSkeletons(5) produces skeleton rows. CHECK 104 initially tested by calling full async showProfile() but the API call quickly replaced skeletons with error state before the assertion ran. Fixed by directly testing renderProfileSkeletons() in isolation. 104 total checks, 0 failures. 359 backend tests stable.
+FAILED: CHECK 104 first attempt failed — called async showProfile(), waited 0.1s, but the fetch to /bettors/0x000... returned error state synchronously before the check, replacing the skeletons. Root cause: async function replaces skeleton with error state in <0.1s.
+RULE: [2026-03-25] When Playwright-testing that a function sets skeleton HTML (loading state), test the skeleton-generation function directly (e.g. `renderProfileSkeletons(5)`) rather than calling the full async function that shows skeletons then immediately replaces them. Direct function testing avoids all race conditions and gives a deterministic result.

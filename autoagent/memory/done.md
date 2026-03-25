@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-25
+- **[SESSION #123] Playwright checks 102-104 — profile page back button, stat elements, skeleton loader** — 3 new checks: #profile-back-btn wired to showTab('leaderboard'), all 4 pstat-* elements present, renderProfileSkeletons(5) produces ≥3 skeleton rows; 104 total checks, 0 failures; 359 backend tests stable
 - **[SESSION #122] Code quality audit (sessions 118-120) + Playwright checks 99-101** — audit passed all 9 team checks with XSS-free streak confirmed 77–120; checks 99-101 verify pricing locked-feature tooltips (data-tip on .dim items), account #acct-email/#acct-name elements, and #acct-tier-label non-empty; 101 total checks, 0 failures; 359 backend tests stable
 - **[SESSION #120] Alerts/pricing/follows Playwright checks (94-98)** — 5 new checks: alerts toggle switches, Telegram channel card, exactly 3 pricing cards, "Most Popular" badge, follows empty CTA; 98 total checks, 0 failures; 359 tests stable
 - **[SESSION #119] Mobile viewport Playwright tests (checks 89-93)** — 5 new checks at 375px: mobile bottom nav visible, lb-grid single column, visible buttons ≥44px, no horizontal overflow on leaderboard view, landing screenshot saved; 93 total checks, 0 failures; 359 backend tests stable
