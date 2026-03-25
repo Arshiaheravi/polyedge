@@ -1860,5 +1860,15 @@
     "files": ["autoagent/playwright_registry.py"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 55, "failures": 0, "notes": "7 new checks (49-55): each of the 7 major screens verified via showView/showTab JS calls on a dedicated scr_page instance"}
+  },
+  {
+    "session": 91,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "brain",
+    "summary": "Brain session: fixed stale StockCards paths in coding.md, added Playwright hidden-element navigation rule, created click-path-audit skill for vanilla JS state bugs, added fragile zones guard for auth/scheduler/polymarket",
+    "files": ["autoagent/skills/playwright.md", "autoagent/skills/coding.md", "autoagent/skills/click-path-audit.md", "autoagent/skills/INDEX.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md", "autoagent/memory/activity_log.md", "autoagent/memory/knowledge.md", "autoagent/memory/backlog.md"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "brain session — no code changes"}
   }
 ]

@@ -33,6 +33,7 @@ Read this first to find the right skill file before starting any task.
 | Brand color + font system | `brand-guidelines.md` | CSS variable rules (note: StockCards palette section is stale — use design.md for PolyEdge colors) |
 | Animated GIFs for Slack | `slack-gif.md` | PIL + imageio, emoji/message sizes, animation techniques |
 | Creating new skill files | `skill-creator.md` | Skill file format, quality checklist, when to create vs reuse |
+| Button/state interaction bugs (vanilla JS) | `click-path-audit.md` | Trace each button handler for state cancellation bugs and race conditions |
 | Visual art / posters / design images | `canvas-design.md` | 2-phase: philosophy (.md) then canvas (.png/.pdf), 90% visual 10% text |
 
 ## Common task workflows (already proven)

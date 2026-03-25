@@ -11,6 +11,10 @@
 - [ ] Leaderboard sort controls upgrade — the 3 sort buttons (Profit / Win Rate / Volume) currently have basic active states; upgrade with: pill-style toggle group (one visible active pill), smooth 0.2s transition, tooltip on hover explaining what each metric means (e.g. "Total USD profit on Polymarket"), and a subtle count badge showing how many bettors qualify.
 
 
+- [ ] Empowerment-framed bet notification copy — change Telegram/push alert message from "0xABCD placed a bet on [Market]" to "Top bettor you follow just moved on [Market] — 68% win rate this month". Frame the alert as an edge, not a data dump. Change in `services/notifications.py` dispatch_bet_notification(). **Backend change required.**
+- [ ] @lru_cache on get_settings() — add `@functools.lru_cache()` decorator to `get_settings()` in `backend/app/config.py` so Pydantic reads the .env file exactly once at startup rather than on every request. 2-line change, zero risk.
+- [ ] Per-bettor notification budget — add `max_alerts_per_bettor_per_day` column to AlertSetting model (default: unlimited). Scheduler checks this before firing notification — if user already received N alerts from bettor X today, skip. Prevents one prolific bettor spamming the notification feed.
+
 ---
 
 ## MEDIUM PRIORITY

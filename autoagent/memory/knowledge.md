@@ -45,6 +45,12 @@
 
 ## Session Reflexions
 
+### BRAIN Session #91 Reflexion — 2026-03-24
+ACCOMPLISHED: (1) Curated knowledge.md — no duplicates found, already clean. (2) Checked activity_log.md — 30 entries, below 30 threshold, no archival triggered. (3) Searched 5+ topics, 11 new sources. (4) Found 3 new ECC skills (click-path-audit, santa-method, skill-comply) added 2026-03-22/23. (5) Implemented 3 improvements: playwright.md SPA hidden-element navigation rule (from session 90 failure), coding.md stale-path fix + FRAGILE ZONES guard (from arxiv 2603.06847 fault taxonomy), new click-path-audit.md skill. (6) Added 3 backlog items.
+FAILED: Nothing failed.
+RULE: [2026-03-24] Skill files that reference wrong project paths (stale from prior project) are as harmful as wrong code — agents follow them and edit wrong files. BRAIN sessions must check coding.md PYTHON BACKEND PATTERNS and FRONTEND PATTERNS sections against the actual project structure. Grep for distinctive wrong terms (e.g. "stockcards", "app.js", "styles.css") to catch staleness fast.
+RULE: [2026-03-24] When a BRAIN session implements a fix for a specific session failure (e.g. session 90's hidden-element Playwright click), the fix goes into the SKILL FILE for that task type (playwright.md), not just knowledge.md. knowledge.md is the agent's long-term memory; skill files are the agent's in-session reference. A rule only in knowledge.md gets read at session start but may not be recalled when the specific failure triggers mid-session.
+
 ### Session #90 Reflexion — 2026-03-24 (UI/UX)
 ACCOMPLISHED: Playwright screenshot gallery. Captured 7 PNGs (01-07) via tmp_screenshots.py using JS `showView()`/`showTab()` calls — no click() on nav elements (they're not visible at 1280px desktop). Added 7 new checks (49-55) to playwright_registry.py using a separate `scr_page` instance so the new checks don't interfere with prior checks 1-48. 55/55 pass. 303 backend tests stable.
 FAILED: First attempt used ElementHandle.click() on #nav-leaderboard etc. — elements exist in DOM but are display:none at desktop width. Fixed by using `page.evaluate("showView(...)")` / `page.evaluate("showTab(...)")` instead. Also hit charmap encoding error from `→` unicode in print() — fixed by using plain ASCII `->` in print statements (or sys.stdout.reconfigure — but ASCII was simpler).

@@ -14,20 +14,21 @@ Make the smallest change that solves the problem. Before every edit ask:
 - "Am I adding an abstraction for ONE use case?" → don't, just write the code
 Over-engineering is the #1 agent failure mode. 3 lines that work > 30 that are "cleaner".
 
-## PYTHON BACKEND PATTERNS
-- New route: create in `src/stockcards/routes/`, register in `src/stockcards/app.py`
-- New service: create in `src/stockcards/services/`, import in the route
-- New model field: add to `src/stockcards/models/signals.py`, wire through route + frontend
-- Admin endpoints: use `_require_admin` dependency (see `routes/admin.py`)
-- Pure functions only in `services/analysis.py` — no I/O, no HTTP, no yfinance
+## PYTHON BACKEND PATTERNS (PolyEdge)
+- New route: create in `backend/app/routes/`, register in `backend/app/main.py` with `app.include_router()`
+- New service: create in `backend/app/services/`, import in the route
+- New model field: add to `backend/app/models.py`, wire through route + frontend
+- Admin endpoints: use `x-admin-password` header check (see `routes/admin.py`)
+- External API calls: ONLY in `services/` layer — routes must never call Polymarket/Stripe/Telegram directly
 - Python command: `py` (not python, not python3)
+- Backend port: **8002** — never 8001 or 8000
 
-## FRONTEND PATTERNS
-- All JS in `frontend/app.js` — no separate files
-- All CSS in `frontend/styles.css` — no separate files
-- Dark theme, no emojis except flag emojis (🇺🇸 🇨🇦)
-- Ticker display: never add `.TO` suffix — backend handles it
-- API base: `http://localhost:8000`
+## FRONTEND PATTERNS (PolyEdge)
+- All JS and CSS in `frontend/index.html` — single-file SPA, no separate app.js/styles.css
+- Dark theme, no emojis in UI text (use inline SVGs instead)
+- API base: `http://localhost:8002`
+- JWT token: stored in `localStorage` as `pe_token`
+- Global state variables: `_bettorCache` (Map), `_disclosureCache` (Map), `alertSettings` (object)
 
 ## DICT KEY CONTRACT — CHECK ALL 3 LAYERS
 When a function returns a dict with new keys:
@@ -57,9 +58,9 @@ When adding a new scoring dimension, check all 8 layers — missing any produces
 
 **Production startup** — use Gunicorn + Uvicorn workers instead of raw `uvicorn`:
 ```
-gunicorn -k uvicorn.workers.UvicornWorker -w 4 src.stockcards.app:create_app --factory --port 8000
+gunicorn -k uvicorn.workers.UvicornWorker -w 4 app.main:app --port 8002
 ```
-This adds process-level fault isolation and CPU parallelism — critical for concurrent screener calls.
+This adds process-level fault isolation and CPU parallelism — critical for concurrent API calls.
 
 ## FASTAPI STARTUP/SHUTDOWN — USE LIFESPAN, NOT @app.on_event
 `@app.on_event("startup")` / `@app.on_event("shutdown")` are deprecated since FastAPI 0.103+. Use `lifespan`:
@@ -77,9 +78,18 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 ```
-In StockCards this slots into `create_app()` — pass `lifespan=lifespan` to the FastAPI constructor.
+In PolyEdge this slots into `backend/app/main.py` — pass `lifespan=lifespan` to the FastAPI constructor.
 
 ## AFTER WRITING CODE
-- Import check: `py -c "from src.stockcards.app import create_app; print('OK')"`
-- Run tests: `py -m pytest tests/ -q --ignore=tests/test_e2e.py`
+- Import check: `cd backend && py -c "from app.main import app; print('OK')"`
+- Run tests: `cd backend && py -m pytest tests/ -v`
 - Fix ALL failures — never commit red
+
+## FRAGILE ZONES — DOUBLE-CHECK BEFORE COMMITTING
+These three files have downstream effects that tests don't fully catch. When you edit any of them, re-read the surrounding interface contract (type signatures, response shapes) before committing:
+
+- **`backend/app/auth.py`** — JWT payload shape: changing `sub`, `tier`, or any key breaks `get_current_user()` for ALL routes. Verify `{"sub": user.id, "tier": user.subscription_tier}` is unchanged.
+- **`backend/app/services/scheduler.py`** — datetime handling: `_last_check` must be a UTC-aware datetime. APScheduler fires every 30s; if `_last_check` is naive or in wrong TZ, bets are silently re-detected or missed.
+- **`backend/app/services/polymarket.py`** — API response normalization: if the key names returned to routes change (e.g. `profit` → `profit_usd`), ALL routes that use bettor data break silently. The normalised field names are the internal contract — grep for usages before renaming.
+
+(Source: arxiv 2603.06847 — Fault Taxonomy for Agentic AI: token management faults → auth failures; datetime defects → scheduling anomalies; API normalization faults → data validation failures)

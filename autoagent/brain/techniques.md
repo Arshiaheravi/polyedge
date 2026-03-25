@@ -372,6 +372,24 @@ Where: PROMPT.md (STEP 0 self-critique, skip condition + Q6)
 Source: Session 81 META analysis — STEP 0 was silently skipped for ALL UI/UX sessions (no Python touched). XSS audit cycle (sessions 59→67→73→79) happened because STEP 0.5's audit.md wasn't always run either. Moving the grep to STEP 0 Q6 makes it impossible to miss.
 Expected impact: XSS introduced in UI/UX sessions is caught by the author session (not 3-4 sessions later by a dedicated AUDIT session). Breaks the recurring 4-session XSS cycle permanently.
 
+## SPA hidden-element navigation rule in playwright.md — implemented 2026-03-24 (session 91)
+What: Added "SPA HIDDEN ELEMENT NAVIGATION" section to playwright.md. Never click PolyEdge nav elements by ID (display:none at desktop). Always use `page.evaluate("showView(...)")` or `page.evaluate("showTab(...)")`. Also added multi-screen check pattern with isolated `scr_page` instance.
+Where: autoagent/skills/playwright.md (new section at end, after SPA WAIT STRATEGIES)
+Source: Session #90 failure — ElementHandle.click() on #nav-leaderboard failed silently at 1280px desktop viewport
+Expected impact: Eliminates first-run Playwright failures after any SPA navigation change; agents don't waste a retry discovering hidden-element click failures
+
+## coding.md stale-path cleanup + fragile zones guard — implemented 2026-03-24 (session 91)
+What: (1) Fixed PYTHON BACKEND PATTERNS and FRONTEND PATTERNS sections — removed stale StockCards paths (src/stockcards/routes/, frontend/app.js, frontend/styles.css); replaced with correct PolyEdge paths (backend/app/routes/, frontend/index.html, port 8002). (2) Added FRAGILE ZONES section: when editing auth.py, scheduler.py, or polymarket.py, double-check the interface contract (JWT payload shape, datetime tz-awareness, normalised field names).
+Where: autoagent/skills/coding.md (PYTHON BACKEND PATTERNS, FRONTEND PATTERNS, AFTER WRITING CODE sections)
+Source: (1) SWE-Skills-Bench arxiv 2603.15401 — stale project-specific paths in skills files actively degrade agent performance; (2) arxiv 2603.06847 Fault Taxonomy — top propagation paths in agentic codebases are auth/datetime/API-normalization interface mismatches
+Expected impact: Future WORK sessions read correct file paths on first try; agents double-check JWT/scheduler/polymarket interfaces before committing changes that could silently break all auth or all bet detection
+
+## click-path-audit.md skill (vanilla JS) — implemented 2026-03-24 (session 91)
+What: Created new skill file `autoagent/skills/click-path-audit.md` — PolyEdge-specific adaptation of ECC click-path-audit. Documents PolyEdge's 5 global state variables, 4 common cancellation patterns (toggle+reload race, follow+cache stale, tab switch+pending fetch, disclosure cache invalidation), and a structured audit output format. Added to INDEX.md.
+Where: autoagent/skills/click-path-audit.md (new file), autoagent/skills/INDEX.md
+Source: affaan-m/everything-claude-code skills/click-path-audit (2026-03-22) — 54 state-interaction bugs found in one session using this method in original React/Zustand repo
+Expected impact: Future debugging sessions for "button does nothing" UI bugs have a systematic trace method instead of ad-hoc guessing
+
 ## Event-driven commit reminders (instruction fade-out prevention) — implemented 2026-03-21
 What: At every commit, re-display the 4 most commonly forgotten rules as a COMMIT REMINDERS block: no autoagent/ in project git add, use py not python3, project branch=main vs autoagent branch=master, clear current_task.md immediately after push. Rules re-injected at the exact decision point where they're most needed prevent instruction fade-out — the pattern where critical rules are read at session start but forgotten 30 tool calls later.
 Where: PROMPT.md (STEP 3 — COMMIT REMINDERS block before step 1)

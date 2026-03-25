@@ -2,6 +2,13 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-24 — BRAIN SESSION (Session 91)
+RESEARCHED: autonomous AI agent reliability (arxiv 2603.06847 fault taxonomy, 2603.15401 SWE-Skills-Bench, 2603.09619 context quality criteria), new ECC skills (click-path-audit, santa-method, skill-comply), copy-trading UX improvements 2026, FastAPI production patterns
+DOWNLOADED: affaan-m/everything-claude-code skills/click-path-audit (2026-03-22) — adapted as PolyEdge vanilla JS skill
+IMPLEMENTED: (1) playwright.md — SPA hidden-element navigation rule (page.evaluate vs click() on display:none elements); (2) coding.md — fixed all stale StockCards paths + added FRAGILE ZONES guard for auth.py/scheduler.py/polymarket.py; (3) skills/click-path-audit.md — new skill for vanilla JS state-cancellation bug audits; (4) INDEX.md — added click-path-audit entry
+BACKLOGGED: empowerment-framed notification copy, @lru_cache on get_settings(), per-bettor notification budget
+SOURCES: 11 new sources logged in brain/sources.md
+
 ## 2026-03-24 — UI/UX (Session 90)
 DONE: Playwright screenshot gallery — captured screenshots of all 7 major screens (01_landing_hero.png, 02_leaderboard.png, 03_profile.png, 04_follows.png, 05_alerts.png, 06_pricing.png, 07_auth.png) saved to autoagent/reports/screenshots/. Added 7 new Playwright checks (49-55) that verify each screen renders correctly via showView/showTab JS calls on a dedicated page instance. 55/55 checks pass. 303 backend tests stable.
 IMPACT: Satisfies the NORTH_STAR.md requirement for screenshot documentation of all 7 major screens. Adds regression coverage ensuring each screen renders without errors — any future change that breaks a screen will be caught by checks 49-55 before commit.

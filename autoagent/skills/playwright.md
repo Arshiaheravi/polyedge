@@ -340,3 +340,44 @@ await page.wait_for_load_state("networkidle", timeout=10000)
 **Rule**: When a Playwright check randomly passes/fails, the root cause is almost always a race condition between the check's DOM query and the API response. Use `waitForResponse()` (preferred, precise) or `networkidle` (acceptable, coarser) before asserting on API-loaded content.
 
 (Source: affaan-m/everything-claude-code skills/e2e-testing/SKILL.md, 2026-03-24)
+
+---
+
+## SPA HIDDEN ELEMENT NAVIGATION (PolyEdge-specific)
+
+PolyEdge's SPA has nav elements that are conditionally visible — `#nav-leaderboard`, `#nav-follows`, etc. are `display:none` at desktop widths (mobile-only). Trying to `click()` them in Playwright will silently fail or error.
+
+**Never click nav elements by ID if they might be hidden. Use `page.evaluate()` to call the SPA's JS functions directly:**
+
+```python
+# WRONG — clicks hidden element, silently fails at desktop width:
+await page.click("#nav-leaderboard")
+
+# CORRECT — calls the JS function directly, always works:
+await page.evaluate("showView('leaderboard')")
+await page.evaluate("showTab('follows')")
+await page.evaluate("showView('browse')")
+```
+
+**Multi-screen check pattern** — use a dedicated `scr_page` instance for screen-navigation checks to avoid contaminating the main `page` state:
+
+```python
+scr_page = await browser.new_page()
+await scr_page.goto("http://localhost:3000", timeout=12000)
+await scr_page.wait_for_load_state("networkidle")
+
+# Navigate via JS evals (not click):
+await scr_page.evaluate("showView('leaderboard')")
+await asyncio.sleep(0.5)
+title = await scr_page.title()
+# ... assert on scr_page ...
+
+await scr_page.close()
+# Then browser.close() as normal
+```
+
+Close `scr_page` before `browser.close()` to avoid resource warnings.
+
+**Rule**: For PolyEdge SPA, ALL tab/view switching in Playwright must use `page.evaluate("showView(...)")` or `page.evaluate("showTab(...)")` — never `click()` on nav elements. Nav elements are `display:none` at desktop width (1280px default Playwright viewport).
+
+(Source: Session #90 failure — ElementHandle.click() on #nav-leaderboard failed because element is display:none at desktop width. Fixed by using page.evaluate("showView(...)") instead.)
