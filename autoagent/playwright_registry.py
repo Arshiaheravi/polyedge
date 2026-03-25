@@ -1481,6 +1481,67 @@ async def check():
         except Exception as e:
             failures.append(f"acct-tier-label check error: {e}")
 
+        # ── CHECKS 102-104: profile page DOM (Session 123) ──
+
+        # CHECK 102: #profile-back-btn exists and its onclick calls showTab('leaderboard')
+        try:
+            await page.evaluate("showView('landing')")
+            await asyncio.sleep(0.2)
+            back_ok = await page.evaluate("""() => {
+                const btn = document.getElementById('profile-back-btn');
+                if (!btn) return false;
+                const oc = btn.getAttribute('onclick') || '';
+                return oc.includes("showTab('leaderboard')");
+            }""")
+            if back_ok:
+                checks += 1
+                print("  [CHECK 102] #profile-back-btn exists and onclick calls showTab('leaderboard')")
+            else:
+                failures.append("#profile-back-btn missing or onclick does not call showTab('leaderboard')")
+        except Exception as e:
+            failures.append(f"profile-back-btn check error: {e}")
+
+        # CHECK 103: pstat-profit, pstat-pnl, pstat-volume, pstat-bets stat elements exist in DOM
+        try:
+            stat_ok = await page.evaluate("""() => {
+                const ids = ['pstat-profit', 'pstat-pnl', 'pstat-volume', 'pstat-bets'];
+                return ids.every(id => document.getElementById(id) !== null);
+            }""")
+            if stat_ok:
+                checks += 1
+                print("  [CHECK 103] Profile stat elements present: pstat-profit, pstat-pnl, pstat-volume, pstat-bets")
+            else:
+                missing = await page.evaluate("""() => {
+                    const ids = ['pstat-profit', 'pstat-pnl', 'pstat-volume', 'pstat-bets'];
+                    return ids.filter(id => !document.getElementById(id));
+                }""")
+                failures.append(f"Profile stat elements missing: {missing}")
+        except Exception as e:
+            failures.append(f"Profile stat elements check error: {e}")
+
+        # CHECK 104: #profile-bets-list exists and renderProfileSkeletons() produces skeleton HTML
+        try:
+            result = await page.evaluate("""() => {
+                const list = document.getElementById('profile-bets-list');
+                if (!list) return {list: false, skeletons: 0};
+                if (typeof renderProfileSkeletons !== 'function') return {list: true, skeletons: -1};
+                const html = renderProfileSkeletons(5);
+                const div = document.createElement('div');
+                div.innerHTML = html;
+                return {list: true, skeletons: div.querySelectorAll('.skeleton').length};
+            }""")
+            if not result['list']:
+                failures.append("#profile-bets-list element missing from DOM")
+            elif result['skeletons'] == -1:
+                failures.append("renderProfileSkeletons() function not defined in frontend")
+            elif result['skeletons'] >= 3:
+                checks += 1
+                print(f"  [CHECK 104] #profile-bets-list exists; renderProfileSkeletons(5) produces {result['skeletons']} skeleton rows")
+            else:
+                failures.append(f"renderProfileSkeletons(5) produced only {result['skeletons']} skeleton elements, expected >=3")
+        except Exception as e:
+            failures.append(f"profile-bets-list skeleton check error: {e}")
+
         await browser.close()
     return checks, failures
 
