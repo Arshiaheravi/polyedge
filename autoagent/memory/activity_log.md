@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 *(Sessions 81-100 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — META (Session 126)
+IMPROVED: backlog.md — added 3 Playwright check batches (117-119: toast+demo mode JS API; 120-122: animation helpers+page progress; 123-125: hero section+leaderboard card wiring). Prevents empty HIGH PRIORITY section after sessions 127-128 complete the two existing batches (111-116).
+PATTERNS FOUND: With only 2 Playwright batches left in HIGH PRIORITY, the section will empty after ~2 sessions. LOW-WATER-MARK check relies on work sessions catching this — pre-populating now avoids an exploratory turn wasted on backlog generation mid-session.
+PREDICTED IMPACT: 3 more sessions of pre-defined testing work without needing to invent tasks; no empty-backlog sessions in the near term.
+
 ## 2026-03-25 — TESTING (Session 125)
 DONE: Added 3 Playwright checks (108-110) — account tab renders without JS errors, #acct-tier-desc has non-empty text, #acct-upgrade-btn (.btn-primary) is present in DOM. 110 total checks, 0 failures. 359 backend tests stable.
 IMPACT: Proves the account tab is correctly wired — navigation doesn't trigger JS errors, users always see a tier description, and the upgrade button element is always in the DOM (even when hidden by tier logic).
