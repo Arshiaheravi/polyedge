@@ -205,6 +205,20 @@
     .sort-btn { background: var(--card2); color: var(--text2); border: 1px solid var(--border); border-radius: 100px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
     .sort-btn:hover { border-color: var(--accent); color: var(--text); }
     .sort-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+    /* Pill-style sort toggle group */
+    .sort-pill-group { display: flex; background: var(--card2); border: 1px solid var(--border); border-radius: 100px; padding: 3px; gap: 2px; }
+    .sort-pill { background: transparent; color: var(--text2); border: none; border-radius: 100px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; position: relative; min-height: 32px; }
+    .sort-pill:hover:not(.active) { color: var(--text); background: var(--card3); }
+    .sort-pill.active { background: var(--accent); color: #000; }
+    .sort-count { background: rgba(0,0,0,0.18); border-radius: 100px; font-size: 11px; font-weight: 700; padding: 1px 7px; line-height: 1.6; opacity: 0; transition: opacity 0.3s; }
+    .sort-count.loaded { opacity: 1; }
+    .sort-pill.active .sort-count { background: rgba(0,0,0,0.22); }
+
+    /* Custom tooltip for sort pills */
+    [data-tooltip] { position: relative; }
+    [data-tooltip]::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: var(--card3); color: var(--text); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 6px 10px; font-size: 12px; font-weight: 400; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 200; }
+    [data-tooltip]:hover::after { opacity: 1; }
     .btn-danger { background: rgba(240,62,62,0.12); color: var(--red); border: 1px solid rgba(240,62,62,0.3); }
     .btn-danger:hover { background: rgba(240,62,62,0.22); }
     .btn-outline { background: transparent; color: var(--accent2); border: 1px solid var(--accent); }
@@ -861,6 +875,7 @@
       .section { padding: 48px 16px; }
       /* Tab sort/filter buttons — increase to 40px min touch target */
       .tab-btn { min-height: 40px; padding: 8px 14px; }
+      .sort-pill { min-height: 40px; padding: 8px 12px; }
       /* Follow buttons — increase to 44px touch target (core action) */
       .follow-btn { min-height: 44px; padding: 10px 14px; }
       /* Modal — reduce padding so content fits on 375px */
@@ -1577,8 +1592,10 @@
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
       <div class="tab-bar" style="gap:6px;flex-wrap:wrap;margin-bottom:0;">
-        <button class="tab-btn active" id="browse-sort-profit"  onclick="loadBrowseLeaderboard('profit', browsePeriod)">Top Profit</button>
-      <button class="tab-btn"        id="browse-sort-volume"  onclick="loadBrowseLeaderboard('volume', browsePeriod)">Top Volume</button>
+        <div class="sort-pill-group">
+          <button class="sort-pill active" id="browse-sort-profit" onclick="loadBrowseLeaderboard('profit', browsePeriod)" data-tooltip="Total USD profit across all bets">Top Profit <span class="sort-count" id="browse-sort-count-profit"></span></button>
+          <button class="sort-pill"        id="browse-sort-volume" onclick="loadBrowseLeaderboard('volume', browsePeriod)" data-tooltip="Total USD wagered (wins + losses combined)">Top Volume <span class="sort-count" id="browse-sort-count-volume"></span></button>
+        </div>
       <span style="width:1px;background:var(--border);margin:0 4px;"></span>
       <button class="tab-btn"        id="browse-period-day"   onclick="loadBrowseLeaderboard(browseSort, 'day')">Today</button>
       <button class="tab-btn active" id="browse-period-month" onclick="loadBrowseLeaderboard(browseSort, 'month')">Month</button>
@@ -1660,8 +1677,10 @@
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
           <div class="tab-bar" style="gap:6px;flex-wrap:wrap;margin-bottom:0;">
-            <button class="tab-btn active" id="sort-profit"  onclick="loadLeaderboard('profit', currentPeriod)" title="Rank by how much money they made">Top Profit</button>
-            <button class="tab-btn"        id="sort-volume"  onclick="loadLeaderboard('volume', currentPeriod)" title="Rank by total amount bet">Top Volume</button>
+            <div class="sort-pill-group">
+              <button class="sort-pill active" id="sort-profit" onclick="loadLeaderboard('profit', currentPeriod)" data-tooltip="Total USD profit across all bets">Top Profit <span class="sort-count" id="sort-count-profit"></span></button>
+              <button class="sort-pill"        id="sort-volume" onclick="loadLeaderboard('volume', currentPeriod)" data-tooltip="Total USD wagered (wins + losses combined)">Top Volume <span class="sort-count" id="sort-count-volume"></span></button>
+            </div>
             <span style="width:1px;background:var(--border);margin:0 4px;"></span>
             <button class="tab-btn"        id="period-day"   onclick="loadLeaderboard(currentSort, 'day')"   title="Profit made today only">Today</button>
             <button class="tab-btn active" id="period-month" onclick="loadLeaderboard(currentSort, 'month')" title="Profit made this month">Month</button>
@@ -2688,6 +2707,11 @@ async function loadLeaderboard(sort = currentSort, period = currentPeriod) {
     const el = document.getElementById(`sort-${s}`);
     if (el) el.classList.toggle('active', s === sort);
   });
+  // Reset count badges while loading
+  ['profit', 'volume'].forEach(s => {
+    const badge = document.getElementById(`sort-count-${s}`);
+    if (badge) { badge.textContent = ''; badge.classList.remove('loaded'); }
+  });
   ['day', 'month', 'week', 'all'].forEach(p => {
     const el = document.getElementById(`period-${p}`);
     if (el) el.classList.toggle('active', p === period);
@@ -2708,6 +2732,11 @@ async function loadLeaderboard(sort = currentSort, period = currentPeriod) {
       return;
     }
     container.innerHTML = bettors.map((b, i) => renderBettorCard(b, i)).join('');
+    // Update count badges on sort pills
+    ['profit', 'volume'].forEach(s => {
+      const badge = document.getElementById(`sort-count-${s}`);
+      if (badge) { badge.textContent = bettors.length; badge.classList.add('loaded'); }
+    });
   } catch (e) {
     container.innerHTML = '<div class="empty-state es-card" style="grid-column:1/-1;"><div class="es-illustration es-illustration-gold"><svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M26 5L3 47H49L26 5Z" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="26" y1="21" x2="26" y2="33" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/><circle cx="26" cy="40" r="2.2" fill="#f59e0b"/></svg></div><h3>Could not load leaderboard</h3><p></p></div>';
     container.querySelector('.empty-state p').textContent = e.message;
@@ -2908,6 +2937,11 @@ async function loadBrowseLeaderboard(sort = browseSort, period = browsePeriod) {
     const btn = document.getElementById(`browse-sort-${s}`);
     if (btn) btn.classList.toggle('active', s === sort);
   });
+  // Reset browse count badges while loading
+  ['profit', 'volume'].forEach(s => {
+    const badge = document.getElementById(`browse-sort-count-${s}`);
+    if (badge) { badge.textContent = ''; badge.classList.remove('loaded'); }
+  });
   ['day', 'month', 'week', 'all'].forEach(p => {
     const btn = document.getElementById(`browse-period-${p}`);
     if (btn) btn.classList.toggle('active', p === period);
@@ -2928,6 +2962,11 @@ async function loadBrowseLeaderboard(sort = browseSort, period = browsePeriod) {
       return;
     }
     container.innerHTML = bettors.map((b, i) => renderBettorCard(b, i)).join('');
+    // Update count badges on sort pills
+    ['profit', 'volume'].forEach(s => {
+      const badge = document.getElementById(`browse-sort-count-${s}`);
+      if (badge) { badge.textContent = bettors.length; badge.classList.add('loaded'); }
+    });
   } catch (e) {
     container.innerHTML = '<div class="empty-state es-card" style="grid-column:1/-1;"><div class="es-illustration es-illustration-gold"><svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M26 5L3 47H49L26 5Z" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="26" y1="21" x2="26" y2="33" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/><circle cx="26" cy="40" r="2.2" fill="#f59e0b"/></svg></div><h3>Could not load leaderboard</h3><p></p></div>';
     container.querySelector('.empty-state p').textContent = e.message;
