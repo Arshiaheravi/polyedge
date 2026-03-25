@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-24 — UI/UX (Session 88)
+DONE: Leaderboard card progressive disclosure — clicking any lb-card (except the follow button) expands it via CSS max-height transition (0 → 220px) to reveal recent market titles (lazy-fetched from /bettors/{address} on first expand, results cached in _disclosureCache) and a "View profile →" CTA button. Chevron rotates 180° on expand. Profile navigation moved from header click to the disclosure button. market title data uses escapeHtml(). 45 Playwright checks pass (3 new: toggleLbCardExpand, disclosure HTML, chevron).
+IMPACT: Users can now preview a bettor's recent betting activity directly from the leaderboard without leaving the page. The "View profile →" CTA surfaces at the moment of intent — immediately after the user sees the recent markets — reducing the decision friction before following.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-24 — UI/UX (Session 87)
 DONE: Auth form UX tightening — (1) Tab switch now animates with fade+slide (authFormOut/authFormIn keyframes, 150ms delay before showing new form — prevents flash); (2) mobile full-screen: at ≤640px the auth-box fills 100vh with no border-radius and flush padding; (3) "or" divider with horizontal rules added between submit button and a disabled Google SSO placeholder in both Login and Register forms.
 IMPACT: Auth form now feels polished and intentional on both desktop and mobile. The animated tab switch removes the jarring instant swap. The Google placeholder sets expectations ("social login is coming") without false affordance (button is disabled). Mobile users get a native app-style full-screen form instead of a floating card that fights keyboard pop-up.

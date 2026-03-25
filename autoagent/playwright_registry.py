@@ -530,6 +530,39 @@ async def check():
         except Exception as e:
             failures.append(f'auth-social-btn check error: {e}')
 
+        # CHECK 43 (session 88): toggleLbCardExpand function defined
+        try:
+            fn_exists = await page.evaluate("typeof toggleLbCardExpand === 'function'")
+            if fn_exists:
+                checks += 1
+                print('  [CHECK 43] toggleLbCardExpand function defined')
+            else:
+                failures.append('toggleLbCardExpand function not found in page JS')
+        except Exception as e:
+            failures.append(f'toggleLbCardExpand check error: {e}')
+
+        # CHECK 44 (session 88): .lb-card-disclosure exists in renderBettorCard output
+        try:
+            html = await page.evaluate("renderBettorCard({address:'0xabc123',name:'Test',pnl_usd:1000,volume_usd:5000,rank:1}, 0)")
+            if 'lb-card-disclosure' in html and 'lb-view-profile-btn' in html:
+                checks += 1
+                print('  [CHECK 44] renderBettorCard output contains lb-card-disclosure + lb-view-profile-btn')
+            else:
+                failures.append(f'renderBettorCard missing disclosure/profile-btn: {html[:120]}')
+        except Exception as e:
+            failures.append(f'renderBettorCard disclosure check error: {e}')
+
+        # CHECK 45 (session 88): lb-card chevron SVG present in renderBettorCard output
+        try:
+            html = await page.evaluate("renderBettorCard({address:'0xdef456',name:'Trader',pnl_usd:500,volume_usd:2000}, 1)")
+            if 'lb-card-chevron' in html:
+                checks += 1
+                print('  [CHECK 45] renderBettorCard output contains lb-card-chevron element')
+            else:
+                failures.append(f'renderBettorCard missing lb-card-chevron')
+        except Exception as e:
+            failures.append(f'lb-card-chevron check error: {e}')
+
         await browser.close()
     return checks, failures
 

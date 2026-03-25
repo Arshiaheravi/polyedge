@@ -45,6 +45,12 @@
 
 ## Session Reflexions
 
+### Session #88 Reflexion — 2026-03-24 (UI/UX)
+ACCOMPLISHED: Leaderboard card progressive disclosure. (1) CSS: `.lb-card` gets `cursor:pointer`; `.lb-card-chevron` (24×24, flex centered, `transition: transform 0.28s, color 0.2s`); `.lb-card.lb-expanded .lb-card-chevron` rotates 180°; `.lb-card-disclosure` (max-height:0, opacity:0, `overflow:hidden`, `transition: max-height 0.3s, opacity 0.25s`); `.lb-card.lb-expanded .lb-card-disclosure` (max-height:220px, opacity:1); `.lb-disclosure-inner` (border-top, padding); `.lb-view-profile-btn` (full-width, accent border, hover glow). (2) JS: `_disclosureCache` Map for caching fetched market titles per address; `_loadDisclosureMarkets(addr, disclosureEl)` lazy-fetches `/bettors/{addr}`, extracts 2 market titles, updates `.lb-disclosure-markets` inner HTML using `escapeHtml(t)`; `_renderDisclosureMarkets(marketsDiv, titles)` renders the title rows or fallback text; `toggleLbCardExpand(event, cardEl)` toggles `.lb-expanded` class, skips follow/view-profile buttons, calls `_loadDisclosureMarkets` on expand. (3) `renderBettorCard`: removed `onclick`/`role="button"` from header, added chevron SVG in header, moved click handler to card root div, added `event.stopPropagation()` on follow button + view-profile button, added `.lb-card-disclosure` section before follow button. (4) 3 new Playwright checks (43-45). 45/45 pass. 303 tests stable.
+FAILED: Nothing.
+RULE: [2026-03-24] For CSS max-height expand/collapse: set the initial `max-height:0` on the element and the expanded `max-height` to a generous fixed value (220px) rather than `max-height: auto` — transitions don't animate from/to `auto`. The opacity transition complements it so the reveal feels smooth.
+RULE: [2026-03-24] When making a card clickable but with a button inside: add `event.stopPropagation()` to all interactive child elements (buttons, links) so the card's onclick doesn't fire when the child is clicked. Conversely, in `toggleLbCardExpand(event, cardEl)` use `event.target.closest('.follow-btn')` to bail early for any follow-button descendant click.
+
 ### Session #87 Reflexion — 2026-03-24 (UI/UX)
 ACCOMPLISHED: Auth form UX tightening — animated tab switch (authFormOut/authFormIn CSS keyframes + 150ms JS timeout before revealing new form), mobile full-screen auth-box (100vh, border-radius:0 at ≤640px), "or" divider + Google SSO placeholder button (disabled, opacity:0.45) in both forms. 303 tests stable, 42/42 Playwright checks pass (3 new).
 FAILED: Nothing.

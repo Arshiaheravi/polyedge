@@ -1830,5 +1830,15 @@
     "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 42, "failures": 0, "notes": "3 new checks (40-42): tab animation class, or-divider count, social-btn count"}
+  },
+  {
+    "session": 88,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Leaderboard cards now expand on click to show recent market titles and a View Profile button — users can preview a bettor's recent bets without navigating away from the leaderboard",
+    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 45, "failures": 0, "notes": "3 new checks (43-45): toggleLbCardExpand function, disclosure panel in renderBettorCard output, chevron element"}
   }
 ]
