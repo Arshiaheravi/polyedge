@@ -34,7 +34,7 @@
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
 - Test count: **359 passed** (as of 2026-03-25, session 119 — stable)
-- Playwright checks: **101 total, 0 failures** (as of 2026-03-25, session 122)
+- Playwright checks: **110 total, 0 failures** (as of 2026-03-25, session 125)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -45,6 +45,13 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #125 Reflexion — 2026-03-25 (TESTING — Playwright checks 108-110)
+ACCOMPLISHED: Added 3 Playwright checks (108-110): CHECK 108 — account tab navigation fires no JS errors (tracks pageerror count before/after showTab call); CHECK 109 — #acct-tier-desc element present with non-empty text; CHECK 110 — #acct-upgrade-btn present in DOM with .btn-primary class. 110 total checks, 0 failures. 359 backend tests stable.
+FAILED: Nothing — all 3 checks passed first run.
+RULE: [2026-03-25] To check "no new JS errors after navigation", capture `len(js_errors)` before the `showTab/showView` call, navigate, then slice `js_errors[before_count:]` to see only errors introduced by that navigation. This is more precise than checking `len(js_errors) == 0` (which fails if earlier checks triggered errors).
+
+- Test count: **359 passed** (stable), **110 Playwright checks** (107 → 110)
 
 ### Session #122 Reflexion — 2026-03-25 (TESTING — Code audit + Playwright checks 99-101)
 ACCOMPLISHED: (1) Code quality audit for sessions 118-120: all 9 virtual team checks passed. XSS-free streak confirmed sessions 77–120 (44 sessions). (2) Added 3 Playwright checks (99-101): CHECK 99 — 6 `.pricing-features li.dim[data-tip]` elements present (hover tooltips wired); CHECK 100 — `#acct-email` and `#acct-name` elements exist in account tab; CHECK 101 — `#acct-tier-label` present with non-empty text. 101 total checks, 0 failures. Both tasks completed in same session (zero-tolerance for empty sessions).

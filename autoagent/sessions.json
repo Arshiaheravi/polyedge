@@ -2748,5 +2748,15 @@
       "failures": 0,
       "notes": "checks 105-107 added: upgrade-modal DOM presence, openUpgradeModal visibility toggle, mobile 375px alerts overflow"
     }
+  },
+  {
+    "session": 125,
+    "date": "2026-03-25",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 3 Playwright checks (108-110) verifying account tab: no JS errors on navigation, tier description text present, and upgrade button in DOM — proves account tab is correctly wired and always shows tier info",
+    "files": ["autoagent/playwright_registry.py"],
+    "tests": {"before": 359, "after": 359, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 110, "failures": 0, "notes": "checks 108-110 added: account tab no JS errors, #acct-tier-desc non-empty, #acct-upgrade-btn present"}
   }
 ]

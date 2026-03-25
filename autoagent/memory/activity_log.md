@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 *(Sessions 81-100 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — TESTING (Session 125)
+DONE: Added 3 Playwright checks (108-110) — account tab renders without JS errors, #acct-tier-desc has non-empty text, #acct-upgrade-btn (.btn-primary) is present in DOM. 110 total checks, 0 failures. 359 backend tests stable.
+IMPACT: Proves the account tab is correctly wired — navigation doesn't trigger JS errors, users always see a tier description, and the upgrade button element is always in the DOM (even when hidden by tier logic).
+FILES: autoagent/playwright_registry.py
+
 ## 2026-03-25 — TESTING (Session 124)
 DONE: Added 3 Playwright checks (105-107) — #upgrade-modal exists in DOM, openUpgradeModal() removes .hidden class (modal becomes visible), mobile 375px alerts tab has no horizontal overflow. 107 total checks, 0 failures. 359 backend tests stable.
 IMPACT: Proves the upgrade modal is always present and correctly toggled by the JS function (not broken by a missing element or wrong class), and the alerts settings screen fits within 375px mobile screens without requiring horizontal scrolling.
