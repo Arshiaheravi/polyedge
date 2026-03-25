@@ -2800,5 +2800,15 @@
     "files": ["autoagent/playwright_registry.py"],
     "tests": {"before": 359, "after": 359, "status": "pass"},
     "frontend": {"status": "pass", "checks": 113, "failures": 0, "notes": ""}
+  },
+  {
+    "session": 128,
+    "date": "2026-03-25",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added Playwright checks 114-116: #follows-empty in DOM, #follows-container in DOM, #follows-subtitle in DOM with text content. 116 total checks, 0 failures.",
+    "files": ["autoagent/playwright_registry.py"],
+    "tests": {"before": 359, "after": 359, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 116, "failures": 0, "notes": ""}
   }
 ]

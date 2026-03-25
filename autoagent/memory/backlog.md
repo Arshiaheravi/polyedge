@@ -8,7 +8,6 @@
 
 ## HIGH PRIORITY — Frontend Playwright Tests
 
-- [ ] Playwright checks 114-116 — follows dashboard DOM: (114) #follows-empty element exists in DOM, (115) #follows-container element exists in DOM, (116) #follows-subtitle element exists in DOM with text content
 
 - [ ] Playwright checks 117-119 — toast + demo mode JS API: (117) #toast-container element exists in DOM, (118) typeof window.toastBet === 'function', (119) typeof window.enterDemoMode === 'function'
 

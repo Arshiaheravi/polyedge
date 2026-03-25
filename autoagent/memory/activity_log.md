@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 *(Sessions 81-100 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — TESTING (Session 128)
+DONE: Added 3 Playwright checks (114-116): CHECK 114 — #follows-empty element present in DOM; CHECK 115 — #follows-container element present in DOM; CHECK 116 — #follows-subtitle element present with non-empty text content. 116 total checks, 0 failures. 359 backend tests stable.
+IMPACT: Proves the follows dashboard shell always renders its three key structural elements — the empty state panel, the card container, and the subtitle — so a missing DOM node can't silently break the follows tab for users.
+FILES: autoagent/playwright_registry.py
+
 ## 2026-03-25 — TESTING (Session 127)
 DONE: Added 3 Playwright checks (111-113): CHECK 111 — logout() function defined in window scope; CHECK 112 — clearToken() removes pe_token from localStorage (getItem returns null after call); CHECK 113 — #back-to-top-fab element present in DOM. 113 total checks, 0 failures. 359 backend tests stable.
 IMPACT: Proves the auth logout flow is correctly wired — the logout function is globally accessible, token clearing actually works (not silently failing), and the scroll-to-top button is always rendered in the DOM.

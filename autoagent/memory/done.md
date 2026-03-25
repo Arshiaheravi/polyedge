@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-25
+- **[SESSION #128] Playwright checks 114-116 — follows dashboard DOM** — 3 new checks: #follows-empty present in DOM, #follows-container present in DOM, #follows-subtitle present with text content; 116 total checks, 0 failures; 359 backend tests stable
 - **[SESSION #127] Playwright checks 111-113 — logout + clearToken + FAB DOM** — 3 new checks: logout() defined in window scope, clearToken() removes pe_token from localStorage, #back-to-top-fab present in DOM; 113 total checks, 0 failures; 359 backend tests stable
 - **[SESSION #125] Playwright checks 108-110 — account tab content** — 3 new checks: account tab navigates without JS errors, #acct-tier-desc has non-empty text, #acct-upgrade-btn present with .btn-primary class; 110 total checks, 0 failures; 359 backend tests stable
 - **[SESSION #124] Playwright checks 105-107 — upgrade modal DOM + openUpgradeModal + mobile alerts overflow** — 3 new checks: #upgrade-modal present in DOM, openUpgradeModal() removes .hidden class, mobile 375px alerts tab has no horizontal overflow; 107 total checks, 0 failures; 359 backend tests stable

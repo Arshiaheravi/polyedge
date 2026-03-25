@@ -46,6 +46,13 @@
 
 ## Session Reflexions
 
+### Session #128 Reflexion — 2026-03-25 (TESTING — Playwright checks 114-116)
+ACCOMPLISHED: Added 3 Playwright checks (114-116): CHECK 114 — getElementById('follows-empty') !== null; CHECK 115 — getElementById('follows-container') !== null; CHECK 116 — getElementById('follows-subtitle') !== null && textContent.trim().length > 0. 116 total checks, 0 failures. 359 backend tests stable.
+FAILED: Nothing — all 3 checks passed first run.
+RULE: [2026-03-25] For dashboard section structural checks, always verify both the container (follows-container) and the empty-state element (follows-empty) — both must be in the DOM at load time even though only one will be visible. Testing only one misses cases where a template change removes the other.
+
+- Test count: **359 passed** (stable), **116 Playwright checks** (113 → 116)
+
 ### Session #127 Reflexion — 2026-03-25 (TESTING — Playwright checks 111-113)
 ACCOMPLISHED: Added 3 Playwright checks (111-113): CHECK 111 — `typeof window.logout === 'function'`; CHECK 112 — set pe_token, call clearToken(), verify getItem returns null; CHECK 113 — getElementById('back-to-top-fab') !== null. 113 total checks, 0 failures. 359 backend tests stable.
 FAILED: Nothing — all 3 checks passed first run.
