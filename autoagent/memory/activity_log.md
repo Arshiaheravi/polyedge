@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-25 — META (Session 96)
+IMPROVED: (1) backlog.md — split HIGH PRIORITY into "UI/UX (doable now)" and "BACKEND PENDING (blocked)" so work sessions skip backend tasks without wasting turns; moved 5 backend tasks to BACKEND PENDING; added _disclosureCache TTL fix as actionable UI task. (2) PROJECT.md — added `cd backend && py -m pytest tests/ -q` as the backend test command alongside the existing frontend check command (was missing, causing sessions to only know the Playwright command). (3) PROMPT.md — added "BACKEND PENDING" to the list of task labels to skip in step 3, making the rule explicit.
+PATTERNS FOUND: (1) 3 of 5 HIGH PRIORITY backlog items required backend code changes but PROJECT.md explicitly bans backend work — agents waste turns skipping them before reaching actionable UI tasks. (2) PROJECT.md only listed the frontend Playwright test command; PROMPT.md says "run the test command from PROJECT.md" — agents running the baseline health check could miss pytest entirely.
+PREDICTED IMPACT: Work sessions immediately see the 2 actionable UI tasks at the top of HIGH PRIORITY; no wasted "skip (backend)" turns. pytest command is explicit in PROJECT.md so baseline health check runs correctly.
+
 ## 2026-03-24 — UI/UX (Session 95)
 DONE: Account tab redesign — replaced the minimal plain-text Profile section with a profile hero card showing: circular avatar with user initials (green gradient), color-coded plan badge pill (gray=Free, blue=Basic, gold=VIP), upgrade nudge banner for Free-tier users, and Sign Out button styled as btn-danger with SVG icon. 2 new Playwright checks (61-62) verify badge and avatar render.
 IMPACT: Logged-in users now see their identity and plan tier at a glance; the upgrade nudge is surfaced naturally at account view rather than as an error elsewhere; the danger-styled logout reduces accidental sign-outs while making the action discoverable.
