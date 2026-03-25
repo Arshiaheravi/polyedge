@@ -8,6 +8,8 @@
 - [ ] Follows tab dashboard feel — add a summary row at the top (total followed, active bets in last 24h, P&L indicator), style the bettor cards on the follows page with a richer layout matching the leaderboard card quality
 - [ ] Win Rate computation — session 75 added the Win Rate slot in the 2x2 leaderboard grid but it shows "—"; compute win rate from activity data in `polymarket.py` (profitable bets / total bets from the last 20 activity records), expose as `win_rate_pct` in bettor profile API response, and render it in the card. **Note: backend change required (polymarket.py) — skip in UI/UX-only mode; pick this when backend mode resumes**
 
+- [ ] Annual billing toggle on pricing page — add a Monthly/Annual toggle above the 3 pricing cards; show both percentage savings ("Save 17%") and dollar amount ("Save $10/yr") for Basic and VIP when annual is selected; default to Monthly; pure UI change (no backend wiring needed in UI/UX mode — wire to backend in FEATURE MODE). Source: pipelineroad.com SaaS pricing best practices 2026.
+
 ---
 
 ## MEDIUM PRIORITY

@@ -149,7 +149,8 @@ Any dimension that fails = fix before committing. Log issues that require a full
 - **Mobile pricing stack**: Stack cards vertically on mobile (not horizontal scroll). Mobile-optimized pricing converts 2.3x better. Already handled by flexbox wrapping.
 - **Social proof on the pricing page**: Add "Join 847+ traders" or live count near the CTA buttons — not just on the hero. "Visible social proof increases conversion 15-25%." (InfluenceFlow 2026)
 - Add inline under CTA buttons: "Cancel anytime · No credit card for Free tier"
-(Source: InfluenceFlow SaaS Pricing Page Best Practices 2026, Aimers CRO Trends 2026)
+- **Annual billing toggle** (backlog task): Monthly/Annual pill toggle above cards; default Monthly. When Annual selected, show BOTH "Save 17%" badge AND "Save $10/yr" on Basic/VIP cards. Pure CSS toggle — no backend needed in UI/UX mode. Implementation: `<div class="billing-toggle"><span data-period="monthly" class="active">Monthly</span><span data-period="annual">Annual</span></div>` — JS updates card prices on click.
+(Source: InfluenceFlow SaaS Pricing Page Best Practices 2026, Aimers CRO Trends 2026, PipelineRoad SaaS Pricing 2026)
 
 ## TOAST NOTIFICATION STACK (vanilla JS — Emil Kowalski / Sonner pattern)
 For the "toast notification stack" backlog task. No libraries — pure CSS + JS.
