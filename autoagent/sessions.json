@@ -2727,5 +2727,26 @@
       "failures": 0,
       "notes": "checks 102-104 added: profile-back-btn wiring, pstat-* elements, renderProfileSkeletons output"
     }
+  },
+  {
+    "session": 124,
+    "date": "2026-03-25",
+    "time": "14:45",
+    "type": "work",
+    "summary": "Added 3 Playwright checks (105-107) for upgrade modal and mobile alerts tab: #upgrade-modal exists in DOM, openUpgradeModal() removes hidden class, mobile 375px alerts tab has no horizontal overflow — 107 total checks, 0 failures",
+    "files": [
+      "autoagent/playwright_registry.py"
+    ],
+    "tests": {
+      "before": 359,
+      "after": 359,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 107,
+      "failures": 0,
+      "notes": "checks 105-107 added: upgrade-modal DOM presence, openUpgradeModal visibility toggle, mobile 375px alerts overflow"
+    }
   }
 ]

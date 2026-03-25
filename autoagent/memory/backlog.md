@@ -8,9 +8,11 @@
 
 ## HIGH PRIORITY — Frontend Playwright Tests
 
-- [ ] Playwright checks 105-107 — upgrade flow + mobile nav: (105) #upgrade-modal exists in DOM, (106) openUpgradeModal() makes #upgrade-modal visible (removes .hidden), (107) mobile 375px: no horizontal overflow on alerts tab view (extends check 92 to alerts tab)
-
 - [ ] Playwright checks 108-110 — account tab content: (108) account tab renders without JS errors (new page, navigate to account tab, no pageerror events), (109) #acct-tier-desc has non-empty text, (110) account tab has a .btn-primary upgrade button or a visible tier display
+
+- [ ] Playwright checks 111-113 — logout flow + localStorage: (111) logout() function defined in window scope, (112) clearToken() sets localStorage pe_token to null (call clearToken() in evaluate and confirm getItem returns null), (113) #back-to-top-fab element present in DOM
+
+- [ ] Playwright checks 114-116 — follows dashboard DOM: (114) #follows-empty element exists in DOM, (115) #follows-container element exists in DOM, (116) #follows-subtitle element exists in DOM with text content
 
 ---
 

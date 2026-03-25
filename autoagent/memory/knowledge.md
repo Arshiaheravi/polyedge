@@ -720,6 +720,11 @@ RULE: [2026-03-25] Modified tier claim JWT test pattern: use `create_access_toke
 | 112     | 310          | 83              |
 | 110     | 303          | 83              |
 
+### Session #124 Reflexion — 2026-03-25 (TESTING)
+ACCOMPLISHED: Added 3 Playwright checks (105-107) covering upgrade modal and mobile overflow: (105) #upgrade-modal element present in DOM, (106) openUpgradeModal() removes .hidden class making modal visible (tested by reading classList state before+after call), (107) mobile 375px viewport navigates to alerts tab and confirms no horizontal overflow (scrollWidth <= clientWidth). All 3 passed first run. 107 total checks, 0 failures. 359 backend tests stable.
+FAILED: Nothing failed this session.
+RULE: [2026-03-25] When testing JS modal visibility toggle in Playwright, use page.evaluate() to call the function and read classList state in one atomic JS call — avoids timing issues from async page updates. Always clean up by re-adding .hidden at the end of the evaluate block so subsequent checks see uncontaminated page state.
+
 ### Session #123 Reflexion — 2026-03-25 (TESTING)
 ACCOMPLISHED: Added 3 Playwright checks (102-104) covering the profile page DOM: (102) #profile-back-btn exists with onclick calling showTab('leaderboard'), (103) all 4 pstat-* stat elements present, (104) #profile-bets-list exists and renderProfileSkeletons(5) produces skeleton rows. CHECK 104 initially tested by calling full async showProfile() but the API call quickly replaced skeletons with error state before the assertion ran. Fixed by directly testing renderProfileSkeletons() in isolation. 104 total checks, 0 failures. 359 backend tests stable.
 FAILED: CHECK 104 first attempt failed — called async showProfile(), waited 0.1s, but the fetch to /bettors/0x000... returned error state synchronously before the check, replacing the skeletons. Root cause: async function replaces skeleton with error state in <0.1s.
