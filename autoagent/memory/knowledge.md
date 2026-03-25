@@ -46,6 +46,14 @@
 
 ## Session Reflexions
 
+### DEEP BRAIN Session #121 Reflexion — 2026-03-25
+ACCOMPLISHED: (1) STEP 1B: Session 119 hidden element filter failure → added getBoundingClientRect visible-element filter rule to playwright.md (VISIBLE ELEMENT FILTER section). (2) STEP 1C: Merged duplicate XSS streak rule — session 107 RULE superseded by session 117 RULE (updated with "*(XSS streak rule updated in Session #117 RULE below — this entry superseded)*"). (3) STEP 1D: Archived oldest 20 activity_log entries (sessions 81-99 + 113) to activity_log_archive.md; log now has sessions 100-120 (20 entries). (4) PERIODIC TECH-DEBT CHECK: work count = 90 (multiple of 5), no audit in backlog → added code quality audit task for sessions 118-120. (5) Web searches: 8 new sources evaluated (7 new to sources.md). Plankton code quality tool backlogged. (6) META: Found and fixed visible-element filter gap in playwright.md. (7) Techniques: added visible-element filter to techniques.md.
+FAILED: Background search agents produced empty output files (0 bytes). Fell back to direct WebSearch/WebFetch tool calls — same quality of research without the parallelism overhead.
+RULE: [2026-03-25] When background search agents return 0-byte output files, don't wait or retry — use WebSearch/WebFetch tools directly in the main session. Background agents add overhead for simple web searches; use them only for multi-step research tasks that truly benefit from parallelism.
+RULE: [2026-03-25] The visible-element filter rule in playwright.md is now the canonical reference — any Playwright check that measures element dimensions at a non-default viewport MUST use `getBoundingClientRect().height > 0` filtering. This pattern belongs in playwright.md (skill read per task) not just knowledge.md (read at session start).
+
+- Test count: **359 passed** (stable — no code changes), **98 Playwright checks** (stable)
+
 ### Session #120 Reflexion — 2026-03-25 (TESTING — Alerts/pricing/follows Playwright checks)
 ACCOMPLISHED: Added 5 Playwright checks (94-98): alerts toggle switches (#toggle-push + #toggle-telegram), Telegram channel card (#ch-telegram), exactly 3 .pricing-card elements, featured card .pricing-badge "Most Popular", #follows-empty CTA button calling showTab('leaderboard'). 98 total checks, 0 failures. 359 backend tests stable. Cleared all 3 HIGH PRIORITY frontend backlog tasks.
 FAILED: Nothing — all 5 checks passed on first run.
@@ -115,7 +123,7 @@ RULE: [2026-03-25] `.hidden { display: none !important }` stops scroll events fr
 ### Session #107 Reflexion — 2026-03-25 (META — Code Quality Audit Sessions 99–105)
 ACCOMPLISHED: Full 9-member virtual team audit of sessions 99–105 changed files (frontend/index.html, playwright_registry.py). All checks passed clean. Marcus (XSS): PASS — both greps ran; 0 unescaped innerHTML patterns. Key findings: chatId wrapped with escapeHtml() at line 3624 before injection; DEMO_BETTORS is fully hardcoded static data (no API fields); _setProfileTrend uses textContent only (safe); buildTickerItem uses escapeHtml(t.name), escapeHtml(rawMarket); renderPositionItem/renderBetRow/renderBettorCard/tbody all escape every API-sourced field. Sarah: no console.error in production. Priya: follows-empty + leaderboard empty states present. Jordan: trust-signal-row on browse + dashboard. Nina: 78 Playwright checks in registry (covering demo mode, trend arrows, hero-cycle, progress bar). Leo: 0 TODO comments. XSS-free streak confirmed: sessions 77–105 = 29+ sessions.
 FAILED: Nothing. 8th consecutive clean audit.
-RULE: [2026-03-25] XSS-free audit streak: sessions 77–110 = 34+ consecutive sessions clean. Streak confirmed by both Marcus greps per session. The escapeHtml discipline is deeply embedded — every new renderXxx function independently applies safe= escaping at the top. Two-grep check at write-time: `grep -n 'innerHTML.*\${' frontend/index.html` AND `grep -n 'innerHTML\s*=\s*[a-zA-Z_]' frontend/index.html`. Confirm streak at every audit.
+*(XSS streak rule updated in Session #117 RULE below — this entry superseded)*
 
 - Test count: **303 passed** (stable, META session — no code changes), **78 Playwright checks** (as of session 107)
 

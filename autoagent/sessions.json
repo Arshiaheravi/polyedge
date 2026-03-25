@@ -2621,7 +2621,7 @@
     "date": "2026-03-25",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 mobile viewport Playwright checks (89-93) at 375px — proves mobile nav is visible, bettor cards stack vertically, buttons are tappable (≥44px), no horizontal overflow on leaderboard view, and landing screenshot captured",
+    "summary": "Added 5 mobile viewport Playwright checks (89-93) at 375px \u00e2\u20ac\u201d proves mobile nav is visible, bettor cards stack vertically, buttons are tappable (\u00e2\u2030\u00a544px), no horizontal overflow on leaderboard view, and landing screenshot captured",
     "files": [
       "autoagent/playwright_registry.py"
     ],
@@ -2642,14 +2642,48 @@
     "date": "2026-03-25",
     "time": "12:00",
     "type": "work",
-    "summary": "Added 5 Playwright checks (94-98): alerts tab toggle switches present, Telegram channel card present, pricing section has 3 cards, featured card has Most Popular badge, follows empty state has CTA to leaderboard — proves the alerts, pricing, and empty follows UI are correctly structured",
-    "files": ["autoagent/playwright_registry.py"],
-    "tests": {"before": 359, "after": 359, "status": "pass"},
+    "summary": "Added 5 Playwright checks (94-98): alerts tab toggle switches present, Telegram channel card present, pricing section has 3 cards, featured card has Most Popular badge, follows empty state has CTA to leaderboard \u00e2\u20ac\u201d proves the alerts, pricing, and empty follows UI are correctly structured",
+    "files": [
+      "autoagent/playwright_registry.py"
+    ],
+    "tests": {
+      "before": 359,
+      "after": 359,
+      "status": "pass"
+    },
     "frontend": {
       "status": "pass",
       "checks": 98,
       "failures": 0,
       "notes": "checks 94-98 added: alerts toggles, telegram card, 3 pricing cards, Most Popular badge, follows empty state CTA"
+    }
+  },
+  {
+    "session": 121,
+    "date": "2026-03-25",
+    "time": "13:00",
+    "type": "brain",
+    "summary": "DEEP BRAIN: added visible-element filter rule to playwright.md (from session 119 failure), archived activity log sessions 81-100 to archive, merged duplicate XSS streak rule in knowledge.md, added code quality audit task to backlog (work count=90), backlogged plankton-code-quality tool, evaluated 8 new sources",
+    "files": [
+      "autoagent/skills/playwright.md",
+      "autoagent/brain/sources.md",
+      "autoagent/brain/techniques.md",
+      "autoagent/memory/knowledge.md",
+      "autoagent/memory/activity_log.md",
+      "autoagent/memory/activity_log_archive.md",
+      "autoagent/memory/backlog.md",
+      "autoagent/sessions.json"
+    ],
+    "tests": {
+      "before": 359,
+      "after": 359,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 98,
+      "failures": 0,
+      "notes": "brain session - no code changes to project files"
     }
   }
 ]

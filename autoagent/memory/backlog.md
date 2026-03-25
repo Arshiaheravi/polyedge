@@ -6,6 +6,10 @@
 
 ---
 
+## HIGH PRIORITY — Code Quality Audit (MANDATORY — work count hit 90, multiple of 5)
+
+- [ ] Code quality audit — sessions 118–120 changed files: `backend/tests/test_cors.py`, `autoagent/playwright_registry.py` (checks 89-98). Run all 9 virtual team checks: Marcus (XSS greps on index.html), Sarah (no console.error, CSS vars), Priya (empty states), Jordan (trust signals), Nina (Playwright check count ≥98, no removed features), Leo (no TODO/FIXME), Alex (try/except on external calls), Ama (secrets not logged), Marcus (error message non-disclosure). Confirm XSS-free streak extends to sessions 77–120.
+
 ## HIGH PRIORITY — Frontend Playwright Tests
 
 - [ ] Playwright CHECK 99-101 — (a) pricing locked features have `data-tip` attributes on `.dim` items, (b) account tab has `#acct-email` and `#acct-name` elements, (c) `#acct-tier-label` element present and has non-empty text content
@@ -19,6 +23,10 @@
 ## MEDIUM PRIORITY — Business Logic Tests
 
 ---
+
+## FEATURE MODE ONLY — Agent Infrastructure Improvements
+
+- [ ] Plankton write-time code quality enforcement — install ruff+biome+plankton hooks via settings.json; auto-formats Python (ruff) and HTML/JS (biome) on every file edit; blocks config tampering; delegates unfixable violations to subprocesses by tier. Requires: `pip install plankton-code-quality`, hooks in settings.json. See ECC skills/plankton-code-quality/SKILL.md.
 
 ## FEATURE MODE ONLY — Competitive Intelligence (from awesome-prediction-market-tools, 2026-03-25)
 

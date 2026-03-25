@@ -162,6 +162,12 @@ Where: PROMPT.md (WHEN A TOOL CALL FAILS section)
 Source: arxiv 2508.11126 (AI Agentic Programming Survey)
 Expected impact: Faster root-cause identification in fix-test-retry cycles; fewer misdiagnosed hypotheses
 
+## Visible-element filter for mobile Playwright checks — implemented 2026-03-25
+What: When checking element dimensions (height, width) at mobile viewport, filter by getBoundingClientRect().height > 0 to skip elements in display:none sections. Also use element+class selector (`.btn.btn-primary`) not just class (`.btn-primary`) to avoid matching links styled as buttons.
+Where: autoagent/skills/playwright.md (VISIBLE ELEMENT FILTER section)
+Source: Session #119 failure — querySelectorAll('.btn-primary') returned 0px for buttons inside hidden dashboard tabs
+Expected impact: Eliminates false-zero results in mobile viewport height checks; CHECK 91-style failures won't recur
+
 ## AAA pattern + one-assert-per-test — implemented 2026-03-20
 What: Tests follow Arrange-Act-Assert structure (3 blocks, blank line between). One behavior per test so failures are pinpointed.
 Where: skills/testing.md (TEST STRUCTURE section from ECC TDD skill)

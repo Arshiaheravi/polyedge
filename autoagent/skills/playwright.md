@@ -381,3 +381,34 @@ Close `scr_page` before `browser.close()` to avoid resource warnings.
 **Rule**: For PolyEdge SPA, ALL tab/view switching in Playwright must use `page.evaluate("showView(...)")` or `page.evaluate("showTab(...)")` — never `click()` on nav elements. Nav elements are `display:none` at desktop width (1280px default Playwright viewport).
 
 (Source: Session #90 failure — ElementHandle.click() on #nav-leaderboard failed because element is display:none at desktop width. Fixed by using page.evaluate("showView(...)") instead.)
+
+---
+
+## VISIBLE ELEMENT FILTER (for height/size checks at mobile viewport)
+
+When checking element sizes (button heights, tap targets) at a non-default viewport (e.g. 375px mobile), many matching elements will be inside `display:none` tab sections that haven't been navigated to. Querying them will return 0px height.
+
+**Always filter by `getBoundingClientRect().height > 0` to skip hidden elements:**
+
+```python
+# WRONG — includes buttons inside display:none sections:
+btn_heights = await page.evaluate("""() => {
+    const btns = document.querySelectorAll('.btn-primary');
+    return Array.from(btns).map(b => b.getBoundingClientRect().height);
+}""")
+# Some values will be 0 — misleading
+
+# CORRECT — filter to visible elements only:
+visible_btn_heights = await page.evaluate("""() => {
+    const btns = document.querySelectorAll('.btn.btn-primary');
+    return Array.from(btns)
+        .map(b => b.getBoundingClientRect().height)
+        .filter(h => h > 0);
+}""")
+# Only measures elements that are actually rendered
+min_height = min(visible_btn_heights) if visible_btn_heights else 0
+```
+
+**Rule**: When checking button heights at mobile viewport, filter by `getBoundingClientRect().height > 0` to skip hidden elements — many buttons live inside display:none sections (dashboard tabs, auth forms). Only measure elements with a real layout height. Also use `.btn.btn-primary` (element + class) to avoid matching styled links.
+
+(Source: Session #119 — querySelectorAll('.btn-primary') returned 0px for buttons inside hidden dashboard tabs, causing CHECK 91 to falsely report 0 visible buttons.)
