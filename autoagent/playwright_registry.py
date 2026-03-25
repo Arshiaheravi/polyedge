@@ -2,7 +2,7 @@
 PolyEdge — Persistent Playwright check registry.
 This file is cumulative: sessions ADD checks here, never subtract.
 Usage: cp autoagent/playwright_registry.py autoagent/tmp_check.py → add session checks → run → cp back.
-Last updated: Session 72 (toast stack — checks 18-22: Sonner stacking, toast(), toastBet(), betAlert event, Test alert button)
+Last updated: Session 97 (sort pill group — checks 63-64: .sort-pill-group present, #sort-profit has sort-pill class and data-tooltip)
 """
 import asyncio, sys
 from playwright.async_api import async_playwright
@@ -826,6 +826,38 @@ async def check():
             await acct_page.close()
         except Exception as e:
             failures.append(f"Account tab redesign check error: {e}")
+
+        # ── CHECK 63-64: Sort pill group (Session 97) ────────────────────────
+        try:
+            pill_page = await browser.new_page()
+            await pill_page.goto("http://localhost:3000", timeout=12000)
+            await pill_page.wait_for_load_state("networkidle")
+            await pill_page.evaluate("showView('dashboard'); showTab('leaderboard')")
+            await asyncio.sleep(0.3)
+
+            # CHECK 63: .sort-pill-group element exists in DOM
+            group_count = await pill_page.eval_on_selector_all('.sort-pill-group', 'els => els.length')
+            if group_count >= 1:
+                checks += 1
+                print(f"  [CHECK 63] {group_count} .sort-pill-group element(s) present in DOM")
+            else:
+                failures.append(".sort-pill-group not found — pill-style sort toggle not rendered")
+
+            # CHECK 64: sort-profit pill has data-tooltip attribute and active class
+            pill_ok = await pill_page.evaluate("""() => {
+                const pill = document.getElementById('sort-profit');
+                if (!pill) return false;
+                return pill.classList.contains('sort-pill') && pill.hasAttribute('data-tooltip');
+            }""")
+            if pill_ok:
+                checks += 1
+                print("  [CHECK 64] #sort-profit has sort-pill class and data-tooltip attribute")
+            else:
+                failures.append("#sort-profit missing sort-pill class or data-tooltip attribute")
+
+            await pill_page.close()
+        except Exception as e:
+            failures.append(f"Sort pill group check error: {e}")
 
         await browser.close()
     return checks, failures

@@ -1895,5 +1895,10 @@
    "summary": "Fixed backlog confusion where 3 of 5 high-priority tasks required backend changes but PROJECT.md bans backend work — sessions were wasting turns skipping them. Moved backend tasks to a dedicated BACKEND PENDING section. Also added the missing pytest command to PROJECT.md so baseline health checks run correctly.",
    "files": ["autoagent/memory/backlog.md", "autoagent/PROJECT.md", "autoagent/PROMPT.md", "autoagent/memory/activity_log.md", "autoagent/sessions.json"],
    "tests": {"before": 303, "after": 303, "status": "pass"},
-   "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "META session — no code changed"}}
+   "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "META session — no code changed"}},
+  {"session": 97, "date": "2026-03-25", "time": "10:00", "type": "work",
+   "summary": "Leaderboard sort controls upgraded to a pill-style segmented control — sort buttons now sit inside a dark pill group container, the active sort gets a green fill, hover shows a CSS tooltip explaining each metric, and a count badge fades in after data loads showing how many bettors are listed.",
+   "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+   "tests": {"before": 303, "after": 303, "status": "pass"},
+   "frontend": {"status": "pass", "checks": 64, "failures": 0, "notes": "2 new checks (63-64): .sort-pill-group present, #sort-profit has sort-pill class and data-tooltip"}}
 ]

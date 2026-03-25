@@ -45,6 +45,13 @@
 
 ## Session Reflexions
 
+### Session #97 Reflexion — 2026-03-25 (UI/UX — Sort Controls Pill Upgrade)
+ACCOMPLISHED: Upgraded leaderboard sort buttons from flat `.tab-btn` to a pill segmented control. CSS: `.sort-pill-group` (dark card bg + border + 100px radius container), `.sort-pill` (transparent bg, transitions to green on active), `.sort-count` (opacity 0 → 1 after data loads), `[data-tooltip]::after` CSS attribute tooltip. JS: reset count badges before fetch, set badge.textContent = bettors.length + classList.add('loaded') after successful load. Applied to both `loadLeaderboard` and `loadBrowseLeaderboard`. 2 new Playwright checks (63-64) pass first run.
+FAILED: Nothing. Zero rework needed.
+RULE: [2026-03-25] For pill/segmented controls, use a wrapper container with `background: var(--card2); border: 1px solid var(--border); border-radius: 100px; padding: 3px;` and children with `background: transparent; border: none; border-radius: 100px; transition: all 0.2s;`. The active child gets `background: var(--accent); color: #000;`. This avoids double borders (inner button + outer container) while giving a clean grouped look.
+RULE: [2026-03-25] Custom CSS tooltips: use `[data-tooltip]` attribute + `::after { content: attr(data-tooltip); opacity: 0; transition: opacity 0.15s; z-index: 200; }` + `:hover::after { opacity: 1; }`. Never use `title` attribute for styled tooltips — browser-native tooltips have no style control and a ~500ms delay. CSS attribute tooltips are instant and styleable.
+RULE: [2026-03-25] Count badges on interactive controls should use `opacity: 0` initial state + `opacity: 1` added via `.loaded` class after data arrives. This prevents flashing "0" or empty badges before data loads. Reset by removing `.loaded` and clearing `.textContent` before the fetch.
+
 ### Session #95 Reflexion — 2026-03-24 (UI/UX — Account Tab Redesign)
 ACCOMPLISHED: Replaced the minimal plain-text Profile settings-card with a `.acct-profile-card` hero layout: avatar circle with computed initials, color-coded `.acct-plan-badge` pill (tier-free/tier-basic/tier-vip classes), upgrade nudge div (hidden/shown based on tier in `renderAccount()`), btn-danger logout with SVG icon. All new IDs/classes populated via `.textContent` (zero innerHTML with API data). 2 new Playwright checks (61-62) pass first run. 303 backend tests unchanged.
 FAILED: Nothing. Zero rework needed.

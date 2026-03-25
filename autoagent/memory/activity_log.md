@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-25 — UI/UX (Session 97)
+DONE: Leaderboard sort controls upgrade — replaced flat tab-btn sort buttons with a pill-style segmented control (.sort-pill-group + .sort-pill); active pill gets a green background; 0.2s CSS transition on state change; custom [data-tooltip] CSS attribute tooltips explain each metric on hover ("Total USD profit across all bets", "Total USD wagered"); count badge (.sort-count) fades in with opacity transition after data loads showing bettors.length; applied to both dashboard and browse leaderboard. 2 new Playwright checks (63-64).
+IMPACT: Sort controls now feel like a polished segmented control (Bloomberg terminal aesthetic) rather than tab buttons — the group container and active pill make the selected state visually unambiguous. Hover tooltips clarify metric meaning exactly when a user pauses over the button to decide — reducing confusion about "Profit vs Volume" for new users.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-25 — META (Session 96)
 IMPROVED: (1) backlog.md — split HIGH PRIORITY into "UI/UX (doable now)" and "BACKEND PENDING (blocked)" so work sessions skip backend tasks without wasting turns; moved 5 backend tasks to BACKEND PENDING; added _disclosureCache TTL fix as actionable UI task. (2) PROJECT.md — added `cd backend && py -m pytest tests/ -q` as the backend test command alongside the existing frontend check command (was missing, causing sessions to only know the Playwright command). (3) PROMPT.md — added "BACKEND PENDING" to the list of task labels to skip in step 3, making the rule explicit.
 PATTERNS FOUND: (1) 3 of 5 HIGH PRIORITY backlog items required backend code changes but PROJECT.md explicitly bans backend work — agents waste turns skipping them before reaching actionable UI tasks. (2) PROJECT.md only listed the frontend Playwright test command; PROMPT.md says "run the test command from PROJECT.md" — agents running the baseline health check could miss pytest entirely.

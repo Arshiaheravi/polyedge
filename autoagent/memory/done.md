@@ -1,5 +1,8 @@
 # Done
 
+## 2026-03-25
+- **[SESSION #97] Leaderboard sort controls upgrade** — replaced flat tab-btn sort buttons with a pill-style segmented control (.sort-pill-group); active pill gets green background with 0.2s transition; custom CSS [data-tooltip] tooltips explain each metric on hover; count badge fades in after data loads showing bettors.length; applied to both dashboard and browse leaderboard; 2 new Playwright checks (63-64); 303 tests pass, 64 checks pass
+
 ## 2026-03-24
 - **[SESSION #95] Account tab redesign** — replaced plain Profile card with visual hero (avatar initials circle, color-coded plan badge pill, upgrade nudge for Free users, styled Sign Out button); 2 new Playwright checks (61-62); 303 backend tests + 62 checks pass
 - **[SESSION #94] Profile page skeleton loading** — replaced static em-dash placeholders with animated .skeleton shimmer on all 4 stat card values (Profit, PnL%, Volume, Total Bets) and the name heading; bet-row skeletons were already present; 2 new Playwright checks (59-60); 303 backend tests pass, 60/60 checks pass
