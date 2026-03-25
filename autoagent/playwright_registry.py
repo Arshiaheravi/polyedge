@@ -7,7 +7,7 @@ Last updated: Session 98 (disclosureCache TTL — checks 65-66: _DISCLOSURE_TTL_
 import asyncio, sys
 from playwright.async_api import async_playwright
 
-BACKEND_URL = "http://localhost:8001"
+BACKEND_URL = "http://localhost:8002"
 FRONTEND_URL = "http://localhost:3000"
 
 async def check():
@@ -920,6 +920,31 @@ async def check():
                 failures.append("#browse-live-count or #browse-live-count-text not found in DOM")
         except Exception as e:
             failures.append(f"Live count element check error: {e}")
+
+        # CHECK 69 (session 102): #page-progress bar element exists in DOM
+        try:
+            prog_ok = await page.evaluate("""() => {
+                const el = document.getElementById('page-progress');
+                return el !== null;
+            }""")
+            if prog_ok:
+                checks += 1
+                print("  [CHECK 69] #page-progress element present in DOM")
+            else:
+                failures.append("#page-progress element not found — progress bar HTML missing")
+        except Exception as e:
+            failures.append(f"Progress bar check error: {e}")
+
+        # CHECK 70 (session 102): startProgress function defined in window scope
+        try:
+            fn_ok = await page.evaluate("typeof window.startProgress === 'function'")
+            if fn_ok:
+                checks += 1
+                print("  [CHECK 70] startProgress() function defined")
+            else:
+                failures.append("startProgress() not defined in window scope")
+        except Exception as e:
+            failures.append(f"startProgress check error: {e}")
 
         await browser.close()
     return checks, failures

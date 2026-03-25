@@ -1112,6 +1112,18 @@
       transition: background 0.15s, box-shadow 0.15s;
     }
     .lb-view-profile-btn:hover { background: rgba(0,201,122,0.08); box-shadow: 0 0 12px rgba(0,201,122,0.12); }
+
+    /* ── Page-load progress bar ── */
+    #page-progress {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), #00e5a0);
+      z-index: 10000; pointer-events: none;
+      border-radius: 0 2px 2px 0;
+      opacity: 0;
+      transition: width 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease;
+      box-shadow: 0 0 8px rgba(0,201,122,0.5);
+    }
+    #page-progress.is-running { opacity: 1; }
   </style>
 </head>
 <body>
@@ -1119,6 +1131,7 @@
 <!-- Skip to main content — WCAG 2.4.1 -->
 <a href="#main-content" class="skip-link">Skip to main content</a>
 <div id="toast-container" role="status" aria-live="polite" aria-atomic="false"></div>
+<div id="page-progress" role="progressbar" aria-hidden="true"></div>
 
 <!-- ============================================================
      LANDING
@@ -2458,6 +2471,7 @@ document.addEventListener('keydown', function(e) {
 // ── View routing ─────────────────────────────────────────────
 
 function showView(view, sub) {
+  startProgress();
   ['landing', 'auth', 'dashboard', 'browse'].forEach(v => {
     document.getElementById(`view-${v}`).classList.toggle('hidden', v !== view);
   });
@@ -2468,6 +2482,10 @@ function showView(view, sub) {
 }
 
 function showTab(tab) {
+  startProgress();
+  // Scroll active main-content to top on tab switch
+  const mc = document.querySelector('#view-dashboard .main-content, #view-browse .main-content');
+  if (mc) mc.scrollTo({ top: 0, behavior: 'smooth' });
   ['leaderboard', 'follows', 'alerts', 'account', 'profile'].forEach(t => {
     const el = document.getElementById(`tab-${t}`);
     if (el) el.classList.toggle('hidden', t !== tab);
@@ -4087,8 +4105,36 @@ async function profileToggleFollow() {
   _updateFollowPreview(followedAddresses.has(_profileAddress));
 }
 
+// ── Page progress bar ─────────────────────────────────────────
+let _progressTimer = null;
+function startProgress() {
+  const bar = document.getElementById('page-progress');
+  if (!bar) return;
+  if (_progressTimer) { clearTimeout(_progressTimer); _progressTimer = null; }
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+  bar.classList.add('is-running');
+  // Force reflow so the width reset takes effect before animating
+  void bar.offsetWidth;
+  bar.style.transition = 'width 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease';
+  bar.style.width = '60%';
+  _progressTimer = setTimeout(() => {
+    bar.style.width = '100%';
+    _progressTimer = setTimeout(() => {
+      bar.style.opacity = '0';
+      _progressTimer = setTimeout(() => {
+        bar.classList.remove('is-running');
+        bar.style.width = '0%';
+        bar.style.opacity = '';
+        _progressTimer = null;
+      }, 260);
+    }, 280);
+  }, 420);
+}
+
 // ── Bootstrap ─────────────────────────────────────────────────
 
+startProgress();
 init();
 runLandingCounters();
 refreshLiveTicker();
