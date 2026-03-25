@@ -568,6 +568,25 @@
     .follow-btn.following { background: rgba(16,185,129,0.1); color: var(--green2); border-color: rgba(16,185,129,0.25); }
     .follow-btn.following:hover { background: rgba(239,68,68,0.1); color: var(--red); border-color: rgba(239,68,68,0.25); }
 
+    /* Follow preview tooltip on leaderboard cards */
+    .lb-follow-wrap { position: relative; }
+    .lb-follow-tooltip {
+      position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+      background: var(--card3); border: 1px solid var(--border2);
+      color: var(--text2); font-size: 11px; font-weight: 500;
+      padding: 5px 10px; border-radius: var(--radius-xs);
+      white-space: nowrap; pointer-events: none;
+      opacity: 0; transition: opacity 0.15s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      z-index: 10;
+    }
+    .lb-follow-tooltip::after {
+      content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      border: 5px solid transparent; border-top-color: var(--border2);
+    }
+    .lb-follow-wrap:hover .lb-follow-tooltip,
+    .lb-follow-wrap:focus-within .lb-follow-tooltip { opacity: 1; }
+
     /* ── Leaderboard Card Grid ── */
     .lb-grid {
       display: grid;
@@ -2726,12 +2745,15 @@ function renderBettorCard(b, i) {
         </button>
       </div>
     </div>
-    <button class="follow-btn w-full ${isFollowing ? 'following' : ''}"
-            onclick="event.stopPropagation();toggleFollow('${safeAddr}', '${eName}', this)"
-            aria-label="${isFollowing ? 'Unfollow' : 'Follow'} ${eName}"
-            aria-pressed="${isFollowing}">
-      ${isFollowing ? '&#10003; Following' : '+ Follow'}
-    </button>
+    <div class="lb-follow-wrap">
+      ${!isFollowing ? `<span class="lb-follow-tooltip" aria-hidden="true">You\u2019ll be notified within 30s when ${eName} bets</span>` : ''}
+      <button class="follow-btn w-full ${isFollowing ? 'following' : ''}"
+              onclick="event.stopPropagation();toggleFollow('${safeAddr}', '${eName}', this)"
+              aria-label="${isFollowing ? 'Unfollow' : 'Follow'} ${eName}"
+              aria-pressed="${isFollowing}">
+        ${isFollowing ? '&#10003; Following' : '+ Follow'}
+      </button>
+    </div>
   </div>`;
 }
 
