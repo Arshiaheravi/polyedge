@@ -3754,16 +3754,15 @@ async function showProfile(address) {
 
   showTab('profile');
 
-  // Reset to loading state
-  document.getElementById('profile-name').textContent = 'Loading\u2026';
+  // Reset to skeleton loading state
+  document.getElementById('profile-name').innerHTML = '<span class="skeleton" style="display:inline-block;height:26px;width:160px;border-radius:6px;vertical-align:middle;"></span>';
   document.getElementById('profile-addr-display').textContent = address;
   document.getElementById('profile-polylink').href = `https://polymarket.com/profile/${encodeURIComponent(address)}`;
-  document.getElementById('pstat-profit').textContent = '\u2014';
-  document.getElementById('pstat-pnl').textContent = '\u2014';
-  document.getElementById('pstat-profit').style.color = '';
-  document.getElementById('pstat-pnl').style.color = '';
-  document.getElementById('pstat-volume').textContent = '\u2014';
-  document.getElementById('pstat-bets').textContent = '\u2014';
+  ['pstat-profit', 'pstat-pnl', 'pstat-volume', 'pstat-bets'].forEach(id => {
+    const el = document.getElementById(id);
+    el.innerHTML = '<div class="skeleton" style="height:28px;border-radius:6px;"></div>';
+    el.style.color = '';
+  });
   document.getElementById('profile-rank-badge').style.display = 'none';
   document.getElementById('profile-profit-badge').style.display = 'none';
 
