@@ -125,3 +125,4 @@
 
 ### 2026-03-25
 - **[SESSION #113] Security extended tests — XSS, SQL injection, tier claim JWT, auth bypass** — 41 new pytest tests proving XSS payloads in name/address fields don't crash the server, SQL injection in 3 different input surfaces returns <500, modified tier claim JWT is ignored (DB tier wins), and all 9 protected endpoints reject missing/invalid tokens.
+- **[SESSION #117] Code quality audit — sessions 108–115** — Full 9-member virtual team audit of all 9 changed files (frontend/index.html, polymarket.py, playwright_registry.py, 5 test files). All checks passed. XSS-free streak confirmed at 41+ sessions (77–117). 354 tests stable.
