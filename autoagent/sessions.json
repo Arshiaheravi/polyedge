@@ -1900,5 +1900,10 @@
    "summary": "Leaderboard sort controls upgraded to a pill-style segmented control — sort buttons now sit inside a dark pill group container, the active sort gets a green fill, hover shows a CSS tooltip explaining each metric, and a count badge fades in after data loads showing how many bettors are listed.",
    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
    "tests": {"before": 303, "after": 303, "status": "pass"},
-   "frontend": {"status": "pass", "checks": 64, "failures": 0, "notes": "2 new checks (63-64): .sort-pill-group present, #sort-profit has sort-pill class and data-tooltip"}}
+   "frontend": {"status": "pass", "checks": 64, "failures": 0, "notes": "2 new checks (63-64): .sort-pill-group present, #sort-profit has sort-pill class and data-tooltip"}},
+  {"session": 98, "date": "2026-03-25", "time": "11:00", "type": "work",
+   "summary": "Fixed stale leaderboard card market titles — disclosure cache now expires after 5 minutes so users who leave the page open see fresh bettor activity instead of the titles from initial load.",
+   "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+   "tests": {"before": 303, "after": 303, "status": "pass"},
+   "frontend": {"status": "pass", "checks": 66, "failures": 0, "notes": "2 new checks (65-66): _DISCLOSURE_TTL_MS=300000, _disclosureCache entry shape {titles, ts}"}}
 ]

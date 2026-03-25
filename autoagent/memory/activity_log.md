@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-25 — UI/UX (Session 98)
+DONE: _disclosureCache TTL fix — leaderboard card progressive disclosure now caches market titles for 5 minutes only; entries store `{titles, ts}` instead of a bare array; re-fetches stale data transparently on next card expand; 2 new Playwright checks (65-66).
+IMPACT: Fixes stale market titles persisting indefinitely — users who leave the leaderboard open will see fresh market data after 5 minutes instead of the titles from when they first opened the page, keeping the "recent markets" preview accurate for active traders.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-25 — UI/UX (Session 97)
 DONE: Leaderboard sort controls upgrade — replaced flat tab-btn sort buttons with a pill-style segmented control (.sort-pill-group + .sort-pill); active pill gets a green background; 0.2s CSS transition on state change; custom [data-tooltip] CSS attribute tooltips explain each metric on hover ("Total USD profit across all bets", "Total USD wagered"); count badge (.sort-count) fades in with opacity transition after data loads showing bettors.length; applied to both dashboard and browse leaderboard. 2 new Playwright checks (63-64).
 IMPACT: Sort controls now feel like a polished segmented control (Bloomberg terminal aesthetic) rather than tab buttons — the group container and active pill make the selected state visually unambiguous. Hover tooltips clarify metric meaning exactly when a user pauses over the button to decide — reducing confusion about "Profit vs Volume" for new users.

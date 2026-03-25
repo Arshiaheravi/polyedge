@@ -4,7 +4,6 @@
 
 ## HIGH PRIORITY — UI/UX Tasks (doable in current UI/UX-only mode)
 
-- [ ] _disclosureCache TTL fix — leaderboard card disclosure cache never expires; add a TTL key alongside each entry (`{titles, ts: Date.now()}`) and re-fetch if older than 5 minutes. Pure frontend JS change in `_loadDisclosureMarkets`. See tech_debt.md.
 - [ ] Nav/header improvements — add active state to nav links, smooth scroll behavior, add a subtle top progress bar on page load
 - [ ] Trust signals section — add "Built on real Polymarket data" text badge near leaderboard header; show live total bet count (fetch from `/admin/stats` if available or derive from leaderboard data). **Note**: "How it works 3-step section" was completed in session 84 — do NOT re-implement it.
 - [ ] Color-coded profit/loss — verify renderPositionItem (follows activity grid) colors P&L correctly. Sessions 75/80/83 added green/red badges on leaderboard, profile, and follow cards. If renderPositionItem already applies color, remove this item.

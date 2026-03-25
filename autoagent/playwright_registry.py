@@ -2,7 +2,7 @@
 PolyEdge — Persistent Playwright check registry.
 This file is cumulative: sessions ADD checks here, never subtract.
 Usage: cp autoagent/playwright_registry.py autoagent/tmp_check.py → add session checks → run → cp back.
-Last updated: Session 97 (sort pill group — checks 63-64: .sort-pill-group present, #sort-profit has sort-pill class and data-tooltip)
+Last updated: Session 98 (disclosureCache TTL — checks 65-66: _DISCLOSURE_TTL_MS=300000, _disclosureCache entry shape {titles, ts})
 """
 import asyncio, sys
 from playwright.async_api import async_playwright
@@ -858,6 +858,35 @@ async def check():
             await pill_page.close()
         except Exception as e:
             failures.append(f"Sort pill group check error: {e}")
+
+        # CHECK 65 (session 98): _disclosureCache uses {titles, ts} structure with TTL constant
+        try:
+            ttl_ok = await page.evaluate("""() => {
+                return typeof _DISCLOSURE_TTL_MS === 'number' && _DISCLOSURE_TTL_MS === 5 * 60 * 1000;
+            }""")
+            if ttl_ok:
+                checks += 1
+                print("  [CHECK 65] _DISCLOSURE_TTL_MS defined and equals 300000ms (5 min)")
+            else:
+                failures.append("_DISCLOSURE_TTL_MS not defined or wrong value")
+        except Exception as e:
+            failures.append(f"_DISCLOSURE_TTL_MS check error: {e}")
+
+        # CHECK 66 (session 98): _disclosureCache.set stores {titles, ts} object (not bare array)
+        try:
+            cache_ok = await page.evaluate("""() => {
+                _disclosureCache.set('__ttl_test__', { titles: ['test'], ts: Date.now() });
+                const entry = _disclosureCache.get('__ttl_test__');
+                _disclosureCache.delete('__ttl_test__');
+                return Array.isArray(entry.titles) && typeof entry.ts === 'number';
+            }""")
+            if cache_ok:
+                checks += 1
+                print("  [CHECK 66] _disclosureCache entries have {titles: [], ts: number} shape")
+            else:
+                failures.append("_disclosureCache entry shape is wrong (expected {titles, ts})")
+        except Exception as e:
+            failures.append(f"_disclosureCache shape check error: {e}")
 
         await browser.close()
     return checks, failures

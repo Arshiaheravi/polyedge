@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **303 passed** (as of 2026-03-24, session 94 — no new backend tests, frontend-only change)
+- Test count: **303 passed** (as of 2026-03-25, session 98 — no new backend tests, frontend-only change)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +44,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #98 Reflexion — 2026-03-25 (UI/UX — _disclosureCache TTL Fix)
+ACCOMPLISHED: Changed `_disclosureCache` from `Map<addr, string[]>` to `Map<addr, {titles: string[], ts: number}>`. Added `_DISCLOSURE_TTL_MS = 5 * 60 * 1000`. Cache hit check now validates `(Date.now() - cached.ts) < _DISCLOSURE_TTL_MS` before serving; stale entries trigger a fresh fetch. Error path also stores `{titles: [], ts: Date.now()}` so errors don't permanently lock an address. 2 Playwright checks (65-66) verify the TTL constant value and entry shape. Zero tests changed.
+FAILED: Nothing. Clean first run.
+RULE: [2026-03-25] When adding TTL to a cache, always apply TTL to the error path too — not just the success path. If the error path stores without a TTL, a transient network failure will lock that cache key permanently until page reload, which is worse than the original stale-data problem.
+RULE: [2026-03-25] For Playwright checks on pure JS state (constants, Map structures), use `page.evaluate()` to inject a test entry and verify shape. Don't rely on DOM checks for logic-layer tests — `_disclosureCache.set('__test__', ...)` + `_disclosureCache.get('__test__')` + `_disclosureCache.delete('__test__')` is the cleanest pattern.
 
 ### Session #97 Reflexion — 2026-03-25 (UI/UX — Sort Controls Pill Upgrade)
 ACCOMPLISHED: Upgraded leaderboard sort buttons from flat `.tab-btn` to a pill segmented control. CSS: `.sort-pill-group` (dark card bg + border + 100px radius container), `.sort-pill` (transparent bg, transitions to green on active), `.sort-count` (opacity 0 → 1 after data loads), `[data-tooltip]::after` CSS attribute tooltip. JS: reset count badges before fetch, set badge.textContent = bettors.length + classList.add('loaded') after successful load. Applied to both `loadLeaderboard` and `loadBrowseLeaderboard`. 2 new Playwright checks (63-64) pass first run.
