@@ -1542,6 +1542,67 @@ async def check():
         except Exception as e:
             failures.append(f"profile-bets-list skeleton check error: {e}")
 
+        # ── CHECKS 105-107: upgrade flow + mobile nav (Session 124) ──
+
+        # CHECK 105: #upgrade-modal exists in DOM
+        try:
+            modal_exists = await page.evaluate("""() => {
+                return document.getElementById('upgrade-modal') !== null;
+            }""")
+            if modal_exists:
+                checks += 1
+                print("  [CHECK 105] #upgrade-modal element present in DOM")
+            else:
+                failures.append("#upgrade-modal element missing from DOM")
+        except Exception as e:
+            failures.append(f"upgrade-modal existence check error: {e}")
+
+        # CHECK 106: openUpgradeModal() makes #upgrade-modal visible (removes .hidden)
+        try:
+            visible = await page.evaluate("""() => {
+                const modal = document.getElementById('upgrade-modal');
+                if (!modal) return false;
+                if (typeof openUpgradeModal !== 'function') return false;
+                // Ensure it starts hidden
+                if (!modal.classList.contains('hidden')) modal.classList.add('hidden');
+                openUpgradeModal();
+                const visible = !modal.classList.contains('hidden');
+                // Clean up — re-hide so page state is not contaminated
+                modal.classList.add('hidden');
+                return visible;
+            }""")
+            if visible:
+                checks += 1
+                print("  [CHECK 106] openUpgradeModal() removes .hidden from #upgrade-modal")
+            else:
+                failures.append("openUpgradeModal() did not remove .hidden from #upgrade-modal (or function/modal missing)")
+        except Exception as e:
+            failures.append(f"openUpgradeModal visibility check error: {e}")
+
+        # CHECK 107: mobile 375px — no horizontal overflow on alerts tab
+        try:
+            mob_page = await browser.new_page()
+            await mob_page.set_viewport_size({"width": 375, "height": 812})
+            await mob_page.goto("http://localhost:3000", timeout=12000)
+            await mob_page.wait_for_load_state("networkidle", timeout=10000)
+            await mob_page.evaluate("showView('dashboard')")
+            await asyncio.sleep(0.3)
+            await mob_page.evaluate("showTab('alerts')")
+            await asyncio.sleep(0.4)
+            overflow_info = await mob_page.evaluate("""() => ({
+                noOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+                scrollWidth: document.documentElement.scrollWidth,
+                clientWidth: document.documentElement.clientWidth
+            })""")
+            await mob_page.close()
+            if overflow_info['noOverflow']:
+                checks += 1
+                print("  [CHECK 107] Mobile 375px: no horizontal overflow on alerts tab")
+            else:
+                failures.append(f"Mobile 375px alerts tab has horizontal overflow (scrollWidth={overflow_info['scrollWidth']} > clientWidth={overflow_info['clientWidth']})")
+        except Exception as e:
+            failures.append(f"Mobile alerts overflow check error: {e}")
+
         await browser.close()
     return checks, failures
 
