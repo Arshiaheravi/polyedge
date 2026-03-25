@@ -1725,6 +1725,121 @@ async def check():
         except Exception as e:
             failures.append(f"follows-subtitle check error: {e}")
 
+        # CHECK 117: #toast-container element exists in DOM
+        try:
+            toast_container_ok = await page.evaluate("""() => {
+                return document.getElementById('toast-container') !== null;
+            }""")
+            if toast_container_ok:
+                checks += 1
+                print("  [CHECK 117] #toast-container element present in DOM")
+            else:
+                failures.append("#toast-container element missing from DOM")
+        except Exception as e:
+            failures.append(f"toast-container DOM check error: {e}")
+
+        # CHECK 118: typeof window.toastBet === 'function'
+        try:
+            toast_bet_ok = await page.evaluate("typeof window.toastBet === 'function'")
+            if toast_bet_ok:
+                checks += 1
+                print("  [CHECK 118] typeof window.toastBet === 'function'")
+            else:
+                failures.append("window.toastBet is not a function")
+        except Exception as e:
+            failures.append(f"toastBet typeof check error: {e}")
+
+        # CHECK 119: typeof window.enterDemoMode === 'function' (standalone)
+        try:
+            enter_demo_ok = await page.evaluate("typeof window.enterDemoMode === 'function'")
+            if enter_demo_ok:
+                checks += 1
+                print("  [CHECK 119] typeof window.enterDemoMode === 'function'")
+            else:
+                failures.append("window.enterDemoMode is not a function")
+        except Exception as e:
+            failures.append(f"enterDemoMode typeof check error: {e}")
+
+        # CHECK 120: typeof window.animateCounter === 'function'
+        try:
+            animate_counter_ok = await page.evaluate("typeof window.animateCounter === 'function'")
+            if animate_counter_ok:
+                checks += 1
+                print("  [CHECK 120] typeof window.animateCounter === 'function'")
+            else:
+                failures.append("window.animateCounter is not a function")
+        except Exception as e:
+            failures.append(f"animateCounter typeof check error: {e}")
+
+        # CHECK 121: typeof window.runLandingCounters === 'function'
+        try:
+            run_counters_ok = await page.evaluate("typeof window.runLandingCounters === 'function'")
+            if run_counters_ok:
+                checks += 1
+                print("  [CHECK 121] typeof window.runLandingCounters === 'function'")
+            else:
+                failures.append("window.runLandingCounters is not a function")
+        except Exception as e:
+            failures.append(f"runLandingCounters typeof check error: {e}")
+
+        # CHECK 122: typeof window.showTab === 'function' (core tab navigation function)
+        try:
+            show_tab_ok = await page.evaluate("typeof window.showTab === 'function'")
+            if show_tab_ok:
+                checks += 1
+                print("  [CHECK 122] typeof window.showTab === 'function'")
+            else:
+                failures.append("window.showTab is not a function")
+        except Exception as e:
+            failures.append(f"showTab typeof check error: {e}")
+
+        # CHECK 123: typeof window.loadLeaderboard === 'function'
+        try:
+            load_lb_ok = await page.evaluate("typeof window.loadLeaderboard === 'function'")
+            if load_lb_ok:
+                checks += 1
+                print("  [CHECK 123] typeof window.loadLeaderboard === 'function'")
+            else:
+                failures.append("window.loadLeaderboard is not a function")
+        except Exception as e:
+            failures.append(f"loadLeaderboard typeof check error: {e}")
+
+        # CHECK 124: typeof window.profileToggleFollow === 'function'
+        try:
+            profile_follow_ok = await page.evaluate("typeof window.profileToggleFollow === 'function'")
+            if profile_follow_ok:
+                checks += 1
+                print("  [CHECK 124] typeof window.profileToggleFollow === 'function'")
+            else:
+                failures.append("window.profileToggleFollow is not a function")
+        except Exception as e:
+            failures.append(f"profileToggleFollow typeof check error: {e}")
+
+        # CHECK 125: renderBettorCard() output contains a .follow-btn with aria-label attribute
+        try:
+            render_aria_ok = await page.evaluate("""() => {
+                if (typeof renderBettorCard !== 'function') return false;
+                const html = renderBettorCard({
+                    address: '0xtest',
+                    name: 'TestTrader',
+                    profit: 1000,
+                    accuracy: 0.6,
+                    volume: 5000,
+                    rank: 1
+                }, false);
+                const tmp = document.createElement('div');
+                tmp.innerHTML = html;
+                const btn = tmp.querySelector('.follow-btn');
+                return btn !== null && btn.hasAttribute('aria-label');
+            }""")
+            if render_aria_ok:
+                checks += 1
+                print("  [CHECK 125] renderBettorCard() .follow-btn has aria-label attribute")
+            else:
+                failures.append("renderBettorCard() .follow-btn missing or lacks aria-label attribute")
+        except Exception as e:
+            failures.append(f"renderBettorCard aria-label check error: {e}")
+
         await browser.close()
     return checks, failures
 
