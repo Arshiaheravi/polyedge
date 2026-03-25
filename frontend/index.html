@@ -308,9 +308,15 @@
     /* Hero */
     .hero {
       text-align: center; padding: 100px 20px 80px; position: relative; z-index: 1; overflow: hidden;
-      /* When hero-bg.jpg is available, uncomment:
-         background-image: url('assets/hero-bg.jpg');
-         background-size: cover; background-position: center top; */
+      background-image: url('assets/hero-bg.jpg');
+      background-size: cover; background-position: center top;
+      background-color: #0a1628; /* fallback if image fails */
+    }
+    /* Dark scrim over the hero image so text stays readable */
+    .hero-scrim {
+      position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(180deg, rgba(10,22,40,0.72) 0%, rgba(10,22,40,0.55) 40%, rgba(10,22,40,0.80) 100%);
+      pointer-events: none;
     }
     /* Dot-grid texture — fades at edges via mask */
     .hero::before {
@@ -1222,7 +1228,10 @@
 ============================================================ -->
 <div id="view-landing">
   <nav class="landing-nav" role="navigation" aria-label="Main navigation">
-    <div class="logo" aria-label="PolyEdge home">Poly<span>Edge</span></div>
+    <div class="logo" aria-label="PolyEdge home" style="display:flex;align-items:center;gap:8px;">
+      <img src="assets/logo.png" alt="" aria-hidden="true" style="height:32px;width:32px;object-fit:contain;border-radius:6px;" onerror="this.style.display='none'">
+      Poly<span>Edge</span>
+    </div>
     <div class="nav-actions">
       <button class="btn btn-secondary" onclick="showView('auth', 'login')" aria-label="Log in to your account">Log In</button>
       <button class="btn btn-primary" onclick="showView('auth', 'register')" aria-label="Get started for free">Start Free &rarr;</button>
@@ -1232,6 +1241,7 @@
   <!-- Hero -->
   <main id="main-content">
   <div class="hero">
+    <div class="hero-scrim" aria-hidden="true"></div>
     <div class="hero-pill animate-fade-in" role="status" aria-label="Service status: live">
       <span class="dot" aria-hidden="true"></span>
       Live Polymarket data &mdash; Updated every 30 seconds
@@ -4326,13 +4336,23 @@ setInterval(refreshLiveTicker, 30000); // refresh every 30s
 // ── Back-to-top FAB ───────────────────────────────────────────
 (function initBackToTop() {
   const fab = document.getElementById('back-to-top-fab');
-  const browseMC = document.querySelector('#view-browse .main-content');
-  if (!fab || !browseMC) return;
-  browseMC.addEventListener('scroll', () => {
-    fab.classList.toggle('fab-visible', browseMC.scrollTop > 300);
+  if (!fab) return;
+
+  function onLeaderboard() {
+    // Works for both browse (unauthenticated) and dashboard leaderboard tab (authenticated)
+    const browseVisible = !document.getElementById('view-browse').classList.contains('hidden');
+    const dashVisible = !document.getElementById('view-dashboard').classList.contains('hidden');
+    const leaderboardTabVisible = dashVisible && document.getElementById('tab-leaderboard') &&
+      !document.getElementById('tab-leaderboard').classList.contains('hidden');
+    return browseVisible || leaderboardTabVisible;
+  }
+
+  window.addEventListener('scroll', () => {
+    fab.classList.toggle('fab-visible', onLeaderboard() && window.scrollY > 300);
   }, { passive: true });
+
   fab.addEventListener('click', () => {
-    browseMC.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 })();
 </script>
