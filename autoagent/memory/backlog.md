@@ -2,20 +2,26 @@
 
 ---
 
+## HIGH PRIORITY — Code Quality
+
+- [ ] Code quality audit — scan last 5 work sessions' changed files for cross-file coupling, test specificity degradation, and smells introduced by agent edits (sessions 108–113: frontend/index.html, playwright_registry.py, backend/tests/test_bettors.py, backend/tests/test_polymarket_service.py)
+
+---
+
 ## HIGH PRIORITY — Security & Vulnerability Tests
+
+- [ ] Password bcrypt hash storage — POST /auth/register, then query DB: verify User.hashed_password starts with `$2b$` and does NOT contain the plaintext password (proves bcrypt is used, never plaintext)
+- [ ] Rate limiting: 10 rapid login attempts in a loop — none should return 500 (server must be stable under repeated auth requests even without rate limit enforcement)
 
 ---
 
 ## HIGH PRIORITY — Frontend Playwright Tests
 
-- [ ] Full register → login → follow flow — Playwright: open http://localhost:3000, click Sign Up, fill form, submit, assert redirected to dashboard, assert leaderboard loads with bettor cards, click Follow on first bettor, assert follow confirmed
-- [ ] Login error states — Playwright: try wrong password → assert inline error shown (not alert box), try empty fields → assert validation error, assert no redirect on failure
-- [ ] Leaderboard interactions — Playwright: assert bettor cards render, click sort buttons and assert order changes, type in search box and assert filtering works, scroll to bottom and assert back-to-top FAB appears
-- [ ] Profile page flow — Playwright: click View Profile on any bettor card, assert profile page loads with name + stats + recent bets, assert recent bets show outcome (Yes/No) not empty, click Back and assert return to leaderboard
-
 ---
 
 ## HIGH PRIORITY — Backend Coverage Gaps
+
+- [ ] Stripe webhook basic-tier upgrade — simulate `checkout.session.completed` with metadata `{plan: "basic"}`, assert user tier changes free → basic and follow limit becomes 5
 
 
 ---

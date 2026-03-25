@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — TESTING (Session 114)
+DONE: 5 new Playwright checks (84-88) covering register form field presence, login wrong-password inline error (real API call), sort button active class toggle, search filter hiding non-matching cards, and profile tab navigation — total 88 Playwright checks, 0 failures.
+IMPACT: Frontend E2E coverage now proves the full auth form is wired correctly, login errors surface to users (not silently fail), leaderboard sort is responsive, search filtering works on any bettor list, and profile navigation is functional. These are all user-facing flows that were untested.
+FILES: autoagent/playwright_registry.py
+
 ## 2026-03-25 — TESTING (Session 112)
 DONE: Bettor profile rank/pnl_usd fields exposed via polymarket service, REDEEM-type bets filtered from get_recent_bets, 7 new tests covering rank/pnl/outcome/price fields at both service and route layers.
 IMPACT: Users viewing a bettor profile now see accurate rank (position on leaderboard) and pnl_usd; bets list no longer shows REDEEM cash-out entries that have no outcome/price data — only actual trade decisions are shown. Tests prove correctness and prevent regression.

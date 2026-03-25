@@ -45,6 +45,14 @@
 
 ## Session Reflexions
 
+### Session #114 Reflexion — 2026-03-25 (TESTING — Playwright checks 84-88)
+ACCOMPLISHED: 5 new Playwright checks: (84) register form fields present via DOM eval; (85) login wrong-password shows #err-login-general — real API call on separate page using wait_for_function with 6s timeout; (86) sort button active class toggle synchronously (loadBrowseLeaderboard sets active class before async API fetch); (87) search filter hides all cards when no match — demo mode + filterLeaderboard call; (88) showTab('profile') makes #tab-profile visible. All 88 checks pass, 351 backend tests stable.
+FAILED: Nothing failed.
+RULE: [2026-03-25] For PolyEdge auth error tests: `submitLogin()` sets `#err-login-general` text after the backend responds. Use `page.wait_for_function("document.getElementById('err-login-general').textContent.trim().length > 0", timeout=6000)` on a separate page — this waits for the async backend response cleanly.
+RULE: [2026-03-25] `loadBrowseLeaderboard(sort)` synchronously sets `.active` class on sort buttons (lines 3153-3156) BEFORE the async API fetch. So `page.evaluate("loadBrowseLeaderboard('volume')")` can be immediately followed by an evaluate-based assertion on the active class — no await/sleep needed.
+
+- Test count: **351 passed** (stable), **88 Playwright checks** (83 → 88)
+
 ### BRAIN Session #111 Reflexion — 2026-03-25
 ACCOMPLISHED: (1) Competitive intelligence sweep — analyzed 40+ Polymarket copy-trading/alerting tools from Awesome-Prediction-Market-Tools repo; identified feature gaps: Discord channel, trade-size filter, Edge Score composite metric, delayed free-tier alerts. (2) knowledge.md curation: merged duplicate XSS streak rules (sessions 93+107 both tracked the streak separately); updated to 77–110 = 34+ sessions; merged specific grep patterns into canonical rule. (3) design.md: added Conviction/Edge Score badge pattern to CARD ANATOMY — 3-tier pill (green/blue/gray), score formula, honest "—" placeholder. (4) 4 FEATURE MODE backlog items added. (5) 7 sources logged. ECC still at v1.9.0, no new papers from VoltAgent since February.
 FAILED: Nothing failed.

@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-25
+- **[SESSION #114] Playwright checks 84-88: auth form, login error, sort toggle, search filter, profile nav** — 5 new Playwright checks cover register form completeness, login wrong-password inline error (real API call), sort button active class toggle, search filter hiding non-matching cards, profile tab navigation; 88 total checks, 0 failures; 351 backend tests stable
 - **[SESSION #112] Bettor profile rank/pnl_usd + REDEEM filter + 7 new tests** — profile API now exposes rank and pnl_usd (fetched in parallel from leaderboard); get_recent_bets filters out REDEEM-type cash-outs (no outcome/price); 7 new tests verify rank/pnl fields, REDEEM exclusion, outcome/price presence; 310 backend tests + 83 Playwright checks pass
 - **[SESSION #109] Hero background image + AI logo via NovaBanana** — generated hero-bg.jpg (dark fintech cinematic) and logo.png (PE monogram) via NovaBanana API; wired hero-bg.jpg as CSS background with dark scrim overlay; added logo.png to landing nav; fixed CHECK 78 FAB scroll test (window.scrollY not mc.scrollTop); 80 Playwright checks, 303 tests pass
 - **[SESSION #108] Back-to-top FAB on browse leaderboard** — green ↑ FAB appears when scrolled >300px in the 100-item leaderboard, smoothly scrolls back to top; stays above mobile nav on small screens; hidden on view change; 2 new Playwright checks (77-78); 303 tests pass, 78 checks pass

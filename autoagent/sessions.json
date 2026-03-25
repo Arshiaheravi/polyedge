@@ -2500,5 +2500,26 @@
       "failures": 0,
       "notes": "no frontend changes this session"
     }
+  },
+  {
+    "session": 114,
+    "date": "2026-03-25",
+    "time": "09:00",
+    "type": "work",
+    "summary": "5 new Playwright checks (84-88) covering the register form fields, login wrong-password inline error, sort button active class toggle, search filter hides non-matching cards, and profile tab navigation — total Playwright coverage now 88 checks",
+    "files": [
+      "autoagent/playwright_registry.py"
+    ],
+    "tests": {
+      "before": 351,
+      "after": 351,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 88,
+      "failures": 0,
+      "notes": "5 new checks: auth form fields, login error state, sort toggle, search filter, profile tab nav"
+    }
   }
 ]

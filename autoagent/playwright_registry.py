@@ -1149,6 +1149,110 @@ async def check():
         except Exception as e:
             failures.append(f"hero-user-count check error: {e}")
 
+        # CHECK 84 (session 114): Auth register form has all required fields
+        try:
+            await page.evaluate("showView('auth', 'register')")
+            await asyncio.sleep(0.2)
+            auth_fields_ok = await page.evaluate("""() => {
+                const name = document.getElementById('reg-name');
+                const email = document.getElementById('reg-email');
+                const pw = document.getElementById('reg-password');
+                const btn = document.getElementById('register-submit');
+                const form = document.getElementById('form-register');
+                return !!(name && email && pw && btn && form && !form.classList.contains('hidden'));
+            }""")
+            if auth_fields_ok:
+                checks += 1
+                print("  [CHECK 84] Register form has all required fields (name/email/password/submit)")
+            else:
+                failures.append("Register form missing required fields or form is hidden")
+            await page.evaluate("showView('landing')")
+        except Exception as e:
+            failures.append(f"Register form fields check error: {e}")
+
+        # CHECK 85 (session 114): Login wrong password shows inline error in #err-login-general
+        try:
+            auth_page = await browser.new_page()
+            await auth_page.goto(FRONTEND_URL, timeout=12000)
+            await auth_page.wait_for_load_state("networkidle")
+            await auth_page.evaluate("showView('auth', 'login')")
+            await asyncio.sleep(0.3)
+            await auth_page.fill('#login-email', 'wronguser_playwright@example.com')
+            await auth_page.fill('#login-password', 'wrongpassword123')
+            await auth_page.click('#login-submit')
+            await auth_page.wait_for_function(
+                "document.getElementById('err-login-general').textContent.trim().length > 0",
+                timeout=6000
+            )
+            error_text = await auth_page.inner_text('#err-login-general')
+            if error_text.strip():
+                checks += 1
+                print("  [CHECK 85] Login wrong password shows inline error in #err-login-general")
+            else:
+                failures.append("Login error: #err-login-general is empty after wrong-password submit")
+            await auth_page.close()
+        except Exception as e:
+            failures.append(f"Login error state check failed: {e}")
+
+        # CHECK 86 (session 114): Sort volume button gets active class; profit loses it (synchronous toggle)
+        try:
+            await page.evaluate("showView('browse')")
+            await asyncio.sleep(0.2)
+            await page.evaluate("loadBrowseLeaderboard('volume')")
+            sort_ok = await page.evaluate("""() => {
+                const vol = document.getElementById('browse-sort-volume');
+                const profit = document.getElementById('browse-sort-profit');
+                return vol && profit &&
+                       vol.classList.contains('active') &&
+                       !profit.classList.contains('active');
+            }""")
+            if sort_ok:
+                checks += 1
+                print("  [CHECK 86] Sort volume gets active class; profit loses active class")
+            else:
+                failures.append("Sort button active class toggle failed: volume should be active, profit should not")
+            await page.evaluate("loadBrowseLeaderboard('profit')")
+            await page.evaluate("showView('landing')")
+        except Exception as e:
+            failures.append(f"Sort button active class check error: {e}")
+
+        # CHECK 87 (session 114): Search filter hides all cards when query matches nothing (demo mode)
+        try:
+            await page.evaluate("enterDemoMode()")
+            await asyncio.sleep(0.5)
+            filter_ok = await page.evaluate("""() => {
+                filterLeaderboard('browse-leaderboard-body', 'zzznomatch_xyz_playwright');
+                const cards = document.querySelectorAll('#browse-leaderboard-body .lb-card');
+                const hidden = document.querySelectorAll('#browse-leaderboard-body .lb-card.lb-card-hidden');
+                return cards.length > 0 && hidden.length === cards.length;
+            }""")
+            if filter_ok:
+                checks += 1
+                print("  [CHECK 87] Search filter hides all cards when query matches nothing")
+            else:
+                failures.append("Search filter did not hide all non-matching cards")
+            await page.evaluate("exitDemoMode()")
+        except Exception as e:
+            failures.append(f"Search filter check error: {e}")
+
+        # CHECK 88 (session 114): showTab('profile') makes #tab-profile visible
+        try:
+            await page.evaluate("showView('dashboard')")
+            await asyncio.sleep(0.2)
+            await page.evaluate("showTab('profile')")
+            profile_tab_ok = await page.evaluate("""() => {
+                const profileTab = document.getElementById('tab-profile');
+                return profileTab !== null && !profileTab.classList.contains('hidden');
+            }""")
+            if profile_tab_ok:
+                checks += 1
+                print("  [CHECK 88] showTab('profile') makes #tab-profile visible")
+            else:
+                failures.append("#tab-profile still hidden after showTab('profile') — profile nav broken")
+            await page.evaluate("showView('landing')")
+        except Exception as e:
+            failures.append(f"Profile tab navigation check error: {e}")
+
         await browser.close()
     return checks, failures
 
