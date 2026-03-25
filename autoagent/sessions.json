@@ -1602,5 +1602,15 @@
       "failures": 0,
       "notes": "No new checks added; all 22 existing checks still pass after XSS fixes"
     }
+  },
+  {
+    "session": 74,
+    "date": "2026-03-24",
+    "time": "22:00",
+    "type": "work",
+    "summary": "Bettor profile bet rows now show YES/NO as a styled pill with price inline (YES 72¢ green / NO 28¢ red) and an Active badge for bets under 14 days old — makes copy-trade decisions faster",
+    "files": ["frontend/index.html"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 22, "failures": 0, "notes": "No new checks added; existing 22 checks pass"}
   }
 ]

@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-24
+- **[SESSION #74] Bet row probability pill + active badge** — Replaced flat YES/NO text with styled pills (green/red tint, rounded border, price inline as "72¢"); added "Active" badge for bets < 14 days old — honest proxy for market copyability.
 - **[SESSION #73] Audit — fixed 3 XSS vulnerabilities in renderBettorCard + loadLandingPreview** — API-sourced avatar URLs and bettor names were injected unescaped into innerHTML template literals; landing page XSS closed for unauthenticated visitors.
 - **[SESSION #65] Empty state illustrations — SVG art for follows, alerts, leaderboard error** — Replaced plain emojis with inline SVG illustrations: chart+follow-badge for the follows empty state, bell+lightning for alerts-no-notifications banner (shown/hidden by JS based on toggle states), warning triangle for leaderboard fetch errors. Added .es-illustration CSS class with green/blue/gold tint variants.
 - **[SESSION #64] Hero background — premium CSS dot grid + multi-glow ambient lights** — Added dot grid ::before (26px, fades at edges) and three-layer ambient glow ::after to hero section; bg-image hook commented in for hero-bg.jpg; NovaBanana API key invalid so documented in ASSETS_NEEDED.md with user instructions.

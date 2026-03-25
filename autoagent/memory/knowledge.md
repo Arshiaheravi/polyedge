@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #74 Reflexion — 2026-03-24 (UI/UX)
+ACCOMPLISHED: Transformed bet rows in bettor profile from flat `outcome + separate price span` to YES/NO pill component: `.bet-outcome.yes` (green tint + border), `.bet-outcome.no` (red tint + border), `.bet-outcome.other` (neutral), with inline `.bet-outcome-price` for "72¢". Added `.bet-active-badge` (pulsing dot via `::before`) for bets < 14 days old. 303 tests stable, 22/22 Playwright checks pass.
+FAILED: Nothing. Single-file CSS+JS change with no external dependencies.
+RULE: [2026-03-24] When a bet row needs a "market status" badge but only the bet timestamp (not market end date) is available from the frontend, use a conservative recency heuristic: `betAge < 14 days → "Active"`; no badge for older bets. This is honest UX — don't label anything "Open" or "Closed" without ground-truth data. Overpromising market status misleads traders who might copy a settled market.
+
 ### Session #73 Reflexion — 2026-03-24 (Audit)
 ACCOMPLISHED: Code quality audit of sessions 68–72 changes in frontend/index.html. Found and fixed 3 XSS vulnerabilities: (1) `renderBettorCard` used `avatarUrl` (API-sourced `b.avatar_url`) directly in `src="${avatarUrl}"` inside a template literal injected via innerHTML — fixed by adding `const safeAvatarUrl = escapeHtml(avatarUrl)`. (2) `loadLandingPreview` used `b.avatar_url` unescaped in `src` attribute — fixed with `escapeHtml`. (3) `loadLandingPreview` used `b.name` unescaped in innerHTML — fixed with `escapeHtml`. No dead code found. Nav is consistent (desktop 4 items = mobile 4 items). No console.error. 303 tests stable. 22/22 Playwright checks pass.
 FAILED: Nothing failed.
