@@ -6,13 +6,13 @@
 
 ---
 
-## HIGH PRIORITY — Code Quality Audit (MANDATORY — work count hit 90, multiple of 5)
-
-- [ ] Code quality audit — sessions 118–120 changed files: `backend/tests/test_cors.py`, `autoagent/playwright_registry.py` (checks 89-98). Run all 9 virtual team checks: Marcus (XSS greps on index.html), Sarah (no console.error, CSS vars), Priya (empty states), Jordan (trust signals), Nina (Playwright check count ≥98, no removed features), Leo (no TODO/FIXME), Alex (try/except on external calls), Ama (secrets not logged), Marcus (error message non-disclosure). Confirm XSS-free streak extends to sessions 77–120.
-
 ## HIGH PRIORITY — Frontend Playwright Tests
 
-- [ ] Playwright CHECK 99-101 — (a) pricing locked features have `data-tip` attributes on `.dim` items, (b) account tab has `#acct-email` and `#acct-name` elements, (c) `#acct-tier-label` element present and has non-empty text content
+- [ ] Playwright checks 102-104 — profile page DOM: (102) #profile-back-btn exists and onclick calls showTab('leaderboard'), (103) pstat-profit/pstat-pnl/pstat-volume/pstat-bets stat card elements exist in DOM, (104) #profile-bets-list element exists and showProfile() immediately populates it with skeleton rows
+
+- [ ] Playwright checks 105-107 — upgrade flow + mobile nav: (105) #upgrade-modal exists in DOM, (106) openUpgradeModal() makes #upgrade-modal visible (removes .hidden), (107) mobile 375px: no horizontal overflow on alerts tab view (extends check 92 to alerts tab)
+
+- [ ] Playwright checks 108-110 — account tab content: (108) account tab renders without JS errors (new page, navigate to account tab, no pageerror events), (109) #acct-tier-desc has non-empty text, (110) account tab has a .btn-primary upgrade button or a visible tier display
 
 ---
 

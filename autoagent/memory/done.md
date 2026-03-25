@@ -1,6 +1,8 @@
 # Done
 
 ## 2026-03-25
+- **[SESSION #122] Code quality audit (sessions 118-120) + Playwright checks 99-101** — audit passed all 9 team checks with XSS-free streak confirmed 77–120; checks 99-101 verify pricing locked-feature tooltips (data-tip on .dim items), account #acct-email/#acct-name elements, and #acct-tier-label non-empty; 101 total checks, 0 failures; 359 backend tests stable
+- **[SESSION #120] Alerts/pricing/follows Playwright checks (94-98)** — 5 new checks: alerts toggle switches, Telegram channel card, exactly 3 pricing cards, "Most Popular" badge, follows empty CTA; 98 total checks, 0 failures; 359 tests stable
 - **[SESSION #119] Mobile viewport Playwright tests (checks 89-93)** — 5 new checks at 375px: mobile bottom nav visible, lb-grid single column, visible buttons ≥44px, no horizontal overflow on leaderboard view, landing screenshot saved; 93 total checks, 0 failures; 359 backend tests stable
 - **[SESSION #118] CORS header tests — 5 tests covering preflight, wildcard origin, Authorization header allowance** — proves the CORSMiddleware is correctly configured; last security coverage gap closed; 359 tests pass
 - **[SESSION #115] Code quality audit (sessions 108-113) + 3 new security/payment tests** — audit passed all 9 team checks (Marcus XSS greps clean); added bcrypt hash storage test (verify $2b$ prefix, no plaintext), rate-limit stability test (10 rapid logins, none 500), and Stripe basic-tier upgrade + follow-limit chain test (free→basic→verify 5 follows allowed, 6th rejected); 354 tests pass
