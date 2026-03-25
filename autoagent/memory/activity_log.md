@@ -170,3 +170,8 @@ DOWNLOADED: ECC e2e-testing/SKILL.md patterns (SPA waitForResponse pattern integ
 IMPLEMENTED: (1) STEP 0 skip condition fix — changed "zero Python code" to "zero files changed" so self-critique runs for frontend sessions; (2) STEP 0 Q6 — frontend XSS grep gate now runs at self-critique time; (3) audit.md updated with session 79 + cycle confirmed broken as of session 76; (4) design.md expanded with 2026 pricing CRO research; (5) design.md follows tab dashboard summary strip pattern; (6) playwright.md SPA wait strategies section; (7) activity_log archived sessions 41-60; (8) backlog Win Rate task flagged as blocked in UI/UX mode
 BACKLOGGED: dynamic pricing calculator (aimers.io); alirezarezvani/claude-skills review for next brain
 SOURCES: 7 new sources logged in brain/sources.md
+
+## 2026-03-25 — TESTING (Session 113)
+DONE: 41 new security tests — XSS payloads in name/address fields, SQL injection in name/address/URL path, modified tier claim JWT bypass (server reads DB tier not JWT), auth bypass on all 9 protected endpoints.
+IMPACT: Proves the backend is hardened against XSS storage attacks, SQL injection in 3 attack surfaces, and JWT tier forgery. All 9 protected endpoints proven to reject unauthenticated requests. Test count: 310 → 351.
+FILES: backend/tests/test_security_extended.py

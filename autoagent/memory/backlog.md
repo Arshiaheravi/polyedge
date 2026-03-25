@@ -4,11 +4,6 @@
 
 ## HIGH PRIORITY — Security & Vulnerability Tests
 
-- [ ] SQL injection tests — try `' OR '1'='1`, `; DROP TABLE users; --` in email/address/name fields on register, login, follows, bettors endpoints — assert 4xx returned, never 500, DB intact after
-- [ ] XSS payload tests — inject `<script>alert(1)</script>` and `"><img src=x onerror=alert(1)>` into name field on register, market_question stored in BetEvent — assert stored safely (escaped), never executed
-- [ ] Auth bypass tests — call every protected endpoint with: no token, wrong token, token from deleted user, token with tampered payload, token with modified tier claim — all must return 401 or 403
-- [ ] Tier enforcement bypass — create free user, manually craft POST /follows requests to exceed limit=1 — assert 403 on 2nd follow regardless of request manipulation
-
 ---
 
 ## HIGH PRIORITY — Frontend Playwright Tests
@@ -22,8 +17,6 @@
 
 ## HIGH PRIORITY — Backend Coverage Gaps
 
-- [ ] GET /follows/live — test with VIP user following 3 bettors where get_active_positions raises for all 3 — assert still returns 3 entries with empty active_positions, not a 500
-- [ ] Admin MRR formula — assert `basic_users * 4.99 + vip_users * 9.99` (not old 14.99 formula), test with 2 basic + 3 VIP users
 
 ---
 

@@ -2479,5 +2479,26 @@
       "failures": 0,
       "notes": "Updated CHECK 80 from logo img to wordmark text (logo img removed)"
     }
+  },
+  {
+    "session": 113,
+    "date": "2026-03-25",
+    "time": "06:30",
+    "type": "work",
+    "summary": "41 new security tests covering XSS payloads in name and address fields, SQL injection in 3 input surfaces, modified tier claim JWT bypass (proves server uses DB tier not JWT), and auth bypass checks on all 9 protected endpoints \u2014 test count grew from 310 to 351",
+    "files": [
+      "backend/tests/test_security_extended.py"
+    ],
+    "tests": {
+      "before": 310,
+      "after": 351,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 83,
+      "failures": 0,
+      "notes": "no frontend changes this session"
+    }
   }
 ]

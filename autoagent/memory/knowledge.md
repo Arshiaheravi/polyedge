@@ -643,3 +643,16 @@ RULE: [2026-03-25] When a service function is refactored to use `asyncio.gather`
 |---------|--------------|-----------------|
 | 112     | 310          | 83              |
 | 110     | 303          | 83              |
+
+### Session #113 Reflexion — 2026-03-25
+ACCOMPLISHED: 41 new security tests covering XSS payloads in name/address fields, SQL injection in name/address/URL path, modified tier claim JWT bypass, and auth bypass on all 9 protected endpoints.
+FAILED: Two tests initially failed — GET /auth/me wraps user in `{"user": {...}}` so accessing `resp.json()["name"]` should be `resp.json()["user"]["name"]`. Fixed by reading the route response structure first.
+RULE: [2026-03-25] GET /auth/me returns `{"user": {...}}` not a flat user dict — always access `resp.json()["user"]["field"]`, not `resp.json()["field"]`. This is different from register/login which also wrap in `{"access_token": ..., "user": {...}}`.
+RULE: [2026-03-25] Modified tier claim JWT test pattern: use `create_access_token({"sub": str(user_id), "tier": "vip"})` with valid secret — server decodes it, reads sub, fetches DB user, uses DB tier. The extra JWT claim is silently ignored. Test confirms DB-authoritative tier enforcement.
+
+## Test Suite History
+| Session | Backend Tests | Frontend Checks |
+|---------|--------------|-----------------|
+| 113     | 351          | 83              |
+| 112     | 310          | 83              |
+| 110     | 303          | 83              |

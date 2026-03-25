@@ -120,3 +120,6 @@
 ## 2026-03-25
 - **[SESSION #104] Bettor profile rich stat cards** — Upgraded 4 plain stat cards with colored gradient top borders, hover lift, and trend arrows (▲/▼) wired to live profit/PnL% values.
 - **[SESSION #110] Modal keyboard nav + lb last-active + follow pulse + social counter + pricing tooltips** — Escape/Enter keyboard modal shortcuts, "Active Xm ago" green-dot timestamps on leaderboard cards in demo mode, animated follow button glow pulse on hover, hero social proof counter animates 0→847+ on landing load, and "Unlock with Basic/VIP →" upgrade tooltips on locked pricing feature rows.
+
+### 2026-03-25
+- **[SESSION #113] Security extended tests — XSS, SQL injection, tier claim JWT, auth bypass** — 41 new pytest tests proving XSS payloads in name/address fields don't crash the server, SQL injection in 3 different input surfaces returns <500, modified tier claim JWT is ignored (DB tier wins), and all 9 protected endpoints reject missing/invalid tokens.
