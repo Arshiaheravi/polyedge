@@ -1648,6 +1648,45 @@ async def check():
         except Exception as e:
             failures.append(f"acct-upgrade-btn check error: {e}")
 
+        # ── CHECKS 111-113: logout flow + localStorage (Session 127) ──
+
+        # CHECK 111: logout() function is defined in window scope
+        try:
+            logout_ok = await page.evaluate("typeof window.logout === 'function'")
+            if logout_ok:
+                checks += 1
+                print("  [CHECK 111] logout() function defined in window scope")
+            else:
+                failures.append("logout() function not defined in window scope")
+        except Exception as e:
+            failures.append(f"logout function check error: {e}")
+
+        # CHECK 112: clearToken() removes pe_token from localStorage
+        try:
+            clear_ok = await page.evaluate("""() => {
+                localStorage.setItem('pe_token', 'test-token-playwright');
+                clearToken();
+                return localStorage.getItem('pe_token') === null;
+            }""")
+            if clear_ok:
+                checks += 1
+                print("  [CHECK 112] clearToken() removes pe_token from localStorage (getItem returns null)")
+            else:
+                failures.append("clearToken() did not remove pe_token from localStorage")
+        except Exception as e:
+            failures.append(f"clearToken localStorage check error: {e}")
+
+        # CHECK 113: #back-to-top-fab element present in DOM
+        try:
+            fab_ok = await page.evaluate("document.getElementById('back-to-top-fab') !== null")
+            if fab_ok:
+                checks += 1
+                print("  [CHECK 113] #back-to-top-fab element present in DOM")
+            else:
+                failures.append("#back-to-top-fab element missing from DOM")
+        except Exception as e:
+            failures.append(f"back-to-top-fab check error: {e}")
+
         await browser.close()
     return checks, failures
 
