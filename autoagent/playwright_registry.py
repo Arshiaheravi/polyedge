@@ -1346,6 +1346,91 @@ async def check():
         except Exception as e:
             failures.append(f"Mobile 375px viewport setup error: {e}")
 
+        # ── CHECKS 94-98: Alerts toggles, pricing cards, empty follows (Session 120) ──
+
+        # CHECK 94: alerts tab has toggle switches for push and telegram
+        try:
+            await page.evaluate("showView('dashboard'); showTab('alerts')")
+            await asyncio.sleep(0.3)
+            toggles_ok = await page.evaluate("""() => {
+                const pushToggle = document.getElementById('toggle-push');
+                const tgToggle   = document.getElementById('toggle-telegram');
+                return !!(pushToggle && tgToggle);
+            }""")
+            if toggles_ok:
+                checks += 1
+                print("  [CHECK 94] Alerts tab has #toggle-push and #toggle-telegram switches")
+            else:
+                failures.append("Alerts tab: #toggle-push or #toggle-telegram missing")
+        except Exception as e:
+            failures.append(f"Alerts toggle check error: {e}")
+
+        # CHECK 95: alerts tab has Telegram channel card (#ch-telegram) with title
+        try:
+            tg_ok = await page.evaluate("""() => {
+                const card = document.getElementById('ch-telegram');
+                if (!card) return false;
+                // card must contain the title text "Telegram"
+                return card.textContent.includes('Telegram');
+            }""")
+            if tg_ok:
+                checks += 1
+                print("  [CHECK 95] Alerts tab: #ch-telegram card present with 'Telegram' title")
+            else:
+                failures.append("Alerts tab: #ch-telegram card missing or has no 'Telegram' text")
+            await page.evaluate("showView('landing')")
+        except Exception as e:
+            failures.append(f"Alerts Telegram section check error: {e}")
+
+        # CHECK 96: pricing section has exactly 3 .pricing-card elements
+        try:
+            await page.evaluate("showView('landing')")
+            await asyncio.sleep(0.2)
+            card_count = await page.eval_on_selector_all('.pricing-card', 'els => els.length')
+            if card_count == 3:
+                checks += 1
+                print("  [CHECK 96] Pricing section has exactly 3 .pricing-card elements")
+            else:
+                failures.append(f"Pricing section: expected 3 .pricing-card elements, found {card_count}")
+        except Exception as e:
+            failures.append(f"Pricing cards count check error: {e}")
+
+        # CHECK 97: featured pricing card (.pricing-card.featured) has "Most Popular" badge
+        try:
+            badge_ok = await page.evaluate("""() => {
+                const featured = document.querySelector('.pricing-card.featured');
+                if (!featured) return false;
+                const badge = featured.querySelector('.pricing-badge');
+                return badge !== null && badge.textContent.trim() === 'Most Popular';
+            }""")
+            if badge_ok:
+                checks += 1
+                print("  [CHECK 97] Featured pricing card has 'Most Popular' .pricing-badge")
+            else:
+                failures.append("Featured pricing card: .pricing-badge with 'Most Popular' not found")
+        except Exception as e:
+            failures.append(f"Pricing badge check error: {e}")
+
+        # CHECK 98: follows empty state element exists and CTA button navigates to leaderboard
+        try:
+            await page.evaluate("showView('dashboard'); showTab('follows')")
+            await asyncio.sleep(0.3)
+            empty_ok = await page.evaluate("""() => {
+                const emptyEl = document.getElementById('follows-empty');
+                if (!emptyEl) return false;
+                // CTA button must call showTab('leaderboard')
+                const btn = emptyEl.querySelector('button.btn-primary');
+                return btn !== null && btn.getAttribute('onclick').includes("showTab('leaderboard')");
+            }""")
+            if empty_ok:
+                checks += 1
+                print("  [CHECK 98] #follows-empty exists with .btn-primary CTA pointing to leaderboard tab")
+            else:
+                failures.append("#follows-empty missing or CTA button does not call showTab('leaderboard')")
+            await page.evaluate("showView('landing')")
+        except Exception as e:
+            failures.append(f"Follows empty state check error: {e}")
+
         await browser.close()
     return checks, failures
 
