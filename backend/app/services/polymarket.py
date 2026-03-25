@@ -48,7 +48,7 @@ def _normalise_leaderboard_entry(raw: dict) -> dict:
     }
 
 
-def _normalise_profile(raw: dict, volume: float = 0.0, trade_count: int = 0) -> dict:
+def _normalise_profile(raw: dict, volume: float = 0.0, trade_count: int = 0, pnl_usd: float = 0.0, rank: int = 0) -> dict:
     address = raw.get("proxyWallet") or raw.get("address") or ""
     name = raw.get("userName") or raw.get("name") or raw.get("pseudonym") or (address[:10] + "..." if address else "Unknown")
     avatar_url = raw.get("profileImageOptimized") or raw.get("profileImage") or _blockies_url(address)
@@ -57,6 +57,8 @@ def _normalise_profile(raw: dict, volume: float = 0.0, trade_count: int = 0) -> 
     return {
         "address": address,
         "name": name,
+        "rank": rank,
+        "pnl_usd": round(float(pnl_usd), 2),
         "volume_usd": round(float(volume), 2),
         "total_bets": int(raw.get("numTrades") or raw.get("total_bets") or trade_count),
         "avg_bet_usd": avg_bet,
@@ -68,11 +70,11 @@ def _normalise_bet(raw: dict) -> dict:
     return {
         "market_id": raw.get("conditionId") or raw.get("market_id") or "",
         "market_question": raw.get("title") or raw.get("question") or raw.get("market_question") or "Unknown Market",
-        "outcome": raw.get("outcome") or raw.get("side") or "",
+        "outcome": raw.get("outcome") or "",          # "Yes" / "No" — only present on TRADE type
         "amount_usd": round(float(raw.get("usdcSize") or raw.get("size") or 0), 2),
         "timestamp": raw.get("timestamp") or raw.get("createdAt") or "",
-        "price": round(float(raw.get("price") or 0), 4),
-        "type": raw.get("side") or "BUY",
+        "price": round(float(raw.get("price") or 0), 4),  # entry price 0-1, only on TRADE
+        "type": raw.get("side") or "BUY",              # BUY / SELL
         "tx_hash": raw.get("transactionHash") or "",
         "market_icon": raw.get("icon") or "",
         "market_slug": raw.get("eventSlug") or raw.get("slug") or "",
@@ -221,31 +223,62 @@ async def get_active_positions(address: str, limit: int = 20) -> list[dict]:
 
 
 async def get_bettor_profile(address: str) -> dict:
-    """Get a specific bettor's profile from their recent activity."""
-    params = {"user": address, "limit": 50}
-    raw_list = []
+    """Get a specific bettor's profile — merges activity data with leaderboard rank/pnl/volume."""
+    import asyncio
 
-    async with httpx.AsyncClient(timeout=TIMEOUT) as client:
-        try:
-            resp = await client.get(f"{BASE_URL}/activity", params=params)
-            resp.raise_for_status()
-            raw_list = resp.json()
-            if not isinstance(raw_list, list):
-                raw_list = []
-        except Exception:
-            raw_list = []
+    async def _fetch_activity():
+        async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+            try:
+                resp = await client.get(f"{BASE_URL}/activity", params={"user": address, "limit": 50})
+                resp.raise_for_status()
+                data = resp.json()
+                return data if isinstance(data, list) else []
+            except Exception:
+                return []
 
-    if not raw_list:
-        return _normalise_profile({"proxyWallet": address})
+    async def _fetch_leaderboard_entry():
+        """Look up this bettor in the leaderboard to get authoritative rank/pnl/volume."""
+        async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+            for offset in range(0, 100, 50):
+                try:
+                    resp = await client.get(
+                        f"{BASE_URL}/v1/leaderboard",
+                        params={"timePeriod": "month", "orderBy": "PNL", "limit": 50, "offset": offset, "category": "overall"},
+                    )
+                    resp.raise_for_status()
+                    page = resp.json()
+                    if not isinstance(page, list):
+                        break
+                    for entry in page:
+                        if (entry.get("proxyWallet") or "").lower() == address.lower():
+                            return entry
+                    if len(page) < 50:
+                        break
+                except Exception:
+                    break
+        return None
 
-    first = raw_list[0]
+    raw_list, lb_entry = await asyncio.gather(_fetch_activity(), _fetch_leaderboard_entry())
+
+    # Build profile_raw from activity for name/avatar
+    first = raw_list[0] if raw_list else {}
+    # lb_entry has real leaderboard data only if it contains the `vol` field
+    has_lb_data = bool(lb_entry and lb_entry.get("vol") is not None)
     profile_raw = {
         "proxyWallet": address,
-        "name": first.get("name") or first.get("pseudonym") or "",
-        "profileImage": first.get("profileImageOptimized") or first.get("profileImage") or "",
+        "userName": (lb_entry.get("userName") if has_lb_data else None)
+                    or first.get("name") or first.get("pseudonym") or "",
+        "profileImage": first.get("profileImageOptimized") or first.get("profileImage")
+                        or (lb_entry.get("profileImage") if lb_entry else ""),
     }
-    volume = sum(float(t.get("usdcSize") or t.get("size") or 0) for t in raw_list)
-    return _normalise_profile(profile_raw, volume=volume, trade_count=len(raw_list))
+
+    # Use leaderboard data for authoritative volume/pnl/rank (only if real lb entry)
+    pnl_usd = float(lb_entry.get("pnl") or 0) if has_lb_data else 0.0
+    volume = float(lb_entry.get("vol") or 0) if has_lb_data else sum(float(t.get("usdcSize") or t.get("size") or 0) for t in raw_list)
+    rank = int(lb_entry.get("rank") or 0) if has_lb_data else 0
+    trade_count = len([t for t in raw_list if t.get("type") == "TRADE"]) or len(raw_list)
+
+    return _normalise_profile(profile_raw, volume=volume, trade_count=trade_count, pnl_usd=pnl_usd, rank=rank)
 
 
 async def get_recent_bets(address: str, limit: int = 20) -> list[dict]:
@@ -262,4 +295,5 @@ async def get_recent_bets(address: str, limit: int = 20) -> list[dict]:
         except Exception:
             raw_list = []
 
-    return [_normalise_bet(b) for b in raw_list if isinstance(b, dict)]
+    # Only include TRADE type — REDEEM is cashing out winnings (no outcome/price data)
+    return [_normalise_bet(b) for b in raw_list if isinstance(b, dict) and b.get("type") != "REDEEM"]

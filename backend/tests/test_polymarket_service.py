@@ -502,6 +502,90 @@ async def test_get_leaderboard_empty_first_page_returns_empty_list():
     assert mock_client.get.call_count == 1  # breaks on first empty page, no second call
 
 
+# ── _normalise_profile includes rank and pnl_usd ─────────────────────────────
+
+def test_normalise_profile_includes_rank_and_pnl_usd():
+    """_normalise_profile must expose rank and pnl_usd fields (added session 112)."""
+    from app.services.polymarket import _normalise_profile
+    raw = {"proxyWallet": "0xabc", "userName": "Whale"}
+    result = _normalise_profile(raw, volume=1000.0, trade_count=5, pnl_usd=420.75, rank=3)
+    assert result["rank"] == 3
+    assert result["pnl_usd"] == 420.75
+    assert result["volume_usd"] == 1000.0
+    assert result["address"] == "0xabc"
+
+
+def test_normalise_profile_rank_and_pnl_default_to_zero():
+    """When rank/pnl_usd not supplied, they default to 0."""
+    from app.services.polymarket import _normalise_profile
+    raw = {"proxyWallet": "0xdef"}
+    result = _normalise_profile(raw)
+    assert result["rank"] == 0
+    assert result["pnl_usd"] == 0.0
+
+
+# ── get_recent_bets REDEEM filter ─────────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_recent_bets_filters_out_redeem_type():
+    """get_recent_bets must exclude entries where type=='REDEEM' — only TRADE returned."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    activity = [
+        {"conditionId": "trade1", "title": "Trade Market", "outcome": "Yes",
+         "usdcSize": "100.0", "price": "0.6", "side": "BUY", "type": "TRADE"},
+        {"conditionId": "redeem1", "title": "Redeem Market", "outcome": "",
+         "usdcSize": "80.0", "price": "0.0", "type": "REDEEM"},
+        {"conditionId": "trade2", "title": "Another Trade", "outcome": "No",
+         "usdcSize": "50.0", "price": "0.45", "side": "BUY", "type": "TRADE"},
+    ]
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = activity
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_recent_bets
+        result = await get_recent_bets("0xwhale", limit=20)
+
+    assert len(result) == 2
+    ids = [r["market_id"] for r in result]
+    assert "trade1" in ids
+    assert "trade2" in ids
+    assert "redeem1" not in ids
+
+
+@pytest.mark.asyncio
+async def test_get_recent_bets_outcome_and_price_populated_for_trade():
+    """TRADE entries must have outcome ('Yes'/'No') and price (0-1 float) populated."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    activity = [
+        {"conditionId": "t1", "title": "Win Bet", "outcome": "Yes",
+         "usdcSize": "200.0", "price": "0.7500", "side": "BUY", "type": "TRADE"},
+    ]
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = activity
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_recent_bets
+        result = await get_recent_bets("0xwhale", limit=20)
+
+    assert len(result) == 1
+    assert result[0]["outcome"] == "Yes"
+    assert result[0]["price"] == 0.75
+
+
 # ── get_recent_bets "activity" key fallback ───────────────────────────────────
 
 @pytest.mark.asyncio

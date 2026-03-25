@@ -308,9 +308,9 @@
     /* Hero */
     .hero {
       text-align: center; padding: 100px 20px 80px; position: relative; z-index: 1; overflow: hidden;
-      background-image: url('assets/hero-bg.jpg');
-      background-size: cover; background-position: center top;
-      background-color: #0a1628; /* fallback if image fails */
+      /* When hero-bg.jpg is available, uncomment:
+         background-image: url('assets/hero-bg.jpg');
+         background-size: cover; background-position: center top; */
     }
     /* Dark scrim over the hero image so text stays readable */
     .hero-scrim {
@@ -1235,10 +1235,7 @@
 ============================================================ -->
 <div id="view-landing">
   <nav class="landing-nav" role="navigation" aria-label="Main navigation">
-    <div class="logo" aria-label="PolyEdge home" style="display:flex;align-items:center;gap:8px;">
-      <img src="assets/logo.png" alt="" aria-hidden="true" style="height:32px;width:32px;object-fit:contain;border-radius:6px;" onerror="this.style.display='none'">
-      Poly<span>Edge</span>
-    </div>
+    <div class="logo" aria-label="PolyEdge home">Poly<span>Edge</span></div>
     <div class="nav-actions">
       <button class="btn btn-secondary" onclick="showView('auth', 'login')" aria-label="Log in to your account">Log In</button>
       <button class="btn btn-primary" onclick="showView('auth', 'register')" aria-label="Get started for free">Start Free &rarr;</button>
@@ -2174,6 +2171,11 @@
       </div>
       <div class="profile-bets-section">
         <h2 class="profile-section-title">Recent Bets</h2>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--text2);line-height:1.7;">
+          <strong style="color:var(--text);">Trade history only</strong> — these are the last 20 bets this trader placed, newest first. They may have already <strong style="color:var(--text);">sold or exited</strong> any of these positions.
+          To see what they actually hold <em>right now</em> and can be copied today, go to <strong style="color:var(--accent);">My Follows → Live Bets</strong> after following them.
+          &nbsp;·&nbsp; <strong style="color:var(--text);">YES/NO</strong> = which side they bet &nbsp;·&nbsp; <strong style="color:var(--text);">¢ price</strong> = implied probability at entry (52¢ = 52% chance) &nbsp;·&nbsp; <strong style="color:var(--accent);">Active</strong> badge = placed within 14 days
+        </div>
         <div id="profile-bets-list" class="profile-bets-list"></div>
       </div>
     </div>
@@ -4214,10 +4216,12 @@ function renderProfileData(profile, bets) {
   document.getElementById('profile-addr-display').textContent = profile.address;
   document.getElementById('profile-polylink').href = `https://polymarket.com/profile/${encodeURIComponent(profile.address)}`;
 
-  // Badges: use cached leaderboard data if available (more complete), else derive from profile
+  // Badges: use profile API data (now includes rank + pnl_usd), fall back to leaderboard cache
   const cached = _bettorCache.get(profile.address);
-  const rank = cached ? cached.rank : null;
-  const pnlUsd = cached ? cached.pnl_usd : null;
+  const rank = profile.rank || (cached ? cached.rank : null);
+  const pnlUsd = (profile.pnl_usd !== undefined && profile.pnl_usd !== 0)
+    ? profile.pnl_usd
+    : (cached ? cached.pnl_usd : null);
   _renderProfileBadges(rank, pnlUsd, profile.volume_usd);
 
   // 4-stat strip

@@ -255,3 +255,67 @@ def test_leaderboard_limit_param_passed_to_service(client):
     mock_fn.assert_called_once()
     call_kwargs = mock_fn.call_args.kwargs
     assert call_kwargs.get("limit") == 5, f"expected limit=5 but got {call_kwargs}"
+
+
+def test_bettor_detail_profile_includes_rank_and_pnl_usd(client):
+    """GET /bettors/{address} profile must include rank and pnl_usd fields (added session 112)."""
+    import app.routes.bettors as bettors_mod
+    addr = "0xRANK_CHECK"
+    bettors_mod._profile_cache.pop(addr, None)
+    mock_profile = {
+        "address": addr, "name": "RankTrader",
+        "rank": 7, "pnl_usd": 1234.56,
+        "volume_usd": 5000.0, "total_bets": 20, "avg_bet_usd": 250.0, "avatar_url": "",
+    }
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=mock_profile)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=[])):
+        resp = client.get(f"/bettors/{addr}")
+    assert resp.status_code == 200
+    profile = resp.json()["profile"]
+    assert "rank" in profile, "profile must contain 'rank' field"
+    assert "pnl_usd" in profile, "profile must contain 'pnl_usd' field"
+    assert profile["rank"] == 7
+    assert profile["pnl_usd"] == 1234.56
+
+
+def test_bettor_detail_recent_bets_have_outcome_and_price(client):
+    """GET /bettors/{address} recent_bets must include outcome and price for each bet."""
+    import app.routes.bettors as bettors_mod
+    addr = "0xBET_OUTCOME"
+    bettors_mod._profile_cache.pop(addr, None)
+    mock_profile = {"address": addr, "name": "BetOutcomeTrader", "rank": 0, "pnl_usd": 0.0,
+                    "volume_usd": 100.0, "total_bets": 1, "avg_bet_usd": 100.0, "avatar_url": ""}
+    mock_bets = [
+        {"market_id": "m1", "market_question": "Will it rain?",
+         "outcome": "Yes", "price": 0.65,
+         "amount_usd": 100.0, "timestamp": "2026-03-01", "type": "BUY", "tx_hash": "", "market_icon": "", "market_slug": ""},
+    ]
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=mock_profile)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=mock_bets)):
+        resp = client.get(f"/bettors/{addr}")
+    assert resp.status_code == 200
+    bets = resp.json()["recent_bets"]
+    assert len(bets) == 1
+    assert bets[0]["outcome"] == "Yes"
+    assert bets[0]["price"] == 0.65
+
+
+def test_bettor_detail_redeem_bets_not_in_response(client):
+    """GET /bettors/{address} must not include REDEEM-type bets in recent_bets."""
+    import app.routes.bettors as bettors_mod
+    addr = "0xNO_REDEEM"
+    bettors_mod._profile_cache.pop(addr, None)
+    mock_profile = {"address": addr, "name": "NoRedeemTrader", "rank": 0, "pnl_usd": 0.0,
+                    "volume_usd": 100.0, "total_bets": 1, "avg_bet_usd": 100.0, "avatar_url": ""}
+    # Service layer already filters REDEEM — this confirms the route passes through only TRADE bets
+    mock_bets = [
+        {"market_id": "t1", "market_question": "Trade Q", "outcome": "No",
+         "price": 0.45, "amount_usd": 50.0, "timestamp": "2026-03-01",
+         "type": "BUY", "tx_hash": "", "market_icon": "", "market_slug": ""},
+    ]
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=mock_profile)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=mock_bets)):
+        resp = client.get(f"/bettors/{addr}")
+    assert resp.status_code == 200
+    bets = resp.json()["recent_bets"]
+    assert all(b["outcome"] != "" for b in bets), "all returned bets must have an outcome (REDEEM filtered)"
