@@ -792,6 +792,41 @@ async def check():
         except Exception as e:
             failures.append(f"Profile skeleton check error: {e}")
 
+        # ── CHECK 61-62: Account tab redesign (Session 95) ───────────────────
+        try:
+            acct_page = await browser.new_page()
+            await acct_page.goto("http://localhost:3000")
+            await acct_page.wait_for_load_state("networkidle")
+
+            # CHECK 61: acct-plan-badge element exists with tier- class
+            badge_ok = await acct_page.evaluate("""() => {
+                const el = document.getElementById('acct-plan-badge');
+                if (!el) return false;
+                return el.className.includes('tier-free') || el.className.includes('tier-basic') || el.className.includes('tier-vip');
+            }""")
+            if badge_ok:
+                checks += 1
+                print("  [CHECK 61] Account tab: acct-plan-badge has tier- class")
+            else:
+                failures.append("Account plan badge: element missing or no tier- class")
+
+            # CHECK 62: acct-logout-btn (.acct-logout-btn) exists and acct-avatar present
+            ui_ok = await acct_page.evaluate("""() => {
+                const avatar = document.getElementById('acct-avatar');
+                const logoutBtn = document.querySelector('.acct-logout-btn');
+                const nudge = document.getElementById('acct-upgrade-nudge');
+                return !!(avatar && logoutBtn && nudge);
+            }""")
+            if ui_ok:
+                checks += 1
+                print("  [CHECK 62] Account tab: avatar, logout btn, and upgrade nudge elements exist")
+            else:
+                failures.append("Account tab: missing acct-avatar, acct-logout-btn, or acct-upgrade-nudge")
+
+            await acct_page.close()
+        except Exception as e:
+            failures.append(f"Account tab redesign check error: {e}")
+
         await browser.close()
     return checks, failures
 
