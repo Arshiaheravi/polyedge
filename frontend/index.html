@@ -2276,6 +2276,7 @@ function renderBettorCard(b, i) {
   const name = b.name || shortAddr(addr);
   const isFollowing = followedAddresses.has(addr);
   const avatarUrl = b.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${addr}`;
+  const safeAvatarUrl = escapeHtml(avatarUrl);
   const delay = Math.min(i, 9) * 80;
   const pnl = b.pnl_usd ?? null;
   const vol = b.volume_usd || 0;
@@ -2303,7 +2304,7 @@ function renderBettorCard(b, i) {
          role="button" tabindex="0"
          title="View ${eName}'s profile"
          onkeydown="if(event.key==='Enter')showProfile('${safeAddr}')">
-      <img class="lb-card-avatar" src="${avatarUrl}" alt="${eName}"
+      <img class="lb-card-avatar" src="${safeAvatarUrl}" alt="${eName}"
            onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${safeAddr}'" />
       <div class="lb-card-identity">
         <div class="lb-card-name" title="${eName}">${eName}</div>
@@ -2967,6 +2968,9 @@ async function loadLandingPreview() {
     }
     tbody.innerHTML = bettors.map((b, i) => {
       const avatarUrl = b.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${b.address}`;
+      const safeAvatar = escapeHtml(avatarUrl);
+      const safeAddr2  = escapeHtml(b.address || '');
+      const safeName   = escapeHtml(b.name || shortAddr(b.address));
       const blurred = i >= 3 ? 'blur-row' : '';
       const pnl = b.pnl_usd ?? null;
       const pnlDisplay = pnl !== null
@@ -2976,10 +2980,10 @@ async function loadLandingPreview() {
         <td>${rankBadge(b.rank ? b.rank - 1 : i)}</td>
         <td>
           <div class="bettor-row">
-            <img class="avatar" src="${avatarUrl}" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${b.address}'" alt="avatar" style="width:32px;height:32px;" />
+            <img class="avatar" src="${safeAvatar}" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=${safeAddr2}'" alt="avatar" style="width:32px;height:32px;" />
             <div>
-              <div class="bettor-name" style="font-size:14px;">${b.name || shortAddr(b.address)}</div>
-              <div class="bettor-addr">${shortAddr(b.address)}</div>
+              <div class="bettor-name" style="font-size:14px;">${safeName}</div>
+              <div class="bettor-addr">${escapeHtml(shortAddr(b.address))}</div>
             </div>
           </div>
         </td>
