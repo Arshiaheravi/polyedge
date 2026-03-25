@@ -51,7 +51,12 @@ FAILED: Nothing. First run clean.
 RULE: [2026-03-25] For "live" or "real-time" indicators, use a small dot with `@keyframes` pulse (scale 0.8↔1 + opacity 0.5↔1, 2s ease-in-out infinite) rather than a blinking cursor or spinner — pulse feels alive without being distracting. Pair it with an `opacity: 0 → 1` fade on the containing badge so the element doesn't flash a "0 traders" state before data loads.
 RULE: [2026-03-25] Before starting a session, check each backlog item by reading the relevant code section — "color-coded P&L" was already implemented but remained in backlog 3 sessions too long. A 30-second grep for the described variable (`pnlColor = p.cash_pnl >= 0`) would have caught this. Always grep before implementing a "verify/add" backlog item.
 
-- Test count: **303 passed** (as of 2026-03-25, session 99 — no new backend tests, frontend-only change)
+- Test count: **303 passed** (as of 2026-03-25, session 100 — no new backend tests, META session)
+
+### Session #100 Reflexion — 2026-03-25 (META — Code Quality Audit Sessions 94–98)
+ACCOMPLISHED: Full virtual team audit (9 members) of sessions 94–98 changed files. All checks passed clean. Verified Marcus XSS greps: 30 escapeHtml() usages, chatId correctly wrapped before innerHTML injection, renderBettorCard/renderBetRow/renderPositionItem/tbody all clean. Removed stale tech_debt entry for _disclosureCache TTL (fixed session 98). Test count 303 confirmed stable.
+FAILED: Nothing. Cleanest audit in 6 sessions.
+RULE: [2026-03-25] After fixing a tech_debt item (like the disclosureCache TTL), immediately mark it as fixed in tech_debt.md in the same session — don't leave it open to confuse future audits. The audit cycle confirmed: logging debt to tech_debt.md and fixing it in the targeted session is working correctly.
 
 ### Session #98 Reflexion — 2026-03-25 (UI/UX — _disclosureCache TTL Fix)
 ACCOMPLISHED: Changed `_disclosureCache` from `Map<addr, string[]>` to `Map<addr, {titles: string[], ts: number}>`. Added `_DISCLOSURE_TTL_MS = 5 * 60 * 1000`. Cache hit check now validates `(Date.now() - cached.ts) < _DISCLOSURE_TTL_MS` before serving; stale entries trigger a fresh fetch. Error path also stores `{titles: [], ts: Date.now()}` so errors don't permanently lock an address. 2 Playwright checks (65-66) verify the TTL constant value and entry shape. Zero tests changed.

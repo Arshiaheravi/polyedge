@@ -2,15 +2,11 @@
 
 ---
 
-## META TASK (scheduled — session 99, 75 work sessions = multiple of 5)
-
-- [ ] Code quality audit — scan sessions 94–98 changed files (frontend/index.html, playwright_registry.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits
-
----
-
 ## HIGH PRIORITY — UI/UX Tasks (doable in current UI/UX-only mode)
 
 - [ ] Nav/header improvements — add active state to nav links, smooth scroll behavior, add a subtle top progress bar on page load
+- [ ] Hero section polish — improve landing page hero: bigger headline, animated value-prop subtext, pulsing CTA button, and a live stat counter (e.g. "100 traders tracked · $2M+ profit tracked")
+- [ ] Bettor profile rich stats — replace the 4 plain stat cards on the profile page with gradient-border cards that have micro-sparklines or trend arrows (up/down since last week)
 
 ---
 

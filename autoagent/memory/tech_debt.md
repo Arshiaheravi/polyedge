@@ -7,4 +7,4 @@ Format: [DATE] [FILE] [TEAM MEMBER] — [issue description]
 
 [2026-03-24] CLAUDE.md [Leo] — VIP price shown as $14.99 but admin.py uses 9.99. PROJECT.md also says $9.99. CLAUDE.md needs updating. Low urgency — no user-facing page reads from CLAUDE.md.
 [2026-03-24] backend/app/routes/follows.py [Ama] — _activity_cache grows unboundedly (no max-size eviction, just TTL on access). At scale with many users this leaks memory. Fix: add maxsize cap or use an LRU cache (functools.lru_cache won't work for this pattern — use a simple OrderedDict with max entries).
-[2026-03-24] frontend/index.html [Ama/Priya] — _disclosureCache (Map) on leaderboard cards is never invalidated. If a bettor makes new bets after the user first expanded their card, the cached market titles are stale until page reload. Low impact (decorative preview), but could mislead. Fix: set a TTL key alongside each cache entry (e.g. `_disclosureCache.set(addr, {titles, ts: Date.now()})`) and re-fetch if older than 5 minutes.
+~~[2026-03-24] frontend/index.html [Ama/Priya] — _disclosureCache TTL~~ FIXED session 98 — entries now store `{titles, ts}` with 5-min TTL (`_DISCLOSURE_TTL_MS = 300000`).
