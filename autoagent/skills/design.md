@@ -80,13 +80,35 @@ Before writing any CSS/JS for a new section, answer:
 - CSS-only animations preferred (no JS animation libs)
 - Hover states that surprise: scale + glow is expected; try color shift + border reveal instead
 
+## VISUAL AUDIT CHECKLIST (run before committing any UI change)
+Score each dimension pass/fail — from ECC design-system/SKILL.md (2026-03-23):
+
+1. **Color consistency** — are all colors CSS variables from `:root`? No raw hex values?
+2. **Typography hierarchy** — clear visual step from heading → subhead → body → caption?
+3. **Spacing rhythm** — consistent 8px-grid spacing? No arbitrary px values?
+4. **Component consistency** — do similar elements (cards, badges, buttons) look the same?
+5. **Responsive behavior** — fluid at 375px/768px/1280px? No overflow or clipped content?
+6. **Animation** — purposeful only? No scroll-triggered animations on every element?
+7. **Accessibility** — interactive elements have focus outlines? Touch targets ≥ 44×44px?
+8. **Information density** — clean scan path? No more than 3-4 data points per card?
+9. **Empty states** — every list/section has a designed empty state (not blank)?
+10. **Loading states** — skeleton cards, not blank white flashes?
+
+Any dimension that fails = fix before committing. Log issues that require a full session to `autoagent/memory/tech_debt.md`.
+
 ## AVOID (AI slop patterns in copy-trading UIs)
 - Generic purple gradients without purpose
 - 3-column grids with no visual hierarchy
 - "No data available" empty states — write context copy
-- Overanimating on page load
+- Overanimating on page load — especially scroll-triggered animations on every card
 - Tables for data that should be cards
 - Hardcoded colors instead of CSS variables
+- Glass morphism cards with no structural purpose (backdrop-filter on content that doesn't need layering)
+- Rounded corners on things that shouldn't be rounded (data tables, stat numbers, badges)
+- Generic hero with centered headline text over a stock gradient — add depth (dot grid, ambient glow)
+- Excessive box-shadows on dark backgrounds — kills legibility; prefer border elevation instead
+
+(Source: ECC skills/design-system/SKILL.md Mode 3 AI Slop Detector, 2026-03-23)
 
 ## FINTECH UX PATTERNS (copy-trading specific — 2026 research)
 

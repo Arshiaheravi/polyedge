@@ -2,11 +2,11 @@
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
 ## 2026-03-24 19:44 — BRAIN SESSION (Session 71)
-RESEARCHED: autonomous agent best practices arxiv 2026, toast notification stack vanilla JS, probability chip UI fintech, dark theme CSS best practices, copy-trading platform UX conversion
-DOWNLOADED: No new skill files (patterns extracted directly into existing skill files)
-IMPLEMENTED: (1) Toast stack section in design.md — Emil Kowalski/Sonner collapsed-scale formula + height-accumulation expand + data-mounted interruptible entry animation; (2) Probability chip CSS section in design.md — YES/NO pill color pairing for dark backgrounds; (3) 2 new backlog tasks: four-metric leaderboard (PnL%/win rate/volume/follower count), pre-commit follow preview ("notified within 30s when X places a bet")
-BACKLOGGED: 2 new tasks added (four-metric leaderboard display, pre-commit follow preview)
-SOURCES: 4 new sources logged in brain/sources.md
+RESEARCHED: autonomous agent best practices arxiv 2026, toast notification stack vanilla JS, probability chip UI fintech, dark theme CSS best practices, copy-trading platform UX conversion; checked anthropics/skills + affaan-m/everything-claude-code for new releases
+DOWNLOADED: 6 new ECC skills found (browser-qa, design-system, benchmark, canary-watch, product-lens, safety-guard); integrated browser-qa accessibility patterns and design-system audit patterns
+IMPLEMENTED: (1) Toast stack section in design.md — Emil Kowalski/Sonner pattern with exact CSS+JS; (2) Probability chip CSS section in design.md — YES/NO pill formula for dark themes; (3) VISUAL AUDIT CHECKLIST in design.md — 10-dimension pre-commit checklist from ECC design-system; (4) Extended AVOID section — 4 new AI slop patterns; (5) Accessibility check patterns in playwright.md — 3 ready-to-paste a11y checks; (6) 2 new backlog tasks added
+BACKLOGGED: 2 new tasks (four-metric leaderboard display, pre-commit follow preview)
+SOURCES: 12 new sources logged in brain/sources.md
 
 ## 2026-03-24 — UI/UX (Session 70)
 DONE: Login/Register form UX polish — added password visibility toggle (eye icon) to all password fields, inline field-level error messages (red text below field) replacing toast-based validation errors, fadeUp slide-in animation on auth-box, social proof copy under login CTA. API errors shown in centred general error div. Errors auto-clear as user types. 17/17 Playwright checks pass (3 new: auth-box DOM, pass-toggle count, form-error count). 303 tests stable.

@@ -266,3 +266,50 @@ When debugging a failing check, use this order — never skip to action:
 4. **Always wait for networkidle** on dynamic apps before inspecting: `await page.wait_for_load_state("networkidle")`
 
 Source: Anthropic skills/webapp-testing/SKILL.md (2026-03-20)
+
+---
+
+## ACCESSIBILITY CHECKS (add to session checks when touching UI)
+
+From browser-qa/SKILL.md (ECC 2026-03-23). Add these as Playwright checks for any session that modifies forms, cards, or navigation:
+
+```python
+# Accessibility: focus states — interactive elements must be keyboard-focusable
+focus_issues = await page.evaluate("""() => {
+    const interactive = document.querySelectorAll('button, a, input, select, textarea');
+    return Array.from(interactive).filter(el => {
+        const style = getComputedStyle(el, ':focus');
+        return style.outlineWidth === '0px' && style.outlineStyle === 'none';
+    }).length;
+}""")
+if focus_issues > 0:
+    failures.append(f"Accessibility: {focus_issues} interactive elements have no focus outline")
+else:
+    checks += 1
+    print("  [CHECK N] Accessibility: all interactive elements have focus outlines")
+
+# Accessibility: images must have alt text
+missing_alt = await page.evaluate("""() =>
+    document.querySelectorAll('img:not([alt])').length
+""")
+if missing_alt > 0:
+    failures.append(f"Accessibility: {missing_alt} images missing alt attribute")
+else:
+    checks += 1
+    print("  [CHECK N] Accessibility: all images have alt text")
+
+# Accessibility: form inputs must have labels
+unlabeled = await page.evaluate("""() => {
+    const inputs = document.querySelectorAll('input:not([type="hidden"]):not([type="submit"])');
+    return Array.from(inputs).filter(i => !i.labels?.length && !i.getAttribute('aria-label') && !i.getAttribute('aria-labelledby')).length;
+}""")
+if unlabeled > 0:
+    failures.append(f"Accessibility: {unlabeled} form inputs without labels")
+else:
+    checks += 1
+    print("  [CHECK N] Accessibility: all form inputs labeled")
+```
+
+**Rule**: accessibility checks are non-blocking for this project (PolyEdge is not public-accessibility-required yet) — log failures as warnings, don't fail the check. Change `failures.append` to `print(f"  [WARN] ...")` for a11y checks.
+
+(Source: affaan-m/everything-claude-code skills/browser-qa/SKILL.md, 2026-03-23)

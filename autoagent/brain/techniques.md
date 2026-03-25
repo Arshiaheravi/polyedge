@@ -318,6 +318,18 @@ Where: autoagent/memory/activity_log.md, autoagent/memory/activity_log_archive.m
 Source: arxiv 2601.07190 (Active Context Compression)
 Expected impact: activity_log.md stays under 10000 tokens; auto-loaded context doesn't bloat over time
 
+## Accessibility check patterns in playwright.md — implemented 2026-03-24 (session 71)
+What: Added 3 accessibility Playwright checks to playwright.md (focus outlines on interactive elements, alt text on images, labels on form inputs), adapted from browser-qa/SKILL.md. Marked as non-blocking warnings for PolyEdge (not public-a11y-required yet).
+Where: autoagent/skills/playwright.md (ACCESSIBILITY CHECKS section)
+Source: affaan-m/everything-claude-code skills/browser-qa/SKILL.md (2026-03-23)
+Expected impact: Future sessions adding forms or nav items have a ready-to-paste a11y check pattern; prevents invisible form inputs and unnavigable keyboards from shipping silently
+
+## 10-dimension visual audit checklist in design.md — implemented 2026-03-24 (session 71)
+What: Added VISUAL AUDIT CHECKLIST section to design.md with 10 pass/fail dimensions (color, typography, spacing, consistency, responsive, animation, a11y, density, empty states, loading states). Also extended AVOID section with 4 new AI slop patterns from ECC design-system Mode 3 (purposeless glass morphism, rounded data tables, excessive scroll animations, heavy shadows on dark).
+Where: autoagent/skills/design.md (VISUAL AUDIT CHECKLIST + AVOID sections)
+Source: affaan-m/everything-claude-code skills/design-system/SKILL.md Mode 2 + Mode 3 (2026-03-23)
+Expected impact: Future UI sessions have a concrete pre-commit checklist instead of subjective quality review; AI slop list now covers 10 anti-patterns vs 6 previously
+
 ## Toast stack implementation pattern in design.md — implemented 2026-03-24 (session 71)
 What: Added concrete vanilla JS + CSS implementation pattern for a stacked toast notification system to design.md. Includes the collapsed state scale formula (scale - 0.05 * index), height-accumulation expand pattern, and data-mounted interruptible entry animation — all ready to copy directly into index.html for the backlog "toast notification stack" task.
 Where: autoagent/skills/design.md (TOAST NOTIFICATION STACK section)
