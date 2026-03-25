@@ -45,6 +45,12 @@
 
 ## Session Reflexions
 
+### META Session #116 Reflexion — 2026-03-25
+ACCOMPLISHED: (1) Fixed code quality audit backlog task — expanded file list to all 8 files changed in sessions 108-115 (was only test_security.py + test_payments.py). (2) Added CORS test task to HIGH PRIORITY Security section — confirmed zero CORS tests exist via grep. (3) Updated PROJECT.md Known Facts test count 303→354 + added MRR formula note (VIP=$9.99 not $14.99 per CLAUDE.md). (4) Added PROMPT.md Step 4 rule: update PROJECT.md Known Facts test count at session log time — prevents the count going stale (persisted at 303 through 4 sessions).
+FAILED: Nothing failed. All changes were small targeted edits.
+RULE: [2026-03-25] At the end of every work session (PROMPT.md Step 4), update `PROJECT.md Known Facts` line `Existing tests: ... — N passing as of session X`. This count going stale (303 for sessions 112-115) would confuse future agents' baseline health check. Knowledge.md has a test count too, but PROJECT.md is read first in a new session.
+RULE: [2026-03-25] When writing a code quality audit backlog task, list EVERY file changed since the last audit in the task description — not just test files. Agents executing the audit need the full file list to know what to check. Frontend/index.html and service files are equally audit-worthy as test files.
+
 ### Session #115 Reflexion — 2026-03-25 (TESTING — bcrypt, rate-limit, Stripe chain)
 ACCOMPLISHED: Code quality audit (all 9 checks passed, XSS streak 34+). 3 new tests: (1) `test_password_stored_as_bcrypt_hash` — direct DB query after register, assert $2b$ prefix + no plaintext; (2) `test_rapid_login_attempts_never_500` — 10 rapid wrong-password logins, all return 401 not 500; (3) `test_webhook_basic_tier_upgrade_enforces_follow_limit_5` — asyncio.run(handle_webhook_event) → tier change → then POST /follows 5 times succeeds, 6th is 403.
 FAILED: First version of test 3 patched `app.routes.follows.get_bettor_profile` which doesn't exist — follows route doesn't call polymarket. Fixed by removing the patch and using `bettor_address`/`bettor_name` fields (not `address`).

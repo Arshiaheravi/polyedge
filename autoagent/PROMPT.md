@@ -234,6 +234,7 @@ Use git commands as configured. For two-repo projects, check `autoagent/PROJECT.
    **CRITICAL: APPEND rules, never overwrite existing ones. Each new rule gets a date. Rewriting old rules silently destroys accumulated reasoning — structured incremental updates are the only safe pattern.**
    This is mandatory, not optional. Skipping it loses the learning from every session.
 9. Update `autoagent/memory/knowledge.md` test suite history table with new test count
+10. Update PROJECT.md Known Facts line `Existing tests: ... — N passing as of session X` to reflect the new count and session number. This line going stale (303 persisted through sessions 112–115) causes confusion at next session's baseline health check.
 
 ## CONFIG / IMPORT RULES
 - Before referencing any config variable (e.g. `cfg_live`, `settings.X`), grep for its definition in the codebase

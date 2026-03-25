@@ -4,11 +4,13 @@
 
 ## HIGH PRIORITY — Code Quality
 
-- [ ] Code quality audit — scan sessions 108–115 changed files for cross-file coupling, test specificity degradation, and smells introduced by agent edits (files: test_security.py, test_payments.py)
+- [ ] Code quality audit — scan sessions 108–115 changed files for cross-file coupling, test specificity degradation, and smells introduced by agent edits (files: frontend/index.html [sessions 108-110, 112], services/polymarket.py [session 112], playwright_registry.py [sessions 108, 110, 114], test_security.py, test_payments.py, test_security_extended.py [session 113], test_bettors.py, test_polymarket_service.py [session 112])
 
 ---
 
 ## HIGH PRIORITY — Security & Vulnerability Tests
+
+- [ ] CORS headers test — verify allowed origins accepted and disallowed origins rejected; no test currently exists for CORS configuration (grep confirmed: zero "cors\|CORS\|origin" matches in backend/tests/)
 
 ---
 

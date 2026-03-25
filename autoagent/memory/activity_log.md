@@ -1,6 +1,12 @@
 # Activity Log
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — META (Session 116)
+IMPROVED: (1) backlog.md code quality audit task — expanded file list to all 8 files changed in sessions 108-115 (was only 2 test files, missed frontend/index.html + services/polymarket.py + playwright_registry.py). (2) backlog.md — added CORS header test to HIGH PRIORITY Security section (only genuine remaining security coverage gap, confirmed by grep). (3) PROJECT.md Known Facts — updated test count 303→354 + added note that VIP MRR uses $9.99 (not $14.99 from CLAUDE.md). (4) PROMPT.md Step 4 — added rule to update PROJECT.md Known Facts test count at session log time.
+PATTERNS FOUND: (1) Code quality audit task file list was stale — only listed last 2 test files, missed 6 other changed files from sessions 108-115. (2) PROJECT.md test count sat at 303 through 4 consecutive sessions (112-115) — no step in the workflow required updating it. (3) CORS is the one security checklist item with zero test coverage.
+PREDICTED IMPACT: Code quality auditor will check all 8 changed files (not miss frontend). CORS gap surfaced and will be addressed next security session. PROJECT.md test count stays accurate, eliminating baseline health check confusion.
+FILES: autoagent/memory/backlog.md, autoagent/PROJECT.md, autoagent/PROMPT.md, autoagent/memory/knowledge.md, autoagent/memory/activity_log.md
+
 ## 2026-03-25 — TESTING (Session 115)
 DONE: Code quality audit passed all 9 team checks (Marcus XSS greps: 0 issues, 34+ session streak); then added 3 new tests — bcrypt hash storage ($2b$ prefix, no plaintext), rate-limit stability (10 rapid logins all 401 not 500), Stripe basic-tier upgrade chain (webhook → tier change → follow limit 5 enforced). 354 tests pass, up from 351.
 IMPACT: Proves passwords are stored securely (bcrypt), server is stable under auth abuse, and the entire Stripe→tier→permissions chain works end-to-end for basic subscribers. These are the last 3 uncovered items in the HIGH PRIORITY security/backend gaps.

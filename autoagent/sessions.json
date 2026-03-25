@@ -2534,5 +2534,22 @@
     ],
     "tests": {"before": 351, "after": 354, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend files changed"}
+  },
+  {
+    "session": 116,
+    "date": "2026-03-25",
+    "time": "07:00",
+    "type": "meta",
+    "summary": "Improved the autoagent system: fixed code quality audit task to list all 8 files changed in sessions 108-115, added CORS test gap to security backlog, updated PROJECT.md test count from stale 303 to 354, and added a workflow rule to keep that count fresh every session",
+    "files": [
+      "autoagent/memory/backlog.md",
+      "autoagent/PROJECT.md",
+      "autoagent/PROMPT.md",
+      "autoagent/memory/knowledge.md",
+      "autoagent/memory/activity_log.md",
+      "autoagent/sessions.json"
+    ],
+    "tests": {"before": 354, "after": 354, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 88, "failures": 0, "notes": "meta session — no code changes"}
   }
 ]
