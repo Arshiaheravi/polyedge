@@ -1008,6 +1008,32 @@ async def check():
         except Exception as e:
             failures.append(f"Profile stat header/trend check error: {e}")
 
+        # CHECK 75 (session 105): enterDemoMode and exitDemoMode functions defined + DEMO_BETTORS array exists
+        try:
+            demo_ok = await page.evaluate("""() => {
+                return typeof enterDemoMode === 'function' &&
+                       typeof exitDemoMode === 'function' &&
+                       Array.isArray(DEMO_BETTORS) && DEMO_BETTORS.length === 5;
+            }""")
+            if demo_ok:
+                checks += 1
+                print("  [CHECK 75] enterDemoMode/exitDemoMode functions and DEMO_BETTORS(5) defined")
+            else:
+                failures.append("enterDemoMode/exitDemoMode or DEMO_BETTORS(5) missing")
+        except Exception as e:
+            failures.append(f"Demo mode function check error: {e}")
+
+        # CHECK 76 (session 105): hero CTA has .btn-demo button (Try the demo)
+        try:
+            demo_btn = await page.query_selector('.hero-cta .btn-demo')
+            if demo_btn:
+                checks += 1
+                print("  [CHECK 76] .btn-demo button present in .hero-cta")
+            else:
+                failures.append(".btn-demo button not found in .hero-cta")
+        except Exception as e:
+            failures.append(f"Demo button check error: {e}")
+
         await browser.close()
     return checks, failures
 

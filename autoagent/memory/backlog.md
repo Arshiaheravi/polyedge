@@ -4,7 +4,9 @@
 
 ## HIGH PRIORITY — UI/UX Tasks (doable in current UI/UX-only mode)
 
-- [ ] Demo mode landing page — add a "Try the demo" CTA on the hero that loads a pre-populated leaderboard with 5 anonymized demo bettors (client-side mock data, zero backend) so visitors can experience the UI before registering. Research shows interactive demos convert 2x better than static screenshots (aimers.io CRO 2026)
+- [ ] Back-to-top FAB on browse leaderboard — when user scrolls >300px inside the browse `.main-content`, show a floating green ↑ button (fixed bottom-right, above mobile nav) that scrolls to top. Disappears when near top. Makes 100-item leaderboard easier to navigate.
+- [ ] Animate "847+" social proof counter on hero — the hardcoded "847+" in the hero social proof `<strong>` should count up from ~800→847 via `animateCounter()` on page load (same pattern as hlstat-traders). Give it an ID e.g. `#hero-user-count`. Adds energy and implies the number is live.
+- [ ] Pricing locked features upgrade nudge — add a CSS-only tooltip on `.pricing-features li.dim:hover::after` showing "Unlock with Basic →" on Free tier dim items and "VIP only →" on Basic tier dim items. `content` set via data-upgrade attribute on each `<li>`. Converts hover curiosity into upgrade intent.
 
 ---
 

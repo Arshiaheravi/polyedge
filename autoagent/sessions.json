@@ -2254,5 +2254,15 @@
     "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 74, "failures": 0, "notes": "2 new checks: 73 (data-stat attrs on all 4 stat cards), 74 (profile-stat-header and profile-stat-trend present)"}
+  },
+  {
+    "session": 105,
+    "date": "2026-03-25",
+    "time": "16:00",
+    "type": "work",
+    "summary": "Added a 'Try the demo' button to the hero so visitors can explore the platform before signing up — clicking it activates demo mode which shows the leaderboard pre-loaded with 5 realistic sample bettors, a dismissable green banner prompting sign-up, and an Exit Demo button. Zero backend calls in demo mode.",
+    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 76, "failures": 0, "notes": "2 new checks: 75 (enterDemoMode/exitDemoMode/DEMO_BETTORS defined), 76 (.btn-demo in hero CTA)"}
   }
 ]

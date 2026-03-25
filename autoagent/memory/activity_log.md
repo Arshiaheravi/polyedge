@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
 
+## 2026-03-25 — UI/UX (Session 105)
+DONE: Demo mode landing page — added "Try the demo" dashed-border button to hero CTA; `enterDemoMode()` sets `_demoMode=true`, navigates to browse leaderboard, injects a dismissable green banner ("You're viewing 5 sample bettors — Sign up free to see all 100 real traders"), and renders `DEMO_BETTORS` (5 mock profiles) client-side without any API call; `exitDemoMode()` removes banner and returns to landing; `loadBrowseLeaderboard()` short-circuits on `_demoMode`. 2 new Playwright checks (75-76).
+IMPACT: Visitors can now explore the full product UI before committing to registration — interactive demos convert 2x better than static screenshots (aimers.io CRO 2026). The sign-up nudge in the banner creates a natural conversion moment at the exact point visitors are engaged with the product.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-25 — UI/UX (Session 104)
 DONE: Bettor profile rich stat cards — upgraded 4 plain stat cards with colored gradient top borders (green=Profit, blue=PnL%, purple=Volume, amber=Total Bets), hover lift animation (translateY -2px + box-shadow), header row with label + trend arrow. Trend arrow: ▲ green for positive PnL/profit, ▼ red for negative, contextual info labels ('High'/'Active'/'Prolific') for volume/bets. _setProfileTrend() helper wired into renderProfileData(). 2 new Playwright checks (73-74).
 IMPACT: Profile stat cards now feel like a premium trading dashboard — the color-coded top borders instantly communicate which metric is which at a glance, the trend arrows give visitors immediate directional context on a bettor's performance without needing to read the numbers, and the hover lift makes the data feel interactive.

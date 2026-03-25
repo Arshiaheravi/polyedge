@@ -45,6 +45,14 @@
 
 ## Session Reflexions
 
+### Session #105 Reflexion — 2026-03-25 (UI/UX — Demo Mode Landing Page)
+ACCOMPLISHED: Added full demo mode flow: (1) `.btn-demo` CSS class (dashed border, muted color, green hover). (2) `.demo-banner` + `.demo-badge` + `.demo-banner-actions` CSS components. (3) Hero CTA gains third button: "Try the demo" with `onclick="enterDemoMode()"`. (4) `DEMO_BETTORS` array (5 mock bettors with realistic names/profit/volume, valid hex addresses). (5) `_demoMode` flag variable. (6) `enterDemoMode()`: sets flag, calls `showView('browse')`, injects `#demo-banner` before lb-grid via `insertBefore`. (7) `exitDemoMode()`: clears flag, removes banner, calls `showView('landing')`. (8) `loadBrowseLeaderboard()` short-circuits with demo bettors when `_demoMode === true` — no skeleton, no API call. 2 Playwright checks (75-76). Zero rework.
+FAILED: Nothing failed.
+RULE: [2026-03-25] For a demo/preview mode flag that affects an async function (loadBrowseLeaderboard), set the flag BEFORE calling showView() — the async function's synchronous preamble runs immediately on the next call stack frame. If the demo path has no `await`, it completes synchronously and the view is populated before the banner injection code runs.
+RULE: [2026-03-25] When injecting a DOM element next to a known sibling (e.g. before `#browse-leaderboard-body`), use `lbGrid.parentNode.insertBefore(banner, lbGrid)` — cleaner than `querySelector('.main-content').insertBefore(banner, lbGrid)` and works without knowing the container structure.
+
+- Test count: **303 passed** (stable, frontend-only change), **76 Playwright checks** (74 → 76)
+
 ### Session #104 Reflexion — 2026-03-25 (UI/UX — Profile Rich Stat Cards)
 ACCOMPLISHED: 4 profile stat cards upgraded: (1) Added `[data-stat="profit|pnl|volume|bets"]` attributes to each card. (2) Per-card `--stat-accent` CSS variable defined via attribute selectors (green/blue/purple/amber). (3) `border-top: 2px solid var(--stat-accent)` replaces plain border for colored accent. (4) Hover lift: `translateY(-2px)` + `box-shadow`. (5) `.profile-stat-header` flex row (label left, trend right) replaces plain label. (6) `.profile-stat-trend` span with `trend-up`/`trend-down`/`trend-info` classes + opacity fade-in. (7) `_setProfileTrend(id, value, infoText)` helper function added before `_renderProfileBadges`. (8) Wired in `renderProfileData` for all 4 stats. 2 Playwright checks (73-74). Zero rework.
 FAILED: Nothing failed.
