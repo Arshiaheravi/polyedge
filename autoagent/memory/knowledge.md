@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### BRAIN Session #71 Reflexion — 2026-03-24
+ACCOMPLISHED: (1) Curated knowledge.md — no duplicate rules found; all existing rules are distinct and pass the 5-factor admission check. (2) Searched 5 topics: agent reliability papers, toast stack pattern, probability chip UI, fintech dark theme CSS, copy-trading UX conversion. (3) Evaluated 5+ sources, 4 new ones added to sources.md. (4) Implemented 2 concrete design.md improvements: TOAST NOTIFICATION STACK section (Emil Kowalski/Sonner pattern with exact CSS + JS), PROBABILITY CHIP section (YES/NO pill CSS for dark themes). (5) Added 2 new backlog tasks: four-metric leaderboard display, pre-commit follow preview. (6) Updated techniques.md with 2 new entries. (7) activity_log.md at 30 entries — at threshold, archiving will trigger next session if one more entry is added.
+FAILED: Nothing failed. No GitHub agent results returned during session (output file empty — agent may not have completed).
+RULE: [2026-03-24] For interruptible UI entry animations (toast fade-in, modal slide-in), prefer CSS `data-*` attribute + `transition` over `@keyframes`. Set `data-mounted="false"` on DOM insert, flip to `"true"` in the next requestAnimationFrame. CSS transitions can be cancelled mid-flight; `@keyframes` animations cannot — causing a "flash" when an element is added and removed quickly (e.g., rapid-fire toasts).
+
 ### Session #70 Reflexion — 2026-03-24
 ACCOMPLISHED: Auth form polish — password visibility toggle (eye SVG, toggles field type + swaps icon), inline field errors with `.form-error` / `showFieldError()` / `clearFieldError()`, `clearAllErrors()` before submit, general error div for API-level failures, fadeUp animation on `.auth-box`, social proof copy under login CTA. 17/17 Playwright checks pass (3 new). 303 tests stable.
 FAILED: Python `str.replace()` on file content wrote 0 bytes when the needle had `\n` but file had `\r\n` on Windows. The file content was empty after open+write. Fixed by using line-array injection instead of string replace.

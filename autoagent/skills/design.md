@@ -115,6 +115,68 @@ Before writing any CSS/JS for a new section, answer:
 - Research: elevating middle tier increases that tier's conversion 20-30%
 - Add inline under CTA buttons: "Cancel anytime · No credit card for Free tier"
 
+## TOAST NOTIFICATION STACK (vanilla JS — Emil Kowalski / Sonner pattern)
+For the "toast notification stack" backlog task. No libraries — pure CSS + JS.
+
+**Collapsed state (newest toast on top):**
+```css
+.toast:nth-child(n) {
+  transform: translateY(calc(-14px * var(--index))) scale(calc(1 - 0.05 * var(--index)));
+}
+```
+
+**Expanded state (on hover, shows full heights):**
+```javascript
+// accumulate real heights to offset each toast
+const heights = Array.from(toasts).map(t => t.getBoundingClientRect().height);
+toasts.forEach((t, i) => {
+  const offset = heights.slice(0, i).reduce((a, h) => a + h, 0) + i * 8;
+  t.style.setProperty('--offset', offset + 'px');
+  t.style.transform = `translateY(calc(-1 * var(--offset)))`;
+});
+```
+
+**Entry animation (interruptible — use data attribute, NOT @keyframes):**
+```css
+.toast[data-mounted="false"] { transform: translateY(100%) scale(0.95); opacity: 0; }
+.toast[data-mounted="true"]  { transform: translateY(0); opacity: 1; transition: transform 400ms ease, opacity 200ms; }
+```
+Set `data-mounted="false"` on insert, flip to `"true"` in next animation frame. This allows interrupting mid-animation.
+
+**Auto-dismiss:** `setTimeout(() => removeToast(id), 5000)`. Pause timer on hover.
+
+**Toast types:** success (green left border), info (blue), error (red). Use `--toast-color` CSS variable.
+
+(Source: emilkowal.ski/ui/building-a-toast-component — the Sonner pattern, 2026)
+
+## PROBABILITY CHIP / YES–NO PILL (inline on bet rows)
+For the "bet activity feed enhancements" backlog task.
+
+**CSS for YES/NO outcome badge on a bet row:**
+```css
+.bet-outcome {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 9999px;
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.02em;
+  cursor: default;
+}
+.bet-outcome.yes {
+  background: rgba(0,201,122,0.12); color: #4ade80;
+  border: 1px solid rgba(0,201,122,0.4);
+}
+.bet-outcome.no {
+  background: rgba(240,62,62,0.12); color: #f87171;
+  border: 1px solid rgba(240,62,62,0.4);
+}
+.bet-price { opacity: 0.75; font-size: 0.7rem; }
+```
+
+**HTML pattern:** `<span class="bet-outcome yes">YES <span class="bet-price">72¢</span></span>`
+
+**Rule:** Direction (YES/NO) and price stay in one atomic pill — don't split into two separate elements.
+
+(Source: 2026 fintech dark-mode research; badges-vs-chips pattern analysis)
+
 ## EXTERNAL ASSET APIS (NovaBanana, Unsplash, etc.)
 Before calling any third-party media/image API:
 1. Check `backend/.env` — verify the key is present and non-placeholder (not `REPLACE_ME` / `xxx`)

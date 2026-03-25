@@ -318,6 +318,18 @@ Where: autoagent/memory/activity_log.md, autoagent/memory/activity_log_archive.m
 Source: arxiv 2601.07190 (Active Context Compression)
 Expected impact: activity_log.md stays under 10000 tokens; auto-loaded context doesn't bloat over time
 
+## Toast stack implementation pattern in design.md — implemented 2026-03-24 (session 71)
+What: Added concrete vanilla JS + CSS implementation pattern for a stacked toast notification system to design.md. Includes the collapsed state scale formula (scale - 0.05 * index), height-accumulation expand pattern, and data-mounted interruptible entry animation — all ready to copy directly into index.html for the backlog "toast notification stack" task.
+Where: autoagent/skills/design.md (TOAST NOTIFICATION STACK section)
+Source: emilkowal.ski/ui/building-a-toast-component (Sonner/Emil Kowalski pattern)
+Expected impact: The backlog toast task can be implemented without research turns — the pattern is pre-resolved and concrete
+
+## Probability chip CSS pattern in design.md — implemented 2026-03-24 (session 71)
+What: Added concrete CSS for YES/NO outcome pills on bet rows (dark-tinted bg + bright border + bright text formula for dark themes). Includes HTML structure pattern (direction + price in one atomic pill) and mobile touch-target note.
+Where: autoagent/skills/design.md (PROBABILITY CHIP section)
+Source: 2026 fintech dark-mode research; badges-vs-chips UI pattern analysis
+Expected impact: The backlog bet-activity-feed enhancement task can copy the pill CSS directly — no research needed
+
 ## Event-driven commit reminders (instruction fade-out prevention) — implemented 2026-03-21
 What: At every commit, re-display the 4 most commonly forgotten rules as a COMMIT REMINDERS block: no autoagent/ in project git add, use py not python3, project branch=main vs autoagent branch=master, clear current_task.md immediately after push. Rules re-injected at the exact decision point where they're most needed prevent instruction fade-out — the pattern where critical rules are read at session start but forgotten 30 tool calls later.
 Where: PROMPT.md (STEP 3 — COMMIT REMINDERS block before step 1)
