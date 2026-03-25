@@ -45,6 +45,14 @@
 
 ## Session Reflexions
 
+### Session #103 Reflexion — 2026-03-25 (UI/UX — Hero Section Polish)
+ACCOMPLISHED: 4 hero improvements: (1) `.hero h1` font-size bumped from `clamp(40px,6.5vw,80px)` → `clamp(50px,7.5vw,96px)`. (2) Static `<p>` replaced with `.hero-cycle` container + 3 `.hero-cycle-item` spans using `@keyframes heroTextCycle` (9s total cycle: 3s per phrase, fade+slide in/out, staggered via `animation-delay`). Added `height: 60px` desktop / `height: 88px` mobile. (3) `.btn-hero` gains `animation: ctaGlowPulse 2.5s ease-in-out infinite` — box-shadow glow pulse, coexists with existing `::after` shimmer (different render targets). (4) `.hero-live-stats` bar added below social proof — 3 inline items with `hlstat-dot` separators; `runLandingCounters()` now also animates `#hlstat-traders` (100) and `#hlstat-profit` (2.4). 2 Playwright checks (71-72): hero-cycle DOM shape + hero-live-stats IDs. Zero rework.
+FAILED: Nothing failed.
+RULE: [2026-03-25] For a cycling text container, `height` must be fixed (not `min-height`) — if the container is `overflow: hidden`, a `min-height` will expand to show multiple items stacked, breaking the cycle illusion. Use exact `height` + separate mobile breakpoint to set taller height for wrapping text.
+RULE: [2026-03-25] Adding `animation:` to an element that already has `::after { animation: }` is safe — the element's own animation property and the pseudo-element's animation property are fully independent and don't conflict. Only one `animation` property per selector level.
+
+- Test count: **303 passed** (stable, frontend-only change), **72 Playwright checks** (70 → 72)
+
 ### Session #102 Reflexion — 2026-03-25 (UI/UX — Nav Progress Bar)
 ACCOMPLISHED: Added `#page-progress` — 3px green gradient bar (fixed, top viewport, z-index 10000) that animates on every `showView()` / `showTab()` / initial load. `startProgress()` uses 3-step timeout chain: 0→60% (instant), 60→100% (420ms), then opacity 0 and reset. `showTab()` also calls `mc.scrollTo({ top: 0, behavior: 'smooth' })` on the active `.main-content`. 2 Playwright checks (69-70): DOM presence + function defined.
 FAILED: Nothing failed.

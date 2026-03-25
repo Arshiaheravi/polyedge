@@ -4,7 +4,6 @@
 
 ## HIGH PRIORITY — UI/UX Tasks (doable in current UI/UX-only mode)
 
-- [ ] Hero section polish — improve landing page hero: bigger headline, animated value-prop subtext, pulsing CTA button, and a live stat counter (e.g. "100 traders tracked · $2M+ profit tracked")
 - [ ] Bettor profile rich stats — replace the 4 plain stat cards on the profile page with gradient-border cards that have micro-sparklines or trend arrows (up/down since last week)
 - [ ] Demo mode landing page — add a "Try the demo" CTA on the hero that loads a pre-populated leaderboard with 5 anonymized demo bettors (client-side mock data, zero backend) so visitors can experience the UI before registering. Research shows interactive demos convert 2x better than static screenshots (aimers.io CRO 2026)
 

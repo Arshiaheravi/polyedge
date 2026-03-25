@@ -108,3 +108,6 @@
 - **[SESSION #82] Pricing section uplift** — Monthly/Annual billing toggle, aligned 7-row feature comparison across tiers, social proof line, and trust row for conversion lift
 - **[SESSION #83] Follows tab dashboard upgrade** — 3-stat summary strip (Following/Copyable bets/Tracked P&L) + richer follow cards with rank badge, gradient avatar, profit stats, View Profile button
 - **[SESSION #84] "How it works" section upgrade** — Replaced emoji HTML entities with inline SVGs (bar chart, user-plus, bell), added step connector arrows between cards, added green step-num badges, added CTA button + trust sub-line after the section
+
+### 2026-03-25
+- **[SESSION #103] Hero section polish** — Bigger headline (96px max), 3-phrase cycling value-prop subtext, pulsing CTA glow button, and live stat counter bar ('100 traders tracked · $2.4M+ profit')

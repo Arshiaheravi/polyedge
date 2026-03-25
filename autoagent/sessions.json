@@ -2234,5 +2234,15 @@
     "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 70, "failures": 0, "notes": "2 new checks: 69 (#page-progress DOM), 70 (startProgress function)"}
+  },
+  {
+    "session": 103,
+    "date": "2026-03-25",
+    "time": "14:00",
+    "type": "work",
+    "summary": "Made the landing page hero much more visually impressive: bigger headline text, rotating value-prop phrases that cycle every 3 seconds, a pulsing green glow on the main CTA button, and a live stat bar showing '100 traders tracked · $2.4M+ profit tracked' with animated count-up numbers.",
+    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 72, "failures": 0, "notes": "2 new checks: 71 (.hero-cycle DOM), 72 (.hero-live-stats IDs)"}
   }
 ]

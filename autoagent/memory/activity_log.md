@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
 
+## 2026-03-25 — UI/UX (Session 103)
+DONE: Hero section polish — 4 visual upgrades: (1) h1 font-size bumped from 80px max to 96px max for more visual impact; (2) static description paragraph replaced with .hero-cycle cycling 3 value-prop phrases via @keyframes heroTextCycle (9s loop, fade+slide); (3) .btn-hero gains ctaGlowPulse animation (2.5s box-shadow glow pulse, layers over existing shimmer); (4) .hero-live-stats compact bar added below social proof showing "100 traders tracked · $2.4M+ profit · Feed live" with animateCounter() calls. 2 new Playwright checks (71-72).
+IMPACT: Landing hero is visually bolder and more dynamic — the cycling value props keep the message fresh for visitors who linger, the pulsing CTA draws the eye to the primary action, and the live stat bar reinforces credibility with specific data points immediately below the CTA.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-25 — UI/UX (Session 102)
 DONE: Nav progress bar + scroll-to-top on tab switch — added a 3px green gradient `#page-progress` bar (fixed, top of viewport, z-index 10000) that animates 0→60→100% and fades out on every `showView()` and `showTab()` call and on initial page load; `showTab()` also scrolls the active `.main-content` to top smoothly on every tab switch. 2 new Playwright checks (69-70).
 IMPACT: Every tab/view transition now has immediate visual feedback — the progress bar tells the user "navigation happened" before the API data loads, reducing perceived latency. Smooth scroll-to-top prevents users seeing mid-scroll state when switching from e.g. a long leaderboard to the alerts tab.
