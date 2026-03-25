@@ -111,3 +111,6 @@
 
 ### 2026-03-25
 - **[SESSION #103] Hero section polish** — Bigger headline (96px max), 3-phrase cycling value-prop subtext, pulsing CTA glow button, and live stat counter bar ('100 traders tracked · $2.4M+ profit')
+
+## 2026-03-25
+- **[SESSION #104] Bettor profile rich stat cards** — Upgraded 4 plain stat cards with colored gradient top borders, hover lift, and trend arrows (▲/▼) wired to live profit/PnL% values.

@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
 
+## 2026-03-25 — UI/UX (Session 104)
+DONE: Bettor profile rich stat cards — upgraded 4 plain stat cards with colored gradient top borders (green=Profit, blue=PnL%, purple=Volume, amber=Total Bets), hover lift animation (translateY -2px + box-shadow), header row with label + trend arrow. Trend arrow: ▲ green for positive PnL/profit, ▼ red for negative, contextual info labels ('High'/'Active'/'Prolific') for volume/bets. _setProfileTrend() helper wired into renderProfileData(). 2 new Playwright checks (73-74).
+IMPACT: Profile stat cards now feel like a premium trading dashboard — the color-coded top borders instantly communicate which metric is which at a glance, the trend arrows give visitors immediate directional context on a bettor's performance without needing to read the numbers, and the hover lift makes the data feel interactive.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-25 — UI/UX (Session 103)
 DONE: Hero section polish — 4 visual upgrades: (1) h1 font-size bumped from 80px max to 96px max for more visual impact; (2) static description paragraph replaced with .hero-cycle cycling 3 value-prop phrases via @keyframes heroTextCycle (9s loop, fade+slide); (3) .btn-hero gains ctaGlowPulse animation (2.5s box-shadow glow pulse, layers over existing shimmer); (4) .hero-live-stats compact bar added below social proof showing "100 traders tracked · $2.4M+ profit · Feed live" with animateCounter() calls. 2 new Playwright checks (71-72).
 IMPACT: Landing hero is visually bolder and more dynamic — the cycling value props keep the message fresh for visitors who linger, the pulsing CTA draws the eye to the primary action, and the live stat bar reinforces credibility with specific data points immediately below the CTA.

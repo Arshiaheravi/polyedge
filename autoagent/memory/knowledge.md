@@ -45,6 +45,14 @@
 
 ## Session Reflexions
 
+### Session #104 Reflexion — 2026-03-25 (UI/UX — Profile Rich Stat Cards)
+ACCOMPLISHED: 4 profile stat cards upgraded: (1) Added `[data-stat="profit|pnl|volume|bets"]` attributes to each card. (2) Per-card `--stat-accent` CSS variable defined via attribute selectors (green/blue/purple/amber). (3) `border-top: 2px solid var(--stat-accent)` replaces plain border for colored accent. (4) Hover lift: `translateY(-2px)` + `box-shadow`. (5) `.profile-stat-header` flex row (label left, trend right) replaces plain label. (6) `.profile-stat-trend` span with `trend-up`/`trend-down`/`trend-info` classes + opacity fade-in. (7) `_setProfileTrend(id, value, infoText)` helper function added before `_renderProfileBadges`. (8) Wired in `renderProfileData` for all 4 stats. 2 Playwright checks (73-74). Zero rework.
+FAILED: Nothing failed.
+RULE: [2026-03-25] For per-card accent colors via a CSS variable, use `[data-stat="X"] { --stat-accent: color }` + reference `var(--stat-accent, fallback)` in the shared `.card` rule — cleaner than 4 separate color property rules. The data attribute doubles as both a semantic identifier and a CSS hook.
+RULE: [2026-03-25] `_setProfileTrend(id, value, infoText)` pattern: when `infoText` arg is provided, show it as info; when `value` arg is provided, show directional arrow based on sign. This 3-argument pattern (id, numeric, override-text) cleanly handles both signed and unsigned trend displays in one helper.
+
+- Test count: **303 passed** (stable, frontend-only change), **74 Playwright checks** (72 → 74)
+
 ### Session #103 Reflexion — 2026-03-25 (UI/UX — Hero Section Polish)
 ACCOMPLISHED: 4 hero improvements: (1) `.hero h1` font-size bumped from `clamp(40px,6.5vw,80px)` → `clamp(50px,7.5vw,96px)`. (2) Static `<p>` replaced with `.hero-cycle` container + 3 `.hero-cycle-item` spans using `@keyframes heroTextCycle` (9s total cycle: 3s per phrase, fade+slide in/out, staggered via `animation-delay`). Added `height: 60px` desktop / `height: 88px` mobile. (3) `.btn-hero` gains `animation: ctaGlowPulse 2.5s ease-in-out infinite` — box-shadow glow pulse, coexists with existing `::after` shimmer (different render targets). (4) `.hero-live-stats` bar added below social proof — 3 inline items with `hlstat-dot` separators; `runLandingCounters()` now also animates `#hlstat-traders` (100) and `#hlstat-profit` (2.4). 2 Playwright checks (71-72): hero-cycle DOM shape + hero-live-stats IDs. Zero rework.
 FAILED: Nothing failed.

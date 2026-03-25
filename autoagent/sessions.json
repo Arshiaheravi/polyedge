@@ -2244,5 +2244,15 @@
     "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 72, "failures": 0, "notes": "2 new checks: 71 (.hero-cycle DOM), 72 (.hero-live-stats IDs)"}
+  },
+  {
+    "session": 104,
+    "date": "2026-03-25",
+    "time": "15:00",
+    "type": "work",
+    "summary": "Upgraded the 4 bettor profile stat cards from plain flat boxes to polished gradient-border cards: each card now has a unique colored top accent border (green=profit, blue=PnL%, purple=volume, amber=bets), a hover lift animation, and a small trend arrow that shows ▲ in green for positive profit/PnL% or ▼ in red for negative, plus contextual labels for volume and bets count.",
+    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 74, "failures": 0, "notes": "2 new checks: 73 (data-stat attrs on all 4 stat cards), 74 (profile-stat-header and profile-stat-trend present)"}
   }
 ]

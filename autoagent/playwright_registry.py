@@ -977,6 +977,37 @@ async def check():
         except Exception as e:
             failures.append(f"Hero live stats check error: {e}")
 
+        # CHECK 73: profile stat cards have data-stat attributes (profit/pnl/volume/bets)
+        try:
+            stat_ok = await page.evaluate("""() => {
+                const cards = document.querySelectorAll('.profile-stat-card[data-stat]');
+                if (cards.length !== 4) return false;
+                const stats = Array.from(cards).map(c => c.dataset.stat);
+                return stats.includes('profit') && stats.includes('pnl') && stats.includes('volume') && stats.includes('bets');
+            }""")
+            if stat_ok:
+                checks += 1
+                print("  [CHECK 73] profile stat cards have data-stat attrs (profit/pnl/volume/bets)")
+            else:
+                failures.append("profile stat cards missing data-stat attrs — expected 4 cards with profit/pnl/volume/bets")
+        except Exception as e:
+            failures.append(f"Profile stat card check error: {e}")
+
+        # CHECK 74: profile-stat-header and profile-stat-trend elements present in all 4 stat cards
+        try:
+            header_ok = await page.evaluate("""() => {
+                const headers = document.querySelectorAll('.profile-stat-header');
+                const trends = document.querySelectorAll('.profile-stat-trend');
+                return headers.length === 4 && trends.length === 4;
+            }""")
+            if header_ok:
+                checks += 1
+                print("  [CHECK 74] profile-stat-header and profile-stat-trend present in all 4 stat cards")
+            else:
+                failures.append("profile-stat-header or profile-stat-trend missing — expected 4 of each")
+        except Exception as e:
+            failures.append(f"Profile stat header/trend check error: {e}")
+
         await browser.close()
     return checks, failures
 
