@@ -238,7 +238,7 @@
       20% { opacity: 1; }
       45% { left: 115%; opacity: 0; }
     }
-    .btn-hero { position: relative; overflow: hidden; }
+    .btn-hero { position: relative; overflow: hidden; animation: ctaGlowPulse 2.5s ease-in-out infinite; }
     .btn-hero::after {
       content: ''; position: absolute; top: 0; left: -60%;
       width: 40%; height: 100%; transform: skewX(-12deg);
@@ -328,15 +328,43 @@
     @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
 
     .hero h1 {
-      font-size: clamp(40px, 6.5vw, 80px); font-weight: 900; line-height: 1.05;
+      font-size: clamp(50px, 7.5vw, 96px); font-weight: 900; line-height: 1.05;
       letter-spacing: -2px; margin-bottom: 24px;
       background: linear-gradient(145deg, #f1f5f9 30%, #34d399 70%, #00c97a 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    .hero p {
-      font-size: clamp(16px, 2vw, 20px); color: var(--text2); max-width: 580px;
-      margin: 0 auto 40px; line-height: 1.65; font-weight: 400;
+    /* Cycling value-prop subtext */
+    .hero-cycle {
+      position: relative; height: 60px; max-width: 600px; margin: 0 auto 40px; overflow: hidden;
     }
+    .hero-cycle-item {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: clamp(16px, 2vw, 20px); color: var(--text2); line-height: 1.6; text-align: center;
+      opacity: 0; animation: heroTextCycle 9s infinite;
+    }
+    .hero-cycle-item:nth-child(1) { animation-delay: 0s; }
+    .hero-cycle-item:nth-child(2) { animation-delay: 3s; }
+    .hero-cycle-item:nth-child(3) { animation-delay: 6s; }
+    @keyframes heroTextCycle {
+      0%           { opacity: 0; transform: translateY(8px); }
+      8%, 28%      { opacity: 1; transform: translateY(0); }
+      36%, 100%    { opacity: 0; transform: translateY(-8px); }
+    }
+    /* Pulsing CTA glow */
+    @keyframes ctaGlowPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,201,122,0); }
+      50%      { box-shadow: 0 0 0 7px rgba(0,201,122,0.18), 0 8px 28px rgba(0,201,122,0.28); }
+    }
+    /* Hero live stat counter bar */
+    .hero-live-stats {
+      display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
+      margin: 20px auto 0; max-width: 640px;
+      font-size: 13px; color: var(--text2); font-weight: 500;
+    }
+    .hero-live-stats strong { color: var(--text); font-weight: 700; }
+    .hlstat-dot { color: var(--border2); font-size: 16px; line-height: 1; }
+    .hlstat-live { display: inline-flex; align-items: center; gap: 5px; }
+    .hlstat-live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green2); animation: pulse 2s infinite; flex-shrink: 0; }
     .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
     /* Stat strip */
@@ -847,6 +875,7 @@
       .nav-actions .btn-secondary { display: none; }
       .hero { padding: 60px 16px 40px; }
       .hero h1 { letter-spacing: -1px; }
+      .hero-cycle { height: 88px; }
       .main-content { padding: 16px; }
       .stat-strip { flex-direction: column; }
       .stat-strip-item { border-right: none; border-bottom: 1px solid var(--border); }
@@ -1153,7 +1182,11 @@
       Live Polymarket data &mdash; Updated every 30 seconds
     </div>
     <h1 class="animate-fade-up delay-1">Copy the sharpest<br>minds on Polymarket.</h1>
-    <p class="animate-fade-up delay-2">Follow the most profitable bettors and get instant alerts the moment they place a bet. Be first. Win more.</p>
+    <div class="hero-cycle animate-fade-up delay-2" role="marquee" aria-label="Platform value propositions">
+      <span class="hero-cycle-item">Follow the most profitable bettors and get instant alerts the moment they bet.</span>
+      <span class="hero-cycle-item">Be the first to copy the trade &mdash; before the market moves against you.</span>
+      <span class="hero-cycle-item">Track 100 elite traders. Set alerts. Copy their edge and win more.</span>
+    </div>
     <div class="hero-cta animate-fade-up delay-3">
       <button class="btn btn-primary btn-lg btn-hero" onclick="showView('auth', 'register')">Get Started Free &rarr;</button>
       <button class="btn btn-secondary btn-lg" onclick="showView('browse')">View Live Leaderboard</button>
@@ -1161,6 +1194,13 @@
     <p class="animate-fade-up delay-4" style="font-size:13px;color:var(--text3);text-align:center;margin-top:16px;">
       Join <strong style="color:var(--text2);">847+</strong> traders already copying top bettors
     </p>
+    <div class="hero-live-stats animate-fade-up delay-4" aria-label="Live platform statistics">
+      <span><strong><span id="hlstat-traders">100</span></strong> traders tracked</span>
+      <span class="hlstat-dot">&middot;</span>
+      <span>$<strong><span id="hlstat-profit">2.4</span>M+</strong> profit tracked</span>
+      <span class="hlstat-dot">&middot;</span>
+      <span class="hlstat-live"><span class="hlstat-live-dot" aria-hidden="true"></span>Feed live</span>
+    </div>
 
     <!-- Stats strip -->
     <div class="stat-strip animate-fade-up delay-4" style="margin-top:56px;" role="list" aria-label="Platform statistics">
@@ -3819,6 +3859,11 @@ function runLandingCounters() {
       const betsEl  = document.getElementById('stat-bets-today');
       if (volEl)  { volEl.textContent = '$0'; animateCounter(volEl, 2.4, '$', 'M+'); }
       if (betEl)  { betEl.textContent = '0';  animateCounter(betEl, 100, '', ''); }
+      // Hero live stats counters
+      const tradersEl = document.getElementById('hlstat-traders');
+      const profitEl  = document.getElementById('hlstat-profit');
+      if (tradersEl) { tradersEl.textContent = '0'; animateCounter(tradersEl, 100, '', ''); }
+      if (profitEl)  { profitEl.textContent = '0';  animateCounter(profitEl, 2.4, '', ''); }
       if (betsEl) {
         const startBets = 1247;
         betsEl.textContent = '0'; animateCounter(betsEl, startBets, '', '');
