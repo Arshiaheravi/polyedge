@@ -1431,6 +1431,56 @@ async def check():
         except Exception as e:
             failures.append(f"Follows empty state check error: {e}")
 
+        # ── CHECKS 99-101: pricing locked features, account tab elements (Session 122) ──
+
+        # CHECK 99: pricing locked features have data-tip on .dim items
+        try:
+            await page.evaluate("showView('landing')")
+            await asyncio.sleep(0.2)
+            dim_with_tip = await page.evaluate("""() => {
+                const dims = document.querySelectorAll('.pricing-features li.dim[data-tip]');
+                return dims.length;
+            }""")
+            if dim_with_tip >= 4:
+                checks += 1
+                print(f"  [CHECK 99] Pricing locked features: {dim_with_tip} .dim items have data-tip attributes")
+            else:
+                failures.append(f"Pricing .dim items with data-tip: expected >=4, found {dim_with_tip}")
+        except Exception as e:
+            failures.append(f"Pricing dim data-tip check error: {e}")
+
+        # CHECK 100: account tab has #acct-email and #acct-name elements
+        try:
+            await page.evaluate("showView('dashboard'); showTab('account')")
+            await asyncio.sleep(0.2)
+            acct_ok = await page.evaluate("""() => {
+                const email = document.getElementById('acct-email');
+                const name  = document.getElementById('acct-name');
+                return !!(email && name);
+            }""")
+            if acct_ok:
+                checks += 1
+                print("  [CHECK 100] Account tab: #acct-email and #acct-name elements present")
+            else:
+                failures.append("Account tab: #acct-email or #acct-name element missing")
+        except Exception as e:
+            failures.append(f"Account tab elements check error: {e}")
+
+        # CHECK 101: #acct-tier-label element present and has non-empty text content
+        try:
+            tier_ok = await page.evaluate("""() => {
+                const el = document.getElementById('acct-tier-label');
+                return el !== null && el.textContent.trim().length > 0;
+            }""")
+            if tier_ok:
+                checks += 1
+                print("  [CHECK 101] #acct-tier-label present with non-empty text")
+            else:
+                failures.append("#acct-tier-label missing or has empty text content")
+            await page.evaluate("showView('landing')")
+        except Exception as e:
+            failures.append(f"acct-tier-label check error: {e}")
+
         await browser.close()
     return checks, failures
 
