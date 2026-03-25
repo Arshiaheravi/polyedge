@@ -2,9 +2,6 @@
 
 ---
 
-## META (next session — tech debt, session 70 = 5×14)
-- [ ] Code quality audit — scan last 5 work sessions' changed files (sessions 88–92: lb progressive disclosure, follows dashboard, sort controls area, mobile UX) for cross-file coupling, test specificity degradation, and smells introduced by agent edits
-
 ## HIGH PRIORITY — UI/UX Tasks
 
 - [ ] Win Rate computation — session 75 added the Win Rate slot in the 2x2 leaderboard grid but it shows "—"; compute win rate from activity data in `polymarket.py` (profitable bets / total bets from the last 20 activity records), expose as `win_rate_pct` in bettor profile API response, and render it in the card. **Note: backend change required (polymarket.py) — skip in UI/UX-only mode; pick this when backend mode resumes**
