@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\apscheduler\triggers\interval.py
+# hypothesis_version: 6.151.9
+
+[', ', 'end_date', 'end_date=%r', 'interval', 'interval=%r', 'interval[%s]', 'interval_length', 'jitter', 'jitter=%s', 'start_date', 'start_date=%r', 'timezone', 'version']

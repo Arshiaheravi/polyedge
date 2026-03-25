@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_token.py
+# hypothesis_version: 6.151.9
+
+['BankAccount', 'Card', "Literal['']|float", "Literal['']|str", 'Token', 'Token.CreateParams', 'Token.RetrieveParams', 'cartes_bancaires', 'checking', 'company', 'existing', 'futsu', 'government_entity', 'individual', 'mastercard', 'non_profit', 'none', 'post', 'savings', 'token', 'toza', 'visa']

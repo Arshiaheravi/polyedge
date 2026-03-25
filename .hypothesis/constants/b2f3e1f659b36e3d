@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\issuing\_dispute_service.py
+# hypothesis_version: 6.151.9
+
+['/v1/issuing/disputes', "Literal['']|bool", "Literal['']|int", "Literal['']|str", 'api', 'canceled', 'duplicate', 'expired', 'fraudulent', 'get', 'lost', 'not_received', 'other', 'post', 'submitted', 'unsubmitted', 'won']

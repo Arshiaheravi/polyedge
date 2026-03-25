@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\issuing\_personalization_design_service.py
+# hypothesis_version: 6.151.9
+
+["Literal['']|str", 'active', 'api', 'get', 'inactive', 'post', 'rejected', 'review']

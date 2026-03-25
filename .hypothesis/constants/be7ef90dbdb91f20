@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_person.py
+# hypothesis_version: 6.151.9
+
+['%s/%s/persons/%s', 'File', 'Person', 'account', 'additional_document', 'address', 'address_kana', 'address_kanji', 'alternatives', 'dob', 'document', 'errors', 'existing', 'future_requirements', 'invalid_tax_id', 'invalid_url_format', 'invalid_url_length', 'invalid_value_other', 'none', 'person', 'registered_address', 'relationship', 'requirements', 'verification']

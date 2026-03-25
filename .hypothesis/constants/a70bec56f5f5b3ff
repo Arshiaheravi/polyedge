@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_payment_method_configuration.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', "Literal['']|str", 'acss_debit', 'affirm', 'afterpay_clearpay', 'alipay', 'amazon_pay', 'apple_pay', 'au_becs_debit', 'bacs_debit', 'bancontact', 'blik', 'boleto', 'card', 'cartes_bancaires', 'cashapp', 'customer_balance', 'display_preference', 'eps', 'fpx', 'get', 'giropay', 'google_pay', 'grabpay', 'ideal', 'jcb', 'klarna', 'konbini', 'link', 'mobilepay', 'multibanco', 'none', 'off', 'on', 'oxxo', 'p24', 'paynow', 'paypal', 'post', 'promptpay', 'revolut_pay', 'sepa_debit', 'sofort', 'swish', 'twint', 'us_bank_account', 'wechat_pay', 'zip']

@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\billing_portal\_configuration_service.py
+# hypothesis_version: 6.151.9
+
+["Literal['']|str", 'always_invoice', 'api', 'at_period_end', 'create_prorations', 'customer_service', 'get', 'immediately', 'low_quality', 'missing_features', 'none', 'other', 'post', 'switched_service', 'too_complex', 'too_expensive', 'unused']

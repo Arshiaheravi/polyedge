@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\v2\core\_event_service.py
+# hypothesis_version: 6.151.9
+
+['/v2/core/events', '/v2/core/events/{id}', 'api', 'get']

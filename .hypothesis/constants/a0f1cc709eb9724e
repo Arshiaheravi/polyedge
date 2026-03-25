@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\entitlements\_feature.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Feature', 'Feature.CreateParams', 'Feature.ListParams', 'Feature.ModifyParams', 'entitlements.feature', 'get', 'post']

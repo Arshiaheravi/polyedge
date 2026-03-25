@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\terminal\_configuration.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Configuration', 'File', "Literal['']|str", '_cls_delete', '_cls_delete_async', 'aud', 'bbpos_wisepos_e', 'cad', 'chf', 'czk', 'delete', 'dkk', 'eur', 'gbp', 'get', 'hkd', 'myr', 'nok', 'nzd', 'offline', 'post', 'reboot_window', 'sek', 'sgd', 'stripe_s700', 'tipping', 'usd', 'verifone_p400']

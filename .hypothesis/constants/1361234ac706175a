@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_subscription_schedule.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Account', 'Application', 'Coupon', 'Customer', 'DiscountResource', "Literal['']|str", 'PaymentMethod', 'Plan', 'Price', 'PromotionCode', 'Subscription', 'SubscriptionSchedule', 'TaxId', 'TaxRate', 'TestClock', '_cls_cancel', '_cls_cancel_async', '_cls_release', '_cls_release_async', 'account', 'active', 'add_invoice_items', 'always_invoice', 'automatic', 'automatic_tax', 'billing_thresholds', 'cancel', 'canceled', 'charge_automatically', 'completed', 'create_prorations', 'current_phase', 'day', 'default_settings', 'discounts', 'exclusive', 'get', 'id', 'inclusive', "int|Literal['now']", 'invoice_settings', 'issuer', 'items', 'liability', 'month', 'none', 'not_started', 'phase_start', 'phases', 'post', 'release', 'released', 'renew', 'self', 'send_invoice', 'transfer_data', 'unspecified', 'week', 'year']

@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_price.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', '/v1/prices/search', 'Price', 'Price.CreateParams', 'Price.ListParams', 'Price.ModifyParams', 'Price.RetrieveParams', 'Price.SearchParams', 'Product', 'currency_options', 'custom_unit_amount', 'day', 'down', 'exclusive', 'get', 'graduated', 'inclusive', 'inf', 'last_during_period', 'last_ever', 'licensed', 'max', 'metered', 'month', 'one_time', 'per_unit', 'post', 'price', 'recurring', 'sum', 'tiered', 'tiers', 'transform_quantity', 'unspecified', 'up', 'volume', 'week', 'year']

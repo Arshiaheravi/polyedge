@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_customer_session.py
+# hypothesis_version: 6.151.9
+
+['Customer', 'CustomerSession', 'always', 'buy_button', 'components', 'customer_session', 'disabled', 'enabled', 'features', 'limited', 'off_session', 'on_session', 'payment_element', 'post', 'pricing_table', 'unspecified']

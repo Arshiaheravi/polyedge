@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\terminal\_location.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', "Literal['']|str", 'Location', 'Location.ListParams', '_cls_delete', '_cls_delete_async', 'address', 'delete', 'get', 'post', 'terminal.location']

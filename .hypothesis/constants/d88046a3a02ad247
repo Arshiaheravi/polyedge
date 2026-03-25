@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\financial_connections\_session_service.py
+# hypothesis_version: 6.151.9
+
+['account', 'api', 'balances', 'checking', 'credit_card', 'customer', 'get', 'line_of_credit', 'mortgage', 'ownership', 'payment_method', 'post', 'savings', 'transactions']

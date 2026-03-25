@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\billing\_alert.py
+# hypothesis_version: 6.151.9
+
+['Alert', 'Alert.ActivateParams', 'Alert.ArchiveParams', 'Alert.CreateParams', 'Alert.ListParams', 'Alert.RetrieveParams', 'Customer', 'Meter', '_cls_activate', '_cls_activate_async', '_cls_archive', '_cls_archive_async', '_cls_deactivate', 'active', 'archived', 'billing.alert', 'customer', 'filters', 'get', 'id', 'inactive', 'one_time', 'post', 'usage_threshold']

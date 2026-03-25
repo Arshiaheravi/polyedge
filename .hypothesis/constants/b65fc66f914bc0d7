@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\treasury\_transaction_entry.py
+# hypothesis_version: 6.151.9
+
+['Authorization', 'CreditReversal', 'DebitReversal', 'InboundTransfer', 'OutboundPayment', 'OutboundTransfer', 'ReceivedCredit', 'ReceivedDebit', 'Transaction', 'TransactionEntry', 'balance_impact', 'created', 'credit_reversal', 'debit_reversal', 'effective_at', 'flow_details', 'get', 'inbound_transfer', 'other', 'outbound_payment', 'outbound_transfer', 'received_credit', 'received_debit']

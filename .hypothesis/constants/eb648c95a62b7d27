@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_source_service.py
+# hypothesis_version: 6.151.9
+
+['/v1/sources', '/v1/sources/{source}', "Literal['']|int", 'accepted', 'api', 'code_verification', 'delete', 'deprecated_none', 'discount', 'email', 'get', 'manual', 'none', 'offline', 'one_time', 'online', 'pending', 'post', 'receiver', 'redirect', 'refused', 'reusable', 'revoked', 'scheduled', 'shipping', 'single_use', 'sku', 'stripe_email', 'tax', 'variable']

@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\aiohttp\streams.py
+# hypothesis_version: 6.151.9
+
+[b'\n', '%d bytes', '<%s>', 'Chunk too big', 'DataQueue', 'EMPTY_PAYLOAD', 'EofStream', 'FlowControlDataQueue', 'StreamReader', '_T', '_eof_counter', 'e=%r', 'eof', 'low=%d high=%d', 'read', 'readany', 'readchunk', 'readuntil', 'w=%r']

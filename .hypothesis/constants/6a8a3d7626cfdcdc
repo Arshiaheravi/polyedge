@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_search_result_object.py
+# hypothesis_version: 6.151.9
+
+['T', 'V1', 'api', 'api_key', 'data', 'get', 'has_more', 'ignore', 'next_page', 'page', 'search_result', 'stripe_account', 'stripe_version', 'url']

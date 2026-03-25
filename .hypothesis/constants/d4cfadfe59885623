@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\aiohttp\http_parser.py
+# hypothesis_version: 6.151.9
+
+[b'\r\n', b' \t', b':', b';', b'[\\x00-\\x1F\\x7F()<>@,;:\\[\\]={} \\t\\\\\\\\\\"]', 100, 199, 204, 999, 8190, 32768, '#', '.', '/', '?', 'CONNECT', 'HTTP/', 'HTTP/(\\d+).(\\d+)', 'HeadersParser', 'HttpParser', 'HttpRequestParser', 'HttpResponseParser', 'POST', 'PUT', 'RawRequestMessage', 'RawResponseMessage', '_MsgT', 'ascii', 'br', 'chunked', 'close', 'code', 'compression', 'decompress', 'deflate', 'flush', 'gzip', 'headers', 'keep-alive', 'method', 'raw_headers', 'reason', 'should_close', 'surrogateescape', 'upgrade', 'utf-8', 'utf8', 'version', 'xmlcharrefreplace']

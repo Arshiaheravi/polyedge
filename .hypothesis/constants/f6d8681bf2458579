@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\trio\_socket.py
+# hypothesis_version: 6.151.9
+
+['255.255.255.255', '<broadcast>', 'AF_UNIX', 'Error in connect: ', 'SOCK_CLOEXEC', 'SOCK_NONBLOCK', '__name__', 'accept', 'ascii', 'detach', 'fileno', 'fromshare', 'get_inheritable', 'getpeername', 'getsockname', 'getsockopt', 'hostname_resolver', 'linux', 'listen', 'recv', 'recv_into', 'recvfrom', 'recvfrom_into', 'recvmsg', 'recvmsg_into', 'send', 'sendmsg', 'set_inheritable', 'setsockopt', 'share', 'socket.socket', 'socket_factory', 'trio.socket.socket', 'win32']

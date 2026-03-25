@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_subscription_item_service.py
+# hypothesis_version: 6.151.9
+
+['allow_incomplete', 'always_invoice', 'api', 'create_prorations', 'day', 'default_incomplete', 'delete', 'error_if_incomplete', 'exclusive', 'get', 'inclusive', 'month', 'none', 'post', 'unspecified', 'week', 'year']

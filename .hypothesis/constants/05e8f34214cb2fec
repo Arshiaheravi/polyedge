@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\tax\_settings.py
+# hypothesis_version: 6.151.9
+
+['/v1/tax/settings', 'Settings', 'active', 'address', 'defaults', 'exclusive', 'head_office', 'inclusive', 'inferred_by_currency', 'pending', 'post', 'status_details', 'tax.settings']

@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\trio\_ssl.py
+# hypothesis_version: 6.151.9
+
+[16384, 'BROKEN', 'CLOSED', 'OK', 'TLSv1.3', '_State', 'cipher', 'compression', 'context', 'get_channel_binding', 'getpeercert', 'pending', 'server_hostname', 'server_side', 'session', 'session_reused', 'shared_ciphers', 'strerror', 'version']

@@ -1087,19 +1087,19 @@ async def check():
         except Exception as e:
             failures.append(f"Hero scrim check error: {e}")
 
-        # CHECK 80 (session 109): landing nav .logo contains an img tag (logo.png)
+        # CHECK 80 (session 109→112): landing nav .logo contains PolyEdge wordmark
         try:
-            logo_img = await page.evaluate("""() => {
-                const logo = document.querySelector('.landing-nav .logo img');
-                return logo !== null;
+            logo_text = await page.evaluate("""() => {
+                const logo = document.querySelector('.landing-nav .logo');
+                return logo ? logo.textContent.trim() : '';
             }""")
-            if logo_img:
+            if "PolyEdge" in logo_text or ("Poly" in logo_text and "Edge" in logo_text):
                 checks += 1
-                print("  [CHECK 80] Landing nav .logo contains img element (logo.png)")
+                print("  [CHECK 80] Landing nav .logo contains PolyEdge wordmark")
             else:
-                failures.append("Landing nav .logo does not contain an img tag")
+                failures.append(f"Landing nav .logo wordmark not found (got: '{logo_text}')")
         except Exception as e:
-            failures.append(f"Logo img check error: {e}")
+            failures.append(f"Logo wordmark check error: {e}")
 
         # CHECK 81 (session 110): Escape key closes an open modal
         try:

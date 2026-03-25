@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\billing\_credit_grant.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'CreditGrant', 'Customer', "Literal['']|int", 'TestClock', '_cls_expire', '_cls_expire_async', '_cls_void_grant', 'amount', 'applicability_config', 'billing.credit_grant', 'get', 'id', 'metered', 'monetary', 'paid', 'post', 'promotional', 'scope']

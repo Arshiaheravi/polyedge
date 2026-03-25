@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\billing\_credit_balance_transaction.py
+# hypothesis_version: 6.151.9
+
+['CreditGrant', 'Invoice', 'TestClock', 'amount', 'credit', 'credits_applied', 'credits_expired', 'credits_granted', 'credits_voided', 'debit', 'get', 'monetary']

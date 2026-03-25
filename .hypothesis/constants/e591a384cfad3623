@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\treasury\_outbound_payment.py
+# hypothesis_version: 6.151.9
+
+["Literal['']|str", 'Mandate', 'OutboundPayment', 'Transaction', '_cls_cancel', '_cls_cancel_async', '_cls_fail', '_cls_fail_async', '_cls_post', '_cls_post_async', '_cls_update', '_cls_update_async', 'account_closed', 'account_frozen', 'ach', 'address', 'billing_details', 'canceled', 'checking', 'company', 'declined', 'end_user_details', 'failed', 'financial_account', 'get', 'id', 'individual', 'invalid_currency', 'no_account', 'other', 'post', 'posted', 'processing', 'returned', 'returned_details', 'savings', 'status_transitions', 'stripe', 'tracking_details', 'us_bank_account', 'us_domestic_wire']

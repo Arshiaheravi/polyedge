@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\issuing\_physical_bundle.py
+# hypothesis_version: 6.151.9
+
+['PhysicalBundle', 'active', 'custom', 'features', 'get', 'inactive', 'optional', 'required', 'review', 'standard', 'unsupported']

@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_oauth.py
+# hypothesis_version: 6.151.9
+
+['/oauth/authorize', '/oauth/deauthorize', '/oauth/token', '?', 'OAuth.OAuthToken', 'V1', 'api_key', 'authorization_code', 'bearer', 'client_id', 'code', 'connect', 'post', 'refresh_token', 'response_type']

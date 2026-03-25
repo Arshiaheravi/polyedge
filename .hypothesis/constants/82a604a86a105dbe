@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\treasury\_received_debit.py
+# hypothesis_version: 6.151.9
+
+['ReceivedDebit', 'Transaction', 'account_closed', 'account_frozen', 'ach', 'address', 'already_reversed', 'balance', 'billing_details', 'card', 'deadline_passed', 'failed', 'financial_account', 'get', 'insufficient_funds', 'issuing_card', 'linked_flows', 'network_restricted', 'other', 'payments', 'post', 'reversal_details', 'stripe', 'succeeded', 'us_bank_account']

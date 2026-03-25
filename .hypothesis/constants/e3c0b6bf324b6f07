@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\aiohttp\helpers.py
+# hypothesis_version: 6.151.9
+
+[127, 128, ' "', '"', '"%s"', "''", '(', ')', '*', '*/*', '+', ',', ', ', '.netrc', '/', ':', ';', '; ', '<', '=', '>', '?', '@', 'Apr', 'Aug', 'BaseTimerContext', 'Basic %s', 'BasicAuth', 'ChainMapProxy', 'Content-Type: ', 'Darwin', 'Dec', 'ETag', 'Feb', 'Fri', 'Invalid credentials.', 'Jan', 'Jul', 'Jun', 'Mar', 'May', 'Mon', 'MultiDictProxy[str]', 'NETRC', 'Nov', 'Oct', 'PYTHONASYNCIODEBUG', 'Sat', 'Sep', 'Sun', 'Thu', 'Tue', 'Wed', 'Windows', '[', '[!#-}\\x80-\\xff]+', '\\', '\\"', '\\\\', ']', '_S', '_T', '_content_dict', '_content_type', '_maps', '_netrc', '_stored_content_type', 'ascii', 'asyncio.Future[_T]', 'asyncio.Task[Any]', 'basic', 'charset', 'dev_mode', 'encoding', 'filename', 'http', 'https', 'isasyncgenfunction', 'latin1', 'login', 'name', 'password', 'utf-8', 'ws', 'wss', '{', '}']

@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\treasury\_outbound_payment_service.py
+# hypothesis_version: 6.151.9
+
+["Literal['']|str", 'ach', 'api', 'canceled', 'checking', 'company', 'failed', 'financial_account', 'get', 'individual', 'post', 'posted', 'processing', 'returned', 'savings', 'us_bank_account', 'us_domestic_wire']

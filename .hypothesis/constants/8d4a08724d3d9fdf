@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_account_service.py
+# hypothesis_version: 6.151.9
+
+['/v1/account', '/v1/accounts', "Literal['']|float", "Literal['']|str", 'account', 'api', 'application', 'bank_account', 'card', 'company', 'custom', 'daily', 'delete', 'existing', 'express', 'friday', 'full', 'get', 'government_entity', 'individual', 'manual', 'monday', 'monthly', 'non_profit', 'none', 'post', 'saturday', 'standard', 'stripe', 'sunday', 'thursday', 'tuesday', 'wednesday', 'weekly']

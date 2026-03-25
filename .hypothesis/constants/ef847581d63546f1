@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\events\_v1_billing_meter_error_report_triggered_event.py
+# hypothesis_version: 6.151.9
+
+['api', 'archived_meter', 'error_types', 'get', 'no_meter', 'reason', 'request', 'sample_errors', 'stripe_account', 'timestamp_in_future']

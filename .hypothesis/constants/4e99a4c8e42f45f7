@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\tax\_transaction_line_item.py
+# hypothesis_version: 6.151.9
+
+['exclusive', 'inclusive', 'reversal', 'transaction']

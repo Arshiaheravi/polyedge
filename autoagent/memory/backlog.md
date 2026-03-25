@@ -22,7 +22,6 @@
 
 ## HIGH PRIORITY — Backend Coverage Gaps
 
-- [ ] GET /bettors/{address} — assert response includes `rank`, `pnl_usd` fields (recently added — no test yet), assert recent_bets filtered to TRADE type only (no REDEEM), assert outcome/price fields populated
 - [ ] GET /follows/live — test with VIP user following 3 bettors where get_active_positions raises for all 3 — assert still returns 3 entries with empty active_positions, not a 500
 - [ ] Admin MRR formula — assert `basic_users * 4.99 + vip_users * 9.99` (not old 14.99 formula), test with 2 basic + 3 VIP users
 

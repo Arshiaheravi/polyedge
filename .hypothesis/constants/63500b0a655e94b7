@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_line_item.py
+# hypothesis_version: 6.151.9
+
+['DiscountResource', 'Price', 'TaxRate', 'customer_exempt', 'discounts', 'item', 'not_collecting', 'not_subject_to_tax', 'not_supported', 'product_exempt', 'proportionally_rated', 'reduced_rated', 'reverse_charge', 'standard_rated', 'taxes', 'zero_rated']

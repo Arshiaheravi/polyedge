@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_tax_code_service.py
+# hypothesis_version: 6.151.9
+
+['/v1/tax_codes', '/v1/tax_codes/{id}', 'api', 'get']

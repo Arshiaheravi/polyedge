@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_file_service.py
+# hypothesis_version: 6.151.9
+
+['/v1/files', '/v1/files/{file}', 'account_requirement', 'api', 'business_icon', 'business_logo', 'content_type', 'customer_signature', 'dispute_evidence', 'files', 'finance_report_run', 'get', 'identity_document', 'multipart/form-data', 'pci_document', 'post', 'selfie']

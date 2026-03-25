@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\urllib3\request.py
+# hypothesis_version: 6.151.9
+
+['?', 'Content-Type', 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'RequestMethods', 'body', 'headers', 'request_url']

@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — TESTING (Session 112)
+DONE: Bettor profile rank/pnl_usd fields exposed via polymarket service, REDEEM-type bets filtered from get_recent_bets, 7 new tests covering rank/pnl/outcome/price fields at both service and route layers.
+IMPACT: Users viewing a bettor profile now see accurate rank (position on leaderboard) and pnl_usd; bets list no longer shows REDEEM cash-out entries that have no outcome/price data — only actual trade decisions are shown. Tests prove correctness and prevent regression.
+FILES: backend/app/services/polymarket.py, frontend/index.html, backend/tests/test_bettors.py, backend/tests/test_polymarket_service.py
+
 ## 2026-03-25 — BRAIN SESSION (Session 111)
 RESEARCHED: autonomous AI agent reliability 2026, LLM self-improvement techniques, Claude Code skills (ECC still v1.9.0 — no new skills), prediction market copy trading SaaS (coindesk AI agents article), FastAPI production 2026, Awesome-Prediction-Market-Tools (40+ competitors analyzed), arxiv ABC-Bench (agentic backend coding), VoltAgent awesome-ai-agent-papers (no March 2026 papers yet)
 DOWNLOADED: Nothing new — ECC still at v1.9.0; no new applicable skills found

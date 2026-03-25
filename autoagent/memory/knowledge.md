@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **303 passed** (as of 2026-03-25, session 98 — no new backend tests, frontend-only change)
+- Test count: **310 passed** (as of 2026-03-25, session 112 — 7 new tests for bettor profile rank/pnl_usd and REDEEM filter)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -632,7 +632,14 @@ FAILED: Nothing failed — all 3 checks passed first run.
 RULE: [2026-03-25] For `data-tip` CSS tooltips: use `content: attr(data-tip)` with `position: absolute; bottom: calc(100% + 4px); opacity: 0; transition: opacity 0.15s` on `::after`, set `opacity: 1` on `:hover::after`. Add `position: relative` and `cursor: help` to the parent. This requires zero JS and works for any inline element. Pitfall: `white-space: nowrap` is needed on the ::after to prevent tooltip text wrapping — without it, tooltips on short parent elements collapse to a single character width.
 RULE: [2026-03-25] When DEMO_BETTORS array needs dynamic values (e.g. timestamps), compute them at module load time by declaring `const _now = Math.floor(Date.now() / 1000)` BEFORE the DEMO_BETTORS const, then reference `_now - N*60` inside the object literals. This avoids making DEMO_BETTORS a function call and keeps the array serializable.
 
+### Session #112 Reflexion — 2026-03-25 (TESTING)
+ACCOMPLISHED: Committed uncommitted polymarket service + frontend changes from a prior interrupted session; wrote 7 new tests proving rank/pnl_usd fields present, REDEEM-type bets filtered, outcome/price populated for TRADE bets; updated Playwright CHECK 80 from "logo img present" to "PolyEdge wordmark present" to match the frontend change that removed the logo img element; 310 backend tests + 83 Playwright checks pass.
+FAILED: First Playwright run showed 1 failure — CHECK 80 expected a logo img tag that had been removed in the uncommitted frontend diff. Fixed by updating both playwright_registry.py and tmp_check.py (they are separate files — both must be updated).
+RULE: [2026-03-25] When uncommitted changes remove a UI element that a Playwright check verifies, update BOTH `playwright_registry.py` AND `tmp_check.py` — they are separate files and `tmp_check.py` is the one actually executed. Updating only the registry leaves the stale check in the running file.
+RULE: [2026-03-25] When a service function is refactored to use `asyncio.gather` with two internal `httpx.AsyncClient` contexts, existing mock tests that patch `httpx.AsyncClient` with a single `return_value` still work — both internal contexts receive the same mock object. Verify this by checking `has_lb_data = bool(lb_entry and lb_entry.get("vol") is not None)`: if the activity mock data lacks "vol", lb data is treated as absent and falls back to legacy volume-summing logic.
+
 ## Test Suite History
 | Session | Backend Tests | Frontend Checks |
 |---------|--------------|-----------------|
+| 112     | 310          | 83              |
 | 110     | 303          | 83              |

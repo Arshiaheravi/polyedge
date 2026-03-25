@@ -18,6 +18,10 @@ from pathlib import Path
 if sys.platform == "win32":
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+    # Suppress Windows "drive not found" / "critical error" pop-up dialogs.
+    # SEM_FAILCRITICALERRORS (1) | SEM_NOOPENFILEERRORBOX (2) = 3
+    import ctypes
+    ctypes.windll.kernel32.SetErrorMode(3)
 
 ROOT      = Path(__file__).resolve().parent.parent
 AGENT_DIR = Path(__file__).resolve().parent
@@ -195,6 +199,20 @@ def run_session(session_type: str, session_num: int) -> bool:
             except: proc.kill()
         raise
 
+# ── Dashboard tab management ───────────────────────────────────
+_dashboard_opened = False
+
+def _open_dashboard_once(path: str):
+    """Open the dashboard in a browser tab the first time, then just update the file.
+    Subsequent sessions update dashboard.html in place — the browser tab auto-refreshes
+    if the user has it open, without spawning a new tab each session."""
+    global _dashboard_opened
+    if not _dashboard_opened:
+        webbrowser.open(path)
+        _dashboard_opened = True
+    # After first open: file is already updated by generate_dashboard(),
+    # browser will reflect changes on next manual refresh — no new tab opened.
+
 # ── Dashboard ──────────────────────────────────────────────────
 def generate_dashboard():
     sessions_file = AGENT_DIR / "sessions.json"
@@ -302,7 +320,7 @@ def run():
 
         generate_dashboard()
         if (AGENT_DIR / "dashboard.html").exists():
-            webbrowser.open(str(AGENT_DIR / "dashboard.html"))
+            _open_dashboard_once(str(AGENT_DIR / "dashboard.html"))
 
         # Save counter
         counter_file.write_text(json.dumps({"count": session_num + 1}))

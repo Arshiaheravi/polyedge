@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\aiohttp\cookiejar.py
+# hypothesis_version: 6.151.9
+
+[1601, 1900, 2000, '(\\d{1,2})', '(\\d{2,4})', '.', '/', 'BaseCookie[str]', 'CookieJar', 'DummyCookieJar', 'Morsel[str]', 'SimpleCookie[str]', 'domain', 'expires', 'https', 'max-age', 'path', 'rb', 'secure', 'token', 'wb', 'wss']

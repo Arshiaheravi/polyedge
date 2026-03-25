@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\trio\_subprocess.py
+# hypothesis_version: 6.151.9
+
+[434, 1104, '0.20.0', 'bufsize', 'encoding', 'errors', 'linux', 'nt', 'posix', 'running with PID {}', 'shell', 'stderr', 'stdin', 'stdout', 'text', 'universal_newlines']

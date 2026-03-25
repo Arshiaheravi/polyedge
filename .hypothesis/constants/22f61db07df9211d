@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\issuing\_token.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Card', 'Token', 'Token.ListParams', 'Token.ModifyParams', 'Token.RetrieveParams', 'account_card_too_new', 'account_too_new', 'active', 'additional_device', 'app', 'apple_pay', 'approve', 'cardholder_address', 'data_expired', 'decline', 'defer_id_v_decision', 'deleted', 'device', 'device_recently_lost', 'get', 'google_pay', 'has_suspended_tokens', 'high_risk', 'inactive_account', 'issuing.token', 'long_account_tenure', 'low_account_score', 'low_device_score', 'manual', 'mastercard', 'network_data', 'on_file', 'other', 'phone', 'post', 'requested', 'require_auth', 'samsung_pay', 'software_update', 'suspended', 'suspicious_activity', 'visa', 'wallet_provider', 'watch']

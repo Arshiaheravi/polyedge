@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_balance.py
+# hypothesis_version: 6.151.9
+
+['/v1/balance', 'Balance', 'available', 'balance', 'connect_reserved', 'instant_available', 'issuing', 'net_available', 'pending', 'source_types']

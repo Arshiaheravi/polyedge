@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\trio\_core\_run.py
+# hypothesis_version: 6.151.9
+
+[0.0, 0.5, 1000, 10000, 200000, ', cancelled', '<Task {!r} at {:#x}>', '<init>', 'Runner', 'TASK_STATUS_IGNORED', 'active', 'after_io_wait', 'after_run', 'after_task_step', 'ago', 'before_io_wait', 'before_run', 'before_task_step', 'cr_frame', 'epoll', 'exited', 'from now', 'kqueue', 'linux', 'runner', 'task_exited', 'task_scheduled', 'task_spawned', 'trio', 'unbound', 'unsupported platform', 'win32', '{}.{}']

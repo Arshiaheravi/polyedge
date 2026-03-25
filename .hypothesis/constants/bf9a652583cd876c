@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\test_helpers\issuing\_personalization_design_service.py
+# hypothesis_version: 6.151.9
+
+['api', 'geographic_location', 'inappropriate', 'network_name', 'non_binary_image', 'non_fiat_currency', 'other', 'other_entity', 'post', 'promotional_material']

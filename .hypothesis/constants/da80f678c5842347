@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_invoice_line_item.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Discount', 'InvoiceItem', 'InvoiceLineItem', 'Plan', 'Price', 'Subscription', 'SubscriptionItem', 'TaxRate', 'amusement_tax', 'communications_tax', 'credited_items', 'customer_exempt', 'discount', 'discount_amounts', 'exclusive', 'gst', 'hst', 'igst', 'inclusive', 'invoiceitem', 'jct', 'lease_tax', 'line_item', 'not_collecting', 'not_subject_to_tax', 'not_supported', 'period', 'post', 'product_exempt', 'proportionally_rated', 'proration_details', 'pst', 'qst', 'reduced_rated', 'reverse_charge', 'rst', 'sales_tax', 'standard_rated', 'subscription', 'tax_amounts', 'unspecified', 'vat', 'zero_rated']

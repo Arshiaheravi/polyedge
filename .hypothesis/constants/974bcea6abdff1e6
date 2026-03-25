@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_credit_note_line_item.py
+# hypothesis_version: 6.151.9
+
+['Discount', 'TaxRate', 'custom_line_item', 'customer_exempt', 'discount', 'discount_amounts', 'invoice_line_item', 'not_collecting', 'not_subject_to_tax', 'not_supported', 'product_exempt', 'proportionally_rated', 'reduced_rated', 'reverse_charge', 'standard_rated', 'tax_amounts', 'zero_rated']

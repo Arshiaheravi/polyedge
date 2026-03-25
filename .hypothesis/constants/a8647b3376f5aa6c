@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_invoice_rendering_template.py
+# hypothesis_version: 6.151.9
+
+['_cls_archive', '_cls_archive_async', '_cls_unarchive', '_cls_unarchive_async', 'active', 'archived', 'get', 'id', 'post']

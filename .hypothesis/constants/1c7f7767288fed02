@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\identity\_verification_session.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'VerificationReport', 'VerificationSession', '_cls_cancel', '_cls_cancel_async', '_cls_redact', '_cls_redact_async', 'abandoned', 'address', 'br_cpf', 'canceled', 'consent_declined', 'device_not_supported', 'dob', 'document', 'document_expired', 'driving_license', 'email', 'get', 'id', 'id_card', 'id_number', 'id_number_mismatch', 'last_error', 'options', 'passport', 'phone', 'post', 'processing', 'provided_details', 'redacted', 'redaction', 'requires_input', 'selfie_face_mismatch', 'selfie_manipulated', 'sg_nric', 'under_supported_age', 'us_ssn', 'verification_flow', 'verified', 'verified_outputs']

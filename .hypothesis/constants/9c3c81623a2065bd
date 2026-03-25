@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_tax_rate.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'TaxRate', 'TaxRate.CreateParams', 'TaxRate.ListParams', 'TaxRate.ModifyParams', 'amusement_tax', 'city', 'communications_tax', 'country', 'county', 'district', 'get', 'gst', 'hst', 'igst', 'jct', 'lease_tax', 'multiple', 'post', 'pst', 'qst', 'rst', 'sales_tax', 'state', 'tax_rate', 'vat']

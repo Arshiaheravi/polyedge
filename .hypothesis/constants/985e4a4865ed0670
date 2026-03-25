@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_plan_service.py
+# hypothesis_version: 6.151.9
+
+['/v1/plans', '/v1/plans/{plan}', 'api', 'day', 'delete', 'down', 'get', 'graduated', 'inf', 'last_during_period', 'last_ever', 'licensed', 'max', 'metered', 'month', 'per_unit', 'post', 'sum', 'tiered', 'up', 'volume', 'week', 'year']

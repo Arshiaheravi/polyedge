@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\trio\_core\_multierror.py
+# hypothesis_version: 6.151.9
+
+[2211, ', ', '0.22.0', '<MultiError: {}>', 'IPython', 'MultiError.catch', 'MultiError.filter()', 'PyObject_HEAD', '__getattr__', '__getattribute__', '__name__', 'apport_excepthook', 'exceptions', 'tb_frame', 'tb_lasti', 'tb_lineno', 'tb_next', 'trio', 'trio_fake_sys']

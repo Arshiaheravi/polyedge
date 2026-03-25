@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\radar\_value_list_item.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'ValueListItem', '_cls_delete', '_cls_delete_async', 'delete', 'get', 'post']

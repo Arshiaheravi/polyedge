@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_source.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', '%s/%s/sources/%s', "Literal['']|int", 'Source', 'Source.CreateParams', 'Source.ModifyParams', 'Source.VerifyParams', 'SourceTransaction', '_cls_verify', '_cls_verify_async', 'accepted', 'ach_credit_transfer', 'ach_debit', 'acss_debit', 'address', 'alipay', 'au_becs_debit', 'bancontact', 'card', 'card_present', 'code_verification', 'customer', 'delete', 'deprecated_none', 'discount', 'email', 'eps', 'get', 'giropay', 'id', 'ideal', 'items', 'klarna', 'manual', 'multibanco', 'none', 'offline', 'one_time', 'online', 'owner', 'p24', 'pending', 'post', 'receiver', 'redirect', 'refused', 'reusable', 'revoked', 'scheduled', 'sepa_credit_transfer', 'sepa_debit', 'shipping', 'single_use', 'sku', 'sofort', 'source', 'source_order', 'stripe_email', 'tax', 'three_d_secure', 'variable', 'verified_address', 'wechat']

@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_subscription_item.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Discount', "Literal['now']|int", 'Plan', 'Price', 'SubscriptionItem', 'TaxRate', 'UsageRecord', 'UsageRecordSummary', '_cls_delete', '_cls_delete_async', 'allow_incomplete', 'always_invoice', 'billing_thresholds', 'create_prorations', 'day', 'default_incomplete', 'delete', 'error_if_incomplete', 'exclusive', 'get', 'inclusive', 'increment', 'month', 'none', 'post', 'set', 'subscription_item', 'unspecified', 'usage_record', 'usage_record_summary', 'week', 'year']

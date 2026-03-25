@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\aiohttp\connector.py
+# hypothesis_version: 6.151.9
+
+[2.0, 15.0, 100, 200, 'BaseConnector', 'ClientRequest', 'ClientTimeout', 'ConnectionKey', 'Connector is closed.', 'Fingerprint', 'NamedPipeConnector', 'TCPConnector', 'Trace', 'Unclosed connection', 'Unclosed connector', 'UnixConnector', '_awaitable', '_awaited', '_cleanup', '_cleanup_closed', 'client_connection', 'connections', 'connector', 'family', 'flags', 'host', 'hostname', 'https', 'message', 'port', 'proto', 'socket', 'source', 'source_traceback']

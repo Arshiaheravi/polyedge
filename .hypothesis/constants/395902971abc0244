@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\_updateable_api_resource.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'T', 'idempotency_key', 'post', 'save']

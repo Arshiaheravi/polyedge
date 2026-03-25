@@ -2455,5 +2455,29 @@
       "failures": 0,
       "notes": "brain session \u2014 no code changes"
     }
+  },
+  {
+    "session": 112,
+    "date": "2026-03-25",
+    "time": "14:00",
+    "type": "work",
+    "summary": "Bettor profile now exposes rank and pnl_usd; get_recent_bets filters REDEEM cash-outs so only real trade bets show; 7 new tests prove correctness at service + route layers",
+    "files": [
+      "backend/app/services/polymarket.py",
+      "frontend/index.html",
+      "backend/tests/test_bettors.py",
+      "backend/tests/test_polymarket_service.py"
+    ],
+    "tests": {
+      "before": 303,
+      "after": 310,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 83,
+      "failures": 0,
+      "notes": "Updated CHECK 80 from logo img to wordmark text (logo img removed)"
+    }
   }
 ]

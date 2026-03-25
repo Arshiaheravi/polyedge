@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\OneDrive\Desktop\PolyEdge\backend\app\services\notifications.py
+# hypothesis_version: 6.151.9
+
+[200, 201, '...', '/icon.png', '86400', 'Body', 'Content-Type', 'From', 'HTML', 'TTL', 'To', 'Web push failed: %s', 'application/json', 'basic', 'body', 'chat_id', 'endpoint', 'icon', 'parse_mode', 'sms', 'telegram', 'text', 'title', 'vip', 'web_push']

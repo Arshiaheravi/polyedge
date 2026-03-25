@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\stripe\terminal\_reader.py
+# hypothesis_version: 6.151.9
+
+['%s/%s', 'Charge', "Literal['']|str", 'Location', 'PaymentIntent', 'Reader', 'Reader.CreateParams', 'Reader.DeleteParams', 'Reader.ListParams', 'Reader.ModifyParams', 'Refund', 'SetupIntent', '_cls_cancel_action', '_cls_delete', '_cls_delete_async', '_cls_refund_payment', 'action', 'always', 'bbpos_chipper2x', 'bbpos_wisepad3', 'bbpos_wisepos_e', 'card_present', 'cart', 'delete', 'duplicate', 'failed', 'fraudulent', 'get', 'id', 'in_progress', 'interac_present', 'limited', 'line_items', 'mobile_phone_reader', 'offline', 'online', 'post', 'process_config', 'process_setup_intent', 'refund_payment', 'set_reader_display', 'simulated_wisepos_e', 'stripe_m2', 'stripe_s700', 'succeeded', 'terminal.reader', 'tipping', 'unspecified', 'verifone_P400']
