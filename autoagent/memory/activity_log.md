@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
 
+## 2026-03-25 — UI/UX (Session 102)
+DONE: Nav progress bar + scroll-to-top on tab switch — added a 3px green gradient `#page-progress` bar (fixed, top of viewport, z-index 10000) that animates 0→60→100% and fades out on every `showView()` and `showTab()` call and on initial page load; `showTab()` also scrolls the active `.main-content` to top smoothly on every tab switch. 2 new Playwright checks (69-70).
+IMPACT: Every tab/view transition now has immediate visual feedback — the progress bar tells the user "navigation happened" before the API data loads, reducing perceived latency. Smooth scroll-to-top prevents users seeing mid-scroll state when switching from e.g. a long leaderboard to the alerts tab.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-25 — DEEP BRAIN (Session 101)
 RESEARCHED: autonomous AI agent reliability 2026, LLM agent self-improvement (arxiv 2601.04620 AgentDevel, 2601.21557 MCE), Claude Code skills ecosystem (hesreallyhim/awesome-claude-code 25k+ stars), agentic context management (AGENTS.md impact arxiv 2601.20404: 28.64% runtime reduction), copy trading SaaS CRO 2026 (interactive demos 2x conversion), FastAPI production 2026
 DOWNLOADED: Nothing new — affaan-m/ecc still at v1.9.0; no new applicable skills found

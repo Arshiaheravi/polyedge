@@ -45,6 +45,13 @@
 
 ## Session Reflexions
 
+### Session #102 Reflexion — 2026-03-25 (UI/UX — Nav Progress Bar)
+ACCOMPLISHED: Added `#page-progress` — 3px green gradient bar (fixed, top viewport, z-index 10000) that animates on every `showView()` / `showTab()` / initial load. `startProgress()` uses 3-step timeout chain: 0→60% (instant), 60→100% (420ms), then opacity 0 and reset. `showTab()` also calls `mc.scrollTo({ top: 0, behavior: 'smooth' })` on the active `.main-content`. 2 Playwright checks (69-70): DOM presence + function defined.
+FAILED: Nothing failed.
+RULE: [2026-03-25] Progress bar CSS transition requires `void bar.offsetWidth` (force reflow) between setting `width: 0%` and starting the animation — without it, the transition doesn't run because the browser batches the style changes. This is the standard "force reflow" trick for CSS animations.
+
+- Test count: **303 passed** (stable, frontend-only change), **70 Playwright checks** (68 → 70)
+
 ### BRAIN Session #101 Reflexion — 2026-03-25 (DEEP BRAIN)
 ACCOMPLISHED: (1) STEP 1B: Found "stale backlog item" pattern recurs (sessions 89+99) — fixed by adding GREP-BEFORE-PICKING rule to PROMPT.md step 3. (2) STEP 1C: Merged stale session 85 XSS streak rule (superseded by session 93 rule); updated session 93 XSS streak count from "16 sessions" to "24+ sessions (77-100)". (3) STEP 1D: Archived sessions 61-80 from activity_log.md to archive (was 40 entries, now 20). (4) 7 sources evaluated, 7 logged. (5) 1 concrete implementation: GREP-BEFORE-PICKING in PROMPT.md. (6) 1 backlog task added: demo mode landing page (2x conversion research finding). (7) MCE paper found (2601.21557) — validates our brain session approach but not implementable prompt-only.
 FAILED: Nothing failed.

@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-25
+- **[SESSION #102] Nav progress bar + scroll-to-top on tab switch** — thin green gradient bar animates 0→100% and fades out on every view/tab transition and initial load; main-content scrolls to top on showTab(); 2 new Playwright checks (69-70); 303 tests pass, 70 checks pass
 - **[SESSION #100] Code quality audit — sessions 94–98** — all 9 virtual team checks passed (Marcus XSS clean, Sarah/Priya/Nina/Leo/Jordan all pass); stale disclosureCache tech debt entry removed; 303 tests stable
 - **[SESSION #99] Trust signals — data source badge + live trader count** — added .trust-signal-row below leaderboard header on both browse and dashboard views: "Built on real Polymarket data" pill badge + animated green pulsing dot "N traders tracked live" badge that fades in after data loads; 2 new Playwright checks (67-68); 303 tests pass, 68 checks pass
 - **[SESSION #98] _disclosureCache TTL fix** — leaderboard card disclosure cache now expires after 5 minutes; re-fetches market titles transparently on next expand; 2 new Playwright checks (65-66); 303 tests pass, 66 checks pass
