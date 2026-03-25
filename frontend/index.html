@@ -1028,16 +1028,38 @@
       gap: var(--sp-3);
       margin-bottom: var(--sp-5);
     }
+    .profile-stat-card[data-stat="profit"] { --stat-accent: #00c97a; }
+    .profile-stat-card[data-stat="pnl"]    { --stat-accent: #4A9EFF; }
+    .profile-stat-card[data-stat="volume"] { --stat-accent: #a78bfa; }
+    .profile-stat-card[data-stat="bets"]   { --stat-accent: #f59e0b; }
     .profile-stat-card {
       background: var(--card);
       border: 1px solid var(--border);
+      border-top: 2px solid var(--stat-accent, var(--border2));
       border-radius: var(--radius-sm);
       padding: var(--sp-4) var(--sp-5);
+      position: relative;
+      transition: box-shadow var(--duration), transform var(--duration), border-color var(--duration);
+    }
+    .profile-stat-card:hover {
+      border-color: var(--border2);
+      border-top-color: var(--stat-accent, var(--border2));
+      box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+      transform: translateY(-2px);
+    }
+    .profile-stat-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;
     }
     .profile-stat-label {
       font-size: var(--fs-xs); color: var(--text3);
-      margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+      text-transform: uppercase; letter-spacing: 0.05em;
     }
+    .profile-stat-trend {
+      font-size: var(--fs-xs); font-weight: 700; opacity: 0; transition: opacity 0.4s; letter-spacing: 0;
+    }
+    .profile-stat-trend.trend-up   { color: #00c97a; opacity: 1; }
+    .profile-stat-trend.trend-down { color: #f03e3e; opacity: 1; }
+    .profile-stat-trend.trend-info { color: var(--text3); opacity: 1; }
     .profile-stat-val { font-size: var(--fs-4xl); font-weight: 700; color: var(--text); font-family: var(--font-display); }
     .profile-bets-section { margin-top: var(--sp-5); }
     .profile-section-title { font-size: var(--fs-xl); font-weight: 700; color: var(--text); margin-bottom: var(--sp-3); }
@@ -2070,20 +2092,32 @@
         </div>
       </div>
       <div class="profile-stats-row">
-        <div class="profile-stat-card">
-          <div class="profile-stat-label">Profit</div>
+        <div class="profile-stat-card" data-stat="profit">
+          <div class="profile-stat-header">
+            <div class="profile-stat-label">Profit</div>
+            <span class="profile-stat-trend" id="pstat-profit-trend"></span>
+          </div>
           <div class="profile-stat-val" id="pstat-profit">&#8212;</div>
         </div>
-        <div class="profile-stat-card">
-          <div class="profile-stat-label">PnL%</div>
+        <div class="profile-stat-card" data-stat="pnl">
+          <div class="profile-stat-header">
+            <div class="profile-stat-label">PnL%</div>
+            <span class="profile-stat-trend" id="pstat-pnl-trend"></span>
+          </div>
           <div class="profile-stat-val" id="pstat-pnl">&#8212;</div>
         </div>
-        <div class="profile-stat-card">
-          <div class="profile-stat-label">Volume</div>
+        <div class="profile-stat-card" data-stat="volume">
+          <div class="profile-stat-header">
+            <div class="profile-stat-label">Volume</div>
+            <span class="profile-stat-trend" id="pstat-volume-trend"></span>
+          </div>
           <div class="profile-stat-val" id="pstat-volume">&#8212;</div>
         </div>
-        <div class="profile-stat-card">
-          <div class="profile-stat-label">Total Bets</div>
+        <div class="profile-stat-card" data-stat="bets">
+          <div class="profile-stat-header">
+            <div class="profile-stat-label">Total Bets</div>
+            <span class="profile-stat-trend" id="pstat-bets-trend"></span>
+          </div>
           <div class="profile-stat-val" id="pstat-bets">&#8212;</div>
         </div>
       </div>
@@ -3999,6 +4033,20 @@ function _updateFollowPreview(isFollowing) {
   }
 }
 
+function _setProfileTrend(id, value, infoText) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (infoText !== undefined) {
+    el.className = 'profile-stat-trend trend-info';
+    el.textContent = infoText;
+    return;
+  }
+  if (value === null || value === undefined) { el.className = 'profile-stat-trend'; el.textContent = ''; return; }
+  if (value > 0) { el.className = 'profile-stat-trend trend-up'; el.textContent = '▲'; }
+  else if (value < 0) { el.className = 'profile-stat-trend trend-down'; el.textContent = '▼'; }
+  else { el.className = 'profile-stat-trend trend-info'; el.textContent = '—'; }
+}
+
 function _renderProfileBadges(rank, pnlUsd, volumeUsd) {
   const rankEl = document.getElementById('profile-rank-badge');
   const profitEl = document.getElementById('profile-profit-badge');
@@ -4066,6 +4114,13 @@ function renderProfileData(profile, bets) {
 
   document.getElementById('pstat-volume').textContent = fmtUSD(vol);
   document.getElementById('pstat-bets').textContent = profile.total_bets || '\u2014';
+
+  // Trend arrows for stat cards
+  _setProfileTrend('pstat-profit-trend', pnlForDisplay);
+  _setProfileTrend('pstat-pnl-trend', pnlPct !== null ? parseFloat(pnlPct) : null);
+  _setProfileTrend('pstat-volume-trend', null, vol > 100000 ? 'High' : vol > 0 ? 'Active' : undefined);
+  const totalBets = profile.total_bets;
+  _setProfileTrend('pstat-bets-trend', null, totalBets > 0 ? (totalBets > 50 ? 'Prolific' : 'Active') : undefined);
 
   const followBtn = document.getElementById('profile-follow-btn');
   followBtn.className = `follow-btn profile-follow-cta${isFollowing ? ' following' : ''}`;
