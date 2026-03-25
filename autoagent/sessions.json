@@ -1642,5 +1642,15 @@
     "files": ["frontend/index.html"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 22, "failures": 0, "notes": "22/22 existing checks pass; no new checks needed for settings page redesign"}
+  },
+  {
+    "session": 78,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added structured skeleton cards to the follows tab — the page no longer shows blank space while loading, instead showing follow-card and position-card shaped skeletons that match the real layout",
+    "files": ["frontend/index.html"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 24, "failures": 0, "notes": "Added CHECK 23 (renderFollowSkeletonCards function exists) and CHECK 24 (output contains follows-grid + follow-card + skeleton)"}
   }
 ]

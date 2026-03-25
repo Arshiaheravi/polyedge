@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #78 Reflexion — 2026-03-24 (UI/UX)
+ACCOMPLISHED: Added `renderFollowSkeletonCards(count)` function — follow-card shaped skeletons (avatar circle + name/addr lines + button bar). Called in `loadMyFollows()` for `cardContainer` (was previously set to `''` during load). Replaced 2 flat 80px skeleton bars in `activityContainer` with 4 structured position-card skeletons (top bar with avatar/name/LIVE badge, title block, outcome pill row, stats grid). Playwright CHECK 23+24 added. 303 tests stable, 24/24 Playwright checks pass.
+FAILED: Nothing.
+RULE: [2026-03-24] Skeleton cards should structurally mirror the real card they replace — same CSS class wrapper, same internal sections (avatar, name row, stat blocks, button). A 80px flat bar is better than a spinner but users still register it as "placeholder not content" if the proportions don't match. Structural skeletons (same grid, same spacing) feel like the content is "coming soon in place" rather than "whole section missing".
+
 ### Session #77 Reflexion — 2026-03-24 (UI/UX)
 ACCOMPLISHED: Redesigned the alerts settings page — replaced the flat settings-card with 3 toggle-rows with three distinct `.acc-card` channel cards (Web Push / Telegram / SMS), each with icon, plan-tier badge, live status dot+label, and a "Test" button shown only when the channel is active. Added `updateChannelStatus()` (reads toggle DOM state + `alertSettings` global to determine Active/Connected/Not linked/VIP required) and `testChannel()` (fires real browser Notification for push; toast for Telegram/SMS). Speed banner with left accent border added. Added `--blue: #4A9EFF` to `:root`. `telegram_chat_id` escaped via `escapeHtml()`. 303 tests stable, 22/22 Playwright checks pass.
 FAILED: Nothing.

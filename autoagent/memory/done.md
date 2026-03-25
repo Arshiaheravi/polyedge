@@ -77,3 +77,5 @@
 - **[SESSION #70] Login/Register form UX polish** — Added password visibility toggle (eye icon), inline field-level error messages replacing toast validation, fadeUp slide-in animation on auth card, social proof copy, and free-tier trust copy under register CTA
 
 - **[SESSION #72] Toast notification stack** — Upgraded toast system to Sonner/Emil Kowalski stacked pattern: collapsed fan-stack with scale+opacity peek, expand-on-hover with 8px gaps, auto-dismiss 5s, max 5 toasts. New toast-bet type for bet alerts, toastBet() helper, betAlert CustomEvent integration, new-position detection in refreshFollowsActivity(). 22 Playwright checks pass (5 new).
+
+- **[SESSION #78] Loading skeleton screens** — Added renderFollowSkeletonCards() with follow-card shaped skeletons (avatar circle + name/addr lines + button bar), replacing blank space in follows grid during load. Replaced 2 flat bars with 4 structured position-card skeletons in activity container. 24 Playwright checks pass (2 new).

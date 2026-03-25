@@ -295,6 +295,28 @@ async def check():
         except Exception as e:
             failures.append(f'Test alert button check error: {e}')
 
+        # CHECK 23 (session 78): renderFollowSkeletonCards function exists
+        try:
+            fn_exists = await page.evaluate("typeof renderFollowSkeletonCards === 'function'")
+            if fn_exists:
+                checks += 1
+                print('  [CHECK 23] renderFollowSkeletonCards function defined')
+            else:
+                failures.append('renderFollowSkeletonCards function not found in page JS')
+        except Exception as e:
+            failures.append(f'renderFollowSkeletonCards check error: {e}')
+
+        # CHECK 24 (session 78): renderFollowSkeletonCards(3) returns HTML with follow-card skeletons
+        try:
+            html = await page.evaluate("renderFollowSkeletonCards(3)")
+            if 'follows-grid' in html and 'follow-card' in html and 'skeleton' in html:
+                checks += 1
+                print('  [CHECK 24] renderFollowSkeletonCards(3) returns follows-grid with skeleton cards')
+            else:
+                failures.append(f'renderFollowSkeletonCards(3) output missing expected classes: {html[:100]}')
+        except Exception as e:
+            failures.append(f'renderFollowSkeletonCards output check error: {e}')
+
         await browser.close()
     return checks, failures
 

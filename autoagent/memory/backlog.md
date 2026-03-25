@@ -2,9 +2,14 @@
 
 ---
 
+## META TASKS
+
+- [ ] Code quality audit — scan last 5 work sessions' changed files (frontend/index.html) for cross-file coupling, test specificity degradation, and smells introduced by agent edits (Session 78 trigger: 60 work sessions = multiple of 5)
+
+---
+
 ## HIGH PRIORITY — UI/UX Tasks
 
-- [ ] Loading skeleton screens — replace any spinner with skeleton placeholder cards while data loads (leaderboard, follows list)
 - [ ] Bettor profile page hero upgrade — rich profile header: avatar circle placeholder (gradient initials), profit badge, rank badge, a stat strip (profit, win rate, volume, bets), follow/unfollow as the dominant CTA with pre-follow preview text ("You'll be notified within 30s when they bet")
 - [ ] Pricing section uplift — elevate the Basic card (translateY(-8px), 2px accent glow border, "Most Popular" badge), add a feature comparison list per card, add "Cancel anytime · No credit card for Free" trust line under the CTAs
 - [ ] Follows tab dashboard feel — add a summary row at the top (total followed, active bets in last 24h, P&L indicator), style the bettor cards on the follows page with a richer layout matching the leaderboard card quality

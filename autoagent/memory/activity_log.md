@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 78)
+DONE: Added structured skeleton loading screens to the follows tab — `renderFollowSkeletonCards(count)` creates follow-card shaped skeletons (avatar circle + name/addr lines + button bar) that appear in the follows grid while the API call loads. Replaced 2 flat 80px bars in the activity container with 4 structured position-card skeletons matching the real card layout (top bar, title, outcome pill row, stats grid). 24/24 Playwright checks pass. 303 tests stable.
+IMPACT: The follows tab no longer shows blank space while loading — users see a skeleton that mirrors the exact layout of real follow cards, so the page feels fast and responsive rather than broken or loading from scratch. The structured activity skeletons signal "copyable bets are loading" rather than "something is happening".
+FILES: frontend/index.html
+
 ## 2026-03-24 — UI/UX (Session 77)
 DONE: Redesigned the alerts settings page — replaced the flat toggle-row list inside one card with three distinct channel cards (Web Push, Telegram, SMS), each showing a live status dot + label (Active / Connected / Not linked yet / VIP required) and a "Test" button that appears only when the channel is fully configured and connected. Added speed-importance banner with left accent border. Added --blue CSS variable, updateChannelStatus() and testChannel() JS helpers. XSS-safe: telegram_chat_id escaped via escapeHtml(). 303 tests stable, 22/22 Playwright checks pass.
 IMPACT: Users can now see at a glance which notification channels are working vs. misconfigured — no more guessing if Telegram is actually linked. The Test button provides immediate feedback so users trust their alerts will fire before they need them. Three separate cards with plan-tier badges (Free / Basic / VIP) also reinforce the upgrade value proposition inline on the settings page.
