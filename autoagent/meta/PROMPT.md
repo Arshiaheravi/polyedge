@@ -18,6 +18,11 @@ If UNTRACKED files (`??`) or unstaged modified files (` M`) exist that match the
 - Update `autoagent/memory/current_task.md` to add: `NOTE: Partial work found — [files] exist. Next session: read existing files, assess what is done, check off completed steps, continue.`
 - Do NOT commit — META sessions don't ship code.
 
+## STEP 0.5 — PERIODIC TECH-DEBT SAFETY NET
+Count work sessions: `py -c "import json; d=json.load(open('autoagent/sessions.json')); print(len([s for s in d if s.get('type')=='work']))"` (run from project root).
+If that count is a multiple of 5 **AND** no code quality audit task exists in `autoagent/memory/backlog.md` → add one before continuing.
+This is a META-level safety net: work sessions sometimes skip this check in long sessions.
+
 ## STEP 1 — READ RECENT HISTORY
 Read `autoagent/memory/activity_log.md` — last 5 sessions.
 Look for:

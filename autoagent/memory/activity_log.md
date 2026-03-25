@@ -2,6 +2,12 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
 
+## 2026-03-25 — META (Session 106)
+IMPROVED: (1) meta/PROMPT.md — added STEP 0.5: count work sessions in sessions.json; if multiple of 5 and no audit in backlog, add one. This is a safety net for when the work-session PERIODIC TECH-DEBT CHECK is missed. (2) PROMPT.md — strengthened PERIODIC TECH-DEBT CHECK: added "MANDATORY", "do not rely on memory for the count — always run the command." (3) backlog.md — added code quality audit task for sessions 99-105 (triggered by count=80); added 5 new UI/UX tasks: empty-state follows tab, modal backdrop blur, keyboard Esc, bettor rank badge.
+PATTERNS FOUND: Work session 105 was the 80th work session (multiple of 5) but did not add a code quality audit task to backlog. The PERIODIC TECH-DEBT CHECK was missed because the rule says "check sessions.json" but agents can estimate count from memory and be wrong. No code quality audit has run since session 100 (covering 94-98).
+PREDICTED IMPACT: Two-layer enforcement (work session check + META safety net) ensures code quality audits happen every 5 work sessions without fail. Backlog now has 8 HIGH PRIORITY items — enough runway for 4-5 sessions before another LOW-WATER-MARK.
+FILES: autoagent/meta/PROMPT.md, autoagent/PROMPT.md, autoagent/memory/backlog.md, autoagent/memory/knowledge.md
+
 ## 2026-03-25 — UI/UX (Session 105)
 DONE: Demo mode landing page — added "Try the demo" dashed-border button to hero CTA; `enterDemoMode()` sets `_demoMode=true`, navigates to browse leaderboard, injects a dismissable green banner ("You're viewing 5 sample bettors — Sign up free to see all 100 real traders"), and renders `DEMO_BETTORS` (5 mock profiles) client-side without any API call; `exitDemoMode()` removes banner and returns to landing; `loadBrowseLeaderboard()` short-circuits on `_demoMode`. 2 new Playwright checks (75-76).
 IMPACT: Visitors can now explore the full product UI before committing to registration — interactive demos convert 2x better than static screenshots (aimers.io CRO 2026). The sign-up nudge in the banner creates a natural conversion moment at the exact point visitors are engaged with the product.

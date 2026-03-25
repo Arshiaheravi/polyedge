@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### META Session #106 Reflexion — 2026-03-25
+ACCOMPLISHED: (1) PERIODIC TECH-DEBT CHECK missed at work count=80 — added code quality audit task to backlog for sessions 99-105. (2) Added STEP 0.5 to meta/PROMPT.md — META sessions now verify the periodic tech-debt check wasn't skipped. (3) Strengthened PROMPT.md PERIODIC TECH-DEBT CHECK wording: "MANDATORY, do not skip", added command to run explicitly, added "Do not rely on memory for the count." (4) Backlog extended: added 5 new HIGH PRIORITY UI/UX tasks (audit, empty state follows, modal backdrop blur, keyboard Esc, rank badge) to prevent LOW-WATER-MARK hit in next 1-2 sessions.
+FAILED: Nothing failed. All changes are system improvements.
+RULE: [2026-03-25] The PERIODIC TECH-DEBT CHECK (work count multiple of 5 → add audit task) is easy to miss in long work sessions — the agent may estimate count from memory rather than running the json count. Adding an explicit "run the command" mandate AND a META-session safety net (STEP 0.5) creates two-layer enforcement for mandatory periodic tasks.
+
 ### Session #105 Reflexion — 2026-03-25 (UI/UX — Demo Mode Landing Page)
 ACCOMPLISHED: Added full demo mode flow: (1) `.btn-demo` CSS class (dashed border, muted color, green hover). (2) `.demo-banner` + `.demo-badge` + `.demo-banner-actions` CSS components. (3) Hero CTA gains third button: "Try the demo" with `onclick="enterDemoMode()"`. (4) `DEMO_BETTORS` array (5 mock bettors with realistic names/profit/volume, valid hex addresses). (5) `_demoMode` flag variable. (6) `enterDemoMode()`: sets flag, calls `showView('browse')`, injects `#demo-banner` before lb-grid via `insertBefore`. (7) `exitDemoMode()`: clears flag, removes banner, calls `showView('landing')`. (8) `loadBrowseLeaderboard()` short-circuits with demo bettors when `_demoMode === true` — no skeleton, no API call. 2 Playwright checks (75-76). Zero rework.
 FAILED: Nothing failed.

@@ -4,9 +4,14 @@
 
 ## HIGH PRIORITY — UI/UX Tasks (doable in current UI/UX-only mode)
 
+- [ ] Code quality audit — sessions 99–105 (9-check virtual team: Marcus XSS greps, Sarah CSS, Priya state, Jordan trust, Nina Playwright, Leo dead-code). Key areas: demo mode DEMO_BETTORS array, _setProfileTrend helper, hero-cycle animation, progress bar. XSS streak should extend through session 105 (sessions 77–105 = 29 sessions). Run both greps: `grep -n 'innerHTML.*\${' frontend/index.html` AND `grep -n 'innerHTML\s*=\s*[a-zA-Z_]' frontend/index.html`.
 - [ ] Back-to-top FAB on browse leaderboard — when user scrolls >300px inside the browse `.main-content`, show a floating green ↑ button (fixed bottom-right, above mobile nav) that scrolls to top. Disappears when near top. Makes 100-item leaderboard easier to navigate.
 - [ ] Animate "847+" social proof counter on hero — the hardcoded "847+" in the hero social proof `<strong>` should count up from ~800→847 via `animateCounter()` on page load (same pattern as hlstat-traders). Give it an ID e.g. `#hero-user-count`. Adds energy and implies the number is live.
 - [ ] Pricing locked features upgrade nudge — add a CSS-only tooltip on `.pricing-features li.dim:hover::after` showing "Unlock with Basic →" on Free tier dim items and "VIP only →" on Basic tier dim items. `content` set via data-upgrade attribute on each `<li>`. Converts hover curiosity into upgrade intent.
+- [ ] Empty state for follows tab — when `GET /follows` returns an empty array, show a centered empty-state card: SVG bell icon + "You're not following anyone yet" heading + "Browse the leaderboard to find top traders" subtext + "Go to Leaderboard →" CTA button that calls `showView('browse')`. Currently shows a blank list.
+- [ ] Modal backdrop blur — add `backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);` to `.modal-overlay` for all modals (upgrade, alerts setup). One CSS addition. Makes the modal feel more polished and premium.
+- [ ] Keyboard accessibility — add `document.addEventListener('keydown', e => { if (e.key === 'Escape') closeUpgradeModal() })` and wire it to any open modal overlay. Also add `Enter` key support for the primary action button in any open modal. Catches WAI-ARIA pattern for dialogs.
+- [ ] Bettor card rank badge — add a gold/silver/bronze `.lb-rank-badge` pill to each leaderboard card showing rank # (1, 2, 3 → gold/silver/bronze medals, 4-10 → green accent, 11+ → subdued). Position: absolute top-right of lb-card. The rank is already available as the array index in `renderBettorCard(bettor, index)`. Confirms top-3 status at a glance.
 
 ---
 
