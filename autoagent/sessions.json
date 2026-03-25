@@ -1820,5 +1820,15 @@
     "files": ["autoagent/memory/backlog.md", "autoagent/memory/done.md", "autoagent/memory/activity_log.md", "autoagent/sessions.json", "autoagent/memory/knowledge.md"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 39, "failures": 0, "notes": "No frontend changes — audit only"}
+  },
+  {
+    "session": 87,
+    "date": "2026-03-24",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Polished the login and sign-up page — it now animates smoothly when switching tabs, goes full-screen on mobile, and shows an 'or' divider with a Google login placeholder below the submit button",
+    "files": ["frontend/index.html", "autoagent/playwright_registry.py"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 42, "failures": 0, "notes": "3 new checks (40-42): tab animation class, or-divider count, social-btn count"}
   }
 ]

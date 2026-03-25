@@ -497,6 +497,39 @@ async def check():
         except Exception as e:
             failures.append(f'Step icon SVG check error: {e}')
 
+        # CHECK 40 (session 87): switchAuthTab animated version — auth-form-out class referenced in JS
+        try:
+            has_anim = await page.evaluate("typeof switchAuthTab === 'function' && switchAuthTab.toString().includes('auth-form-out')")
+            if has_anim:
+                checks += 1
+                print('  [CHECK 40] switchAuthTab uses auth-form-out animation class')
+            else:
+                failures.append('switchAuthTab does not reference auth-form-out animation')
+        except Exception as e:
+            failures.append(f'switchAuthTab animation check error: {e}')
+
+        # CHECK 41 (session 87): .auth-or-divider present in both login and register forms
+        try:
+            dividers = await page.eval_on_selector_all('.auth-or-divider', 'els => els.length')
+            if dividers == 2:
+                checks += 1
+                print('  [CHECK 41] 2 .auth-or-divider elements present (login + register)')
+            else:
+                failures.append(f'Expected 2 .auth-or-divider elements, found {dividers}')
+        except Exception as e:
+            failures.append(f'auth-or-divider check error: {e}')
+
+        # CHECK 42 (session 87): .auth-social-btn placeholder present (Google SSO coming soon)
+        try:
+            social_btns = await page.eval_on_selector_all('.auth-social-btn', 'els => els.length')
+            if social_btns == 2:
+                checks += 1
+                print('  [CHECK 42] 2 .auth-social-btn placeholders present (login + register)')
+            else:
+                failures.append(f'Expected 2 .auth-social-btn elements, found {social_btns}')
+        except Exception as e:
+            failures.append(f'auth-social-btn check error: {e}')
+
         await browser.close()
     return checks, failures
 

@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-24 — UI/UX (Session 87)
+DONE: Auth form UX tightening — (1) Tab switch now animates with fade+slide (authFormOut/authFormIn keyframes, 150ms delay before showing new form — prevents flash); (2) mobile full-screen: at ≤640px the auth-box fills 100vh with no border-radius and flush padding; (3) "or" divider with horizontal rules added between submit button and a disabled Google SSO placeholder in both Login and Register forms.
+IMPACT: Auth form now feels polished and intentional on both desktop and mobile. The animated tab switch removes the jarring instant swap. The Google placeholder sets expectations ("social login is coming") without false affordance (button is disabled). Mobile users get a native app-style full-screen form instead of a floating card that fights keyboard pop-up.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-24 — META (Session 86)
 IMPROVED: (1) design.md — added "LAYOUT TRAPS" section with the flex-vs-grid connector arrow rule from session 84's first-attempt failure (cards inside grid can't have connector siblings injected between cells; fix: flat flex container with cards and connectors as siblings). (2) backlog.md — removed stale "How it works 3-step section" sub-item from Trust signals (done session 84); added clarifying note that leaderboard follow button (not profile page) is the target for pre-commit follow preview; added 2 new HIGH VALUE tasks: hero live counter animations (countUp/ticker, pure frontend) and WebSocket real-time notifications (VIP differentiator, backend change); added verification note on color-coded P&L to check coverage before removing.
 PATTERNS FOUND: (1) Backlog items describing multi-part tasks go stale when one sub-item gets done without a backlog update — the next session picks the task and wastes turns discovering part of it is already done (session 84 did "How it works" but backlog still listed it). (2) Layout pattern failures (session 84 flex/grid) cost 2-3 turns per occurrence but are fully preventable with one design.md rule read upfront.

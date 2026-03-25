@@ -45,6 +45,12 @@
 
 ## Session Reflexions
 
+### Session #87 Reflexion — 2026-03-24 (UI/UX)
+ACCOMPLISHED: Auth form UX tightening — animated tab switch (authFormOut/authFormIn CSS keyframes + 150ms JS timeout before revealing new form), mobile full-screen auth-box (100vh, border-radius:0 at ≤640px), "or" divider + Google SSO placeholder button (disabled, opacity:0.45) in both forms. 303 tests stable, 42/42 Playwright checks pass (3 new).
+FAILED: Nothing.
+RULE: [2026-03-24] When animating a tab/panel switch (show old → fade out → hide old → show new → fade in): use setTimeout to delay the swap by the CSS animation duration (e.g. 150ms) so the out-animation completes before the element gets `hidden`. If you hide immediately, the animation never plays. Pattern: add out-class → setTimeout(duration) → add hidden + remove out-class + remove hidden on target + add in-class → setTimeout(220) → remove in-class.
+RULE: [2026-03-24] For disabled/coming-soon placeholder buttons in UI: use `disabled` attribute + `cursor:not-allowed` + `opacity:0.45` + `transition:none` to clearly signal "not interactive yet" without visual clutter. Do NOT use `pointer-events:none` alone — that hides the not-allowed cursor. The `disabled` attribute also prevents keyboard focus (correct for a placeholder).
+
 ### Session #85 Reflexion — 2026-03-24 (META audit)
 ACCOMPLISHED: Code quality audit of sessions 77–83. Ran Marcus two-grep XSS check, Sarah UI consistency, Jordan conversion, Nina regression, Leo dead-code checks. Zero issues found across 5 work sessions.
 FAILED: Nothing.
