@@ -563,6 +563,44 @@ async def check():
         except Exception as e:
             failures.append(f'lb-card-chevron check error: {e}')
 
+        # CHECK 46 (session 89): lb-follow-wrap + lb-follow-tooltip rendered in renderBettorCard (not-following state)
+        try:
+            html = await page.evaluate("renderBettorCard({address:'0xaaa111',name:'Alice Trader',pnl_usd:2000,volume_usd:8000,rank:5}, 0)")
+            if 'lb-follow-wrap' in html and 'lb-follow-tooltip' in html:
+                checks += 1
+                print('  [CHECK 46] renderBettorCard (not following) contains lb-follow-wrap + lb-follow-tooltip')
+            else:
+                failures.append(f'renderBettorCard missing lb-follow-wrap or lb-follow-tooltip: {html[-200:]}')
+        except Exception as e:
+            failures.append(f'lb-follow-wrap check error: {e}')
+
+        # CHECK 47 (session 89): tooltip text contains "notified within 30s" for a specific bettor name
+        try:
+            html = await page.evaluate("renderBettorCard({address:'0xbbb222',name:'Bob Smith',pnl_usd:500,volume_usd:3000,rank:10}, 1)")
+            if 'notified within 30s' in html and 'Bob Smith' in html:
+                checks += 1
+                print('  [CHECK 47] lb-follow-tooltip contains "notified within 30s" + bettor name')
+            else:
+                failures.append(f'Tooltip missing expected text. Excerpt: {html[-200:]}')
+        except Exception as e:
+            failures.append(f'lb-follow-tooltip text check error: {e}')
+
+        # CHECK 48 (session 89): tooltip NOT rendered when isFollowing=true (followedAddresses has address)
+        try:
+            html = await page.evaluate("""() => {
+                followedAddresses.add('0xccc333');
+                const h = renderBettorCard({address:'0xccc333',name:'Carol',pnl_usd:100,volume_usd:1000,rank:20}, 2);
+                followedAddresses.delete('0xccc333');
+                return h;
+            }""")
+            if 'lb-follow-tooltip' not in html:
+                checks += 1
+                print('  [CHECK 48] lb-follow-tooltip correctly absent when already following')
+            else:
+                failures.append(f'lb-follow-tooltip shown when already following — should be hidden')
+        except Exception as e:
+            failures.append(f'lb-follow-tooltip following-state check error: {e}')
+
         await browser.close()
     return checks, failures
 

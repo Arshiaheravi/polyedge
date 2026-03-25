@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-24 — UI/UX (Session 89)
+DONE: Leaderboard follow preview tooltip — `.lb-follow-wrap` relative container + `.lb-follow-tooltip` absolute tooltip added to `renderBettorCard()`; tooltip shows "You'll be notified within 30s when [Name] bets" on hover/focus of the Follow button; tooltip is hidden when the bettor is already followed; CSS arrow caret points down to button; 3 new Playwright checks (46–48). Also discovered hero counter animations were already implemented (animateCounter + runLandingCounters, committed prior session) and removed from backlog. 303 backend tests pass. 48/48 Playwright checks pass.
+IMPACT: Users hovering the Follow button on any leaderboard card now see exactly what they're signing up for before clicking — the "30s notification" promise is shown at the precise moment of decision. This reduces uncertainty about the core value prop (instant alerts) and should increase follow conversion rate.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
 ## 2026-03-24 — UI/UX (Session 88)
 DONE: Leaderboard card progressive disclosure — clicking any lb-card (except the follow button) expands it via CSS max-height transition (0 → 220px) to reveal recent market titles (lazy-fetched from /bettors/{address} on first expand, results cached in _disclosureCache) and a "View profile →" CTA button. Chevron rotates 180° on expand. Profile navigation moved from header click to the disclosure button. market title data uses escapeHtml(). 45 Playwright checks pass (3 new: toggleLbCardExpand, disclosure HTML, chevron).
 IMPACT: Users can now preview a bettor's recent betting activity directly from the leaderboard without leaving the page. The "View profile →" CTA surfaces at the moment of intent — immediately after the user sees the recent markets — reducing the decision friction before following.
