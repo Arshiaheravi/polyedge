@@ -2,7 +2,7 @@
 PolyEdge — Persistent Playwright check registry.
 This file is cumulative: sessions ADD checks here, never subtract.
 Usage: cp autoagent/playwright_registry.py autoagent/tmp_check.py → add session checks → run → cp back.
-Last updated: Session 108 (back-to-top FAB — checks 77-78: #back-to-top-fab exists/hidden on load, FAB visible when browseMC scrollTop > 300)
+Last updated: Session 125 (account tab content — checks 108-110: account tab no JS errors, #acct-tier-desc non-empty, #acct-upgrade-btn present)
 """
 import asyncio, sys
 from playwright.async_api import async_playwright
@@ -1602,6 +1602,51 @@ async def check():
                 failures.append(f"Mobile 375px alerts tab has horizontal overflow (scrollWidth={overflow_info['scrollWidth']} > clientWidth={overflow_info['clientWidth']})")
         except Exception as e:
             failures.append(f"Mobile alerts overflow check error: {e}")
+
+        # ── CHECKS 108-110: account tab content (Session 125) ──
+
+        # CHECK 108: account tab renders without JS errors
+        try:
+            js_errors_before = len(js_errors)
+            await page.evaluate("showView('dashboard'); showTab('account')")
+            await asyncio.sleep(0.4)
+            new_errors = js_errors[js_errors_before:]
+            if not new_errors:
+                checks += 1
+                print("  [CHECK 108] Account tab renders without JS errors")
+            else:
+                failures.append(f"Account tab navigation caused JS errors: {'; '.join(new_errors[:3])}")
+        except Exception as e:
+            failures.append(f"Account tab JS error check error: {e}")
+
+        # CHECK 109: #acct-tier-desc has non-empty text content
+        try:
+            tier_desc_ok = await page.evaluate("""() => {
+                const el = document.getElementById('acct-tier-desc');
+                return el !== null && el.textContent.trim().length > 0;
+            }""")
+            if tier_desc_ok:
+                checks += 1
+                print("  [CHECK 109] #acct-tier-desc present with non-empty text")
+            else:
+                failures.append("#acct-tier-desc missing or has empty text content")
+        except Exception as e:
+            failures.append(f"acct-tier-desc check error: {e}")
+
+        # CHECK 110: account tab has #acct-upgrade-btn (.btn-primary upgrade button) in DOM
+        try:
+            upgrade_ok = await page.evaluate("""() => {
+                const btn = document.getElementById('acct-upgrade-btn');
+                return btn !== null && btn.classList.contains('btn-primary');
+            }""")
+            if upgrade_ok:
+                checks += 1
+                print("  [CHECK 110] #acct-upgrade-btn (.btn-primary) present in account tab DOM")
+            else:
+                failures.append("#acct-upgrade-btn missing or does not have .btn-primary class")
+            await page.evaluate("showView('landing')")
+        except Exception as e:
+            failures.append(f"acct-upgrade-btn check error: {e}")
 
         await browser.close()
     return checks, failures
