@@ -105,6 +105,18 @@ Score each dimension pass/fail — from ECC design-system/SKILL.md (2026-03-23):
 
 Any dimension that fails = fix before committing. Log issues that require a full session to `autoagent/memory/tech_debt.md`.
 
+## LAYOUT TRAPS (prevent wasted turns)
+
+### Connector arrows between flex-column items
+When building a "steps with connector arrows" layout (e.g. How It Works section):
+- **WRONG**: put step cards inside a CSS grid, connector arrows as siblings outside the grid — grid handles placement internally, you can't inject elements between grid cells
+- **RIGHT**: put ALL step cards AND connector divs as direct children of a single `display:flex; flex-direction:row` container — connectors are siblings of the cards, not nested inside a grid wrapper
+- Pattern: `.steps-flow { display:flex; align-items:flex-start }` → `[card] [connector] [card] [connector] [card]` all as flex children
+- Connectors need `padding-top: 56px` (approx) to vertically center against the card icon, not the card top edge
+- On mobile: change flex-direction to `column` and hide connectors (`display:none`)
+
+(Source: PolyEdge session 84 — first attempt used grid wrapper, connectors couldn't interleave. Fix: remove grid, use flat flex)
+
 ## AVOID (AI slop patterns in copy-trading UIs)
 - Generic purple gradients without purpose
 - 3-column grids with no visual hierarchy

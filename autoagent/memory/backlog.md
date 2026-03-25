@@ -13,10 +13,12 @@
 
 ## MEDIUM PRIORITY
 
+- [ ] Hero live counter animations — implement countUp() on the 3 hero stats strip (animate from 0 to final value on page load using requestAnimationFrame); add number ticker that increments one of the live stats every 8s to signal real-time activity. Pure CSS/JS, no backend needed. Pattern already in design.md ANIMATION RULES.
 - [ ] Nav/header improvements — add active state to nav links, smooth scroll behavior, add a subtle top progress bar on page load
-- [ ] Trust signals section — add "Built on real Polymarket data", show live bet count ticker, add a "How it works" 3-step section with icons
-- [ ] Color-coded profit/loss — green for positive P&L, red for negative, consistent across all cards and tables
-- [ ] Pre-commit follow preview — before confirming follow, show inline preview: "You will be notified within 30s when [Bettor Name] places a bet"; one-CTA enrollment flow; reduces follow abandonment
+- [ ] Trust signals section — add "Built on real Polymarket data" text badge near leaderboard header; show live total bet count (fetch from `/admin/stats` if available or derive from leaderboard data). **Note**: "How it works 3-step section" was completed in session 84 — do NOT re-implement it.
+- [ ] Color-coded profit/loss — verify consistency: sessions 75/80/83 added green/red profit badges on leaderboard cards, profile hero, and follow cards. Check that the follows activity grid (renderPositionItem) also colors P&L correctly. If already done everywhere, remove this item.
+- [ ] Pre-commit follow preview — on the LEADERBOARD follow button (not profile page — that already has it from session 80): before confirming follow, show a tooltip or inline preview "You'll be notified within 30s when [Name] bets". Profile page already has this; leaderboard cards do not yet.
+- [ ] WebSocket real-time notifications — replace the 30s APScheduler polling loop with Polymarket's WebSocket endpoints (`/v1/ws/markets`, `/v1/ws/private`) for instant bet detection. Key VIP tier differentiator — reduces detection latency from ~30s to ~1s. Backend change: scheduler.py. **Note: backend change required — skip in UI/UX-only mode.**
 
 ---
 
