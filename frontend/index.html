@@ -397,6 +397,13 @@
     .blur-row td { filter: blur(5px); user-select: none; pointer-events: none; }
 
     /* Pricing */
+    .pricing-billing-toggle { display: flex; align-items: center; justify-content: center; gap: 0; margin: 0 auto 28px; background: var(--card2); border: 1px solid var(--border); border-radius: 100px; padding: 4px; width: fit-content; }
+    .billing-tab { padding: 7px 20px; border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text2); transition: color 0.2s, background 0.2s; user-select: none; white-space: nowrap; }
+    .billing-tab.active { background: var(--card3); color: var(--text); }
+    .billing-save-badge { display: none; margin-left: 6px; font-size: 10px; font-weight: 800; color: var(--accent); background: rgba(0,201,122,0.12); border: 1px solid rgba(0,201,122,0.3); padding: 2px 7px; border-radius: 100px; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.05em; }
+    .billing-tab.active .billing-save-badge { display: inline; }
+    .pricing-social-proof { text-align: center; font-size: 13px; color: var(--text3); margin-bottom: 8px; }
+    .pricing-social-proof strong { color: var(--text2); }
     .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 20px; max-width: 980px; margin: 0 auto; align-items: start; padding-top: 16px; }
     .pricing-card {
       background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
@@ -425,13 +432,20 @@
     .pricing-name { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text2); margin-bottom: 14px; }
     .pricing-price { font-size: 48px; font-weight: 900; line-height: 1; margin-bottom: 4px; letter-spacing: -1px; }
     .pricing-price sub { font-size: 16px; font-weight: 400; color: var(--text2); vertical-align: baseline; }
+    .pricing-price-annual { display: none; }
     .pricing-period { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+    .pricing-annual-savings { display: none; font-size: 12px; color: var(--accent); font-weight: 700; margin-top: 2px; }
+    body.annual-billing .pricing-price-monthly { display: none; }
+    body.annual-billing .pricing-price-annual { display: inline; }
+    body.annual-billing .pricing-annual-savings { display: block; }
     .pricing-features { list-style: none; margin-bottom: 32px; }
     .pricing-features li { font-size: 14px; padding: 9px 0; border-bottom: 1px solid rgba(35,40,64,0.5); display: flex; align-items: center; gap: 10px; color: var(--text); }
+    .pricing-features li.dim { color: var(--text3); }
     .pricing-features li:last-child { border-bottom: none; }
     .check { color: var(--green2); font-size: 15px; flex-shrink: 0; }
     .cross { color: var(--text3); font-size: 15px; flex-shrink: 0; }
     .pricing-cta-note { font-size: 12px; color: var(--text3); text-align: center; margin-top: 10px; line-height: 1.5; }
+    .pricing-trust-row { text-align: center; font-size: 12px; color: var(--text3); margin-top: 20px; }
 
     /* Testimonials */
     .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
@@ -757,6 +771,7 @@
       /* Remove elevation on featured pricing card — can't elevate in a stacked column */
       .pricing-card.featured { transform: none; margin-top: 8px; }
       .pricing-card.featured:hover { transform: translateY(-4px); }
+      .pricing-billing-toggle { margin-bottom: 20px; }
       /* Toast above bottom nav */
       #toast-container { bottom: 72px; right: 8px; left: 8px; width: auto; }
       .toast { max-width: 100%; }
@@ -1135,18 +1150,30 @@
     <div class="section-eyebrow">Pricing</div>
     <div class="section-title">One plan pays for itself with one good bet</div>
     <div class="section-sub">Start free. Upgrade when you're ready to start copying.</div>
+    <!-- Billing toggle -->
+    <div class="pricing-billing-toggle" role="group" aria-label="Billing period">
+      <div class="billing-tab active" data-period="monthly" onclick="setPricingPeriod('monthly')" tabindex="0" role="button">Monthly</div>
+      <div class="billing-tab" data-period="annual" onclick="setPricingPeriod('annual')" tabindex="0" role="button">Annual <span class="billing-save-badge">Save 17%</span></div>
+    </div>
+    <!-- Social proof -->
+    <div class="pricing-social-proof"><strong>847+ traders</strong> are currently copying top bettors on PolyEdge</div>
     <div class="pricing-grid">
       <!-- Free -->
       <div class="pricing-card">
         <div class="pricing-name">Free</div>
-        <div class="pricing-price">$0<sub>/mo</sub></div>
+        <div class="pricing-price">
+          <span class="pricing-price-monthly">$0<sub>/mo</sub></span>
+          <span class="pricing-price-annual">$0<sub>/mo</sub></span>
+        </div>
         <div class="pricing-period">Free forever</div>
         <ul class="pricing-features">
-          <li><span class="check">&#10003;</span> Full leaderboard access</li>
-          <li><span class="check">&#10003;</span> Bettor profiles &amp; stats</li>
+          <li><span class="check">&#10003;</span> Top 100 leaderboard + bettor profiles</li>
+          <li><span class="check">&#10003;</span> Full bet history &amp; stats</li>
           <li><span class="check">&#10003;</span> Follow <strong>1 bettor</strong></li>
-          <li><span class="cross">&#10007;</span> <span style="color:var(--text3);">Alerts &amp; notifications</span></li>
-          <li><span class="cross">&#10007;</span> <span style="color:var(--text3);">Priority speed</span></li>
+          <li class="dim"><span class="cross">&#10007;</span> Instant bet alerts (within 30s)</li>
+          <li class="dim"><span class="cross">&#10007;</span> Web push &amp; Telegram notifications</li>
+          <li class="dim"><span class="cross">&#10007;</span> SMS text alerts</li>
+          <li class="dim"><span class="cross">&#10007;</span> Priority speed (fastest alerts)</li>
         </ul>
         <button class="btn btn-secondary w-full btn-lg" onclick="showView('auth', 'register')">Get Started Free</button>
         <div class="pricing-cta-note">No credit card required</div>
@@ -1155,15 +1182,20 @@
       <div class="pricing-card featured">
         <div class="pricing-badge">Most Popular</div>
         <div class="pricing-name" style="color:var(--accent2);">Basic</div>
-        <div class="pricing-price" style="color:var(--accent2);">$4.99<sub>/mo</sub></div>
+        <div class="pricing-price" style="color:var(--accent2);">
+          <span class="pricing-price-monthly">$4.99<sub>/mo</sub></span>
+          <span class="pricing-price-annual">$4.16<sub>/mo</sub></span>
+        </div>
+        <div class="pricing-annual-savings" style="color:var(--accent);">Save $10/yr &mdash; billed $49.90 annually</div>
         <div class="pricing-period">Less than a coffee</div>
         <ul class="pricing-features">
-          <li><span class="check">&#10003;</span> Full leaderboard access</li>
-          <li><span class="check">&#10003;</span> Bettor profiles &amp; stats</li>
+          <li><span class="check">&#10003;</span> Top 100 leaderboard + bettor profiles</li>
+          <li><span class="check">&#10003;</span> Full bet history &amp; stats</li>
           <li><span class="check">&#10003;</span> Follow up to <strong>5 bettors</strong></li>
-          <li><span class="check">&#10003;</span> Web push notifications</li>
-          <li><span class="check">&#10003;</span> Telegram alerts</li>
-          <li><span class="cross">&#10007;</span> <span style="color:var(--text3);">SMS alerts</span></li>
+          <li><span class="check">&#10003;</span> <strong>Get alerted within 30s</strong> when they bet</li>
+          <li><span class="check">&#10003;</span> Web push &amp; Telegram notifications</li>
+          <li class="dim"><span class="cross">&#10007;</span> SMS text alerts</li>
+          <li class="dim"><span class="cross">&#10007;</span> Priority speed (fastest alerts)</li>
         </ul>
         <button class="btn btn-primary w-full btn-lg" onclick="showView('auth', 'register')">Start Basic &rarr;</button>
         <div class="pricing-cta-note">Cancel anytime &middot; Billed monthly</div>
@@ -1171,21 +1203,26 @@
       <!-- VIP -->
       <div class="pricing-card pricing-vip">
         <div class="pricing-name" style="color:var(--gold2);">VIP</div>
-        <div class="pricing-price" style="color:var(--gold2);">$9.99<sub>/mo</sub></div>
+        <div class="pricing-price" style="color:var(--gold2);">
+          <span class="pricing-price-monthly">$9.99<sub>/mo</sub></span>
+          <span class="pricing-price-annual">$8.29<sub>/mo</sub></span>
+        </div>
+        <div class="pricing-annual-savings" style="color:var(--gold);">Save $20/yr &mdash; billed $99.48 annually</div>
         <div class="pricing-period">For serious traders</div>
         <ul class="pricing-features">
-          <li><span class="check">&#10003;</span> Full leaderboard access</li>
-          <li><span class="check">&#10003;</span> Bettor profiles &amp; stats</li>
+          <li><span class="check">&#10003;</span> Top 100 leaderboard + bettor profiles</li>
+          <li><span class="check">&#10003;</span> Full bet history &amp; stats</li>
           <li><span class="check">&#10003;</span> <strong>Unlimited</strong> bettor follows</li>
-          <li><span class="check">&#10003;</span> Web push notifications</li>
-          <li><span class="check">&#10003;</span> Telegram alerts</li>
-          <li><span class="check">&#10003;</span> <strong>SMS alerts</strong> (text message)</li>
-          <li><span class="check">&#10003;</span> <strong>Priority speed</strong> (fastest alerts)</li>
+          <li><span class="check">&#10003;</span> <strong>Get alerted within 30s</strong> when they bet</li>
+          <li><span class="check">&#10003;</span> Web push &amp; Telegram notifications</li>
+          <li><span class="check">&#10003;</span> <strong>SMS text alerts</strong> (instant to your phone)</li>
+          <li><span class="check">&#10003;</span> <strong>Priority speed</strong> &mdash; fastest alerts, first to copy</li>
         </ul>
         <button class="btn btn-gold w-full btn-lg" onclick="showView('auth', 'register')">Go VIP &rarr;</button>
         <div class="pricing-cta-note">Cancel anytime &middot; Billed monthly</div>
       </div>
     </div>
+    <div class="pricing-trust-row">Cancel anytime &nbsp;&middot;&nbsp; No credit card for Free tier &nbsp;&middot;&nbsp; Upgrade or downgrade at any time</div>
   </div>
 
   <!-- Testimonials -->
@@ -2142,6 +2179,27 @@ function setBtn(id, disabled, text) {
   b.disabled = disabled;
   if (text) b.textContent = text;
 }
+
+// ── Pricing billing toggle ────────────────────────────────────
+
+function setPricingPeriod(period) {
+  document.querySelectorAll('.billing-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.period === period);
+  });
+  if (period === 'annual') {
+    document.body.classList.add('annual-billing');
+  } else {
+    document.body.classList.remove('annual-billing');
+  }
+}
+
+// Keyboard support for billing toggle tabs
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' || e.key === ' ') {
+    const tab = e.target.closest('.billing-tab');
+    if (tab) { e.preventDefault(); setPricingPeriod(tab.dataset.period); }
+  }
+});
 
 // ── View routing ─────────────────────────────────────────────
 
