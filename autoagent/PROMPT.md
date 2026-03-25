@@ -110,6 +110,8 @@ Before entering any refinement loop (e.g. fix-test-retry cycle), define the acce
 - "Pass: feature works as described in current_task.md step N" — concrete
 If no criterion exists, stop looping after 2 retries and log the blocker to current_task.md instead of looping indefinitely.
 
+**OBSERVER LOOP GUARD** (5-layer loop prevention — ECC v1.9.0): If you observe that you have called the SAME tool with the SAME parameters 3 or more times in this session, STOP immediately. You are in an observer loop — a runaway recursion where each retry produces the same failure. Write to current_task.md: "BLOCKED: observer loop detected — [tool name] called N times with same params. Root cause: [hypothesis]. Escalating to user." Do not retry a 4th time. (Source: affaan-m/everything-claude-code v1.9.0 5-layer observer loop prevention guard, March 2026)
+
 ## IF NO RELEVANT SKILL EXISTS
 Create `autoagent/skills/[tasktype].md` with rules you discover while working.
 Example: if you hit a tricky database migration pattern, write `skills/database.md`.

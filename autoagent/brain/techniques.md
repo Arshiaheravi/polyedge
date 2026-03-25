@@ -342,6 +342,12 @@ Where: autoagent/skills/design.md (PROBABILITY CHIP section)
 Source: 2026 fintech dark-mode research; badges-vs-chips UI pattern analysis
 Expected impact: The backlog bet-activity-feed enhancement task can copy the pill CSS directly — no research needed
 
+## Observer loop guard (5-layer runaway prevention) — implemented 2026-03-24 (session 81)
+What: Added "OBSERVER LOOP GUARD" to LOOP EXIT CONDITIONS section in PROMPT.md. If the same tool is called with the same params 3+ times, the agent STOPS and writes BLOCKED to current_task.md — no 4th retry. Prevents runaway loops that exhaust context windows on genuinely broken environments.
+Where: PROMPT.md (LOOP EXIT CONDITIONS section, after the 2-retry stop rule)
+Source: affaan-m/everything-claude-code v1.9.0 — 5-layer loop prevention guard (March 2026)
+Expected impact: Eliminates runaway tool-call loops that silently exhaust context; converts silent failure into explicit BLOCKED log.
+
 ## SPA wait strategies in Playwright (waitForResponse pattern) — implemented 2026-03-24 (session 81)
 What: Added "SPA WAIT STRATEGIES" section to playwright.md with `waitForResponse()` (precise, waits for specific API call) and `networkidle` (coarser) patterns for PolyEdge's API-loaded content. Includes working Python code snippet.
 Where: autoagent/skills/playwright.md (new section at end)
