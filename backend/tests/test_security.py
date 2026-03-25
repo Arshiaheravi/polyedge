@@ -1,7 +1,8 @@
 """
 Security and business-rule edge-case tests.
 Covers: JWT tampering, expiry, missing sub; VIP unlimited follows;
-register input validation; unfollow-then-re-follow; bettor unknown address.
+register input validation; unfollow-then-re-follow; bettor unknown address;
+bcrypt hash storage; rate-limit stability under rapid login attempts.
 """
 from datetime import timedelta
 from unittest.mock import AsyncMock, patch
@@ -185,3 +186,55 @@ class TestBettorUnknownAddress:
         with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(side_effect=Exception("API down"))):
             resp = client.get("/bettors/0xbadaddress")
         assert resp.status_code == 502
+
+
+# ---------------------------------------------------------------------------
+# Bcrypt Hash Storage
+# ---------------------------------------------------------------------------
+
+def test_password_stored_as_bcrypt_hash(client, db):
+    """Registered user's password must be stored as a bcrypt hash ($2b$), never plaintext."""
+    from app.models import User
+
+    client.post("/auth/register", json={
+        "email": "hashcheck@example.com",
+        "password": "supersecretpass",
+        "name": "HashUser",
+    })
+
+    user = db.query(User).filter(User.email == "hashcheck@example.com").first()
+    assert user is not None
+    assert user.hashed_password.startswith("$2b$"), (
+        f"Expected bcrypt prefix '$2b$' but got: {user.hashed_password[:10]}"
+    )
+    assert "supersecretpass" not in user.hashed_password, (
+        "Plaintext password must never appear in hashed_password column"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Rate Limiting — server stability under rapid repeated login attempts
+# ---------------------------------------------------------------------------
+
+def test_rapid_login_attempts_never_500(client):
+    """10 rapid login attempts must not produce any 500 errors.
+
+    The server has no formal rate limiting — this test verifies that repeated
+    failed auth requests are handled gracefully (400/401/422) and never crash
+    with a 500 Internal Server Error, which would indicate a bug in auth logic.
+    """
+    client.post("/auth/register", json={
+        "email": "ratelimit@example.com",
+        "password": "correctpass",
+        "name": "RateUser",
+    })
+
+    for _ in range(10):
+        resp = client.post("/auth/login", json={
+            "email": "ratelimit@example.com",
+            "password": "wrongpassword",
+        })
+        assert resp.status_code != 500, (
+            f"Server returned 500 on a login attempt — auth must never crash: {resp.text}"
+        )
+        assert resp.status_code == 401

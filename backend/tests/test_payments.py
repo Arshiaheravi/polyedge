@@ -243,3 +243,73 @@ def test_webhook_unknown_event_returns_200(client):
 
     assert resp.status_code == 200
     assert resp.json() == {"status": "ok"}
+
+
+def test_webhook_basic_tier_upgrade_enforces_follow_limit_5(client, db):
+    """checkout.session.completed with plan=basic upgrades user free → basic,
+    and they can now add up to 5 follows (not just 1 as on free tier).
+
+    This tests the full chain: Stripe webhook → tier upgrade → tier enforcement.
+    """
+    from app.auth import hash_password
+    from app.models import User
+    from app.services.stripe_service import handle_webhook_event
+    import asyncio
+    import json as _json
+
+    user = User(
+        email="basic_upgrade@x.com",
+        hashed_password=hash_password("p"),
+        name="Basic User",
+        subscription_tier="free",
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    # Simulate the Stripe webhook upgrading them to basic
+    event = {
+        "type": "checkout.session.completed",
+        "data": {
+            "object": {
+                "metadata": {"user_id": str(user.id), "plan": "basic"},
+                "subscription": "sub_basic_test",
+            }
+        }
+    }
+    asyncio.run(handle_webhook_event(
+        payload=_json.dumps(event).encode(),
+        sig_header="",
+        db=db,
+    ))
+    db.refresh(user)
+    assert user.subscription_tier == "basic"
+
+    # Now verify they can add up to 5 follows (basic tier limit)
+    # POST /follows uses bettor_address + bettor_name fields; no external API call is made.
+    token_resp = client.post("/auth/login", json={
+        "email": "basic_upgrade@x.com", "password": "p"
+    })
+    token = token_resp.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Should be able to add 5 follows without hitting limit
+    for i in range(5):
+        resp = client.post(
+            "/follows",
+            json={"bettor_address": f"0xbasicbettor{i:04d}", "bettor_name": f"Bettor{i}"},
+            headers=headers,
+        )
+        assert resp.status_code == 201, (
+            f"Follow #{i+1} failed with {resp.status_code} — basic tier should allow 5 follows"
+        )
+
+    # 6th follow must be rejected (basic limit is 5)
+    resp = client.post(
+        "/follows",
+        json={"bettor_address": "0xbasicbettor9999", "bettor_name": "Extra"},
+        headers=headers,
+    )
+    assert resp.status_code == 403, (
+        "Basic tier allows only 5 follows — 6th must be rejected with 403"
+    )
