@@ -4,8 +4,6 @@
 
 ## HIGH PRIORITY — Security & Vulnerability Tests
 
-- [ ] CORS headers test — verify allowed origins accepted and disallowed origins rejected; no test currently exists for CORS configuration (grep confirmed: zero "cors\|CORS\|origin" matches in backend/tests/)
-
 ---
 
 ## HIGH PRIORITY — Frontend Playwright Tests

@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — TESTING (Session 118)
+DONE: Added 5 CORS header tests (test_cors.py) covering simple request header presence, wildcard origin acceptance, OPTIONS preflight 200 response, Authorization header allowance, and no-origin same-origin requests. 359 backend tests pass (up from 354).
+IMPACT: Proves the CORS middleware is correctly configured for cross-origin browser clients — the frontend at localhost:3000 can reach the API at localhost:8002 with credentials and custom headers. Last remaining HIGH PRIORITY security gap now covered.
+FILES: backend/tests/test_cors.py
+
 ## 2026-03-25 — META (Session 117)
 DONE: Code quality audit of sessions 108–115 (9 files: frontend/index.html, services/polymarket.py, playwright_registry.py, test_security.py, test_payments.py, test_security_extended.py, test_bettors.py, test_polymarket_service.py). All 9 virtual team checks passed. Marcus XSS greps clean — 5 innerHTML=variable patterns verified, all API-sourced strings properly escaped with escapeHtml(). 354 backend tests stable.
 IMPACT: Confirms the codebase is clean through session 115. XSS-free streak now 41+ sessions (77–117). Clears the top HIGH PRIORITY backlog item, unblocking next task selection.

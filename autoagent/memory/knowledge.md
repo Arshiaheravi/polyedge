@@ -33,7 +33,7 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **354 passed** (as of 2026-03-25, session 115 — bcrypt hash, rate-limit, Stripe basic-tier chain tests)
+- Test count: **359 passed** (as of 2026-03-25, session 118 — CORS header tests added)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +44,11 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #118 Reflexion — 2026-03-25 (TESTING — CORS headers)
+ACCOMPLISHED: Added 5 CORS tests in test_cors.py — simple request header presence, wildcard origin acceptance, OPTIONS preflight 200 response, Authorization header allowance in preflight, no-origin same-origin request. All 5 pass; total 359 tests.
+FAILED: Nothing.
+RULE: [2026-03-25] When testing CORS with `allow_origins=["*"]` + `allow_credentials=True`, Starlette reflects the request Origin back (not bare `*`) because `Access-Control-Allow-Origin: *` is incompatible with `Access-Control-Allow-Credentials: true`. Assert the header is non-empty, not a specific value like `*`.
 
 ### META Session #117 Reflexion — 2026-03-25 (Code Quality Audit — Sessions 108–115)
 ACCOMPLISHED: Full 9-member virtual team audit of sessions 108–115 changed files. All checks passed clean. Marcus (XSS): PASS — both greps ran on frontend/index.html; verified 5 variable-assigned innerHTML patterns: (1) line 3282 skeleton loader — pure CSS/static, no API data; (2) line 3669 chatId — escapeHtml(String(...)) applied; (3) line 3474 activityContainer — html built by renderPositionItem() which escapes all 5 API fields (safeBettor, safeMarketTitle, safeOutcome, safePolyUrl, safeAvatarUrl); (4) line 3939 tbody — safeName/safeAddr2/safeAvatar all escaped; (5) line 4068 inner — html built by buildTickerItem() which escapes t.name and rawMarket. Alex/Marcus/Ama on services/polymarket.py: all external calls in try/except with graceful fallback, no secrets, no DB queries, pagination loop has break conditions (no infinite loop). Leo/Nina on playwright_registry.py: 1263 lines, 88 checks, no TODOs, no dead code, clean naming. Nina/Marcus on test files (5 files, 99 test functions): no TODOs, mocks at correct route namespace, hash_password used for test users. Tests: 354/354 passed.
