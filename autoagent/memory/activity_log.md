@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — META SESSION (Session 76)
+IMPROVED: (1) design.md RULES — expanded XSS line into a full write-time prevention protocol: when writing any template literal that ends up in innerHTML, apply escapeHtml() at the point of writing; named the two-line failure mode (template builds var, var assigned to innerHTML separately) that the existing grep misses; added second grep `innerHTML\s*=\s*[a-zA-Z_]`. (2) audit.md Marcus XSS check — now runs two mandatory greps (same-line + variable-assigned innerHTML); added explicit note that sessions 59/67/73 all found two-line patterns. (3) backlog.md — added Win Rate computation task (session 75 left the slot as "—", ready to populate from activity data).
+PATTERNS FOUND: XSS was introduced and then found by audit in 3 consecutive cycles (sessions 58→59, 62-66→67, 68-72→73). The existing grep `innerHTML.*\${` missed the two-line pattern (template literal builds a string variable; that variable later assigned to innerHTML). The rule was audit-time (read after building) not write-time (applied while writing).
+PREDICTED IMPACT: Future UI sessions will apply escapeHtml() at write time by following the explicit write-time protocol in design.md RULES (read before building). The second grep catches the two-line pattern that caused 3 consecutive post-hoc audits. XSS audit cycles should stop recurring.
+
 ## 2026-03-24 — UI/UX (Session 75)
 DONE: Upgraded leaderboard cards from a 3-stat row to a 2×2 four-metric grid: PnL%, Profit, Volume, and Win Rate (with "90d" confidence-horizon badge). Renamed "ROI" to "PnL%" for copy-trader clarity. Win Rate shows "—" as an honest placeholder — slot is designed and labeled, ready to populate when trade-level data is available. Skeleton cards updated to match. 303 tests stable, 22/22 Playwright checks pass.
 IMPACT: Bettor cards now surface the exact 4 data points copy-traders use to evaluate who to follow (OKX/eToro UX research). The "90d" badge on Win Rate sets expectations about the data horizon, reducing perceived risk when users see the "—" placeholder.

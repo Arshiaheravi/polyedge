@@ -1622,5 +1622,15 @@
     "files": ["frontend/index.html"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 22, "failures": 0, "notes": "No new checks needed; all 22 existing checks pass"}
+  },
+  {
+    "session": 76,
+    "date": "2026-03-24",
+    "time": "23:00",
+    "type": "meta",
+    "summary": "Fixed systemic XSS recurrence: expanded design.md with a write-time prevention protocol and added a second audit grep to catch two-line innerHTML patterns — the same pattern caused post-hoc XSS audits in sessions 59, 67, and 73",
+    "files": ["autoagent/skills/design.md", "autoagent/skills/audit.md", "autoagent/memory/backlog.md"],
+    "tests": {"before": 303, "after": 303, "status": "skip"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "META session — no code changed"}
   }
 ]
