@@ -2,6 +2,11 @@
 *(Sessions 1-60 archived — see activity_log_archive.md)*
 
 
+## 2026-03-24 — META (Session 86)
+IMPROVED: (1) design.md — added "LAYOUT TRAPS" section with the flex-vs-grid connector arrow rule from session 84's first-attempt failure (cards inside grid can't have connector siblings injected between cells; fix: flat flex container with cards and connectors as siblings). (2) backlog.md — removed stale "How it works 3-step section" sub-item from Trust signals (done session 84); added clarifying note that leaderboard follow button (not profile page) is the target for pre-commit follow preview; added 2 new HIGH VALUE tasks: hero live counter animations (countUp/ticker, pure frontend) and WebSocket real-time notifications (VIP differentiator, backend change); added verification note on color-coded P&L to check coverage before removing.
+PATTERNS FOUND: (1) Backlog items describing multi-part tasks go stale when one sub-item gets done without a backlog update — the next session picks the task and wastes turns discovering part of it is already done (session 84 did "How it works" but backlog still listed it). (2) Layout pattern failures (session 84 flex/grid) cost 2-3 turns per occurrence but are fully preventable with one design.md rule read upfront.
+PREDICTED IMPACT: Future sessions won't re-implement "How it works". design.md LAYOUT TRAPS prevents recurrence of the flex/grid connector failure. Two new high-value tasks (hero counters, WebSocket) extend the backlog runway 2+ sessions.
+
 ## 2026-03-24 — META (Session 85)
 DONE: Code quality audit of sessions 77–83 frontend work — ran all 9 virtual team checks. Marcus XSS: 0 issues (both greps run; all API-sourced vars use escapeHtml across renderBettorCard, renderPositionItem, renderBetRow, buildTickerItem, follow cards). Sarah: CSS vars consistent, mobile breakpoints present, no console.error. Jordan: upgrade modal wired from follow limit + free toggles. Nina: nav consistent, 303 tests + 39 Playwright checks pass. Leo: no TODO/FIXME, no dead code.
 IMPACT: Confirms the XSS prevention cycle (established session 76) held for 5 consecutive sessions (77–83) — zero XSS found. Audit baseline clean before next round of UI tasks.
