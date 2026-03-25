@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — TESTING (Session 120)
+DONE: Added 5 Playwright checks (94-98) — alerts tab has toggle switches (#toggle-push + #toggle-telegram), Telegram channel card (#ch-telegram) present, pricing section has exactly 3 .pricing-card elements, featured pricing card has "Most Popular" .pricing-badge, follows empty state (#follows-empty) has a .btn-primary CTA pointing to leaderboard tab. 98 total checks, 0 failures. 359 backend tests stable.
+IMPACT: Proves the alerts settings page is correctly rendered with interactive controls, the pricing page shows all 3 tiers with the Basic "Most Popular" badge, and the empty follows state gives new users a clear path to find bettors.
+FILES: autoagent/playwright_registry.py
+
 ## 2026-03-25 — TESTING (Session 119)
 DONE: Added 5 mobile viewport Playwright checks (89-93) at 375px: mobile bottom nav is display:block, .lb-grid is single column, visible .btn-primary buttons are ≥44px tall, no horizontal overflow on leaderboard view, landing page screenshot saved to reports/screenshots/mobile_375_landing.png. 93 total checks, 0 failures. 359 backend tests stable.
 IMPACT: Proves the mobile layout works — nav appears, bettor cards stack vertically (not side-by-side), and buttons are tappable size on iPhone-sized screens. These are the first explicit 375px layout correctness checks.

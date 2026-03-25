@@ -2636,5 +2636,20 @@
       "failures": 0,
       "notes": "checks 89-93 added: mobile-bottom-nav visible, lb-grid single column, buttons >=44px, no leaderboard overflow, landing screenshot"
     }
+  },
+  {
+    "session": 120,
+    "date": "2026-03-25",
+    "time": "12:00",
+    "type": "work",
+    "summary": "Added 5 Playwright checks (94-98): alerts tab toggle switches present, Telegram channel card present, pricing section has 3 cards, featured card has Most Popular badge, follows empty state has CTA to leaderboard — proves the alerts, pricing, and empty follows UI are correctly structured",
+    "files": ["autoagent/playwright_registry.py"],
+    "tests": {"before": 359, "after": 359, "status": "pass"},
+    "frontend": {
+      "status": "pass",
+      "checks": 98,
+      "failures": 0,
+      "notes": "checks 94-98 added: alerts toggles, telegram card, 3 pricing cards, Most Popular badge, follows empty state CTA"
+    }
   }
 ]

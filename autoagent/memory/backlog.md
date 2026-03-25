@@ -8,9 +8,7 @@
 
 ## HIGH PRIORITY — Frontend Playwright Tests
 
-- [ ] Alerts/settings page — Playwright: login, navigate to Alerts tab, assert toggle switches present, assert Telegram section visible, assert no JS errors on page
-- [ ] Pricing section — Playwright: scroll to pricing on landing, assert 3 pricing cards visible, assert Basic card has "Most Popular" badge, hover locked features and assert tooltip appears
-- [ ] Empty follows state — Playwright: login as new user with no follows, navigate to My Follows, assert empty state card shown with CTA button, assert clicking CTA navigates to leaderboard
+- [ ] Playwright CHECK 99-101 — (a) pricing locked features have `data-tip` attributes on `.dim` items, (b) account tab has `#acct-email` and `#acct-name` elements, (c) `#acct-tier-label` element present and has non-empty text content
 
 ---
 

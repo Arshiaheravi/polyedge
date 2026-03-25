@@ -33,7 +33,8 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **359 passed** (as of 2026-03-25, session 118 — CORS header tests added)
+- Test count: **359 passed** (as of 2026-03-25, session 119 — stable)
+- Playwright checks: **98 total, 0 failures** (as of 2026-03-25, session 120)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -44,6 +45,13 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #120 Reflexion — 2026-03-25 (TESTING — Alerts/pricing/follows Playwright checks)
+ACCOMPLISHED: Added 5 Playwright checks (94-98): alerts toggle switches (#toggle-push + #toggle-telegram), Telegram channel card (#ch-telegram), exactly 3 .pricing-card elements, featured card .pricing-badge "Most Popular", #follows-empty CTA button calling showTab('leaderboard'). 98 total checks, 0 failures. 359 backend tests stable. Cleared all 3 HIGH PRIORITY frontend backlog tasks.
+FAILED: Nothing — all 5 checks passed on first run.
+RULE: [2026-03-25] For SPA element-structure checks (toggle switches, channel cards, pricing cards), use `page.evaluate(...)` DOM queries after `showView/showTab` navigation — faster and more reliable than Playwright locators for checking element existence and text content in hidden-by-default sections.
+
+- Test count: **359 passed** (stable), **98 Playwright checks** (93 → 98)
 
 ### Session #119 Reflexion — 2026-03-25 (TESTING — Mobile viewport checks)
 ACCOMPLISHED: Added 5 Playwright checks (89-93) at 375px viewport: CHECK 89 (.mobile-bottom-nav display:block), CHECK 90 (.lb-grid single column via gridTemplateColumns), CHECK 91 (visible .btn-primary buttons ≥44px using getBoundingClientRect filtering out hidden elements), CHECK 92 (no horizontal overflow on leaderboard view), CHECK 93 (landing screenshot). All 93 checks pass, 0 failures. 359 backend tests stable.
