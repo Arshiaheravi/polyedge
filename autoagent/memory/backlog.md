@@ -4,7 +4,6 @@
 
 ## HIGH PRIORITY — UI/UX Tasks
 
-- [ ] Leaderboard four-metric display — surface PnL%, win rate, volume, and follower count per card (OKX/copy-trading research: these are the 4 data points users act on); add "confidence horizon" label ("90-day history") next to win rate to reduce perceived risk
 - [ ] Notification/alerts settings page redesign — replace raw form with toggle switches, add status indicators (connected/disconnected) for Telegram and web push, add a "Test notification" button
 - [ ] Loading skeleton screens — replace any spinner with skeleton placeholder cards while data loads (leaderboard, follows list)
 

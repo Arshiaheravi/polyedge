@@ -45,6 +45,11 @@
 
 ## Session Reflexions
 
+### Session #75 Reflexion — 2026-03-24 (UI/UX)
+ACCOMPLISHED: Replaced the leaderboard's cramped 3-stat layout (Profit | ROI | Volume-fullwidth) with a clean 2×2 metric grid: PnL% (top-left), Profit (top-right), Volume (bottom-left), Win Rate with "90d" confidence-horizon badge (bottom-right). Renamed "ROI" to "PnL%" for copy-trader clarity. Win Rate shows "—" — honest placeholder until trade-level outcome data is wired. Skeleton updated to 4 equal slots. 303 tests stable, 22/22 Playwright checks pass.
+FAILED: Nothing.
+RULE: [2026-03-24] When a UI card needs a metric slot but the data isn't available from the API, show "—" with a clear label + confidence horizon badge (e.g. "Win Rate [90d]") — don't omit the slot or fake the data. The slot establishes the design intent, tells the user what metric they're looking at, and can be populated later without a layout change. This is the "progressive disclosure" approach for data-sparse MVP cards.
+
 ### Session #74 Reflexion — 2026-03-24 (UI/UX)
 ACCOMPLISHED: Transformed bet rows in bettor profile from flat `outcome + separate price span` to YES/NO pill component: `.bet-outcome.yes` (green tint + border), `.bet-outcome.no` (red tint + border), `.bet-outcome.other` (neutral), with inline `.bet-outcome-price` for "72¢". Added `.bet-active-badge` (pulsing dot via `::before`) for bets < 14 days old. 303 tests stable, 22/22 Playwright checks pass.
 FAILED: Nothing. Single-file CSS+JS change with no external dependencies.

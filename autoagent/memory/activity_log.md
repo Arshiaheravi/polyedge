@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-40 archived — see activity_log_archive.md)*
 
+## 2026-03-24 — UI/UX (Session 75)
+DONE: Upgraded leaderboard cards from a 3-stat row to a 2×2 four-metric grid: PnL%, Profit, Volume, and Win Rate (with "90d" confidence-horizon badge). Renamed "ROI" to "PnL%" for copy-trader clarity. Win Rate shows "—" as an honest placeholder — slot is designed and labeled, ready to populate when trade-level data is available. Skeleton cards updated to match. 303 tests stable, 22/22 Playwright checks pass.
+IMPACT: Bettor cards now surface the exact 4 data points copy-traders use to evaluate who to follow (OKX/eToro UX research). The "90d" badge on Win Rate sets expectations about the data horizon, reducing perceived risk when users see the "—" placeholder.
+FILES: frontend/index.html
+
 ## 2026-03-24 — UI/UX (Session 74)
 DONE: Bet row probability pill + active badge — each bet row in bettor profile now shows YES/NO as a styled pill with price inline (e.g. "YES 72¢" in green tint, "NO 28¢" in red tint), replacing the flat colored text + separate price span. Added a subtle "Active" badge (green dot + text) for bets placed within the last 14 days as an honest proxy for "market still live and copyable".
 IMPACT: Users evaluating whether to copy a bet can now instantly read both direction and price in one glance instead of parsing two separate elements; the Active badge flags recent opportunities without making false claims about market status we can't verify from frontend alone. Reinforces the core copy-trading loop.

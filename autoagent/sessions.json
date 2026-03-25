@@ -1612,5 +1612,15 @@
     "files": ["frontend/index.html"],
     "tests": {"before": 303, "after": 303, "status": "pass"},
     "frontend": {"status": "pass", "checks": 22, "failures": 0, "notes": "No new checks added; existing 22 checks pass"}
+  },
+  {
+    "session": 75,
+    "date": "2026-03-24",
+    "time": "22:30",
+    "type": "work",
+    "summary": "Leaderboard bettor cards now show 4 metrics in a 2x2 grid — PnL%, Profit, Volume, and a Win Rate slot with a '90d history' badge — so users can evaluate traders the same way OKX/eToro copy-trading platforms display them",
+    "files": ["frontend/index.html"],
+    "tests": {"before": 303, "after": 303, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 22, "failures": 0, "notes": "No new checks needed; all 22 existing checks pass"}
   }
 ]
