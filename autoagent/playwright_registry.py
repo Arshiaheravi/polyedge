@@ -946,6 +946,37 @@ async def check():
         except Exception as e:
             failures.append(f"startProgress check error: {e}")
 
+        # CHECK 71 (session 103): .hero-cycle container and 3 cycling items present in hero
+        try:
+            hero_cycle_ok = await page.evaluate("""() => {
+                const container = document.querySelector('.hero-cycle');
+                const items = document.querySelectorAll('.hero-cycle-item');
+                return container !== null && items.length === 3;
+            }""")
+            if hero_cycle_ok:
+                checks += 1
+                print("  [CHECK 71] .hero-cycle container with 3 .hero-cycle-item spans present")
+            else:
+                failures.append(".hero-cycle or .hero-cycle-item spans missing/wrong count")
+        except Exception as e:
+            failures.append(f"Hero cycle check error: {e}")
+
+        # CHECK 72 (session 103): .hero-live-stats bar and hlstat-traders/hlstat-profit IDs present
+        try:
+            hero_stats_ok = await page.evaluate("""() => {
+                const bar = document.querySelector('.hero-live-stats');
+                const traders = document.getElementById('hlstat-traders');
+                const profit = document.getElementById('hlstat-profit');
+                return !!(bar && traders && profit);
+            }""")
+            if hero_stats_ok:
+                checks += 1
+                print("  [CHECK 72] .hero-live-stats bar with #hlstat-traders and #hlstat-profit present")
+            else:
+                failures.append(".hero-live-stats, #hlstat-traders, or #hlstat-profit missing")
+        except Exception as e:
+            failures.append(f"Hero live stats check error: {e}")
+
         await browser.close()
     return checks, failures
 
