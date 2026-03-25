@@ -163,13 +163,18 @@
       border-radius: var(--radius-sm);
     }
 
-    /* ── Toast ── */
-    #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
-    .toast { padding: 13px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; pointer-events: auto; animation: slideIn 0.25s ease; max-width: 340px; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow); }
-    .toast-success { background: #052e1c; border: 1px solid #10b981; color: #34d399; }
-    .toast-error   { background: #1f0808; border: 1px solid #ef4444; color: #fca5a5; }
-    .toast-info    { background: #130a2e; border: 1px solid var(--accent); color: var(--accent2); }
-    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    /* ── Toast Stack (Sonner/Emil Kowalski pattern) ── */
+    #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; width: 340px; height: 0; pointer-events: none; }
+    .toast { position: absolute; bottom: 0; left: 0; right: 0; padding: 13px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; pointer-events: auto; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.45); transition: transform 400ms cubic-bezier(0.21,1.02,0.73,1), opacity 200ms, width 200ms; transform-origin: center bottom; will-change: transform, opacity; }
+    .toast[data-mounted="false"] { transform: translateY(100%) scale(0.95); opacity: 0; }
+    .toast-success { background: rgba(5,46,28,0.97); border: 1px solid #10b981; color: #34d399; }
+    .toast-error   { background: rgba(31,8,8,0.97); border: 1px solid #ef4444; color: #fca5a5; }
+    .toast-info    { background: rgba(19,10,46,0.97); border: 1px solid var(--accent); color: var(--accent2); }
+    .toast-bet     { background: rgba(0,18,10,0.97); border-left: 3px solid var(--accent); border-top: 1px solid rgba(0,201,122,0.25); border-right: 1px solid rgba(0,201,122,0.25); border-bottom: 1px solid rgba(0,201,122,0.25); color: var(--text); }
+    .toast-icon { flex-shrink: 0; font-size: 14px; }
+    .toast-msg  { flex: 1; line-height: 1.4; }
+    .toast-close { flex-shrink: 0; background: none; border: none; color: inherit; opacity: 0.45; cursor: pointer; font-size: 18px; padding: 0 0 0 4px; line-height: 1; transition: opacity 0.15s; }
+    .toast-close:hover { opacity: 1; }
 
     /* ── Modal ── */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: var(--sp-5); backdrop-filter: blur(6px); animation: fadeIn 0.2s ease; }
@@ -723,7 +728,7 @@
       .pricing-card.featured { transform: none; margin-top: 8px; }
       .pricing-card.featured:hover { transform: translateY(-4px); }
       /* Toast above bottom nav */
-      #toast-container { bottom: 72px; right: 12px; left: 12px; }
+      #toast-container { bottom: 72px; right: 8px; left: 8px; width: auto; }
       .toast { max-width: 100%; }
       /* Page header wrapping */
       .page-header.flex { flex-direction: column; align-items: flex-start; }
@@ -1361,6 +1366,7 @@
             <span class="live-pulse" style="margin-right:5px;"></span>Live — refreshes every 30s
           </span>
           <button class="btn btn-secondary" onclick="document.getElementById('guide-modal').classList.remove('hidden')" style="font-size:13px;">📖 How to copy a bet?</button>
+          <button class="btn btn-secondary" onclick="toastBet('TraderX', 'Will the Fed cut rates in Q2?', 'YES')" style="font-size:13px;" title="Preview what a bet alert looks like">Test alert</button>
           <button class="btn btn-primary" onclick="showTab('leaderboard')">+ Add Bettor</button>
         </div>
       </div>
@@ -1810,19 +1816,131 @@ async function apiFetch(path, opts = {}) {
   return res;
 }
 
+// ── Toast Stack (Sonner/Emil Kowalski pattern) ─────────────────────────────
+const _toastState = { toasts: [], nextId: 0, expanded: false };
+
+function _updateToastPositions() {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const els = Array.from(container.querySelectorAll('.toast[data-mounted="true"]'));
+  if (!els.length) return;
+  if (_toastState.expanded) {
+    // Expanded (hover): real heights stacked with 8px gap, newest at bottom
+    let offset = 0;
+    for (let i = els.length - 1; i >= 0; i--) {
+      els[i].style.transform = `translateY(calc(-1 * ${offset}px))`;
+      els[i].style.opacity = '1';
+      els[i].style.width = '100%';
+      els[i].style.zIndex = String(els.length - i + 10);
+      offset += els[i].getBoundingClientRect().height + 8;
+    }
+  } else {
+    // Collapsed: fan-stack, newest on top full size, others peeking behind
+    els.forEach((el, i) => {
+      const fromFront = els.length - 1 - i; // 0 = newest (last in DOM)
+      if (fromFront === 0) {
+        el.style.transform = 'translateY(0) scale(1)';
+        el.style.opacity = '1';
+        el.style.width = '100%';
+      } else if (fromFront === 1) {
+        el.style.transform = 'translateY(14px) scale(0.95)';
+        el.style.opacity = '0.8';
+        el.style.width = '94%';
+      } else if (fromFront === 2) {
+        el.style.transform = 'translateY(28px) scale(0.90)';
+        el.style.opacity = '0.6';
+        el.style.width = '88%';
+      } else {
+        el.style.transform = 'translateY(42px) scale(0.85)';
+        el.style.opacity = '0';
+        el.style.width = '82%';
+      }
+      el.style.zIndex = String(els.length - fromFront + 10);
+    });
+  }
+}
+
+function _removeToast(el, id) {
+  if (!el.parentNode) return;
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px) scale(0.95)';
+  el.style.transition = 'opacity 200ms, transform 200ms';
+  setTimeout(() => {
+    if (el.parentNode) el.remove();
+    _toastState.toasts = _toastState.toasts.filter(t => t.id !== id);
+    _updateToastPositions();
+  }, 200);
+}
+
 function toast(msg, type = 'info') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const id = _toastState.nextId++;
   const el = document.createElement('div');
   el.className = `toast toast-${type}`;
-  const icons = { success: '&#10003;', error: '&#9888;', info: 'ℹ' };
+  el.dataset.mounted = 'false';
+  el.dataset.id = String(id);
+
+  const icons = { success: '✓', error: '⚠', info: 'ℹ', bet: '⚡' };
   const iconSpan = document.createElement('span');
-  iconSpan.innerHTML = icons[type] || '';  // safe: hardcoded HTML entities only
+  iconSpan.textContent = icons[type] || 'ℹ'; // safe: hardcoded
+  iconSpan.className = 'toast-icon';
+
   const msgSpan = document.createElement('span');
-  msgSpan.textContent = msg;              // safe: API-sourced strings via textContent
+  msgSpan.textContent = msg; // safe: API-sourced strings via textContent
+  msgSpan.className = 'toast-msg';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'toast-close';
+  closeBtn.setAttribute('aria-label', 'Dismiss notification');
+  closeBtn.textContent = '×'; // safe: hardcoded
+  closeBtn.onclick = (e) => { e.stopPropagation(); _removeToast(el, id); };
+
   el.appendChild(iconSpan);
   el.appendChild(msgSpan);
-  document.getElementById('toast-container').appendChild(el);
-  setTimeout(() => el.remove(), 4000);
+  el.appendChild(closeBtn);
+  container.appendChild(el);
+
+  // Limit to 5 visible toasts — remove oldest if exceeded
+  const all = container.querySelectorAll('.toast');
+  if (all.length > 5) {
+    const oldest = all[0];
+    const oldId = parseInt(oldest.dataset.id);
+    const oldItem = _toastState.toasts.find(t => t.id === oldId);
+    if (oldItem) clearTimeout(oldItem.timer);
+    _removeToast(oldest, oldId);
+  }
+
+  // Hover: expand to full-height stack
+  el.addEventListener('mouseenter', () => { _toastState.expanded = true;  _updateToastPositions(); });
+  el.addEventListener('mouseleave', () => { _toastState.expanded = false; _updateToastPositions(); });
+
+  // Animate in: next rAF flips data-mounted and sets final position
+  requestAnimationFrame(() => {
+    el.dataset.mounted = 'true';
+    _updateToastPositions();
+  });
+
+  // Auto-dismiss after 5s; pause timer on hover
+  const item = { id, el, timer: null };
+  item.timer = setTimeout(() => _removeToast(el, id), 5000);
+  _toastState.toasts.push(item);
+  el.addEventListener('mouseenter', () => clearTimeout(item.timer));
+  el.addEventListener('mouseleave', () => { item.timer = setTimeout(() => _removeToast(el, id), 2000); });
 }
+
+// Bet alert toast — called when a followed bettor places a new bet
+function toastBet(bettorName, marketText, direction) {
+  const dir = (direction || 'BET').toString().toUpperCase();
+  const raw = bettorName + ' bet ' + dir + ': ' + marketText;
+  toast(raw.length > 82 ? raw.slice(0, 79) + '…' : raw, 'bet');
+}
+
+// Custom event bus — allows scheduler/backend to fire bet alerts via CustomEvent
+document.addEventListener('betAlert', (e) => {
+  const { bettor, market, direction } = e.detail || {};
+  if (bettor && market) toastBet(bettor, market, direction);
+});
 
 function fmtUSD(n) {
   if (!n && n !== 0) return '—';
@@ -2428,6 +2546,17 @@ async function refreshFollowsActivity() {
       (b.active_positions || []).map(p => ({ ...p, _bettor: b.name, _addr: b.address,
         _avatarUrl: `https://api.dicebear.com/7.x/identicon/svg?seed=${b.address}` }))
     );
+
+    // Detect new positions and fire bet alert toasts (only after first load)
+    const wasFirstLoad = _seenBetIds.size === 0;
+    const newPositions = allPositions.filter(p => {
+      const key = p._addr + '::' + (p.poly_url || p.market_title || '');
+      if (!_seenBetIds.has(key)) { _seenBetIds.add(key); return true; }
+      return false;
+    });
+    if (!wasFirstLoad && newPositions.length > 0) {
+      newPositions.slice(0, 3).forEach(p => toastBet(p._bettor, p.market_title || 'New bet', p.outcome));
+    }
 
     let html = '';
 
