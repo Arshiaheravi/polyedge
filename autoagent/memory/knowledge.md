@@ -45,6 +45,13 @@
 
 ## Session Reflexions
 
+### BRAIN Session #101 Reflexion — 2026-03-25 (DEEP BRAIN)
+ACCOMPLISHED: (1) STEP 1B: Found "stale backlog item" pattern recurs (sessions 89+99) — fixed by adding GREP-BEFORE-PICKING rule to PROMPT.md step 3. (2) STEP 1C: Merged stale session 85 XSS streak rule (superseded by session 93 rule); updated session 93 XSS streak count from "16 sessions" to "24+ sessions (77-100)". (3) STEP 1D: Archived sessions 61-80 from activity_log.md to archive (was 40 entries, now 20). (4) 7 sources evaluated, 7 logged. (5) 1 concrete implementation: GREP-BEFORE-PICKING in PROMPT.md. (6) 1 backlog task added: demo mode landing page (2x conversion research finding). (7) MCE paper found (2601.21557) — validates our brain session approach but not implementable prompt-only.
+FAILED: Nothing failed.
+RULE: [2026-03-25] The "grep before picking" heuristic must live in PROMPT.md step 3 (where task selection happens), not just in knowledge.md. A rule only in knowledge.md gets read at session start but is not recalled at the specific moment it's needed (task selection). The rule's insertion point matters as much as its content. (Source: Sessions 89+99 both wasted turns despite the rule existing in knowledge.md.)
+
+- Test count: **303 passed** (stable — no code changes this session)
+
 ### Session #99 Reflexion — 2026-03-25 (UI/UX — Trust Signals Section)
 ACCOMPLISHED: Added `.trust-signal-row` below the leaderboard `page-header` on both browse and dashboard views. Two elements: (1) `.trust-badge` — star SVG + "Built on real Polymarket data" always-visible pill; (2) `.trust-live-count` — pulsing dot + "N traders tracked live" that fades in via `opacity: 0 → 1 / .visible` after `loadBrowseLeaderboard` / `loadLeaderboard` populates data. Pulse animation via `@keyframes pulse-dot`. Live count uses `textContent = bettors.length` (safe integer, not innerHTML). 2 Playwright checks (67-68). Also removed the already-done "color-coded profit/loss" backlog item after confirming `renderPositionItem` already applies `var(--green)`/`var(--red)` coloring.
 FAILED: Nothing. First run clean.
@@ -87,7 +94,7 @@ RULE: [2026-03-24] `.textContent = value` replaces innerHTML skeletons cleanly �
 ACCOMPLISHED: 9-member virtual team audit of sessions 88–92. Zero issues blocking commit. Marcus (XSS): PASS — both grep patterns run, confirmed escapeHtml on chatId (alerts), disclosure market titles, renderPositionItem (5 fields: bettor, market_title, outcome, poly_url, avatarUrl), buildTickerItem (name, market), renderBetRow (question, outcome, market_icon, polyLink). Disclosure loader: try/catch present, error fallback "No recent data available", empty fallback "No recent markets found". Tech debt logged: _disclosureCache no-TTL pattern.
 FAILED: Nothing failed.
 RULE: [2026-03-24] When auditing `innerHTML = variable` (grep #2), always trace the variable back to where it was built — a two-step pattern (build in one function, assign in caller) can hide unescaped vars if you only look at the assignment line. The `html` variable pattern (build renderFoo → assign innerHTML = html) is safe only if renderFoo escapes every API-sourced field.
-RULE: [2026-03-24] XSS-free audit streak: sessions 77–93 (16 sessions). The escapeHtml discipline is now deeply embedded. Key signal: every new renderXxx function added in sessions 88–92 independently followed the pattern (safe=escapeHtml(api_field) near top of function, safe var used throughout). No reminder was needed — the pattern is now habitual.
+RULE: [2026-03-25] XSS-free audit streak: sessions 77–100 (24+ sessions). The escapeHtml discipline is deeply embedded — every new renderXxx function independently follows the pattern (safe=escapeHtml(api_field) near top, safe var used throughout). No reminder needed; the two-grep check at write-time (both greps: innerHTML.*\${ AND innerHTML\s*=\s*[a-zA-Z_]) is the key factor. Confirm streak at every audit.
 
 ### Session #92 Reflexion — 2026-03-24 (UI/UX — Mobile Audit)
 ACCOMPLISHED: Audited all 7 screens at 375px. Found and fixed 8 concrete issues: (1) .tab-btn height ~33px → min-height 40px, (2) .follow-btn height ~30px → min-height 44px, (3) .section padding 80px → 48px on mobile, (4) .modal padding 36px → 28px 24px, (5) pricing-card compact padding, (6) follows-stat-divider hidden ≤480px, (7) preview table Volume column hidden ≤480px, (8) preview-card overflow-x auto. 3 new Playwright checks (56-58). 303 tests, 58 checks, 0 failures.
@@ -129,7 +136,7 @@ RULE: [2026-03-24] For disabled/coming-soon placeholder buttons in UI: use `disa
 ### Session #85 Reflexion — 2026-03-24 (META audit)
 ACCOMPLISHED: Code quality audit of sessions 77–83. Ran Marcus two-grep XSS check, Sarah UI consistency, Jordan conversion, Nina regression, Leo dead-code checks. Zero issues found across 5 work sessions.
 FAILED: Nothing.
-RULE: [2026-03-24] The XSS prevention protocol established in session 76 is confirmed effective — 5 consecutive frontend sessions (77–83) produced zero XSS. The two-grep check at write-time (applied before building, not just at audit-time) is the key factor. Continue running both greps at every audit.
+*(XSS streak rule merged into Session #93 RULE below — this entry superseded)*
 
 ### Session #84 Reflexion — 2026-03-24 (UI/UX)
 ACCOMPLISHED: "How It Works" landing section upgrade. (1) CSS: `.steps-flow` flex container (column on mobile), `.step-card` with `flex: 1`, `.step-connector` (40px wide, padding-top 56px to vertically centre vs card icon), `.step-num` (22px green circle), `.steps-cta` + `.steps-cta-sub`. (2) HTML: removed the old `.steps-grid` wrapper and emoji HTML entities; replaced with 3 `.step-card` elements in `.steps-flow` with 2 `.step-connector` divs between them; each card now has step-num, step-icon with inline SVG, step-title, step-desc. (3) SVGs: bar chart (leaderboard), user-plus (follow), bell (alerts). (4) CTA button + trust sub-line after steps-flow. (5) 4 new Playwright checks (36-39). 39/39 pass. 303 backend tests stable.

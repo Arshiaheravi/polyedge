@@ -395,3 +395,9 @@ What: At every commit, re-display the 4 most commonly forgotten rules as a COMMI
 Where: PROMPT.md (STEP 3 — COMMIT REMINDERS block before step 1)
 Source: arxiv 2603.05344 (OPENDEV) — event-driven system reminders counteract instruction fade-out in long sessions
 Expected impact: Eliminates wrong-branch push, autoagent-in-git-add, and current_task.md not cleared — the 3 most common post-commit errors from the activity log
+
+## Grep-before-picking rule — implemented 2026-03-25
+What: Before picking any "add/implement/build" backlog task, run a one-line grep for the feature's key function/class name in the relevant file. If found, remove the task from backlog and pick next.
+Where: PROMPT.md (EVERY SESSION — WHAT TO DO, step 3 — GREP-BEFORE-PICKING block)
+Source: Sessions 89+99 — "animateCounter" and "color-coded P&L" were already implemented but remained in backlog, wasting a full implementation turn each time
+Expected impact: Eliminates the "stale backlog item" waste (2+ occurrences in sessions 89-99); 10-second grep saves 20-minute re-implementation
