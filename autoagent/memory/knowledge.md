@@ -45,7 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
 - Test count: **443 passed, 1 skipped** (as of 2026-03-26, session 150)
-- Playwright checks: **132 total, 0 failures** (as of 2026-03-26, session 134 — no changes since)
+- Playwright E2E: **36 passed, 2 skipped** (as of 2026-03-26, session 154)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -926,3 +926,9 @@ ACCOMPLISHED: (1) STEP 1B: Failure pattern from sessions 149+151 — Playwright 
 FAILED: Background search agents returned 0-byte output (same as sessions 121, 132) — fell back to direct WebFetch calls per established rule.
 RULE: [2026-03-26] Playwright wait_for_function for CSS display changes must use getComputedStyle(...).display === 'flex' (or === 'block'). Using style.display !== '' produces a false pass because empty string is falsy but also means the inline style property is not set (computed style is different). Always use the computed style value, not inline style.
 OPTIMIZATION: [2026-03-26] For brain sessions, skip background search agents entirely (they return 0 bytes on this machine). Use WebFetch directly with parallel calls — same research quality with no wait time.
+
+### Session #154 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added 7 Playwright E2E tests for back-to-top FAB behaviour (3 tests) and mobile layout (4 tests). All 7 passed on first run. Removed stale backlog item (Consensus VIP already covered). 36 Playwright tests passing total.
+FAILED: Nothing — all 7 tests passed first run.
+RULE: [2026-03-26] To test FAB scroll-triggered visibility in Playwright headless: (1) set document.body.style.minHeight = '5000px' to make page scrollable, (2) call window.scrollTo(0, 400), (3) dispatch a 'scroll' event manually via window.dispatchEvent(new Event('scroll')), (4) wait 300ms for handler to fire. This reliably triggers the scroll listener in headless Chromium without needing real content.
+RULE: [2026-03-26] At 375px viewport, mobile nav buttons (inside .mobile-bottom-nav) ARE clickable via page.click('#mob-nav-leaderboard') — they become visible via CSS media query. The desktop-width rule (use page.evaluate() instead of click) applies to #nav-* elements hidden via sidebar, NOT to .mobile-nav-btn elements which become visible at mobile widths.

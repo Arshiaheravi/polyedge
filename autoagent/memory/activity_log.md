@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 154)
+DONE: Added 7 Playwright E2E tests: back-to-top FAB (appears after scrolling >300px on leaderboard, hidden on load, resets scroll on click) and mobile layout (bottom nav visible at 375px, all 5 nav buttons present, leaderboard tab navigates, desktop sidebar hidden at mobile viewport). Also removed stale Consensus-VIP backlog item already covered by test_tier_gates.py.
+IMPACT: FAB and mobile nav are now regression-tested — a broken scroll-to-top or hidden mobile nav would be caught automatically instead of discovered by a user on a phone.
+FILES: backend/tests/playwright/test_ui_flows.py
+
 ## 2026-03-26 — BRAIN (Session 153)
 RESEARCHED: autonomous AI agent best practices 2026, FastAPI 2025-2026 release notes, Polymarket leaderboard + copytrade-wars competitor research, arxiv 2603.22367/2603.24414/2601.11653, Playwright best practices 2026, ECC v1.9.0 re-check, prediction market bot competitive landscape.
 DOWNLOADED: Nothing new — ECC still at v1.9.0; no new applicable Python/FastAPI skills.

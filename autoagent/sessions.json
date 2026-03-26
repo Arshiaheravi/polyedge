@@ -3429,5 +3429,26 @@
       "failures": 0,
       "notes": "brain session \u2014 no code changes"
     }
+  },
+  {
+    "session": 154,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 7 Playwright tests covering back-to-top FAB scroll behaviour and mobile bottom nav layout \u2014 users on phones can now trust the nav and scroll button are regression-tested",
+    "files": [
+      "backend/tests/playwright/test_ui_flows.py"
+    ],
+    "tests": {
+      "before": 443,
+      "after": 443,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 36,
+      "failures": 0,
+      "notes": "7 new Playwright tests; 36 total pass"
+    }
   }
 ]

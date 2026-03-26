@@ -13,11 +13,6 @@
 
 ## HIGH PRIORITY — Frontend UI Playwright Tests
 
-- [ ] **Consensus tab loads** — Playwright: log in as VIP, open Consensus tab, assert whale name is visible in at least one card
-
-- [ ] **Back-to-top FAB** — Playwright: scroll down >300px on leaderboard, assert FAB becomes visible; click it, assert scrolled back to top
-
-- [ ] **Mobile layout** — Playwright: set viewport to 375×812, assert mobile bottom nav is visible and all tabs navigate correctly
 
 ---
 
