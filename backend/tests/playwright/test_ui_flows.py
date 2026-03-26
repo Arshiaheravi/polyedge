@@ -364,3 +364,131 @@ class TestBettorProfileOpens:
         assert "locked" in (sim_value_classes or ""), (
             "Simulator value does NOT have 'locked' class for free user — paywall broken!"
         )
+
+
+# ── 5. Back-to-top FAB ────────────────────────────────────────────────────────
+
+class TestBackToTopFAB:
+    """FAB (#back-to-top-fab) appears after scrolling >300px on the leaderboard view."""
+
+    def test_fab_appears_after_scroll(self, page: Page):
+        """FAB gains fab-visible class when user scrolls >300px on leaderboard."""
+        login(page, "free")
+        # Switch to browse (leaderboard) view so onLeaderboard() returns true
+        page.evaluate("showView('browse')")
+        page.wait_for_timeout(500)
+
+        # Make the page tall enough to scroll, then scroll 400px and fire scroll event
+        page.evaluate("""() => {
+            document.body.style.minHeight = '5000px';
+            window.scrollTo(0, 400);
+            window.dispatchEvent(new Event('scroll'));
+        }""")
+        page.wait_for_timeout(300)
+
+        fab_visible = page.evaluate(
+            "document.getElementById('back-to-top-fab').classList.contains('fab-visible')"
+        )
+        assert fab_visible, (
+            "FAB did not get fab-visible class after scrolling >300px on leaderboard view"
+        )
+
+    def test_fab_hidden_when_not_scrolled(self, page: Page):
+        """FAB does not have fab-visible class on initial page load (scrollY == 0)."""
+        login(page, "free")
+        page.evaluate("showView('browse')")
+        page.wait_for_timeout(300)
+
+        fab_visible = page.evaluate(
+            "document.getElementById('back-to-top-fab').classList.contains('fab-visible')"
+        )
+        assert not fab_visible, (
+            "FAB incorrectly shows fab-visible class on initial load (scrollY should be 0)"
+        )
+
+    def test_fab_click_scrolls_to_top(self, page: Page):
+        """Clicking the FAB scrolls the window back to the top."""
+        login(page, "free")
+        page.evaluate("showView('browse')")
+        page.wait_for_timeout(500)
+
+        # Scroll down and trigger the FAB to become visible
+        page.evaluate("""() => {
+            document.body.style.minHeight = '5000px';
+            window.scrollTo(0, 400);
+            window.dispatchEvent(new Event('scroll'));
+        }""")
+        page.wait_for_timeout(300)
+
+        # Click FAB via JS to avoid display:none issues at desktop viewport
+        page.evaluate("document.getElementById('back-to-top-fab').click()")
+        page.wait_for_timeout(500)  # smooth scroll completes
+
+        scroll_y = page.evaluate("window.scrollY")
+        assert scroll_y < 50, (
+            f"FAB click did not scroll back to top — scrollY is still {scroll_y}"
+        )
+
+
+# ── 6. Mobile layout ──────────────────────────────────────────────────────────
+
+class TestMobileLayout:
+    """At 375×812 viewport the mobile bottom nav is visible and all tabs navigate."""
+
+    def test_mobile_nav_visible_at_narrow_viewport(self, page: Page):
+        """Mobile bottom nav becomes visible at 375px width (max-width:768px breakpoint)."""
+        page.set_viewport_size({"width": 375, "height": 812})
+        login(page, "free")
+
+        nav_display = page.evaluate(
+            "getComputedStyle(document.querySelector('.mobile-bottom-nav')).display"
+        )
+        assert nav_display != "none", (
+            f"Mobile bottom nav is display:'{nav_display}' at 375px — should be visible"
+        )
+
+    def test_mobile_nav_buttons_present(self, page: Page):
+        """All 5 mobile nav buttons are present and have non-empty labels."""
+        page.set_viewport_size({"width": 375, "height": 812})
+        login(page, "free")
+
+        button_ids = [
+            "mob-nav-leaderboard",
+            "mob-nav-follows",
+            "mob-nav-consensus",
+            "mob-nav-alerts",
+            "mob-nav-account",
+        ]
+        for btn_id in button_ids:
+            text = page.evaluate(
+                f"document.getElementById('{btn_id}')?.innerText?.trim()"
+            )
+            assert text, f"Mobile nav button #{btn_id} is missing or has no label"
+
+    def test_mobile_nav_leaderboard_tab_navigates(self, page: Page):
+        """Clicking the mobile Leaders nav button switches to the leaderboard tab."""
+        page.set_viewport_size({"width": 375, "height": 812})
+        login(page, "free")
+
+        # Click the Leaders mobile nav button — it should be visible at 375px
+        page.click("#mob-nav-leaderboard")
+        page.wait_for_timeout(400)
+
+        tab_hidden = page.evaluate(
+            "document.getElementById('tab-leaderboard').classList.contains('hidden')"
+        )
+        assert not tab_hidden, (
+            "tab-leaderboard is still hidden after clicking mobile nav Leaders button"
+        )
+
+    def test_mobile_sidebar_hidden_at_narrow_viewport(self, page: Page):
+        """Desktop sidebar must be hidden at mobile viewport (display:none)."""
+        page.set_viewport_size({"width": 375, "height": 812})
+        login(page, "free")
+
+        sidebar_display = page.evaluate(
+            "getComputedStyle(document.querySelector('.sidebar')).display"
+        )
+        assert sidebar_display == "none", (
+            f"Desktop sidebar is display:'{sidebar_display}' at mobile viewport — should be hidden"
+        )
