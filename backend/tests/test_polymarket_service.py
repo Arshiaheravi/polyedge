@@ -616,3 +616,88 @@ async def test_get_recent_bets_dict_response_with_activity_key_returns_bets():
     assert len(result) == 1
     assert result[0]["market_id"] == "cond_activity"
     assert result[0]["amount_usd"] == 55.0
+
+
+# ── copy_signal in get_active_positions ──────────────────────────────────────
+
+def _make_mock_positions_client(positions_data):
+    """Helper: returns a mock httpx AsyncClient that returns positions_data."""
+    from unittest.mock import AsyncMock, MagicMock
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = positions_data
+    mock_resp.raise_for_status = MagicMock()
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+    return mock_client
+
+
+@pytest.mark.asyncio
+async def test_copy_signal_good_when_price_within_10_pct():
+    """copy_signal='good' when cur_price <= avg_price * 1.10."""
+    from unittest.mock import patch
+    data = [{"redeemable": False, "title": "T", "outcome": "Yes",
+             "avgPrice": 0.40, "curPrice": 0.42, "eventSlug": "s"}]  # +5%
+    mock_client = _make_mock_positions_client(data)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest")
+    assert result[0]["copy_signal"] == "good"
+    assert result[0]["copy_value_pct"] == pytest.approx(5.0, abs=0.2)
+
+
+@pytest.mark.asyncio
+async def test_copy_signal_fair_when_price_10_to_30_pct_above():
+    """copy_signal='fair' when cur_price is 10-30% above avg_price."""
+    from unittest.mock import patch
+    data = [{"redeemable": False, "title": "T", "outcome": "Yes",
+             "avgPrice": 0.40, "curPrice": 0.48, "eventSlug": "s"}]  # +20%
+    mock_client = _make_mock_positions_client(data)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest")
+    assert result[0]["copy_signal"] == "fair"
+    assert result[0]["copy_value_pct"] == pytest.approx(20.0, abs=0.2)
+
+
+@pytest.mark.asyncio
+async def test_copy_signal_late_when_price_over_30_pct_above():
+    """copy_signal='late' when cur_price is >30% above avg_price."""
+    from unittest.mock import patch
+    data = [{"redeemable": False, "title": "T", "outcome": "Yes",
+             "avgPrice": 0.30, "curPrice": 0.50, "eventSlug": "s"}]  # +66.7%
+    mock_client = _make_mock_positions_client(data)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest")
+    assert result[0]["copy_signal"] == "late"
+    assert result[0]["copy_value_pct"] > 30
+
+
+@pytest.mark.asyncio
+async def test_copy_signal_good_when_price_dropped_below_entry():
+    """Price below entry is still 'good' — even better than whale's price."""
+    from unittest.mock import patch
+    data = [{"redeemable": False, "title": "T", "outcome": "Yes",
+             "avgPrice": 0.50, "curPrice": 0.35, "eventSlug": "s"}]  # -30%
+    mock_client = _make_mock_positions_client(data)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest")
+    assert result[0]["copy_signal"] == "good"
+    assert result[0]["copy_value_pct"] < 0
+
+
+@pytest.mark.asyncio
+async def test_copy_signal_good_when_avg_price_is_zero():
+    """When avg_price=0 (missing data), copy_signal defaults to 'good' with pct=0."""
+    from unittest.mock import patch
+    data = [{"redeemable": False, "title": "T", "outcome": "Yes",
+             "avgPrice": 0, "curPrice": 0.50, "eventSlug": "s"}]
+    mock_client = _make_mock_positions_client(data)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest")
+    assert result[0]["copy_signal"] == "good"
+    assert result[0]["copy_value_pct"] == 0.0

@@ -205,6 +205,19 @@ async def get_active_positions(address: str, limit: int = 20) -> list[dict]:
         cur_price = float(p.get("curPrice") or 0)
         avg_price = float(p.get("avgPrice") or 0)
 
+        # Copy timing signal: how far has price moved since whale entry?
+        if avg_price > 0:
+            copy_value_pct = round((cur_price - avg_price) / avg_price * 100, 1)
+            if copy_value_pct <= 10:
+                copy_signal = "good"
+            elif copy_value_pct <= 30:
+                copy_signal = "fair"
+            else:
+                copy_signal = "late"
+        else:
+            copy_value_pct = 0.0
+            copy_signal = "good"
+
         result.append({
             "market_title": p.get("title") or "Unknown Market",
             "outcome": p.get("outcome") or "",
@@ -213,6 +226,8 @@ async def get_active_positions(address: str, limit: int = 20) -> list[dict]:
             "initial_value_usd": round(float(p.get("initialValue") or 0), 2),
             "avg_price": round(avg_price, 4),
             "cur_price": round(cur_price, 4),
+            "copy_value_pct": copy_value_pct,
+            "copy_signal": copy_signal,
             "cash_pnl": round(float(p.get("cashPnl") or 0), 2),
             "percent_pnl": round(float(p.get("percentPnl") or 0), 2),
             "end_date": p.get("endDate") or "",

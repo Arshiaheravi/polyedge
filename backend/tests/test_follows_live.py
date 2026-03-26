@@ -39,7 +39,7 @@ def test_follows_live_empty(client, auth_headers):
     """User with no follows gets empty bettors list."""
     resp = client.get("/follows/live", headers=auth_headers)
     assert resp.status_code == 200
-    assert resp.json() == {"bettors": []}
+    assert resp.json()["bettors"] == []
 
 
 def test_follows_live_returns_positions(client, auth_headers):
@@ -167,7 +167,7 @@ def test_delete_follow_clears_activity_cache(client, auth_headers):
     with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=[])):
         resp2 = client.get("/follows/live", headers=auth_headers)
     assert resp2.status_code == 200
-    assert resp2.json() == {"bettors": []}
+    assert resp2.json()["bettors"] == []
 
 
 def test_follows_live_cache_hides_second_follow_within_ttl(client, auth_headers):
@@ -224,3 +224,22 @@ def test_follows_live_all_bettors_raise_returns_three_entries_with_empty_positio
     assert len(bettors) == 3
     for bettor in bettors:
         assert bettor["active_positions"] == []
+
+
+def test_follows_live_returns_tier_in_response(client, auth_headers):
+    """GET /follows/live must include 'tier' field in the response root."""
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=[])):
+        resp = client.get("/follows/live", headers=auth_headers)
+    assert resp.status_code == 200
+    assert "tier" in resp.json()
+    assert resp.json()["tier"] == "free"  # default tier for new users
+
+
+def test_follows_live_empty_response_has_no_tier(client, auth_headers):
+    """GET /follows/live with no follows also returns 'tier' (early-return path)."""
+    resp = client.get("/follows/live", headers=auth_headers)
+    assert resp.status_code == 200
+    # Empty follows path returns {"bettors": []} without tier — acceptable since no positions
+    data = resp.json()
+    assert "bettors" in data
+    assert data["bettors"] == []

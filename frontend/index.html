@@ -3437,6 +3437,7 @@ async function refreshFollowsActivity() {
     if (!res.ok) return;
     const data = await res.json();
     const bettors = data.bettors || [];
+    const followsTier = data.tier || 'free';
 
     if (!bettors.length) {
       activityContainer.innerHTML = '';
@@ -3490,7 +3491,7 @@ async function refreshFollowsActivity() {
         <strong style="color:var(--text);">Closes in Xd</strong> = when the market shuts and bets resolve
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;">
-        ${allPositions.map(p => renderPositionItem(p)).join('')}
+        ${allPositions.map(p => renderPositionItem(p, followsTier)).join('')}
       </div>`;
     } else {
       html = `<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:48px 32px;text-align:center;">
@@ -3524,7 +3525,7 @@ function renderDeadline(dateStr) {
   return `<span style="font-size:11px;color:var(--text3);">Closes ${new Date(dateStr).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>`;
 }
 
-function renderPositionItem(p) {
+function renderPositionItem(p, tier) {
   const pnlColor = p.cash_pnl >= 0 ? 'var(--green)' : 'var(--red)';
   const pnlSign  = p.cash_pnl >= 0 ? '+' : '';
   const pnlPct   = (p.percent_pnl >= 0 ? '+' : '') + p.percent_pnl.toFixed(1) + '%';
@@ -3540,6 +3541,24 @@ function renderPositionItem(p) {
   const safePolyUrl     = escapeHtml(p.poly_url || '#');
   const safeAvatarUrl   = escapeHtml(p._avatarUrl || '');
 
+  // Copy signal badge (Basic/VIP only)
+  const canSeeCopySignal = tier === 'basic' || tier === 'vip';
+  let copySignalHtml = '';
+  if (canSeeCopySignal && p.copy_signal) {
+    const sig = p.copy_signal;
+    const pct = typeof p.copy_value_pct === 'number' ? p.copy_value_pct : 0;
+    const pctStr = (pct >= 0 ? '+' : '') + pct.toFixed(0) + '%';
+    if (sig === 'good') {
+      copySignalHtml = `<span style="font-size:11px;font-weight:700;background:rgba(0,201,122,0.15);color:var(--green);border:1px solid rgba(0,201,122,0.3);border-radius:100px;padding:2px 9px;white-space:nowrap;" data-tooltip="Entry ${avgPricePct}¢ → Now ${curPricePct}¢ (${pctStr}) — still a good copy price">✅ Good copy</span>`;
+    } else if (sig === 'fair') {
+      copySignalHtml = `<span style="font-size:11px;font-weight:700;background:rgba(255,171,0,0.12);color:#ffab00;border:1px solid rgba(255,171,0,0.3);border-radius:100px;padding:2px 9px;white-space:nowrap;" data-tooltip="Entry ${avgPricePct}¢ → Now ${curPricePct}¢ (${pctStr}) — price moved, copy with caution">⚠️ Price moved</span>`;
+    } else {
+      copySignalHtml = `<span style="font-size:11px;font-weight:700;background:rgba(255,77,77,0.12);color:#ff4d4d;border:1px solid rgba(255,77,77,0.3);border-radius:100px;padding:2px 9px;white-space:nowrap;" data-tooltip="Entry ${avgPricePct}¢ → Now ${curPricePct}¢ (${pctStr}) — significantly above entry price">🔴 Late entry</span>`;
+    }
+  } else if (!canSeeCopySignal) {
+    copySignalHtml = `<span style="font-size:11px;font-weight:700;background:rgba(255,255,255,0.06);color:var(--text3);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:2px 9px;white-space:nowrap;cursor:pointer;" onclick="event.preventDefault();openUpgradeModal();" data-tooltip="Upgrade to Basic to see copy timing">🔒 Copy timing</span>`;
+  }
+
   return `<a href="${safePolyUrl}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:0;background:var(--card);border:1px solid rgba(0,201,122,0.25);border-radius:14px;overflow:hidden;text-decoration:none;transition:transform 0.15s,box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 32px rgba(0,201,122,0.18)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
 
     <!-- Top bar: bettor + deadline + LIVE badge -->
@@ -3553,11 +3572,12 @@ function renderPositionItem(p) {
     <!-- Market title -->
     <div style="padding:12px 14px 8px;font-size:14px;font-weight:600;line-height:1.45;color:var(--text);">${safeMarketTitle}</div>
 
-    <!-- Outcome pill + price -->
+    <!-- Outcome pill + price + copy signal -->
     <div style="padding:0 14px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
       <span style="background:rgba(0,201,122,0.12);color:var(--green);padding:3px 11px;border-radius:100px;font-size:13px;font-weight:800;border:1px solid rgba(0,201,122,0.2);">${safeOutcome}</span>
       <span style="font-size:12px;color:var(--text3);">now <strong style="color:var(--text);">${curPricePct}¢</strong></span>
-      ${priceMoved ? `<span style="font-size:11px;color:${priceDirColor};">${priceDir} from ${avgPricePct}¢ when bought</span>` : ''}
+      ${priceMoved ? `<span style="font-size:11px;color:${priceDirColor};">${priceDir} from ${avgPricePct}¢</span>` : ''}
+      ${copySignalHtml}
     </div>
 
     <!-- Stats row -->

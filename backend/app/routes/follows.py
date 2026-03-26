@@ -129,7 +129,7 @@ async def follows_activity(
     )
 
     if not follows:
-        result = {"bettors": []}
+        result = {"bettors": [], "tier": current_user.subscription_tier}
         _activity_cache[current_user.id] = {"data": result, "ts": now}
         return result
 
@@ -147,7 +147,7 @@ async def follows_activity(
         }
 
     bettors = await asyncio.gather(*[_fetch_one(f) for f in follows])
-    result = {"bettors": list(bettors)}
+    result = {"bettors": list(bettors), "tier": current_user.subscription_tier}
     _activity_cache[current_user.id] = {"data": result, "ts": now}
     return result
 
