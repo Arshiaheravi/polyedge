@@ -33,12 +33,12 @@ from slowapi.util import get_remote_address
 # Import the module-level limiter (defined in main.py)
 # In PolyEdge: import from app.main or define in a shared limiter.py
 
-@limiter.limit("10/minute")      # ← MUST be ABOVE the route decorator
-@router.post("/login")
+@router.post("/login")           # ← route decorator FIRST (outermost, written above)
+@limiter.limit("10/minute")      # ← limiter BELOW the route decorator
 async def login(request: Request, form_data: LoginForm, db: Session = Depends(get_db)):
     ...
 ```
-**CRITICAL #1**: `@limiter.limit(...)` must be the OUTERMOST decorator (above `@router.post`). Wrong order → limit silently never applies.
+**CRITICAL #1**: Route decorator (`@router.post`) must be written ABOVE `@limiter.limit`. Python applies decorators bottom-up, so the route registers the already-rate-limited function. Wrong order → limit silently never applies.
 **CRITICAL #2**: The `request: Request` parameter MUST be in the function signature — slowapi reads it to extract the client IP. Without it, you'll get a 500 error.
 
 ## RATE LIMIT STRING FORMATS

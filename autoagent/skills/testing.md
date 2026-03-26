@@ -233,6 +233,45 @@ When writing parametrized tests with `@pytest.mark.parametrize`, always use `pyt
 Named IDs immediately pinpoint WHICH parameter set failed without reading the parameter values from the test name.
 (Source: rednafi.com pytest.param best practices 2026 — confirmed on PolyEdge tier tests)
 
+### Advanced: dict-based parametrize (cleaner for multi-field cases)
+Pack all inputs and expected value into a dict. Avoids positional fragility when adding fields:
+```python
+@pytest.mark.parametrize("case", [
+    pytest.param({"tier": "free",  "endpoint": "/follows", "expected": 200}, id="free-follows"),
+    pytest.param({"tier": "basic", "endpoint": "/follows", "expected": 200}, id="basic-follows"),
+    pytest.param({"tier": "free",  "endpoint": "/markets/consensus", "expected": 200}, id="free-consensus"),
+])
+def test_tier_access(case, client, auth_headers_for_tier):
+    headers = auth_headers_for_tier(case["tier"])
+    resp = client.get(case["endpoint"], headers=headers)
+    assert resp.status_code == case["expected"]
+```
+
+### Advanced: inline xfail/skip inside parametrize (co-locate skip logic with data)
+```python
+@pytest.mark.parametrize("token", [
+    pytest.param("valid_token", id="valid"),
+    pytest.param("expired", id="expired",
+                 marks=pytest.mark.xfail(reason="expiry check not wired yet")),
+])
+def test_auth(token): ...
+```
+
+### Advanced: `itertools.product` for tier × endpoint matrix (PolyEdge use case)
+```python
+import itertools
+TIERS = ["free", "basic", "vip"]
+ENDPOINTS = ["/follows", "/alerts/settings", "/markets/consensus"]
+
+@pytest.mark.parametrize("tier,endpoint", list(itertools.product(TIERS, ENDPOINTS)))
+def test_no_500(tier, endpoint, client):
+    resp = client.get(endpoint, headers=auth_headers_for(tier))
+    assert resp.status_code != 500
+```
+Generates 9 cases automatically (3 tiers × 3 endpoints). Add a new endpoint → 3 new cases with 1 line.
+
+(Source: fiddler.ai Advanced Pytest Patterns 2026; mergify.com pytest.param guide 2026)
+
 ## IMPORT CHECK BEFORE TESTS
 ```bash
 cd backend && py -c "from app.main import app; print('OK')"
