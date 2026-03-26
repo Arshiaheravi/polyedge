@@ -16,7 +16,9 @@ Confirmed working endpoints (no auth required):
   GET https://data-api.polymarket.com/activity?user=ADDR&limit=N
     → Trades for a specific wallet (for bettor profiles)
 """
-from typing import Optional
+import asyncio
+import time as _time
+from datetime import datetime
 
 import httpx
 
@@ -250,8 +252,6 @@ async def get_active_positions(address: str, limit: int = 20) -> list[dict]:
 
 async def get_bettor_profile(address: str) -> dict:
     """Get a specific bettor's profile — merges activity data with leaderboard rank/pnl/volume."""
-    import asyncio
-
     async def _fetch_activity():
         async with httpx.AsyncClient(timeout=TIMEOUT) as client:
             try:
@@ -320,8 +320,6 @@ async def compute_copy_simulator(address: str, limit: int = 10) -> dict:
         - Else (<7 days, still open) → skip (inconclusive)
     - Returns {simulated_pnl_usd, simulated_roi_pct, bets_analysed}
     """
-    import time as _time
-
     async with httpx.AsyncClient(timeout=TIMEOUT) as client:
         try:
             resp = await client.get(f"{BASE_URL}/activity", params={"user": address, "limit": 50})
@@ -370,7 +368,6 @@ async def compute_copy_simulator(address: str, limit: int = 10) -> dict:
                 if ts_val:
                     bet_age_secs = now_ts - ts_val
                 else:
-                    from datetime import datetime, timezone
                     dt = datetime.fromisoformat(str(raw_ts).replace("Z", "+00:00"))
                     bet_age_secs = now_ts - dt.timestamp()
             except Exception:
@@ -446,8 +443,6 @@ async def get_consensus_signals(min_whales: int = 3) -> list[dict]:
       market_title, condition_id, outcome, whale_count, avg_entry_price,
       current_price, whale_names (list of bettor names — caller decides whether to expose)
     """
-    import asyncio
-
     # Step 1: Get top-100 bettor addresses
     leaderboard = await get_leaderboard(sort_by="profit", time_period="month", limit=100)
     addresses = [(e["address"], e["name"]) for e in leaderboard if e.get("address")]
