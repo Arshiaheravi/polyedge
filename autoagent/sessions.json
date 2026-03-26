@@ -3450,5 +3450,28 @@
       "failures": 0,
       "notes": "7 new Playwright tests; 36 total pass"
     }
+  },
+  {
+    "session": 155,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Fixed Bug #12 (consensus stale data) by replacing a permanent boolean flag with a 60-second TTL \u2014 users now see fresh whale data each time they revisit the tab. Also added data-testid attributes to 9 key HTML elements so Playwright selectors survive CSS class renames.",
+    "files": [
+      "frontend/index.html",
+      "backend/tests/playwright/test_consensus_tab.py",
+      "backend/tests/playwright/test_ui_flows.py"
+    ],
+    "tests": {
+      "before": 443,
+      "after": 443,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 41,
+      "failures": 0,
+      "notes": "5 new Playwright tests; 41 total pass"
+    }
   }
 ]

@@ -166,3 +166,5 @@
 - **[SESSION #150] Playwright event loop fix + data integrity tests** — 105 broken async tests fixed; 18 data integrity tests added
 - **[SESSION #151] Playwright tier gate E2E tests** — 12 tests verify all 3 tiers see correct paywall UI in browser (Consensus, position cards, profile simulator)
 - **[SESSION #152] Playwright UI flow tests** — 14 tests verify pricing cards show all 5 features, register/login journey, leaderboard renders ≥10 cards, profile shows simulator locked/unlocked
+- **[SESSION #154] Playwright FAB + mobile nav tests** — 7 tests verify back-to-top FAB scroll behaviour and mobile nav layout at 375px
+- **[SESSION #155] Fix Bug #12 + data-testid attributes** — replaced _consensusLoaded boolean with 60s TTL timestamp; added data-testid to 9 key HTML elements; 5 new Playwright tests (41 total)

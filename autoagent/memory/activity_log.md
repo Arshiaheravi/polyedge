@@ -74,3 +74,8 @@ FILES: backend/app/routes/alerts.py, backend/tests/test_alerts.py
 DONE: Audited sessions 136-142 changed files; found and fixed telegram_verify half-verified bug — endpoint now requires telegram_chat_id before confirming verification (or returns success immediately if webhook already completed setup). Moved scheduler.py inline imports to module level. Removed conviction variable aliasing. Added 1 regression test.
 IMPACT: Users who called /telegram/verify before messaging the bot were silently left in a broken state: "Telegram linked" shown but chat_id never set so notifications never fired. Now blocked with a clear message directing them to message the bot. Existing webhook-verified users get idempotent success.
 FILES: backend/app/routes/alerts.py, backend/app/services/scheduler.py, backend/tests/test_alerts.py, backend/tests/test_follows_live.py
+
+## 2026-03-26 — TESTING (Session 155)
+DONE: Fixed Bug #12 — replaced _consensusLoaded boolean (never cleared) with 60-second TTL timestamp so consensus data re-fetches after 60s instead of showing stale prices for the whole session. Added data-testid attributes to 9 key HTML elements (pricing cards, login/register form inputs, bettor cards, follow button). Added 5 Playwright tests: TTL re-fetch regression + data-testid presence checks.
+IMPACT: Users on the Consensus tab no longer see stale whale data for the entire session. Playwright selectors are now stable against CSS class changes — data-testid won't break if a designer renames a class.
+FILES: frontend/index.html, backend/tests/playwright/test_consensus_tab.py, backend/tests/playwright/test_ui_flows.py

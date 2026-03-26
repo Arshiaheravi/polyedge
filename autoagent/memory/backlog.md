@@ -22,8 +22,6 @@
 
 - [ ] **GET /health + GET /readiness endpoints** — Add `routes/health.py` with two endpoints: `/health` returns 200 immediately (liveness probe), `/readiness` checks DB connectivity (`db.execute("SELECT 1")`) and returns 200 or 503. Required before any production deployment or Docker/k8s setup. (Source: render.com FastAPI best practices 2026, session 153)
 
-- [ ] **Add data-testid attributes to frontend/index.html** — Add `data-testid="pricing-basic-card"`, `data-testid="register-email"`, `data-testid="login-submit"`, `data-testid="bettor-card"`, `data-testid="follow-btn"` etc. to all key interactive elements. Prevents brittle Playwright selector failures when CSS classes or HTML structure changes. Selectors tied to data-testid survive designer refactors. (Source: BrowserStack Playwright selector best practices 2026, session 153)
-
 ---
 
 ## MEDIUM PRIORITY — Edge Cases & Reliability
