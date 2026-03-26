@@ -3774,5 +3774,29 @@
       "failures": 0,
       "notes": "meta session \u2014 no code changes"
     }
+  },
+  {
+    "session": 169,
+    "date": "2026-03-26",
+    "time": "14:00",
+    "type": "work",
+    "summary": "Fixed get_active_positions to filter out resolved-market positions (price=0 or >=1), and added 3 new tests: price range validation, copy_signal enum check, consensus whale_count and price range \u2014 keeping copyable positions meaningful for users",
+    "files": [
+      "backend/app/services/polymarket.py",
+      "backend/tests/test_data_integrity.py",
+      "backend/tests/test_follows_live.py",
+      "backend/tests/test_polymarket_service.py"
+    ],
+    "tests": {
+      "before": 467,
+      "after": 470,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

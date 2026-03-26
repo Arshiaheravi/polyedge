@@ -2,11 +2,11 @@
 
 ## HIGH PRIORITY — Testing
 
-- [ ] **Active positions price range validation** — `GET /follows/live` returns positions with `avg_price` and `current_price` fields; add a test to `test_data_integrity.py` that verifies both values are between 0.001–0.999 for all returned positions (price = 0 or 1 means a resolved/expired market — serving these is a data quality bug). Grep confirms: no test for this exists yet.
+- [ ] **Recent bets timestamp validation** — `GET /bettors/{address}` recent_bets each have a timestamp field; add a test to `test_data_integrity.py` verifying all timestamps are within the past 90 days (stale data = Polymarket served wrong/cached bets). Grep confirms: no test for timestamp freshness exists yet.
 
-- [ ] **copy_signal enum validation in follows/live** — `GET /follows/live` positions include a `copy_signal` field; add a unit test verifying it is always one of `["good", "fair", "late"]` (never None, empty, or an unknown string). Add to `test_follows_live.py`. Grep confirms: no test validates the enum constraint — only the numeric threshold logic is tested.
+- [ ] **copy_value_pct formula correctness** — `GET /follows/live` positions include `copy_value_pct`; add a unit test to `test_follows_live.py` or `test_polymarket_service.py` asserting `round((cur_price - avg_price) / avg_price * 100, 1)` matches the returned value for a known fixture (avg=0.40, cur=0.50 → 25.0%). Grep confirms: no test explicitly validates the formula output as a number, only the threshold bucketing (copy_signal='fair'). Tests should verify the number, not just the bucket.
 
-- [ ] **Consensus signal whale_count and price range** — `GET /markets/consensus` each signal must have `whale_count >= 3` and `avg_entry_price` between 0.01–0.99. Add a data integrity test in `test_data_integrity.py` verifying these constraints on a real API call (skip gracefully if Polymarket unreachable). Grep confirms: whale_count and price range are not tested in any existing test file.
+- [ ] **Exit alerts only fire for VIP in scheduler** — `_poll_vip_bets` fires exit notifications; add a test verifying that when a whale exits a position, a non-VIP follower (free/basic) does NOT receive an exit alert notification. Grep: `test_poll_vip_bets` tests the exit detection but doesn't verify non-VIP users are excluded from the dispatch call.
 
 ---
 

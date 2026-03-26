@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #169] Active positions price filter + 3 data integrity tests** — filtered resolved-market positions (price=0 or 1) from get_active_positions; added 3 tests for price range, copy_signal enum, consensus whale_count; 467→470 tests
 - **[SESSION #167] Dead code audit** — scanned all JS function definitions in frontend/index.html and all imports in backend/app/; found and removed only 1 dead function (tierBadge, 3 lines); 467 tests still passing
 - **[SESSION #166] Code quality audit — sessions 161-165** — extracted _compute_conviction helper (eliminated duplicate logic in _poll_bets/_poll_vip_bets), fixed stale CORS docstring, added 5 unit tests; 462→467 passing
 - **[SESSION #165] _last_positions purge + health/readiness rate limit tests** — 3 regression tests: scheduler purges stale positions on unfollow; /health and /readiness never return 429; 459→462 tests passing

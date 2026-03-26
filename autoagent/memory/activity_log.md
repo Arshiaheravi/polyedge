@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 14:00 — TESTING (Session 169)
+DONE: Fixed get_active_positions to filter positions with cur_price < 0.001 or > 0.999 (resolved/expired markets leaking as "copyable"), and added 3 regression tests: (1) price range filter verified with mock data including price=0 and price=1 positions, (2) copy_signal enum always in {good, fair, late}, (3) consensus signals have whale_count>=3 and avg_entry_price in 0.01-0.99. Fixed 2 existing tests that had no curPrice in fixtures (now filtered out by the new guard). 467→470 tests.
+IMPACT: Users no longer see resolved markets in their copy-trading dashboard. The price range filter catches both "data missing" (price=0) and "YES settled" (price=1) cases. Tests prove the filter and document the contract.
+FILES: backend/app/services/polymarket.py, backend/tests/test_data_integrity.py, backend/tests/test_follows_live.py, backend/tests/test_polymarket_service.py
+
 ## 2026-03-26 — META (Session 168)
 IMPROVED: (1) knowledge.md — added reflexion entries for sessions 156-167 (12 missing reflexions) and updated test suite history table (was stale at session 142/413 tests, now current through session 167/467 tests). (2) backlog.md — removed empty section clutter at top (14 lines of orphaned `---` separators), reordered to put HIGH PRIORITY Testing before MEDIUM PRIORITY Edge Cases. (3) meta/PROMPT.md — added reflexion gap check to STEP 1: grep for last reflexion session number and flag if 3+ sessions are missing, with instructions to write them from activity_log data.
 PATTERNS FOUND: (a) Reflexion entries for sessions 156-167 were completely absent from knowledge.md — 12 sessions of accumulated rules were missing. Most sessions had no failures so the reflexion was likely skipped as "nothing to document" — but the RULE line is always required even for clean sessions. (b) Backlog ordering had MEDIUM PRIORITY section before HIGH PRIORITY sections — work sessions pick the top item and would reach medium tasks before high ones. (c) Test suite history table was 25 sessions stale.

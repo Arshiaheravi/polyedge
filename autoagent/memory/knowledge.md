@@ -64,6 +64,13 @@ RULE: [2026-03-26] When _poll_bets and _poll_vip_bets both exist, any logic chan
 RULE: [2026-03-26] Docstrings in test files go stale quickly when the underlying implementation changes. At audit time, grep for words like "all origins", "always", "never" in test docstrings and verify they still match the current behavior.
 
 - Test count: **467 passed, 1 skipped** (as of 2026-03-26, session 167) *(unchanged — dead code removal, no new tests)*
+- Test count: **470 passed, 1 skipped** (as of 2026-03-26, session 169) — added 3 data integrity/validation tests
+
+### Session #169 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: (1) Added price-range filter to `get_active_positions` — skip positions with cur_price < 0.001 or > 0.999 (resolved markets were leaking into the copyable positions list). (2) Added 3 regression tests: price range filter, copy_signal enum validation, consensus whale_count and avg_entry_price constraints. (3) Fixed 2 existing tests that omitted `curPrice` in mock data (they tested URL building only, so curPrice wasn't needed before — now required to pass the new filter). 467→470 tests.
+FAILED: Two existing tests (`test_get_active_positions_uses_slug_when_no_event_slug`, `test_get_active_positions_uses_default_url_when_no_slugs`) broke on first run because their mock data had no `curPrice` (defaulted to 0, now filtered). Fix: add `"curPrice": 0.50` to the mock fixture.
+RULE: [2026-03-26] When adding a filter to `get_active_positions` (or any data-normalising function), grep ALL existing tests that use `_make_mock_positions_client` or patch the positions API — any test fixture missing the new required field will break. Before running full suite, run: `grep -n "redeemable.*False\|curPrice" tests/test_polymarket_service.py` and confirm every position dict has all now-required fields.
+RULE: [2026-03-26] The `raise_for_status` mock in async httpx tests should be `mock_resp.raise_for_status = MagicMock()` (not `AsyncMock`) if the service calls `resp.raise_for_status()` synchronously (no `await`). Using `AsyncMock` generates a "coroutine never awaited" RuntimeWarning. Using `MagicMock()` silences it cleanly.
 
 ### Session #167 Reflexion — 2026-03-26 (CODE REVIEW — Dead Code Audit)
 ACCOMPLISHED: Full dead code audit on frontend/index.html (all function definitions) and backend/app/ (all imports). Found exactly 1 dead function: `tierBadge(tier)` — defined at line 2777, never called from any JS code path or HTML onclick attribute. Removed it (4 lines). All 467 tests still pass. All backend imports verified in use.
