@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
 from app.database import get_db
-from app.models import BetEvent, BettorFollow, User
+from app.models import BettorFollow, User
 from app.services.polymarket import get_active_positions, get_recent_bets
 
 router = APIRouter(prefix="/follows", tags=["follows"])

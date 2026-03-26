@@ -2810,6 +2810,10 @@ document.addEventListener('keydown', function(e) {
 
 function showView(view, sub) {
   startProgress();
+  // Clear follows refresh timer when leaving dashboard (prevents 401 redirect loop after logout/expiry)
+  if (view !== 'dashboard' && _followsRefreshTimer) {
+    clearInterval(_followsRefreshTimer); _followsRefreshTimer = null;
+  }
   document.getElementById('back-to-top-fab').classList.remove('fab-visible');
   ['landing', 'auth', 'dashboard', 'browse'].forEach(v => {
     document.getElementById(`view-${v}`).classList.toggle('hidden', v !== view);

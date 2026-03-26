@@ -540,3 +540,57 @@ class TestDataTestidAttributes:
         page.wait_for_selector('[data-testid="bettor-card"]', timeout=15_000)
         cards = page.query_selector_all('[data-testid="bettor-card"]')
         assert len(cards) >= 1, "No bettor cards with data-testid='bettor-card' found after leaderboard load"
+
+
+# ── 7. Follows timer cleanup ──────────────────────────────────────────────────
+
+class TestFollowsTimerCleanup:
+    """The follows refresh timer must be cleared when navigating away from dashboard.
+
+    Bug: showView() did not clear _followsRefreshTimer when leaving dashboard.
+    After logout (or 401), the 30s interval kept firing refreshFollowsActivity(),
+    which got 401 → called showView('auth', 'login') → redirecting the user back
+    to the login page 30s after they logged out.
+
+    Fix: showView() now clears _followsRefreshTimer when view != 'dashboard'.
+    """
+
+    def test_logout_clears_follows_timer(self, page: Page):
+        """After logout, the follows refresh timer must not fire and redirect to auth.
+
+        Uses page.clock.fast_forward to advance time by 31s past the 30s interval.
+        If the timer was NOT cleared, refreshFollowsActivity fires → 401 →
+        showView('auth', 'login') → user is on auth page (test fails).
+        If the timer WAS cleared, no callback fires → user stays on landing (test passes).
+        """
+        login(page, "free")
+
+        # Navigate to follows tab — this calls loadMyFollows() which sets the 30s timer
+        page.evaluate("showTab('follows')")
+        page.wait_for_timeout(800)  # let timer registration complete
+
+        # Install fake clock AFTER the timer is set so we can control when it fires
+        page.clock.install()
+
+        # Log out — with the fix, showView('landing') clears _followsRefreshTimer
+        page.evaluate("logout()")
+        page.wait_for_timeout(200)
+
+        # Fast-forward 31s — if timer was NOT cleared, refreshFollowsActivity fires
+        # → apiFetch('/follows/live') → 401 → showView('auth', 'login')
+        page.clock.fast_forward(31_000)
+        page.wait_for_timeout(500)  # allow any async fetch callbacks to complete
+
+        auth_hidden = page.evaluate(
+            "document.getElementById('view-auth').classList.contains('hidden')"
+        )
+        landing_hidden = page.evaluate(
+            "document.getElementById('view-landing').classList.contains('hidden')"
+        )
+        assert auth_hidden, (
+            "view-auth is visible 31s after logout — "
+            "_followsRefreshTimer was not cleared on logout and redirected user to login"
+        )
+        assert not landing_hidden, (
+            "view-landing is hidden after logout — user should remain on landing page"
+        )
