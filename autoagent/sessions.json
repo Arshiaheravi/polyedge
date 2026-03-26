@@ -2932,5 +2932,15 @@
     "files": ["backend/app/services/polymarket.py", "backend/app/routes/bettors.py", "backend/tests/test_polymarket_service.py", "backend/tests/test_bettors.py", "frontend/index.html"],
     "tests": {"before": 373, "after": 384, "status": "pass"},
     "frontend": {"status": "pass", "checks": 132, "failures": 0, "notes": ""}
+  },
+  {
+    "session": 135,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "VIP users now get notified when a whale exits a position — scheduler detects when a followed bettor closes or reduces a position by more than 50% and fires an exit alert so users know when to take profit",
+    "files": ["backend/app/models.py", "backend/app/services/notifications.py", "backend/app/services/polymarket.py", "backend/app/services/scheduler.py", "backend/tests/test_scheduler.py"],
+    "tests": {"before": 384, "after": 390, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 132, "failures": 0, "notes": "no frontend changes"}
   }
 ]

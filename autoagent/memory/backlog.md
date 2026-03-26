@@ -13,8 +13,6 @@
 
 
 
-- [ ] Exit Alerts — in scheduler.py maintain _last_positions dict per bettor address; each poll compare current positions to previous; if a conditionId that existed last poll is now gone or size reduced by >50%, it is an exit; call dispatch_bet_notification() with type="EXIT" and message "⚡ [BettorName] EXITING [Market] — consider taking profit". TIER GATE: only send EXIT notifications to VIP users (tier == "vip"). Store exit events as BetEvent with type="EXIT" for all tiers (for future analytics).
-
 - [ ] Copy Ratio Setting — let users set a per-bettor copy ratio multiplier (0.1x, 0.25x, 0.5x, 1x) stored in BettorFollow table; show on follow cards as "Copy at 0.5x"; include copy_ratio in notification messages: "🔥 EXTREME conviction — Copy at 0.5x = $X". TIER GATE: Basic/VIP only (Free always shows full bet size, no ratio setting). Rationale: PolyGun (leading competitor) offers 0.1x-1x ratio as core differentiator — without it, PolyEdge users have to manually scale down each copy trade.
 
 - [ ] Insider Score — for each bettor in the top-100, compute a 0-100 confidence score estimating information-edge: factors are (win_rate × profit_usd × avg_conviction × bet_count / 50). Display as a colored badge on leaderboard cards (green >70, yellow 40-70, gray <40). Merge with Edge Score composite metric already in backlog. TIER GATE: visible badge for all tiers; numeric score shown only for Basic/VIP. Rationale: Polywhaler is only competitor offering an insider score — PolyEdge can build this with data we already have.

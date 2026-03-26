@@ -33,8 +33,8 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **384 passed** (as of 2026-03-25, session 134)
-- Playwright checks: **132 total, 0 failures** (as of 2026-03-25, session 134)
+- Test count: **390 passed** (as of 2026-03-26, session 135)
+- Playwright checks: **132 total, 0 failures** (as of 2026-03-26, session 135)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -45,6 +45,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #135 Reflexion — 2026-03-26
+ACCOMPLISHED: Built Exit Alerts — `_detect_exits()` in scheduler.py compares `_last_positions[address]` (conditionId→size map) to current open positions each poll; exits fire when a conditionId disappears or size drops >50%; VIP-only Telegram+web push notifications; BetEvent(event_type="EXIT") stored for all tiers; `format_exit_message()` added to notifications.py; `condition_id` added to `get_active_positions()` result; `event_type` column added to BetEvent model; 6 new tests green; 390 total.
+FAILED: Nothing — first run worked cleanly. `except Exception` in `_detect_exits` means existing `_poll_bets` tests didn't need changes (HTTP errors are silently swallowed).
+RULE: [2026-03-26] When adding a new polling sub-function called from `_poll_bets`, wrap ALL external API calls in `except Exception: logger.warning(); continue` — this means existing tests that don't mock the new API call will still pass (network errors are caught), and new tests can mock it explicitly for targeted assertions.
+RULE: [2026-03-26] Exit detection state pattern: store `{condition_id: size}` dict per bettor address in a module-level `_last_positions` global; first run = record only, subsequent runs = compare. Always reset this dict in tests with an autouse fixture to prevent state bleed between tests.
 
 ### Session #134 Reflexion — 2026-03-25
 ACCOMPLISHED: Added Copy Portfolio Simulator — `compute_copy_simulator()` in polymarket.py infers bet resolution from REDEEM transactions in activity data (no extra API call needed); route uses asyncio.gather for parallel calls; tier gate enforced in route; frontend shows card with textContent (XSS-safe); 11 new tests all green; 384 total.

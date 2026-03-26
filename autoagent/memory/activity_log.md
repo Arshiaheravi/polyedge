@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — FEATURE (Session 135)
+DONE: Built Exit Alerts — scheduler detects when a followed whale closes or reduces a position by >50% and fires exit notifications to VIP users only (Telegram + web push); BetEvent rows with event_type="EXIT" stored for all tiers; format_exit_message() added; condition_id added to get_active_positions() result; event_type column added to BetEvent model; 6 new tests, 390 total.
+IMPACT: VIP users now know WHEN to exit a copied position — the final missing signal in the copy-trading loop. When a whale exits, users holding the same position get an immediate alert to consider taking profit.
+FILES: backend/app/models.py, backend/app/services/notifications.py, backend/app/services/polymarket.py, backend/app/services/scheduler.py, backend/tests/test_scheduler.py
+
 ## 2026-03-25 — FEATURE (Session 134)
 DONE: Added Copy Portfolio Simulator to bettor profile pages — Basic/VIP users now see "Copy $100/bet on last N resolved bets → +$X (+Y%)" card; Free users see blurred value with "Upgrade to unlock" CTA. Backend infers wins via REDEEM transactions, losses via bets >7 days old with no REDEEM, skips still-open bets.
 IMPACT: Users can now quantify what following a specific bettor is actually worth in dollars — the #1 factor that convinces free users to upgrade and keeps paid users subscribed.

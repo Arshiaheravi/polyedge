@@ -1,5 +1,8 @@
 # Done
 
+## 2026-03-26
+- **[SESSION #135] Exit Alerts** — scheduler now detects when a whale closes or reduces a position by >50% and sends VIP-only exit notifications (Telegram + web push); BetEvent rows with event_type="EXIT" stored for all tiers; 6 new tests, 390 total passing
+
 ## 2026-03-25
 - **[SESSION #134] Copy Portfolio Simulator** — bettor profile pages now show simulated P&L if user had copied this bettor's last 10 resolved bets at $100 each; Basic/VIP see full data, Free see blurred teaser with upgrade CTA; 11 new tests, 384 total passing
 - **[SESSION #131] Conviction Score on Notifications** — scheduler now computes conviction = bet_amount / avg_bet_usd from recent bets (no extra API calls); Telegram messages show 🔥 EXTREME (>=10x) or ⚡ HIGH (>=3x) conviction labels; web push title also updated; 9 new tests added; Basic+VIP users see conviction-enhanced alerts
