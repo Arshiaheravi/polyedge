@@ -833,3 +833,64 @@ async def test_copy_simulator_limit_enforced():
         from app.services.polymarket import compute_copy_simulator
         result = await compute_copy_simulator("0xtest", limit=5)
     assert result["bets_analysed"] == 5
+
+
+# ── get_consensus_signals (mocked Polymarket API) ─────────────────────────────
+
+MOCK_CONDITION_ID = "0x" + "a" * 64  # valid 64-char hex
+
+
+@pytest.mark.asyncio
+async def test_get_consensus_signals_with_mocked_api():
+    """Unit test: 5 whales all hold YES on the same market → whale_count=5 in output.
+
+    Mocks get_leaderboard (returns 5 entries) and httpx.AsyncClient (returns
+    1 position each with the same conditionId + outcome).  Verifies:
+    - whale_count == 5
+    - avg_entry_price is in (0.01, 0.99)
+    - condition_id matches MOCK_CONDITION_ID
+    - result is not skipped due to CI/network unavailability
+    """
+    from unittest.mock import AsyncMock, MagicMock, patch
+    from app.services.polymarket import get_consensus_signals
+
+    # 5 whale leaderboard entries
+    mock_leaderboard = [
+        {"address": f"0x{i:040x}", "name": f"whale{i}", "pnl_usd": 1000.0 * (5 - i), "rank": i}
+        for i in range(1, 6)
+    ]
+
+    # Position response: each whale holds YES on MOCK_CONDITION_ID at avg_price=0.60
+    mock_position = {
+        "conditionId": MOCK_CONDITION_ID,
+        "outcome": "Yes",
+        "title": "Will X happen?",
+        "avgPrice": "0.60",
+        "curPrice": "0.65",
+        "redeemable": False,
+        "eventSlug": "test-event",
+    }
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = [mock_position]
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with (
+        patch("app.services.polymarket.get_leaderboard", new=AsyncMock(return_value=mock_leaderboard)),
+        patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client),
+    ):
+        signals = await get_consensus_signals(min_whales=3)
+
+    assert len(signals) >= 1, "Expected at least 1 consensus signal from 5-whale mock"
+    # Find the signal for our mock market
+    target = next((s for s in signals if s["condition_id"] == MOCK_CONDITION_ID), None)
+    assert target is not None, f"Signal for {MOCK_CONDITION_ID} not found in: {signals}"
+    assert target["whale_count"] == 5, f"Expected 5 whales, got {target['whale_count']}"
+    assert 0.01 < target["avg_entry_price"] < 0.99, (
+        f"avg_entry_price {target['avg_entry_price']} out of expected range"
+    )
+    assert target["condition_id"] == MOCK_CONDITION_ID
