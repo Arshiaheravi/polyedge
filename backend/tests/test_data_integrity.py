@@ -273,6 +273,58 @@ def test_recent_bets_market_title_non_empty(client):
         )
 
 
+def test_recent_bets_timestamps_within_90_days(client):
+    """All recent_bets timestamps must be within the past 90 days.
+
+    Stale timestamps (older than 90 days) indicate Polymarket served
+    wrong/cached bets — a data freshness failure that would mislead copy-traders.
+    Timestamps can be a Unix float string or an ISO-8601 string.
+    """
+    import time
+    from datetime import datetime, timezone
+
+    _clear_bettors_cache()
+    resp = client.get("/bettors?limit=5&sort=profit")
+    _skip_if_502(resp, "GET /bettors")
+    assert resp.status_code == 200
+    bettors = resp.json()["bettors"]
+    assert len(bettors) >= 1
+    address = bettors[0]["address"]
+
+    _clear_bettors_cache()
+    detail_resp = client.get(f"/bettors/{address}")
+    _skip_if_502(detail_resp, f"GET /bettors/{address}")
+    assert detail_resp.status_code == 200
+    bets = detail_resp.json().get("recent_bets", [])
+    if not bets:
+        pytest.skip("No recent bets available for this bettor")
+
+    now_ts = time.time()
+    ninety_days_secs = 90 * 24 * 3600
+
+    for bet in bets:
+        raw_ts = bet.get("timestamp", "")
+        if not raw_ts:
+            continue  # missing timestamp — skip this bet (don't fail the test)
+
+        try:
+            ts_val = float(raw_ts) if str(raw_ts).replace(".", "").isdigit() else None
+            if ts_val is None:
+                dt = datetime.fromisoformat(str(raw_ts).replace("Z", "+00:00"))
+                ts_val = dt.timestamp()
+        except Exception:
+            continue  # unparseable timestamp — skip rather than false-fail
+
+        age_secs = now_ts - ts_val
+        assert age_secs <= ninety_days_secs, (
+            f"Bet timestamp is {age_secs / 86400:.1f} days old (>90 days) — "
+            f"Polymarket may be serving stale data: {bet}"
+        )
+        assert age_secs >= 0, (
+            f"Bet timestamp is in the future by {-age_secs:.0f}s — clock skew or bad data: {bet}"
+        )
+
+
 # ── Copy simulator math ──────────────────────────────────────────────────────
 
 def test_copy_simulator_locked_for_free_user(client, db):
