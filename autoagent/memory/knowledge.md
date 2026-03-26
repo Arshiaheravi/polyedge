@@ -12,8 +12,19 @@
 
 ## Project Facts (pre-seeded)
 
-- Backend runs on port **8002** (not 8001, not 8000)
+- Backend runs on port **8003** (was 8002 — changed 2026-03-26 because old 8002 process was stuck pre-markets-router; frontend API constant updated too)
 - Frontend runs on port **3000**
+- Frontend API constant: `const API = 'http://localhost:8003';` at approx line 2451 of frontend/index.html
+
+## Test Accounts (live in polyedge.db — use these for E2E and Playwright tests)
+
+| Tier | Email | Password | DB User ID |
+|------|-------|----------|------------|
+| Free | free@polyedge.com | FreeTest123! | 24 |
+| Basic | basic@polyedge.com | BasicTest123! | 25 |
+| VIP | vip@polyedge.com | VipTest123! | 23 |
+
+These accounts exist in the live SQLite database. Playwright tests MUST use these credentials — do NOT create new accounts each test run as it pollutes the DB. To get a JWT for any tier: `POST /auth/login` with email+password, use `access_token` as Bearer token.
 - Python command on this machine: **`py`** (Windows, not `python3`)
 - Admin password: **`polyedge-admin-2026`** — confirmed loaded from .env by pydantic-settings (verified 2026-03-23). Default in config.py is `"admin"` but .env overrides it. PROJECT.md updated to match.
 - Admin header name: **`x-admin-password`** (hyphen, lowercase)
