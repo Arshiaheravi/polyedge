@@ -54,11 +54,12 @@ def _normalise_leaderboard_entry(raw: dict) -> dict:
     }
 
 
-def _normalise_profile(raw: dict, volume: float = 0.0, trade_count: int = 0, pnl_usd: float = 0.0, rank: int = 0) -> dict:
+def _normalise_profile(raw: dict, volume: float = 0.0, trade_count: int = 0, pnl_usd: float = 0.0, rank: int = 0, accuracy_pct=None) -> dict:
     address = raw.get("proxyWallet") or raw.get("address") or ""
     name = raw.get("userName") or raw.get("name") or raw.get("pseudonym") or (address[:10] + "..." if address else "Unknown")
     avatar_url = raw.get("profileImageOptimized") or raw.get("profileImage") or _blockies_url(address)
     avg_bet = round(volume / trade_count, 2) if trade_count > 0 else 0.0
+    accuracy = round(float(accuracy_pct) / 100.0, 4) if accuracy_pct is not None else None
 
     return {
         "address": address,
@@ -69,6 +70,7 @@ def _normalise_profile(raw: dict, volume: float = 0.0, trade_count: int = 0, pnl
         "total_bets": int(raw.get("numTrades") or raw.get("total_bets") or trade_count),
         "avg_bet_usd": avg_bet,
         "avatar_url": avatar_url,
+        "accuracy": accuracy,
     }
 
 
@@ -298,13 +300,14 @@ async def get_bettor_profile(address: str) -> dict:
                         or (lb_entry.get("profileImage") if lb_entry else ""),
     }
 
-    # Use leaderboard data for authoritative volume/pnl/rank (only if real lb entry)
+    # Use leaderboard data for authoritative volume/pnl/rank/accuracy (only if real lb entry)
     pnl_usd = float(lb_entry.get("pnl") or 0) if has_lb_data else 0.0
     volume = float(lb_entry.get("vol") or 0) if has_lb_data else sum(float(t.get("usdcSize") or t.get("size") or 0) for t in raw_list)
     rank = int(lb_entry.get("rank") or 0) if has_lb_data else 0
     trade_count = len([t for t in raw_list if t.get("type") == "TRADE"]) or len(raw_list)
+    accuracy_pct = lb_entry.get("percentProfitable") if has_lb_data else None
 
-    return _normalise_profile(profile_raw, volume=volume, trade_count=trade_count, pnl_usd=pnl_usd, rank=rank)
+    return _normalise_profile(profile_raw, volume=volume, trade_count=trade_count, pnl_usd=pnl_usd, rank=rank, accuracy_pct=accuracy_pct)
 
 
 async def compute_copy_simulator(address: str, limit: int = 10) -> dict:

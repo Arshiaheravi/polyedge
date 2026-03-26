@@ -170,6 +170,47 @@ def test_leaderboard_vs_profile_pnl_consistent(client):
         )
 
 
+def test_leaderboard_vs_profile_accuracy_consistent(client):
+    """Top bettor: if accuracy is non-null in leaderboard, profile must return same value (±0.02).
+
+    Both endpoints derive accuracy from the same Polymarket percentProfitable field.
+    A discrepancy means one endpoint is missing the field or applying wrong normalisation.
+    """
+    _clear_bettors_cache()
+    resp = client.get("/bettors?limit=5&sort=profit")
+    _skip_if_502(resp, "GET /bettors for accuracy cross-check")
+    assert resp.status_code == 200
+    bettors = resp.json()["bettors"]
+    assert len(bettors) >= 1, "Need at least 1 bettor"
+
+    # Find first bettor with non-null accuracy in leaderboard
+    lb_bettor = None
+    lb_accuracy = None
+    for b in bettors:
+        if b.get("accuracy") is not None:
+            lb_bettor = b
+            lb_accuracy = b["accuracy"]
+            break
+
+    if lb_bettor is None:
+        pytest.skip("No bettor with non-null accuracy in leaderboard response")
+
+    address = lb_bettor["address"]
+    _clear_bettors_cache()
+    profile_resp = client.get(f"/bettors/{address}")
+    _skip_if_502(profile_resp, f"GET /bettors/{address}")
+    assert profile_resp.status_code == 200
+
+    profile_accuracy = profile_resp.json()["profile"].get("accuracy")
+    assert profile_accuracy is not None, (
+        f"Bettor {address}: leaderboard accuracy={lb_accuracy} but profile has no accuracy field"
+    )
+    assert abs(profile_accuracy - lb_accuracy) <= 0.02, (
+        f"Bettor {address}: leaderboard accuracy={lb_accuracy} vs profile accuracy={profile_accuracy} "
+        f"(diff={abs(profile_accuracy - lb_accuracy):.4f} exceeds ±0.02 tolerance)"
+    )
+
+
 # ── Recent bets data validity ────────────────────────────────────────────────
 
 def test_recent_bets_type_is_trade(client):
