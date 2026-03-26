@@ -449,3 +449,15 @@ What: Added OPTIMIZATION tag to PROMPT.md reflexion format (knowledge.md session
 Where: autoagent/PROMPT.md (step 8 reflexion format), autoagent/meta/BRAIN_PROMPT.md (STEP 1B and STEP 1C)
 Source: arxiv 2603.10600 (Trajectory-Informed Memory Generation) — strategy/recovery/optimization 3-category classification; 14.3pp improvement on AppWorld
 Expected impact: Sessions that retried something 2-3 times before succeeding now capture an OPTIMIZATION tip; future sessions can skip the slow path immediately
+
+## Playwright data-attr selector + wait condition rules — implemented 2026-03-26
+What: (1) Use getAttribute("data-addr") not getAttribute("onclick") to extract wallet addresses from bettor cards. (2) Use getComputedStyle(...).display === "flex" not style.display !== "" when waiting for CSS display changes in Playwright — empty string from getComputedStyle means property not found, not hidden.
+Where: autoagent/skills/playwright.md (DATA ATTRIBUTE SELECTORS section)
+Source: PolyEdge session 151 failure — both selector bugs found and fixed on first run of tier gate tests
+Expected impact: Prevents the recurring selector attribute-name confusion (onclick vs data-addr) and wait-condition false-pass (truthy empty string vs correct display value)
+
+## FastAPI v0.132-0.135 production compatibility rules — implemented 2026-03-26
+What: (1) FastAPI v0.132+ enforces Content-Type: application/json for JSON bodies — frontend fetch() calls need explicit headers. (2) FastAPI v0.135+ has native SSE via StreamingResponse + async generator.
+Where: autoagent/skills/coding.md (FASTAPI PRODUCTION SAFETY RULES section)
+Source: fastapi.tiangolo.com release notes 2026
+Expected impact: Prevents silent 415 errors when upgrading FastAPI; enables native SSE implementation without third-party libraries

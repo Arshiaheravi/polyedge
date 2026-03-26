@@ -412,3 +412,47 @@ min_height = min(visible_btn_heights) if visible_btn_heights else 0
 **Rule**: When checking button heights at mobile viewport, filter by `getBoundingClientRect().height > 0` to skip hidden elements — many buttons live inside display:none sections (dashboard tabs, auth forms). Only measure elements with a real layout height. Also use `.btn.btn-primary` (element + class) to avoid matching styled links.
 
 (Source: Session #119 — querySelectorAll('.btn-primary') returned 0px for buttons inside hidden dashboard tabs, causing CHECK 91 to falsely report 0 visible buttons.)
+
+---
+
+## DATA ATTRIBUTE SELECTORS (PolyEdge-specific)
+
+PolyEdge bettor cards store the wallet address in `data-addr` attributes on the card element — NOT in `onclick` attributes. When writing a helper that extracts an address from a card to open a profile, always use `getAttribute('data-addr')`, not `getAttribute('onclick')`.
+
+**Pattern for opening the first profile card in a test:**
+
+```python
+# WRONG — onclick is not on bettor cards (returns null):
+addr = await page.evaluate("""() => {
+    const card = document.querySelector('.lb-card');
+    return card ? card.getAttribute('onclick') : null;
+}""")
+
+# CORRECT — use data-addr attribute:
+addr = await page.evaluate("""() => {
+    const card = document.querySelector('[data-addr]');
+    return card ? card.getAttribute('data-addr') : null;
+}""")
+if not addr:
+    failures.append("No bettor card with data-addr found")
+else:
+    await page.evaluate(f"viewProfile('{addr}')")
+```
+
+**Rule**: Always verify attribute names from the actual HTML source before writing a Playwright selector. Use browser DevTools or `page.content()` to confirm `data-attr` names exist — don't assume `onclick`, `data-id`, or `href` without checking.
+
+**Wait condition rule**: When waiting for a CSS `display` value change, use the EXACT display value string (`display === 'flex'`), NOT a truthiness check (`display !== ''`). An empty string from `getComputedStyle` means the property wasn't found — it's falsy AND not a valid display value:
+
+```python
+# WRONG — '' (empty string) passes the !== '' check:
+await page.wait_for_function(
+    "document.getElementById('view-profile').style.display !== ''"
+)
+
+# CORRECT — wait for the specific display value used in the CSS:
+await page.wait_for_function(
+    "getComputedStyle(document.getElementById('view-profile')).display === 'flex'"
+)
+```
+
+(Source: Session #151 — _open_first_profile used getAttribute('onclick') returning null instead of data-addr; also wait_for_function used display !== '' instead of display === 'flex', causing immediate false pass.)

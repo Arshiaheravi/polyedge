@@ -93,6 +93,12 @@ In PolyEdge this slots into `backend/app/main.py` — pass `lifespan=lifespan` t
 **Async route discipline**: `async def` route handlers must NEVER contain blocking I/O — no `time.sleep()`, no synchronous DB calls, no blocking subprocess calls. These stall the uvicorn event loop and kill all concurrent requests. Only use sync primitives inside `asyncio.to_thread()` or background tasks.
 (Source: DEV Community production-ready FastAPI 2026)
 
+**FastAPI v0.132+ strict Content-Type (breaking change)**: FastAPI v0.132+ enforces `Content-Type: application/json` for JSON request bodies by default. If upgrading FastAPI, frontend `fetch()` calls that POST JSON without explicit Content-Type header will receive 415 Unsupported Media Type. Fix: add `headers: {'Content-Type': 'application/json'}` to all fetch() POST calls, or set `app = FastAPI(strict_content_type=False)` to opt out. Check with `py -m pip show fastapi | grep Version` before upgrading.
+(Source: FastAPI release notes v0.132.0, 2026)
+
+**FastAPI native SSE (v0.135.0)**: FastAPI now has first-class SSE support via StreamingResponse + `yield`. For PolyEdge's bet alert stream, use `StreamingResponse(generate_events(), media_type="text/event-stream")` where `generate_events()` is an async generator yielding `f"data: {json.dumps(event)}\n\n"`. Eliminates the need for external SSE libraries.
+(Source: FastAPI release notes v0.135.0, 2026)
+
 ## FRAGILE ZONES — DOUBLE-CHECK BEFORE COMMITTING
 These three files have downstream effects that tests don't fully catch. When you edit any of them, re-read the surrounding interface contract (type signatures, response shapes) before committing:
 

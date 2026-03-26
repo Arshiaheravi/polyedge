@@ -1,5 +1,12 @@
 # Activity Log
-*(Sessions 1-119 archived — see activity_log_archive.md)*
+*(Sessions 1-140 archived — see activity_log_archive.md)*
+
+## 2026-03-26 — BRAIN (Session 153)
+RESEARCHED: autonomous AI agent best practices 2026, FastAPI 2025-2026 release notes, Polymarket leaderboard features, arxiv 2603.22367 (RES) and 2603.24414 (ClawKeeper), ECC v1.9.0 re-check.
+DOWNLOADED: Nothing new — ECC still at v1.9.0; no new applicable skills.
+IMPLEMENTED: (1) playwright.md — DATA ATTRIBUTE SELECTORS section: use data-addr not onclick attribute; CSS display wait condition must use getComputedStyle value not inline style !== '' (from sessions 149+151 failure patterns). (2) coding.md — FastAPI v0.132 strict Content-Type rule + v0.135 native SSE pattern. (3) activity_log.md — archived sessions 120-140 to activity_log_archive.md (32→12 entries).
+BACKLOGGED: Time-period leaderboard filter (Today/Week/Month/All) — Polymarket's own leaderboard has this; PolyEdge users coming from Polymarket will expect it.
+SOURCES: 5 new sources logged in brain/sources.md.
 
 ## 2026-03-26 — TESTING (Session 152)
 DONE: Added 14 Playwright UI flow tests across 4 suites: landing page pricing (all 5 features per tier card), full register→logout→login journey, leaderboard renders (≥10 bettor cards with names+stats), and bettor profile (name/stats/recent bets/simulator locked for free/unlocked for basic). Fixed logout step to call page.evaluate('logout()') instead of clicking the hidden #tab-account button at desktop viewport.
@@ -57,110 +64,6 @@ FILES: backend/tests/test_tier_gates.py
 DONE: Fixed Telegram notifications permanently broken — added POST /alerts/telegram/webhook endpoint that the bot calls when a user sends /verify CODE. Webhook sets telegram_chat_id + telegram_verified=True. Also removed telegram_chat_id from GET /alerts/settings response (sensitive data was leaking to clients). 5 new tests added. 401 passing.
 IMPACT: Telegram notifications were completely non-functional for every user — telegram_chat_id was never set so the scheduler's send_telegram() always returned False immediately. Now the full Telegram verification flow works end-to-end once the bot is configured.
 FILES: backend/app/routes/alerts.py, backend/tests/test_alerts.py
-
-## 2026-03-26 — BUGFIX (Session 140)
-DONE: Fixed VIP copy timing padlock bug — `_activity_cache` in routes/follows.py stored `tier` at fill-time; after free→VIP upgrade the cached response had `tier:'free'` for up to 30s, causing the frontend to show the 🔒 padlock instead of copy-signal badges for VIP users. Fix injects `current_user.subscription_tier` on every cache hit. Added 2 regression tests. 396 tests passing.
-IMPACT: Paying VIP users who just upgraded saw the same locked UI as free users for up to 30 seconds — eroding trust at the most sensitive moment (right after payment). Now the tier is always live from the DB on every response.
-FILES: backend/app/routes/follows.py, backend/tests/test_follows_live.py
-
-## 2026-03-26 — BUGFIX (Session 139)
-DONE: Fixed 5 medium-priority bugs: (1) accuracy field added to leaderboard normaliser from percentProfitable API field; (2) @lru_cache added to get_settings() so .env is read once not per notification; (3) get_settings() moved outside per-follower loop in scheduler; (4) free users now blocked from enabling web push (403); (5) _last_positions dict now purged each poll for unfollowed bettors. Added regression test for free-tier web push 403.
-IMPACT: Scheduler was re-reading .env file on every single notification for every follower — with 100 followers getting 10 notifications each, that's 1000 file reads per poll cycle. Free users could "enable" web push but never receive anything, creating false confidence. Unfollowed bettor positions were accumulating in memory indefinitely.
-FILES: backend/app/config.py, backend/app/routes/alerts.py, backend/app/services/polymarket.py, backend/app/services/scheduler.py, backend/tests/test_alerts.py
-
-## 2026-03-26 — META (Session 138)
-IMPROVED: (1) PROMPT.md — added CODE REVIEW CROSS-CHECK rule: when a bugfix addresses an item also tracked in the Code Review section, remove that backlog item in the same session (session 137 fixed CORS + telegram_chat_id but left both code review items unchecked). (2) meta/PROMPT.md — added sessions.json logging step (was missing — that's why session 136 is absent from sessions.json; also added sessions 136 and 138 retroactively). (3) backlog.md — removed "CORS review" item (fully addressed by session 137); updated "Sensitive data leakage" item to note telegram_chat_id was fixed, hashed_password/stripe_customer_id still need checking. (4) knowledge.md — updated test count from 390 to 393 (session 137 result).
-PATTERNS FOUND: META sessions were missing sessions.json entries (meta/PROMPT.md had no such instruction). Work sessions fixing code-review bugs don't clean up the corresponding code review backlog items. Test count in knowledge.md goes stale when bugfix sessions don't update it.
-PREDICTED IMPACT: Sessions.json will now have complete coverage of all sessions including META. Next work session fixing a code review bug will remove the corresponding backlog item. Test count drift eliminated.
-
-## 2026-03-26 — BUGFIX (Session 137)
-DONE: Fixed 3 CRITICAL bugs: (1) profile cache tier bypass — keyed by (address, tier) instead of address alone so VIP cached profile can't be served to free users; (2) CORS wildcard removed — allow_origins now set to explicit localhost:3000 list; (3) telegram_chat_id removed from all auth responses — field was leaking in login/register/me. Added 3 regression tests + updated 4 stale tests. 393 total passing.
-IMPACT: Paywall was completely bypassable — any free user could see unlocked Copy Simulator by requesting the same bettor address that a VIP had cached. CORS misconfiguration meant API calls from the browser would be silently rejected. telegram_chat_id is private infrastructure data that must never reach API consumers.
-FILES: backend/app/routes/bettors.py, backend/app/routes/auth.py, backend/app/main.py, backend/tests/test_bettors.py, backend/tests/test_auth.py, backend/tests/test_cors.py
-
-## 2026-03-26 — FEATURE (Session 135)
-DONE: Built Exit Alerts — scheduler detects when a followed whale closes or reduces a position by >50% and fires exit notifications to VIP users only (Telegram + web push); BetEvent rows with event_type="EXIT" stored for all tiers; format_exit_message() added; condition_id added to get_active_positions() result; event_type column added to BetEvent model; 6 new tests, 390 total.
-IMPACT: VIP users now know WHEN to exit a copied position — the final missing signal in the copy-trading loop. When a whale exits, users holding the same position get an immediate alert to consider taking profit.
-FILES: backend/app/models.py, backend/app/services/notifications.py, backend/app/services/polymarket.py, backend/app/services/scheduler.py, backend/tests/test_scheduler.py
-
-## 2026-03-25 — FEATURE (Session 134)
-DONE: Added Copy Portfolio Simulator to bettor profile pages — Basic/VIP users now see "Copy $100/bet on last N resolved bets → +$X (+Y%)" card; Free users see blurred value with "Upgrade to unlock" CTA. Backend infers wins via REDEEM transactions, losses via bets >7 days old with no REDEEM, skips still-open bets.
-IMPACT: Users can now quantify what following a specific bettor is actually worth in dollars — the #1 factor that convinces free users to upgrade and keeps paid users subscribed.
-FILES: backend/app/services/polymarket.py, backend/app/routes/bettors.py, backend/tests/test_polymarket_service.py, backend/tests/test_bettors.py, frontend/index.html
-
-## 2026-03-25 — FEATURE (Session 133)
-DONE: Added Smart Entry Timing to position cards — each copyable bet now shows a copy signal badge: ✅ Good copy (<10% above entry), ⚠️ Price moved (10-30%), 🔴 Late entry (>30%); Free users see 🔒 padlock with upgrade CTA instead.
-IMPACT: Users can now instantly see whether a whale's bet is still worth copying at the current price — the single most important context for a copy decision.
-FILES: backend/app/services/polymarket.py, backend/app/routes/follows.py, backend/tests/test_polymarket_service.py, backend/tests/test_follows_live.py, frontend/index.html
-
-## 2026-03-25 — BRAIN (Session 132)
-RESEARCHED: autonomous AI agent best practices 2026, LLM self-improvement techniques, Confucius Code Agent hierarchical working memory (arxiv 2512.10398), PolyGun competitor acquisition (Polymarket Analytics), prediction market copy trading features 2026, FastAPI async SQLAlchemy patterns.
-DOWNLOADED: Nothing new — ECC still at v1.9.0; no new applicable skills.
-IMPLEMENTED: (1) PROMPT.md — phase-grouped task structure for multi-domain tasks (from CCA hierarchical working memory). (2) PROMPT.md — RULES-FIRST ARBITRATION section (explicit rules override memory; from RPMS arxiv 2603.17831). (3) coding.md — FASTAPI PRODUCTION SAFETY RULES (CORS wildcard prohibition + async discipline). (4) backlog.md — copy-ratio sizing (PolyGun) + Insider Score (Polywhaler) added to HIGH PRIORITY. (5) knowledge.md curation — removed duplicate RULE block in Session #131. (6) activity_log.md archived sessions 100-119 (32→12 entries). (7) techniques.md + sources.md updated with 15 new sources.
-BACKLOGGED: Copy ratio setting (0.1x-1x per bettor, PolyGun differentiator); Insider Score 0-100 (Polywhaler differentiator — no competitor has both this AND conviction score).
-SOURCES: 15 new sources logged in brain/sources.md.
-
-## 2026-03-25 — FEATURE (Session 131)
-DONE: Added Conviction Score to notifications — when a whale places a bet, the scheduler computes conviction = bet_size / avg_bet_size from that bettor's recent bets; >=10x = EXTREME (🔥), >=3x = HIGH (⚡); Telegram messages and web push titles now include the conviction label; 9 new tests cover all conviction label paths.
-IMPACT: Users now see HOW strong each whale's conviction is — a 🔥 42x conviction bet deserves the user's full budget, not just a casual copy. This is the single most impactful signal improvement to copy-trading alerts.
-FILES: backend/app/services/notifications.py, backend/app/services/scheduler.py, backend/tests/test_notifications.py
-
-## 2026-03-25 — TESTING (Session 129)
-DONE: Added 9 Playwright checks (117-125): CHECK 117 — #toast-container DOM presence; CHECK 118 — typeof window.toastBet === 'function'; CHECK 119 — typeof window.enterDemoMode === 'function'; CHECK 120 — typeof window.animateCounter === 'function'; CHECK 121 — typeof window.runLandingCounters === 'function'; CHECK 122 — typeof window.showTab === 'function'; CHECK 123 — typeof window.loadLeaderboard === 'function'; CHECK 124 — typeof window.profileToggleFollow === 'function'; CHECK 125 — renderBettorCard() .follow-btn has aria-label attribute. 125 total checks, 0 failures. 359 backend tests stable.
-IMPACT: Proves that all critical JS functions used for notifications, demo mode, animations, tab navigation, leaderboard loading, and profile follow toggling are correctly defined and accessible — a missing function would silently break a core user flow.
-FILES: autoagent/playwright_registry.py
-
-## 2026-03-25 — TESTING (Session 128)
-DONE: Added 3 Playwright checks (114-116): CHECK 114 — #follows-empty element present in DOM; CHECK 115 — #follows-container element present in DOM; CHECK 116 — #follows-subtitle element present with non-empty text content. 116 total checks, 0 failures. 359 backend tests stable.
-IMPACT: Proves the follows dashboard shell always renders its three key structural elements — the empty state panel, the card container, and the subtitle — so a missing DOM node can't silently break the follows tab for users.
-FILES: autoagent/playwright_registry.py
-
-## 2026-03-25 — TESTING (Session 127)
-DONE: Added 3 Playwright checks (111-113): CHECK 111 — logout() function defined in window scope; CHECK 112 — clearToken() removes pe_token from localStorage (getItem returns null after call); CHECK 113 — #back-to-top-fab element present in DOM. 113 total checks, 0 failures. 359 backend tests stable.
-IMPACT: Proves the auth logout flow is correctly wired — the logout function is globally accessible, token clearing actually works (not silently failing), and the scroll-to-top button is always rendered in the DOM.
-FILES: autoagent/playwright_registry.py
-
-## 2026-03-25 — META (Session 126)
-IMPROVED: backlog.md — added 3 Playwright check batches (117-119: toast+demo mode JS API; 120-122: animation helpers+page progress; 123-125: hero section+leaderboard card wiring). Prevents empty HIGH PRIORITY section after sessions 127-128 complete the two existing batches (111-116).
-PATTERNS FOUND: With only 2 Playwright batches left in HIGH PRIORITY, the section will empty after ~2 sessions. LOW-WATER-MARK check relies on work sessions catching this — pre-populating now avoids an exploratory turn wasted on backlog generation mid-session.
-PREDICTED IMPACT: 3 more sessions of pre-defined testing work without needing to invent tasks; no empty-backlog sessions in the near term.
-
-## 2026-03-25 — TESTING (Session 125)
-DONE: Added 3 Playwright checks (108-110) — account tab renders without JS errors, #acct-tier-desc has non-empty text, #acct-upgrade-btn (.btn-primary) is present in DOM. 110 total checks, 0 failures. 359 backend tests stable.
-IMPACT: Proves the account tab is correctly wired — navigation doesn't trigger JS errors, users always see a tier description, and the upgrade button element is always in the DOM (even when hidden by tier logic).
-FILES: autoagent/playwright_registry.py
-
-## 2026-03-25 — TESTING (Session 124)
-DONE: Added 3 Playwright checks (105-107) — #upgrade-modal exists in DOM, openUpgradeModal() removes .hidden class (modal becomes visible), mobile 375px alerts tab has no horizontal overflow. 107 total checks, 0 failures. 359 backend tests stable.
-IMPACT: Proves the upgrade modal is always present and correctly toggled by the JS function (not broken by a missing element or wrong class), and the alerts settings screen fits within 375px mobile screens without requiring horizontal scrolling.
-FILES: autoagent/playwright_registry.py
-
-## 2026-03-25 — TESTING (Session 123)
-DONE: Added 3 Playwright checks (102-104) for the profile page DOM — #profile-back-btn onclick wiring, all 4 pstat-* stat elements present, #profile-bets-list + renderProfileSkeletons() output. 104 total checks, 0 failures. 359 backend tests stable.
-IMPACT: Proves the profile page back button is correctly wired to return to the leaderboard, the 4 stat slots are always present in the DOM, and the skeleton loader function generates real skeleton rows (not empty output).
-FILES: autoagent/playwright_registry.py
-
-## 2026-03-25 — TESTING (Session 122)
-DONE: Code quality audit (sessions 118-120) passed all 9 team checks — XSS-free streak confirmed 77–120; then added 3 Playwright checks (99-101): pricing locked-feature .dim items have data-tip tooltips (found 6), account tab has #acct-email and #acct-name elements, #acct-tier-label has non-empty text. 101 total checks, 0 failures.
-IMPACT: Proves locked pricing features show upgrade hints on hover (not just visually dimmed), the account tab correctly renders user identity fields, and the tier label always displays a value — all user-facing correctness checks.
-FILES: autoagent/playwright_registry.py
-
-## 2026-03-25 — DEEP BRAIN (Session 121)
-RESEARCHED: autonomous AI agent reliability 2026 (fortune.com reliability lagging article), LLM self-improvement techniques (reflexion, meta-prompting, inference-time scaling), agentic context management (ACON gradient-free compression, ACE), arxiv March 2026 papers (2603.14248 hierarchical planning failures, 2603.12634 budget-aware value tree search, 2603.19896 utility-guided orchestration), ECC v1.9.0 new skills (plankton-code-quality)
-DOWNLOADED: Nothing new — ECC still at v1.9.0; arxiv papers not applicable prompt-only
-IMPLEMENTED: (1) playwright.md — added VISIBLE ELEMENT FILTER section: getBoundingClientRect().height > 0 filter for mobile viewport dimension checks (from session 119 failure pattern). (2) knowledge.md curation — merged duplicate XSS streak rule (session 107 superseded by session 117). (3) activity_log.md archived sessions 81-100 + 113 (40 → 20 entries). (4) backlog.md — added code quality audit task (work count = 90, multiple of 5 tech-debt check) + plankton-code-quality backlog item.
-BACKLOGGED: plankton-code-quality — ECC automated write-time formatting+linting with subprocess delegation; requires hooks in settings.json
-SOURCES: 8 new sources logged in brain/sources.md
-
-## 2026-03-25 — TESTING (Session 120)
-DONE: Added 5 Playwright checks (94-98) — alerts tab has toggle switches (#toggle-push + #toggle-telegram), Telegram channel card (#ch-telegram) present, pricing section has exactly 3 .pricing-card elements, featured pricing card has "Most Popular" .pricing-badge, follows empty state (#follows-empty) has a .btn-primary CTA pointing to leaderboard tab. 98 total checks, 0 failures. 359 backend tests stable.
-IMPACT: Proves the alerts settings page is correctly rendered with interactive controls, the pricing page shows all 3 tiers with the Basic "Most Popular" badge, and the empty follows state gives new users a clear path to find bettors.
-FILES: autoagent/playwright_registry.py
-
-## 2026-03-25 22:30 — FEATURE (Session 130)
-DONE: Built Whale Consensus Signal — GET /markets/consensus endpoint fetches open positions for all top-100 leaderboard bettors concurrently, groups by conditionId+outcome, and returns markets where 3+ whales agree. Response is tier-gated: Free sees top 3 with no whale names, Basic sees all with no names, VIP sees all with whale names visible. New "Consensus" tab in dashboard shows market cards with whale count badge, outcome, avg entry price vs current price with color-coded copy signal, and whale name chips. 5-min server-side cache. 130 Playwright checks, 0 failures.
-IMPACT: Surfaces the single strongest signal in prediction markets — independent agreement from multiple top-100 profitable bettors. When 7 whales all hold YES on a market, the probability of YES winning is dramatically higher than market price implies. Users who act on consensus signals have the best edge available on Polymarket.
-FILES: backend/app/services/polymarket.py, backend/app/routes/markets.py, backend/app/main.py, frontend/index.html, autoagent/playwright_registry.py
 
 ## 2026-03-26 — CODE QUALITY AUDIT (Session 144)
 DONE: Audited sessions 136-142 changed files; found and fixed telegram_verify half-verified bug — endpoint now requires telegram_chat_id before confirming verification (or returns success immediately if webhook already completed setup). Moved scheduler.py inline imports to module level. Removed conviction variable aliasing. Added 1 regression test.

@@ -920,3 +920,9 @@ RULE: [2026-03-26] In PolyEdge Playwright tests, NEVER click the logout button d
 OPTIMIZATION: [2026-03-26] For any button inside a named dashboard tab (#tab-account, #tab-alerts, etc.), use page.evaluate() to call the underlying JS function rather than Playwright's click() — avoids the "element not visible" timeout entirely.
 
 - Test count: **443 passed** (backend unchanged), **14 new Playwright UI flow tests passing** (31 total Playwright tests across 3 files)
+
+### BRAIN Session #153 Reflexion — 2026-03-26
+ACCOMPLISHED: (1) STEP 1B: Failure pattern from sessions 149+151 — Playwright selector used getAttribute('onclick') instead of 'data-addr'; wait condition used display !== '' instead of display === 'flex'. Added DATA ATTRIBUTE SELECTORS section to playwright.md. (2) STEP 1C: No duplicate rules found in knowledge.md (rules are distinct and dated). (3) STEP 1D: Archived sessions 120-140 from activity_log.md (32→12 entries). (4) Web research: 5 sources evaluated. FastAPI v0.132 strict Content-Type + v0.135 native SSE added to coding.md. Polymarket has time-period leaderboard filter (Today/Week/Month/All) — not in PolyEdge; added to backlog. ECC still at v1.9.0. arxiv 2603.22367 (RES) and 2603.24414 (ClawKeeper) not applicable prompt-only.
+FAILED: Background search agents returned 0-byte output (same as sessions 121, 132) — fell back to direct WebFetch calls per established rule.
+RULE: [2026-03-26] Playwright wait_for_function for CSS display changes must use getComputedStyle(...).display === 'flex' (or === 'block'). Using style.display !== '' produces a false pass because empty string is falsy but also means the inline style property is not set (computed style is different). Always use the computed style value, not inline style.
+OPTIMIZATION: [2026-03-26] For brain sessions, skip background search agents entirely (they return 0 bytes on this machine). Use WebFetch directly with parallel calls — same research quality with no wait time.

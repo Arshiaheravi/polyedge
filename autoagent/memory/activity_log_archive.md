@@ -625,3 +625,95 @@ DONE: 41 new security tests — XSS payloads in name/address fields, SQL injecti
 IMPACT: Proves the backend is hardened against XSS storage attacks, SQL injection in 3 attack surfaces, and JWT tier forgery. All 9 protected endpoints proven to reject unauthenticated requests. Test count: 310 → 351.
 FILES: backend/tests/test_security_extended.py
 
+
+*(Sessions 120-140 — archived from activity_log.md on 2026-03-26)*
+
+## 2026-03-26 — BUGFIX (Session 140)
+DONE: Fixed VIP copy timing padlock bug — _activity_cache in routes/follows.py stored tier at fill-time; after free→VIP upgrade the cached response had tier:free for up to 30s. Fix injects current_user.subscription_tier on every cache hit. Added 2 regression tests. 396 tests passing.
+IMPACT: Paying VIP users who just upgraded saw the same locked UI as free users for up to 30 seconds — eroding trust at the most sensitive moment (right after payment).
+FILES: backend/app/routes/follows.py, backend/tests/test_follows_live.py
+
+## 2026-03-26 — BUGFIX (Session 139)
+DONE: Fixed 5 medium-priority bugs: accuracy field added to leaderboard normaliser; @lru_cache on get_settings(); get_settings() moved outside per-follower loop; free users blocked from web push (403); _last_positions dict purged for unfollowed bettors.
+IMPACT: Scheduler was re-reading .env file on every notification for every follower — now cached. Free users get honest 403 instead of silent no-op.
+FILES: backend/app/config.py, backend/app/routes/alerts.py, backend/app/services/polymarket.py, backend/app/services/scheduler.py, backend/tests/test_alerts.py
+
+## 2026-03-26 — META (Session 138)
+IMPROVED: CODE REVIEW CROSS-CHECK rule to PROMPT.md; sessions.json logging added to meta/PROMPT.md; backlog CORS item removed; test count updated 390→393.
+PATTERNS FOUND: META sessions missing sessions.json entries; bugfix sessions not cleaning code review backlog items.
+
+## 2026-03-26 — BUGFIX (Session 137)
+DONE: Fixed 3 CRITICAL bugs: profile cache tier bypass (keyed by address+tier); CORS wildcard removed; telegram_chat_id removed from auth responses. 393 total passing.
+IMPACT: Paywall was completely bypassable — VIP cached profile served to free users. CORS misconfiguration. telegram_chat_id leaking in login/register/me responses.
+FILES: backend/app/routes/bettors.py, backend/app/routes/auth.py, backend/app/main.py, backend/tests/test_bettors.py, backend/tests/test_auth.py, backend/tests/test_cors.py
+
+## 2026-03-26 — FEATURE (Session 135)
+DONE: Built Exit Alerts — scheduler detects when a followed whale closes a position and fires VIP-only exit notifications. BetEvent event_type=EXIT stored. 390 total tests.
+IMPACT: VIP users know WHEN to exit copied positions — final missing signal in copy-trading loop.
+FILES: backend/app/models.py, backend/app/services/notifications.py, backend/app/services/polymarket.py, backend/app/services/scheduler.py, backend/tests/test_scheduler.py
+
+## 2026-03-25 — FEATURE (Session 134)
+DONE: Added Copy Portfolio Simulator — Basic/VIP users see copy ROI card; Free users see blurred upgrade CTA. Infers wins via REDEEM transactions.
+IMPACT: Users can quantify what following a bettor is worth in dollars — #1 upgrade conversion factor.
+FILES: backend/app/services/polymarket.py, backend/app/routes/bettors.py, backend/tests/test_polymarket_service.py, backend/tests/test_bettors.py, frontend/index.html
+
+## 2026-03-25 — FEATURE (Session 133)
+DONE: Added Smart Entry Timing to position cards — copy signal badge shows Good/Price moved/Late entry. Free users see padlock with upgrade CTA.
+IMPACT: Users see whether a bet is still worth copying at the current price.
+FILES: backend/app/services/polymarket.py, backend/app/routes/follows.py, backend/tests/test_polymarket_service.py, backend/tests/test_follows_live.py, frontend/index.html
+
+## 2026-03-25 — BRAIN (Session 132)
+RESEARCHED: autonomous AI agent best practices 2026, hierarchical working memory, PolyGun competitor, FastAPI async patterns.
+IMPLEMENTED: phase-grouped task structure; RULES-FIRST ARBITRATION; FASTAPI PRODUCTION SAFETY RULES in coding.md; archived sessions 100-119; 15 new sources.
+BACKLOGGED: Copy ratio setting; Insider Score.
+SOURCES: 15 new sources logged.
+
+## 2026-03-25 — FEATURE (Session 131)
+DONE: Added Conviction Score to notifications — conviction=bet_size/avg_bet_size; >=10x=EXTREME, >=3x=HIGH. 9 new tests.
+IMPACT: Users see HOW strong each conviction is before copying.
+FILES: backend/app/services/notifications.py, backend/app/services/scheduler.py, backend/tests/test_notifications.py
+
+## 2026-03-25 22:30 — FEATURE (Session 130)
+DONE: Built Whale Consensus Signal — GET /markets/consensus; tier-gated (Free=top3 no names, Basic=all no names, VIP=all+names); 5-min cache; Consensus tab in frontend.
+IMPACT: Surfaces strongest signal: multiple top-100 profitable bettors agreeing on a market outcome.
+FILES: backend/app/services/polymarket.py, backend/app/routes/markets.py, backend/app/main.py, frontend/index.html, autoagent/playwright_registry.py
+
+## 2026-03-25 — TESTING (Session 129)
+DONE: Added 9 Playwright checks (117-125) — typeof checks for 7 JS functions, #toast-container, renderBettorCard aria-label. 125 total checks, 0 failures.
+FILES: autoagent/playwright_registry.py
+
+## 2026-03-25 — TESTING (Session 128)
+DONE: Added 3 Playwright checks (114-116) — #follows-empty, #follows-container, #follows-subtitle elements present. 116 total checks, 0 failures.
+FILES: autoagent/playwright_registry.py
+
+## 2026-03-25 — TESTING (Session 127)
+DONE: Added 3 Playwright checks (111-113) — logout() defined, clearToken() works, #back-to-top-fab present. 113 total checks.
+FILES: autoagent/playwright_registry.py
+
+## 2026-03-25 — META (Session 126)
+IMPROVED: backlog.md — added 3 Playwright check batches to prevent LOW-WATER-MARK hit.
+
+## 2026-03-25 — TESTING (Session 125)
+DONE: Added 3 Playwright checks (108-110) — account tab no JS errors, #acct-tier-desc, #acct-upgrade-btn. 110 total checks.
+FILES: autoagent/playwright_registry.py
+
+## 2026-03-25 — TESTING (Session 124)
+DONE: Added 3 Playwright checks (105-107) — #upgrade-modal, openUpgradeModal() removes .hidden, mobile 375px alerts no overflow. 107 total checks.
+FILES: autoagent/playwright_registry.py
+
+## 2026-03-25 — TESTING (Session 123)
+DONE: Added 3 Playwright checks (102-104) — profile back button, 4 pstat elements, #profile-bets-list. 104 total checks.
+FILES: autoagent/playwright_registry.py
+
+## 2026-03-25 — TESTING (Session 122)
+DONE: Code quality audit passed + 3 Playwright checks (99-101) — pricing tooltips, acct-email/name, tier label. 101 total checks.
+FILES: autoagent/playwright_registry.py
+
+## 2026-03-25 — DEEP BRAIN (Session 121)
+RESEARCHED: reliability 2026, agentic context management, ECC v1.9.0.
+IMPLEMENTED: playwright.md VISIBLE ELEMENT FILTER; knowledge.md curation; archived sessions 81-100+113; plankton backlogged.
+SOURCES: 8 new sources.
+
+## 2026-03-25 — TESTING (Session 120)
+DONE: Added 5 Playwright checks (94-98) — alerts toggles, Telegram card, 3 pricing cards, Most Popular badge, follows empty CTA. 98 total checks.
+FILES: autoagent/playwright_registry.py
