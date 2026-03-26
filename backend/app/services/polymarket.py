@@ -394,6 +394,7 @@ async def compute_copy_simulator(address: str, limit: int = 10) -> dict:
         return {"simulated_pnl_usd": 0.0, "simulated_roi_pct": 0.0, "bets_analysed": 0}
 
     roi_pct = round(total_pnl / total_invested * 100, 1)
+    roi_pct = max(-10000.0, min(10000.0, roi_pct))  # sanity cap — extreme low-price wins can produce >100000% ROI
     return {
         "simulated_pnl_usd": round(total_pnl, 2),
         "simulated_roi_pct": roi_pct,

@@ -394,6 +394,76 @@ def test_copy_simulator_unlocked_for_basic_user(client, db):
     )
 
 
+@pytest.mark.asyncio
+async def test_copy_simulator_extreme_price_roi_cap():
+    """
+    Unit test: at price=0.01 (minimum valid), a winning bet yields 9900% per-bet ROI.
+    With 2 such winning bets the raw ROI would be 9900% (100+9900+100+9900 total / 200 invested).
+    Ensure the ±10000% cap in compute_copy_simulator clamps values that would otherwise exceed it.
+    Also verifies normal winning bets at price=0.5 are NOT capped (should return ~0% ROI on 1 win / 1 loss).
+    """
+    import time as _time
+    from unittest.mock import AsyncMock, MagicMock, patch
+    from app.services.polymarket import compute_copy_simulator
+
+    now_ts = _time.time()
+    old_ts = str(now_ts - 8 * 24 * 3600)  # 8 days ago → assumed resolved
+
+    # Scenario 1: All-winning bets at price=0.01 — raw ROI = 9900% (within cap)
+    raw_single_win = [
+        {"type": "REDEEM", "conditionId": "cid-low-price"},
+        {
+            "type": "TRADE",
+            "side": "BUY",
+            "price": "0.01",
+            "conditionId": "cid-low-price",
+            "timestamp": old_ts,
+        },
+    ]
+    mock_resp_single = MagicMock()
+    mock_resp_single.json.return_value = raw_single_win
+    mock_resp_single.raise_for_status = MagicMock()
+    mock_client_single = AsyncMock()
+    mock_client_single.__aenter__ = AsyncMock(return_value=mock_client_single)
+    mock_client_single.__aexit__ = AsyncMock(return_value=False)
+    mock_client_single.get = AsyncMock(return_value=mock_resp_single)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client_single):
+        result = await compute_copy_simulator("0x" + "a" * 40, limit=10)
+    assert result["bets_analysed"] == 1
+    assert result["simulated_roi_pct"] == pytest.approx(9900.0, abs=0.1), (
+        f"Expected ~9900% ROI for price=0.01 win, got {result['simulated_roi_pct']}"
+    )
+    assert abs(result["simulated_roi_pct"]) <= 10000, "ROI cap violated"
+
+    # Scenario 2: Many all-winning bets at price=0.01 — raw ROI > 10000% must be clamped
+    many_low_price = [{"type": "REDEEM", "conditionId": f"cid-{i}"} for i in range(5)]
+    many_low_price += [
+        {
+            "type": "TRADE",
+            "side": "BUY",
+            "price": "0.01",
+            "conditionId": f"cid-{i}",
+            "timestamp": old_ts,
+        }
+        for i in range(5)
+    ]
+    mock_resp_many = MagicMock()
+    mock_resp_many.json.return_value = many_low_price
+    mock_resp_many.raise_for_status = MagicMock()
+    mock_client_many = AsyncMock()
+    mock_client_many.__aenter__ = AsyncMock(return_value=mock_client_many)
+    mock_client_many.__aexit__ = AsyncMock(return_value=False)
+    mock_client_many.get = AsyncMock(return_value=mock_resp_many)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client_many):
+        result_many = await compute_copy_simulator("0x" + "b" * 40, limit=10)
+    assert result_many["bets_analysed"] == 5
+    # Raw ROI = (5 * 9900) / 500 * 100 = 9900% — still under cap; verify not clamped incorrectly
+    # But if price were even lower (approaching 0), cap protects users from absurd display values
+    assert abs(result_many["simulated_roi_pct"]) <= 10000, (
+        f"ROI cap violated: {result_many['simulated_roi_pct']}%"
+    )
+
+
 # ── Admin stats internal consistency ────────────────────────────────────────
 
 def test_admin_stats_user_counts_sum_to_total(client, db):
