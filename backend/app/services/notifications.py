@@ -54,6 +54,17 @@ def format_bet_message(
     )
 
 
+def format_exit_message(bettor_name: str, market: str, outcome: str) -> str:
+    """Format an exit alert notification message for Telegram."""
+    market_display = market[:80] + "..." if len(market) > 80 else market
+    return (
+        f"⚡ <b>{bettor_name}</b> is EXITING a position!\n\n"
+        f"<b>Market:</b> {market_display}\n"
+        f"<b>Outcome:</b> {outcome}\n\n"
+        f"Consider taking profit on this position."
+    )
+
+
 async def send_web_push(push_subscription_json: str, payload: dict) -> bool:
     """
     Send a Web Push notification.

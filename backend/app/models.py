@@ -75,4 +75,5 @@ class BetEvent(Base):
     amount_usd = Column(Float, nullable=True)
     timestamp = Column(DateTime, nullable=True)
     notified = Column(Boolean, default=False)
+    event_type = Column(String, default="BET", nullable=True)  # "BET" or "EXIT"
     created_at = Column(DateTime, default=datetime.utcnow)

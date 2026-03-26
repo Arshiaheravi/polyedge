@@ -219,6 +219,7 @@ async def get_active_positions(address: str, limit: int = 20) -> list[dict]:
             copy_signal = "good"
 
         result.append({
+            "condition_id": condition_id,
             "market_title": p.get("title") or "Unknown Market",
             "outcome": p.get("outcome") or "",
             "size": round(float(p.get("size") or 0), 4),

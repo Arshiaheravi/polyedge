@@ -41,6 +41,14 @@ def reset_last_check():
     scheduler_module._last_check = original
 
 
+@pytest.fixture(autouse=True)
+def reset_last_positions():
+    """Clear _last_positions before and after each test to prevent state bleed."""
+    scheduler_module._last_positions.clear()
+    yield
+    scheduler_module._last_positions.clear()
+
+
 # Helper: run an async coroutine synchronously in tests.
 def run(coro):
     return asyncio.run(coro)
@@ -754,3 +762,184 @@ def test_poll_bets_outer_exception_leaves_last_check_unchanged(sched_db):
         f"_last_check should not advance after outer exception; "
         f"got {scheduler_module._last_check!r}, expected {before!r}"
     )
+
+
+# ── _detect_exits ─────────────────────────────────────────────────────────────
+
+from app.services.scheduler import _detect_exits  # noqa: E402
+
+
+SAMPLE_POSITION = {
+    "condition_id": "cid_abc",
+    "market_title": "Will X happen?",
+    "outcome": "Yes",
+    "size": 10.0,
+    "current_value_usd": 8.0,
+    "initial_value_usd": 10.0,
+    "avg_price": 0.5,
+    "cur_price": 0.55,
+    "copy_value_pct": 10.0,
+    "copy_signal": "fair",
+    "cash_pnl": -2.0,
+    "percent_pnl": -20.0,
+    "end_date": "",
+    "poly_url": "https://polymarket.com",
+    "icon": "",
+}
+
+
+def test_detect_exits_first_run_no_event(sched_db):
+    """First poll for an address — no previous positions, so no exit events stored."""
+    session, Session = sched_db
+
+    user = User(email="ex@x.com", hashed_password=hash_password("p"), name="Ex", subscription_tier="vip")
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xexit", bettor_name="whale"))
+    session.commit()
+
+    with patch("app.services.scheduler.get_active_positions", new=AsyncMock(return_value=[SAMPLE_POSITION])):
+        run(_detect_exits(session, ["0xexit"]))
+    session.commit()
+
+    verify = Session()
+    events = verify.query(BetEvent).filter(BetEvent.event_type == "EXIT").all()
+    verify.close()
+    assert len(events) == 0
+    # Position map should now be recorded
+    assert "0xexit" in scheduler_module._last_positions
+    assert scheduler_module._last_positions["0xexit"]["cid_abc"] == 10.0
+
+
+def test_detect_exits_position_gone_creates_exit_event(sched_db):
+    """When a conditionId present in _last_positions is gone in the current poll, an EXIT BetEvent is created."""
+    session, Session = sched_db
+
+    user = User(email="ex@x.com", hashed_password=hash_password("p"), name="Ex", subscription_tier="vip")
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xexit", bettor_name="whale"))
+    session.commit()
+
+    # Pre-seed last_positions: bettor had cid_abc
+    scheduler_module._last_positions["0xexit"] = {"cid_abc": 10.0}
+
+    # Current positions: empty (position closed)
+    with patch("app.services.scheduler.get_active_positions", new=AsyncMock(return_value=[])), \
+         patch("app.services.scheduler.send_telegram", new=AsyncMock()), \
+         patch("app.services.scheduler.send_web_push", new=AsyncMock()):
+        run(_detect_exits(session, ["0xexit"]))
+    session.commit()
+
+    verify = Session()
+    events = verify.query(BetEvent).filter(BetEvent.event_type == "EXIT").all()
+    verify.close()
+    assert len(events) == 1
+    assert events[0].bettor_address == "0xexit"
+    assert events[0].market_id == "cid_abc"
+
+
+def test_detect_exits_size_reduced_50pct_creates_exit_event(sched_db):
+    """When a position's size drops by more than 50%, an EXIT BetEvent is stored."""
+    session, Session = sched_db
+
+    user = User(email="ex2@x.com", hashed_password=hash_password("p"), name="Ex2", subscription_tier="vip")
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xreduce", bettor_name="whale"))
+    session.commit()
+
+    scheduler_module._last_positions["0xreduce"] = {"cid_abc": 10.0}
+    reduced_position = dict(SAMPLE_POSITION, size=4.0)  # 4 < 10 * 0.5 = 5 → exit
+
+    with patch("app.services.scheduler.get_active_positions", new=AsyncMock(return_value=[reduced_position])), \
+         patch("app.services.scheduler.send_telegram", new=AsyncMock()), \
+         patch("app.services.scheduler.send_web_push", new=AsyncMock()):
+        run(_detect_exits(session, ["0xreduce"]))
+    session.commit()
+
+    verify = Session()
+    events = verify.query(BetEvent).filter(BetEvent.event_type == "EXIT").all()
+    verify.close()
+    assert len(events) == 1
+
+
+def test_detect_exits_size_unchanged_no_exit_event(sched_db):
+    """When a position's size is unchanged, no EXIT BetEvent is created."""
+    session, Session = sched_db
+
+    user = User(email="ex3@x.com", hashed_password=hash_password("p"), name="Ex3", subscription_tier="vip")
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xhold", bettor_name="whale"))
+    session.commit()
+
+    scheduler_module._last_positions["0xhold"] = {"cid_abc": 10.0}
+    same_position = dict(SAMPLE_POSITION, size=10.0)  # unchanged
+
+    with patch("app.services.scheduler.get_active_positions", new=AsyncMock(return_value=[same_position])):
+        run(_detect_exits(session, ["0xhold"]))
+    session.commit()
+
+    verify = Session()
+    events = verify.query(BetEvent).filter(BetEvent.event_type == "EXIT").all()
+    verify.close()
+    assert len(events) == 0
+
+
+def test_detect_exits_only_notifies_vip(sched_db):
+    """EXIT notifications are only sent to VIP-tier users — basic and free users are skipped."""
+    from app.models import AlertSetting
+    session, Session = sched_db
+
+    vip_user = User(
+        email="vip@x.com", hashed_password=hash_password("p"), name="VIP",
+        subscription_tier="vip", telegram_chat_id="chat_vip", telegram_verified=True,
+    )
+    basic_user = User(
+        email="basic@x.com", hashed_password=hash_password("p"), name="Basic",
+        subscription_tier="basic", telegram_chat_id="chat_basic", telegram_verified=True,
+    )
+    session.add(vip_user)
+    session.add(basic_user)
+    session.flush()
+
+    for u in [vip_user, basic_user]:
+        session.add(BettorFollow(user_id=u.id, bettor_address="0xmixed", bettor_name="whale"))
+        session.add(AlertSetting(user_id=u.id, telegram_enabled=True))
+    session.commit()
+
+    scheduler_module._last_positions["0xmixed"] = {"cid_abc": 10.0}
+
+    mock_telegram = AsyncMock()
+    with patch("app.services.scheduler.get_active_positions", new=AsyncMock(return_value=[])), \
+         patch("app.services.scheduler.send_telegram", new=mock_telegram), \
+         patch("app.services.scheduler.send_web_push", new=AsyncMock()):
+        run(_detect_exits(session, ["0xmixed"]))
+
+    # Only 1 Telegram call — to VIP, not basic
+    assert mock_telegram.call_count == 1
+    call_args = mock_telegram.call_args[0]
+    assert call_args[0] == "chat_vip"  # chat_id arg
+
+
+def test_detect_exits_api_error_skips_address(sched_db):
+    """If get_active_positions raises, the address is skipped and no BetEvent is stored."""
+    session, Session = sched_db
+
+    user = User(email="ex4@x.com", hashed_password=hash_password("p"), name="Ex4", subscription_tier="vip")
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xfail", bettor_name="whale"))
+    session.commit()
+
+    scheduler_module._last_positions["0xfail"] = {"cid_abc": 10.0}
+
+    with patch("app.services.scheduler.get_active_positions", new=AsyncMock(side_effect=Exception("API error"))):
+        run(_detect_exits(session, ["0xfail"]))  # must not raise
+    session.commit()
+
+    verify = Session()
+    events = verify.query(BetEvent).filter(BetEvent.event_type == "EXIT").all()
+    verify.close()
+    assert len(events) == 0
