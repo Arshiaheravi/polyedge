@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #149] Playwright consensus tab tests + conftest login fix** — 5 new Playwright E2E tests confirm port-8003 fix works (no "Could not load" error), tier gate ≤3 signals for free users, upgrade banner logic, VIP no-banner; fixed conftest login() selectors (wrong text/IDs never tested before); 426 backend + 5 Playwright tests all passing
 - **[SESSION #145] Web push VAPID fix** — replaced silent-failing raw POST stub with proper VAPID-signed pywebpush implementation; frontend now disables push toggle when keys not configured; 5 new regression tests; 419 total passing
 - **[SESSION #142] API tier gate test suite** — 12 new tests in test_tier_gates.py covering /markets/consensus (free/basic/VIP caps, whale names) and /follows/live (tier field correctness + Bug #140 regression); 413 total passing
 - **[SESSION #141] Telegram webhook fix** — added POST /alerts/telegram/webhook so the bot can set telegram_chat_id on users (was always null — notifications could never send); removed telegram_chat_id from GET /alerts/settings response (data leak); 5 new tests, 401 total passing

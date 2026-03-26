@@ -882,3 +882,11 @@ RULE: [2026-03-26] When a webhook endpoint CLEARS a field (e.g., telegram_verify
 RULE: [2026-03-26] Code quality audit pattern: read changed files through the lens of (Alex: architecture, Marcus: security, Leo: dead code/consistency). The most valuable finding comes from tracing the INTERACTION between related endpoints (webhook sets fields, verify checks fields) — not just reading each endpoint in isolation.
 
 - Test count: **414 passed** (was 413), **132 Playwright checks** (stable)
+
+### Session #149 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added 5 Playwright E2E tests for the Consensus tab. All pass: (1) free user sees no "Could not load" error; (2) free tier ≤3 signals (tier gate); (3) free tier upgrade banner visible; (4) VIP no upgrade banner; (5) VIP no error. Also fixed conftest.py login() which had never worked — `text=Login` selector matched nothing (button says "Log In"), `#dashboard` doesn't exist (it's `#view-dashboard`). The conftest was written but never tested.
+FAILED: First run: all 5 tests timed out on `page.click("text=Login")`. Root cause: conftest written for a button that doesn't match (wrong text) and waiting for a selector that doesn't exist. Fix: use `page.evaluate("showView('auth', 'login')")` to navigate via JS; use `#login-email`, `#login-password`, `#login-submit`; wait for `#view-dashboard` (not `#dashboard`). Second run: all 5 passed.
+RULE: [2026-03-26] For PolyEdge Playwright conftest: (1) Never use `text=Login` — button is "Log In"; (2) Never wait for `#dashboard` — element is `#view-dashboard`; (3) Use `page.evaluate("showView('auth', 'login')")` to reach auth form. These 3 mistakes were all in the conftest at once and would have broken every future Playwright test.
+RULE: [2026-03-26] A conftest.py with no test files that import it has never been run and must be treated as untested code. Before relying on conftest helpers in new test files, grep for any existing test that calls them: `grep -r "from .conftest import\|from conftest import" tests/playwright/`. If zero matches, validate the helper against the live frontend first.
+
+- Test count: **426 passed** (backend, unchanged), **5 new Playwright tests passing**

@@ -7,7 +7,7 @@ Last updated: Session 125 (account tab content — checks 108-110: account tab n
 import asyncio, sys
 from playwright.async_api import async_playwright
 
-BACKEND_URL = "http://localhost:8002"
+BACKEND_URL = "http://localhost:8003"
 FRONTEND_URL = "http://localhost:3000"
 
 async def check():

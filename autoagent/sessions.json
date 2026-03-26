@@ -3295,5 +3295,10 @@
    "summary": "Added admin-password and stale-mock rules to testing.md so testing sessions see them at skill-read time; added .hypothesis/ to .gitignore to stop test artifact noise in STEP 0 git status; trimmed 5 already-confirmed code review items from backlog",
    "files": ["autoagent/skills/testing.md", "autoagent/memory/backlog.md", ".gitignore"],
    "tests": {"before": 0, "after": 0, "status": "skip"},
-   "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "meta session — no code changes"}}
+   "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "meta session — no code changes"}},
+  {"session": 149, "date": "2026-03-26", "time": "00:00", "type": "work",
+   "summary": "Added 5 Playwright E2E tests for the Consensus tab that prove the port-8003 fix works — users no longer see 'Could not load' error; also fixed the conftest login helper which had wrong selectors and had never been run before",
+   "files": ["backend/tests/playwright/test_consensus_tab.py", "backend/tests/playwright/conftest.py"],
+   "tests": {"before": 426, "after": 426, "status": "pass"},
+   "frontend": {"status": "pass", "checks": 5, "failures": 0, "notes": "5 Playwright consensus tab tests all passing"}}
 ]

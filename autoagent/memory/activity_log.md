@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 149)
+DONE: Added 5 Playwright E2E tests for the Consensus tab — confirms port-8003 fix works (no "Could not load" error), verifies free tier ≤3 signals, upgrade banner logic, and VIP no-banner. Also fixed the conftest login() helper which used wrong selectors (text=Login not found, #dashboard doesn't exist) — conftest had never successfully run before.
+IMPACT: The "Could not load consensus signals" bug was previously untested — a port regression could silently break it for all users with no failing test. Now any port or API failure is caught immediately. The conftest fix unblocks all future Playwright tests.
+FILES: backend/tests/playwright/test_consensus_tab.py, backend/tests/playwright/conftest.py
+
 ## 2026-03-26 — META (Session 148)
 IMPROVED: (1) testing.md — added 2 POLYEDGE-SPECIFIC rules: "admin endpoint tests must use get_settings().admin_password not hardcoded 'admin'" (session 146 failure); "grep for stale HTTP mocks before replacing service transport layer" (session 145 failure). Both rules were only in knowledge.md — testing sessions read testing.md at skill-read time. (2) .gitignore — added backend/.hypothesis/ to stop 18 untracked test artifact files appearing in every STEP 0 git status check. (3) backlog.md — removed 5 code review items already confirmed clean in code review 2026-03-26 and sessions 137–147; kept "Frontend API error handling" and "Dead code" which have not been audited.
 PATTERNS FOUND: Rules from failed tests (sessions 145, 146) were saved to knowledge.md but not to testing.md — so the next testing session would read the skill file and miss the fix. Knowledge.md is for reference; skill files are read at session start and must carry the actionable rules.
