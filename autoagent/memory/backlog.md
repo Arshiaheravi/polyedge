@@ -7,6 +7,7 @@
 
 
 
+
 - [ ] **Consensus "Could not load"** — was caused by port mismatch. Verify it now loads correctly on 8003 by running Playwright test that opens the Consensus tab and asserts market cards are visible.
 
 ---

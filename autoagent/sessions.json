@@ -3266,5 +3266,29 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 147,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Code quality audit \u2014 fixed asyncio deprecation in web push, moved Telegram bot username to config, added telegram_chat_id to sensitive field regression tests",
+    "files": [
+      "backend/app/config.py",
+      "backend/app/routes/alerts.py",
+      "backend/app/services/notifications.py",
+      "backend/tests/test_security.py"
+    ],
+    "tests": {
+      "before": 426,
+      "after": 426,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

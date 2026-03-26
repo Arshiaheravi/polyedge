@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — AUDIT (Session 147)
+DONE: Code quality audit of sessions 142-146 changed files — fixed asyncio.get_event_loop() deprecation in notifications.py, moved hardcoded Telegram bot username to config, added telegram_chat_id to sensitive field regression tests. Logged Telegram webhook IDOR risk to tech_debt.md. 426 tests passing.
+IMPACT: asyncio.get_event_loop() raises DeprecationWarning in Python 3.10+ and will raise RuntimeError in future versions — replaced with get_running_loop(). telegram_chat_id was fixed (session 141) but had no regression test — now protected. Bot username was hardcoded with a "Replace with your actual" comment that would be missed in deployment.
+FILES: backend/app/config.py, backend/app/routes/alerts.py, backend/app/services/notifications.py, backend/tests/test_security.py
+
 ## 2026-03-26 — TESTING (Session 146)
 DONE: Added 7 OWASP security tests — mass assignment (3 tests verify register with subscription_tier in body always yields free tier) + sensitive data leakage (4 tests verify hashed_password and stripe_customer_id never appear in register/login/me/admin responses). 426 tests passing.
 IMPACT: Mass assignment lets attackers escalate to paid tiers via the register API — now regression-tested. Sensitive field leakage exposes bcrypt hashes and internal IDs — now verified absent from all auth and admin endpoints.

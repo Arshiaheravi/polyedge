@@ -44,7 +44,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **426 passed** (as of 2026-03-26, session 146)
+- Test count: **426 passed** (as of 2026-03-26, session 147)
 - Playwright checks: **132 total, 0 failures** (as of 2026-03-26, session 134 — no changes since)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -56,6 +56,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #147 Reflexion — 2026-03-26
+ACCOMPLISHED: Code quality audit of sessions 142-146 files. Fixed 3 issues: (1) asyncio.get_event_loop() → get_running_loop() in notifications.py (deprecated Python 3.10+), (2) hardcoded "PolyEdgeBot" bot username → config setting TELEGRAM_BOT_USERNAME, (3) telegram_chat_id added to _SENSITIVE_FIELDS regression test (session 141 fixed the leak but forgot the test). Logged Telegram webhook IDOR risk to tech_debt.md.
+FAILED: Nothing — all fixes were straightforward. 426 tests still pass.
+RULE: [2026-03-26] When writing a sensitive data leakage regression test (_SENSITIVE_FIELDS), scan ALL recent sensitive field fixes (grep knowledge.md for "removed.*from.*response\|never.*response\|excluded from") and add each field to the test. A fixed leak has no protection without a regression test.
+RULE: [2026-03-26] Use asyncio.get_running_loop() not asyncio.get_event_loop() inside async functions — get_event_loop() is deprecated in Python 3.10+ and raises DeprecationWarning in pytest output. get_running_loop() is always safe inside an async context.
 
 ### Session #146 Reflexion — 2026-03-26
 ACCOMPLISHED: Added 7 OWASP security tests — mass assignment (3 tests) + sensitive data leakage (4 tests). 426 total tests.
