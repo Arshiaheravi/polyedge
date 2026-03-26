@@ -60,6 +60,10 @@ async def _poll_bets() -> None:
                 logger.warning("Failed to fetch bets for %s: %s", address, exc)
                 continue
 
+            # Compute avg bet size from recent bets for conviction score
+            bet_amounts = [b.get("amount_usd", 0.0) for b in bets if b.get("amount_usd", 0.0) > 0]
+            avg_bet_usd = sum(bet_amounts) / len(bet_amounts) if bet_amounts else 0.0
+
             for bet in bets:
                 ts = _parse_timestamp(bet.get("timestamp"))
                 if ts and ts <= _last_check:
@@ -112,12 +116,25 @@ async def _poll_bets() -> None:
                     from app.config import get_settings
                     cfg = get_settings()
 
+                    # Compute conviction score: how large is this bet vs bettor's average?
+                    bet_amount = bet.get("amount_usd", 0.0)
+                    if avg_bet_usd > 0 and bet_amount > 0:
+                        conviction_score = round(bet_amount / avg_bet_usd, 1)
+                    else:
+                        conviction_score = 1.0
+                    if conviction_score >= 10.0:
+                        conviction_label = "EXTREME"
+                    elif conviction_score >= 3.0:
+                        conviction_label = "HIGH"
+                    else:
+                        conviction_label = ""
+
                     try:
                         await dispatch_bet_notification(
                             bettor_name=follow.bettor_name or address[:12],
                             market=bet.get("market_question", ""),
                             outcome=str(bet.get("outcome", "")),
-                            amount=bet.get("amount_usd", 0.0),
+                            amount=bet_amount,
                             telegram_chat_id=user.telegram_chat_id if (alert and alert.telegram_enabled and user.telegram_verified) else None,
                             telegram_bot_token=cfg.telegram_bot_token,
                             push_subscription_json=alert.push_subscription if (alert and alert.web_push_enabled) else None,
@@ -127,6 +144,8 @@ async def _poll_bets() -> None:
                             twilio_auth_token=cfg.twilio_auth_token,
                             twilio_from_number=cfg.twilio_from_number,
                             user_tier=user.subscription_tier,
+                            conviction_score=conviction_score,
+                            conviction_label=conviction_label,
                         )
                     except Exception as exc:
                         logger.warning("Notification failed for user %s: %s", user.id, exc)

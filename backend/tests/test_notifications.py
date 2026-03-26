@@ -412,3 +412,108 @@ async def test_dispatch_vip_sms_enabled_but_no_phone_number_skips_sms():
         )
     assert "sms" not in results
     mock_sms.assert_not_called()
+
+
+# ── Conviction Score tests ────────────────────────────────────────────────────
+
+
+def test_format_bet_message_extreme_conviction():
+    """EXTREME conviction label (>=10x) shows 🔥 in Telegram message."""
+    msg = format_bet_message("Alice", "Will BTC hit 100k?", "Yes", 5000.0, conviction_score=12.5, conviction_label="EXTREME")
+    assert "🔥" in msg
+    assert "EXTREME" in msg
+    assert "12.5x" in msg
+
+
+def test_format_bet_message_high_conviction():
+    """HIGH conviction label (>=3x) shows ⚡ in Telegram message."""
+    msg = format_bet_message("Bob", "Will Trump win?", "No", 1500.0, conviction_score=4.2, conviction_label="HIGH")
+    assert "⚡" in msg
+    assert "HIGH" in msg
+    assert "4.2x" in msg
+
+
+def test_format_bet_message_no_conviction_label():
+    """No conviction label → no conviction line in message, core fields still present."""
+    msg = format_bet_message("Carol", "Will Fed cut rates?", "Yes", 200.0, conviction_score=1.5, conviction_label="")
+    assert "🔥" not in msg
+    assert "⚡" not in msg
+    assert "Carol" in msg
+    assert "$200.00" in msg
+
+
+def test_format_bet_message_default_params():
+    """format_bet_message works with default conviction params (backwards compatible)."""
+    msg = format_bet_message("Dave", "Test market", "Yes", 100.0)
+    assert "Dave" in msg
+    assert "$100.00" in msg
+
+
+@pytest.mark.asyncio
+async def test_dispatch_extreme_conviction_push_title():
+    """EXTREME conviction sets 🔥 title in web push payload."""
+    mock_push = AsyncMock(return_value=True)
+    with patch("app.services.notifications.send_web_push", new=mock_push):
+        await dispatch_bet_notification(
+            bettor_name="Alice",
+            market="Test",
+            outcome="Yes",
+            amount=10000.0,
+            telegram_chat_id=None,
+            telegram_bot_token="",
+            push_subscription_json='{"endpoint":"https://push.example.com"}',
+            user_tier="basic",
+            conviction_score=15.0,
+            conviction_label="EXTREME",
+        )
+    mock_push.assert_called_once()
+    push_payload = mock_push.call_args[0][1]
+    assert "🔥" in push_payload["title"]
+    assert "EXTREME" in push_payload["title"]
+
+
+@pytest.mark.asyncio
+async def test_dispatch_high_conviction_push_title():
+    """HIGH conviction sets ⚡ title in web push payload."""
+    mock_push = AsyncMock(return_value=True)
+    with patch("app.services.notifications.send_web_push", new=mock_push):
+        await dispatch_bet_notification(
+            bettor_name="Bob",
+            market="Test",
+            outcome="No",
+            amount=3000.0,
+            telegram_chat_id=None,
+            telegram_bot_token="",
+            push_subscription_json='{"endpoint":"https://push.example.com"}',
+            user_tier="basic",
+            conviction_score=5.0,
+            conviction_label="HIGH",
+        )
+    mock_push.assert_called_once()
+    push_payload = mock_push.call_args[0][1]
+    assert "⚡" in push_payload["title"]
+    assert "HIGH" in push_payload["title"]
+
+
+@pytest.mark.asyncio
+async def test_dispatch_no_conviction_push_title():
+    """No conviction label → generic push title."""
+    mock_push = AsyncMock(return_value=True)
+    with patch("app.services.notifications.send_web_push", new=mock_push):
+        await dispatch_bet_notification(
+            bettor_name="Carol",
+            market="Test",
+            outcome="Yes",
+            amount=100.0,
+            telegram_chat_id=None,
+            telegram_bot_token="",
+            push_subscription_json='{"endpoint":"https://push.example.com"}',
+            user_tier="basic",
+            conviction_score=1.5,
+            conviction_label="",
+        )
+    mock_push.assert_called_once()
+    push_payload = mock_push.call_args[0][1]
+    assert "Carol" in push_payload["title"]
+    assert "🔥" not in push_payload["title"]
+    assert "⚡" not in push_payload["title"]

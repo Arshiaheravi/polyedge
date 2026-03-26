@@ -29,11 +29,24 @@ async def send_telegram(chat_id: str, message: str, bot_token: str) -> bool:
         return False
 
 
-def format_bet_message(bettor_name: str, market: str, outcome: str, amount: float) -> str:
+def format_bet_message(
+    bettor_name: str,
+    market: str,
+    outcome: str,
+    amount: float,
+    conviction_score: float = 1.0,
+    conviction_label: str = "",
+) -> str:
     """Format a bet notification message for Telegram."""
     market_display = market[:80] + "..." if len(market) > 80 else market
+    conviction_line = ""
+    if conviction_label == "EXTREME":
+        conviction_line = f"🔥 <b>EXTREME conviction bet ({conviction_score:.1f}x avg)</b>\n"
+    elif conviction_label == "HIGH":
+        conviction_line = f"⚡ <b>HIGH conviction bet ({conviction_score:.1f}x avg)</b>\n"
     return (
-        f"<b>{bettor_name}</b> just placed a bet!\n\n"
+        f"<b>{bettor_name}</b> just placed a bet!\n"
+        f"{conviction_line}\n"
         f"<b>Market:</b> {market_display}\n"
         f"<b>Outcome:</b> {outcome}\n"
         f"<b>Amount:</b> ${amount:,.2f}\n\n"
@@ -113,16 +126,19 @@ async def dispatch_bet_notification(
     twilio_auth_token: str = "",
     twilio_from_number: str = "",
     user_tier: str,
+    conviction_score: float = 1.0,
+    conviction_label: str = "",
 ) -> dict:
     """
     Dispatch notifications to a single user for a new bet event.
     Tier rules:
       Basic: web push + Telegram
       VIP:   web push + Telegram + SMS
+    conviction_score: bet_amount / bettor_avg_bet (1.0 = baseline, 3x = HIGH, 10x = EXTREME)
     Returns a dict of {channel: success_bool}.
     """
     results = {}
-    message = format_bet_message(bettor_name, market, outcome, amount)
+    message = format_bet_message(bettor_name, market, outcome, amount, conviction_score, conviction_label)
 
     # Telegram: Basic and VIP
     if user_tier in ("basic", "vip") and telegram_chat_id and telegram_bot_token:
@@ -130,8 +146,13 @@ async def dispatch_bet_notification(
 
     # Web push: Basic and VIP
     if user_tier in ("basic", "vip") and push_subscription_json:
+        push_title = f"{bettor_name} placed a bet!"
+        if conviction_label == "EXTREME":
+            push_title = f"🔥 EXTREME conviction — {bettor_name} bet {conviction_score:.1f}x avg!"
+        elif conviction_label == "HIGH":
+            push_title = f"⚡ HIGH conviction — {bettor_name} bet {conviction_score:.1f}x avg!"
         push_payload = {
-            "title": f"{bettor_name} placed a bet!",
+            "title": push_title,
             "body": f"{market[:60]}... — ${amount:,.2f} on {outcome}",
             "icon": "/icon.png",
         }
