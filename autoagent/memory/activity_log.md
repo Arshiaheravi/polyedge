@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — BUGFIX (Session 160)
+DONE: Fixed 3 silent error swallowing bugs in the follows tab — users now see "Could not load positions. Try refreshing." instead of stuck skeleton cards when the positions API fails on first load; follows-list errors show a toast instead of a misleading empty state.
+IMPACT: Users no longer see infinite loading skeletons when the API is slow or returns an error on the follows tab. Reliable error feedback replaces silent failures that made the app look broken.
+FILES: frontend/index.html
+
 ## 2026-03-26 14:00 — FEATURE (Session 159)
 DONE: Added VIP-tier 5-second poll interval (vs 30s for all tiers) — scheduler now runs two APScheduler jobs: _poll_vip_bets every 5s for addresses followed by VIP users, _poll_bets every 30s for all addresses. Also added GET /readiness endpoint that checks DB connectivity (SELECT 1) and returns 200/503 for production deployments. 4 new tests added (450 total).
 IMPACT: VIP users receive bet notifications up to 6x faster, closing the competitive gap vs PolyCop/PolyGun. The readiness probe enables safe k8s/Docker deployments with proper health gating.

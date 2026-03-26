@@ -13,6 +13,12 @@
 
 ---
 
+## HIGH PRIORITY — Code Quality
+
+- [ ] **Code quality audit (session 160)** — scan last 5 work sessions' changed files (scheduler.py, main.py, config.py, test_scheduler.py, test_health.py, test_bettors.py, follows.py, test_ui_flows.py, test_alerts.py, test_data_integrity.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits. (Triggered by 120 work-session milestone per PROMPT.md De-Sloppify pattern)
+
+---
+
 ## MEDIUM PRIORITY — Edge Cases & Reliability
 
 - [ ] **Rate limiting on auth routes** — add slowapi/starlette middleware to limit POST /auth/register and POST /auth/login to 10 req/min per IP; rapid brute-force attacks currently not blocked. Competitors + 2026 FastAPI best practices both flag this as production-critical. (Source: fastlaunchapi.dev 2026)
@@ -31,8 +37,6 @@
 These tasks are a structural code review — not testing functionality, but reading the code to find bugs, security holes, and logic errors that tests might miss. Write findings as comments in a `tests/test_code_review.py` file or fix directly if small.
 
 *(Auth review, SQL injection, CORS, tier gate completeness, scheduler correctness, Polymarket service review — all confirmed clean in code review 2026-03-26 and sessions 137–147. Removed to prevent re-auditing already-verified areas.)*
-
-- [ ] **Frontend API error handling audit** — scan `frontend/index.html` for every `catch` block and `.then(err =>` handler: verify each shows a user-visible error message (not silently swallows), and that error messages use `escapeHtml()` before `innerHTML`. Focus on: login/register failures, follow/unfollow API errors, Telegram verify errors, payment redirect failures. (Session 148: kept for audit — not yet reviewed)
 
 - [ ] **Dead code audit** — scan `frontend/index.html` for functions defined but never called; scan `backend/app/` for imported names not referenced in their module. Remove anything genuinely unreachable. Candidate areas: frontend helper functions added in early sessions before the card-grid refactor, any `routes/*.py` imports removed during bugfixes. (Session 148: kept for audit — not yet reviewed)
 

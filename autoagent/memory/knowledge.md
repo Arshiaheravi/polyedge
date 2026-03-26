@@ -57,6 +57,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 
 ## Session Reflexions
 
+### Session #160 Reflexion — 2026-03-26
+ACCOMPLISHED: Frontend API error handling audit — found and fixed 3 silent-swallow bugs in follows tab: (1) refreshFollowsActivity `if (!res.ok) return` on first load left skeleton visible forever; (2) same for network errors in catch; (3) loadMyFollows `catch {}` silently showed empty state on /follows API failure. All other error handlers (login, register, follow/unfollow, alerts toggles, Telegram, SMS, payments) were already correct — using toast() which internally uses textContent (XSS-safe). No innerHTML/escapeHtml issues in error paths.
+FAILED: Nothing failed.
+RULE: [2026-03-26] When a function is both called on first load AND on a background timer, `catch {}` (silent fail) is correct for background refresh (preserves existing content) but wrong for first load (skeleton persists forever). Fix pattern: `if (container.querySelector('.skeleton')) { container.innerHTML = '...error message...'; }` in catch — skeletons only exist during first load, real content exists during refresh.
+RULE: [2026-03-26] `catch {}` on authenticated API calls is almost always wrong. The only case where silent swallow is correct is decorative/non-essential UI. For data the user needs (follows list, positions), use `catch (e) { if (e.message !== 'Unauthorized') toast('...', 'error'); }` to avoid double-messaging on 401 redirects while still surfacing real errors.
+
 ### Session #159 Reflexion — 2026-03-26
 ACCOMPLISHED: Added VIP-tier 5-second poll interval — second APScheduler job (_poll_vip_bets) queries only bettor addresses followed by at least one VIP user and runs every 5s. Main job still runs every 30s for all addresses. Duplicate prevention handled by DB duplicate check (bettor_address + market_id + timestamp). Also added GET /readiness endpoint with DB connectivity check. 4 new tests; 450 total.
 FAILED: test_start_scheduler_registers_two_jobs initially failed with RuntimeError (no current event loop) — AsyncIOScheduler.start() requires a running asyncio event loop in non-async test context. Fix: patch AsyncIOScheduler.start with patch.object before calling start_scheduler().
