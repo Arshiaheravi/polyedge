@@ -580,3 +580,7 @@ def test_consensus_whale_count_and_price_range(client):
         assert 0.01 <= price <= 0.99, (
             f"avg_entry_price={price} outside [0.01, 0.99] — resolved market in consensus: {sig}"
         )
+        cid = sig.get("condition_id", "")
+        assert CONDITION_ID_RE.match(cid), (
+            f"condition_id={cid!r} is not a valid 64-char hex ID (expected ^0x[a-fA-F0-9]{{64}}$): {sig}"
+        )
