@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — META (Session 158)
+IMPROVED: (1) playwright.md — added TIMER TESTING section: page.clock.fast_forward() pattern used in session 156 but never documented; includes install-before-goto rule and when-to-use guidance. (2) backlog.md — removed empty "HIGH PRIORITY — Frontend UI Playwright Tests" section header (all tasks completed sessions 149–157, empty section was confusing). (3) backlog.md — restored "Frontend API error handling" and "Dead code" code review items that were explicitly kept in session 148 but silently dropped in subsequent backlog cleanups.
+PATTERNS FOUND: (a) Useful Playwright patterns (page.clock) get used in work sessions but never filed back to playwright.md — only enters knowledge.md at best. (b) Backlog items can silently disappear when sections get cleaned up; session 148 META kept two items but they were gone by session 157.
+PREDICTED IMPACT: Timer-based Playwright tests won't require rediscovery next session. Two pending code review tasks will be picked up instead of forgotten.
+
 ## 2026-03-26 — TESTING (Session 157)
 DONE: Added 3 new reliability tests in test_bettors.py — (1) Polymarket HTTP 500 at httpx transport level returns graceful 200 empty list (leaderboard), (2) same for bettor detail endpoint, (3) 10 concurrent GET /bettors threads using Python threading all return 200 without crashing. Also removed 3 already-covered items from backlog (timeout handling, concurrent requests, scheduler duplicate prevention — all already tested).
 IMPACT: First tests that verify Polymarket 500 resilience at the HTTP layer (not just the mock-at-service-function level). Proves the service's `except Exception: break` pattern actually swallows upstream errors correctly. Concurrent test confirms the module-level cache dict handles concurrent writes safely via CPython GIL.
