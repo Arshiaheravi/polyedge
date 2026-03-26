@@ -63,7 +63,11 @@ async def bettor_detail(
     current_user: Optional[User] = Depends(get_current_user_optional),
 ):
     now = time.time()
-    cache_entry = _profile_cache.get(address)
+    # Cache key must include tier — VIP gets unlocked simulator, free gets locked.
+    # Caching by address alone would serve a VIP response to free users (paywall bypass).
+    tier = getattr(current_user, "subscription_tier", "free") if current_user else "free"
+    cache_key = (address, tier)
+    cache_entry = _profile_cache.get(cache_key)
     if cache_entry and (now - cache_entry["ts"]) < CACHE_TTL:
         return cache_entry["data"]
 
@@ -77,12 +81,11 @@ async def bettor_detail(
         raise HTTPException(status_code=502, detail=f"Polymarket API error: {str(exc)}")
 
     # Tier-gate the simulator: Free users see locked=True placeholder
-    tier = getattr(current_user, "subscription_tier", "free") if current_user else "free"
     if tier in ("basic", "vip"):
         copy_simulator = simulator_raw
     else:
         copy_simulator = {"locked": True}
 
     result = {"profile": profile, "recent_bets": bets, "copy_simulator": copy_simulator}
-    _profile_cache[address] = {"data": result, "ts": now}
+    _profile_cache[cache_key] = {"data": result, "ts": now}
     return result

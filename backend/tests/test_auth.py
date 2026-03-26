@@ -121,7 +121,7 @@ def test_register_uppercase_email_is_treated_as_duplicate(client):
 
 
 def test_get_me_returns_all_user_fields(client, auth_headers):
-    """GET /auth/me response includes id, email, name, subscription_tier, telegram_verified, telegram_chat_id, created_at."""
+    """GET /auth/me response includes id, email, name, subscription_tier, telegram_verified, created_at."""
     resp = client.get("/auth/me", headers=auth_headers)
     assert resp.status_code == 200
     user = resp.json()["user"]
@@ -130,8 +130,28 @@ def test_get_me_returns_all_user_fields(client, auth_headers):
     assert "name" in user
     assert "subscription_tier" in user
     assert "telegram_verified" in user
-    assert "telegram_chat_id" in user
     assert "created_at" in user
+
+
+def test_auth_responses_do_not_expose_telegram_chat_id(client):
+    """telegram_chat_id must never appear in login, register, or /me responses (Bug #3 regression)."""
+    # Register
+    reg_resp = client.post("/auth/register", json={
+        "email": "tgcheck@example.com", "password": "pw123", "name": "TgCheck"
+    })
+    assert reg_resp.status_code == 201
+    assert "telegram_chat_id" not in reg_resp.json().get("user", {}), (
+        "POST /auth/register must not expose telegram_chat_id"
+    )
+
+    # Login
+    login_resp = client.post("/auth/login", json={
+        "email": "tgcheck@example.com", "password": "pw123"
+    })
+    assert login_resp.status_code == 200
+    assert "telegram_chat_id" not in login_resp.json().get("user", {}), (
+        "POST /auth/login must not expose telegram_chat_id"
+    )
 
 
 def test_register_whitespace_padded_email_strips_and_deduplicates(client):
@@ -300,8 +320,8 @@ def test_login_empty_password_returns_401(client):
     assert resp.status_code == 401
 
 
-def test_login_response_has_all_7_fields(client):
-    """POST /auth/login user dict must include all 7 fields from user_to_dict."""
+def test_login_response_has_required_fields(client):
+    """POST /auth/login user dict must include all required public fields."""
     client.post("/auth/register", json={
         "email": "contract7@example.com", "password": "pass123", "name": "Contract"
     })
@@ -310,21 +330,23 @@ def test_login_response_has_all_7_fields(client):
     })
     assert resp.status_code == 200
     user = resp.json()["user"]
-    for field in ("id", "email", "name", "subscription_tier",
-                  "telegram_verified", "telegram_chat_id", "created_at"):
+    for field in ("id", "email", "name", "subscription_tier", "telegram_verified", "created_at"):
         assert field in user, f"login response missing field: {field}"
+    # telegram_chat_id must NEVER appear in any auth response (Bug #3 security fix)
+    assert "telegram_chat_id" not in user, "login response must not expose telegram_chat_id"
 
 
-def test_register_response_has_all_7_fields(client):
-    """POST /auth/register user dict must include all 7 fields from user_to_dict."""
+def test_register_response_has_required_fields(client):
+    """POST /auth/register user dict must include all required public fields."""
     resp = client.post("/auth/register", json={
         "email": "regcontract7@example.com", "password": "pass123", "name": "RegContract"
     })
     assert resp.status_code == 201
     user = resp.json()["user"]
-    for field in ("id", "email", "name", "subscription_tier",
-                  "telegram_verified", "telegram_chat_id", "created_at"):
+    for field in ("id", "email", "name", "subscription_tier", "telegram_verified", "created_at"):
         assert field in user, f"register response missing field: {field}"
+    # telegram_chat_id must NEVER appear in any auth response (Bug #3 security fix)
+    assert "telegram_chat_id" not in user, "register response must not expose telegram_chat_id"
 
 
 def test_register_with_extra_password_confirm_field_succeeds(client):

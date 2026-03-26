@@ -408,3 +408,57 @@ def test_bettor_detail_vip_user_copy_simulator_unlocked(client, db):
     sim = resp.json()["copy_simulator"]
     assert "locked" not in sim
     assert sim["simulated_roi_pct"] == pytest.approx(34.75, rel=0.01)
+
+
+def test_profile_cache_tier_gate_not_bypassed(client, db):
+    """VIP fetches an address → free user fetching the SAME address must still see locked=True.
+
+    This is Bug #1 regression: the old cache was keyed by address only. A VIP response cached
+    for address X would be served to a free user requesting the same address — paywall bypass.
+    Fix: cache key is now (address, tier) so each tier gets its own cache entry.
+    """
+    import app.routes.bettors as bettors_mod
+    from app.models import User
+    from app.auth import hash_password, create_access_token
+
+    addr = "0xCACHE_TIER_GATE"
+    # Clear ALL tier-keyed entries for this address
+    for tier in ("free", "basic", "vip"):
+        bettors_mod._profile_cache.pop((addr, tier), None)
+
+    # Create a VIP user
+    vip_user = User(email="vip_tier_gate@test.com", hashed_password=hash_password("pw"),
+                    name="VipGateUser", subscription_tier="vip")
+    db.add(vip_user)
+    db.commit()
+    db.refresh(vip_user)
+    vip_token = create_access_token({"sub": str(vip_user.id)})
+    vip_headers = {"Authorization": f"Bearer {vip_token}"}
+
+    # VIP fetches the profile first — populates cache with unlocked simulator
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=MOCK_PROFILE_SIM)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=MOCK_BETS_SIM)), \
+         patch("app.routes.bettors.compute_copy_simulator", new=AsyncMock(return_value=MOCK_SIM_RESULT)):
+        vip_resp = client.get(f"/bettors/{addr}", headers=vip_headers)
+    assert vip_resp.status_code == 200
+    assert vip_resp.json()["copy_simulator"].get("locked") is not True, "VIP should see unlocked simulator"
+
+    # Free user (auth_headers is free tier) fetches the SAME address
+    # Must get their own cache entry (locked=True), NOT the VIP entry
+    free_user = User(email="free_tier_gate@test.com", hashed_password=hash_password("pw"),
+                     name="FreeGateUser", subscription_tier="free")
+    db.add(free_user)
+    db.commit()
+    db.refresh(free_user)
+    free_token = create_access_token({"sub": str(free_user.id)})
+    free_headers = {"Authorization": f"Bearer {free_token}"}
+
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=MOCK_PROFILE_SIM)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=MOCK_BETS_SIM)), \
+         patch("app.routes.bettors.compute_copy_simulator", new=AsyncMock(return_value=MOCK_SIM_RESULT)):
+        free_resp = client.get(f"/bettors/{addr}", headers=free_headers)
+    assert free_resp.status_code == 200
+    assert free_resp.json()["copy_simulator"].get("locked") is True, (
+        "Free user must see locked=True even after VIP cached the same address — "
+        "cache key must include tier to prevent paywall bypass (Bug #1 regression)"
+    )

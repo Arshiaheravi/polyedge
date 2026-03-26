@@ -45,7 +45,7 @@ def user_to_dict(user: User) -> dict:
         "name": user.name,
         "subscription_tier": user.subscription_tier,
         "telegram_verified": user.telegram_verified,
-        "telegram_chat_id": user.telegram_chat_id,
+        # telegram_chat_id intentionally excluded — must never appear in API responses
         "created_at": user.created_at.isoformat() if user.created_at else None,
     }
 
