@@ -251,6 +251,32 @@ async def test_send_telegram_returns_false_when_chat_id_empty():
     assert result is False
 
 
+@pytest.mark.asyncio
+async def test_send_telegram_returns_false_on_connect_error():
+    """send_telegram returns False and logs warning when httpx raises ConnectError.
+
+    Covers notifications.py:27-29 — the `except Exception` handler that returns False
+    was never exercised. ConnectError simulates Telegram API being unreachable.
+    """
+    from unittest.mock import patch, AsyncMock
+    import httpx
+
+    mock_client_instance = AsyncMock()
+    mock_client_instance.post = AsyncMock(
+        side_effect=httpx.ConnectError("Connection refused")
+    )
+    mock_client_instance.__aenter__ = AsyncMock(return_value=mock_client_instance)
+    mock_client_instance.__aexit__ = AsyncMock(return_value=False)
+
+    with patch("app.services.notifications.httpx.AsyncClient", return_value=mock_client_instance):
+        result = await send_telegram(
+            chat_id="chat_123",
+            message="test message",
+            bot_token="bot_valid_token",
+        )
+    assert result is False, "send_telegram must return False when ConnectError is raised"
+
+
 # ── send_web_push direct unit tests ──────────────────────────────────────────
 
 

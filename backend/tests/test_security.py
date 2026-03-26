@@ -64,6 +64,36 @@ class TestJWTSecurity:
         resp = client.get("/auth/me", headers={"Authorization": f"Bearer {no_sub}"})
         assert resp.status_code == 401, f"Expected 401, got {resp.status_code}: {resp.json()}"
 
+    def test_token_missing_sub_treated_as_free_on_optional_auth_endpoint(self, client):
+        """JWT with no 'sub' claim → get_current_user_optional returns None → treated as free tier.
+
+        Covers auth.py:72-73: `user_id = payload.get("sub"); if user_id is None: return None`
+        The caller (/markets/consensus) must handle None as anonymous/free, not as a 401.
+        """
+        import app.routes.markets as markets_mod
+        import time
+        from unittest.mock import AsyncMock, patch
+
+        markets_mod._consensus_cache["data"] = None
+        markets_mod._consensus_cache["ts"] = 0
+
+        no_sub = _make_no_sub_token()
+        with patch(
+            "app.routes.markets.get_consensus_signals",
+            new=AsyncMock(return_value=[]),
+        ):
+            resp = client.get(
+                "/markets/consensus",
+                headers={"Authorization": f"Bearer {no_sub}"},
+            )
+        assert resp.status_code == 200, (
+            f"Optional-auth endpoint must return 200, not reject a no-sub JWT: {resp.json()}"
+        )
+        data = resp.json()
+        assert data["tier"] == "free", (
+            "No-sub JWT must be treated as anonymous (free tier), not authenticated"
+        )
+
     def test_completely_invalid_token_returns_401(self, client):
         resp = client.get("/auth/me", headers={"Authorization": "Bearer not.a.jwt"})
         assert resp.status_code == 401, f"Expected 401, got {resp.status_code}: {resp.json()}"

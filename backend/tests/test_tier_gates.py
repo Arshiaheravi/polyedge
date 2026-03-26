@@ -166,6 +166,32 @@ def test_consensus_response_has_required_fields(client):
         assert key in data, f"Response missing required field: {key}"
 
 
+def test_consensus_cache_hit_returns_cached_data_without_calling_service(client):
+    """Cache hit path: pre-populated cache is served without invoking get_consensus_signals.
+
+    Covers markets.py:29 — the branch `if _consensus_cache["data"] and (now - ts) < TTL`
+    was never exercised because every test clears the cache before calling the endpoint.
+    """
+    import time
+    import app.routes.markets as markets_mod
+
+    # Pre-populate cache with fresh data (ts = now → well within TTL)
+    cached_signals = MOCK_SIGNALS[:2]
+    markets_mod._consensus_cache["data"] = cached_signals
+    markets_mod._consensus_cache["ts"] = time.time()
+
+    mock_service = AsyncMock()
+    with patch("app.routes.markets.get_consensus_signals", new=mock_service):
+        resp = client.get("/markets/consensus")
+
+    assert resp.status_code == 200
+    mock_service.assert_not_called(), "Cache hit must NOT call get_consensus_signals"
+    data = resp.json()
+    assert data["total_available"] == len(cached_signals), (
+        "Cache hit must return the pre-populated signals, not a fresh fetch"
+    )
+
+
 def test_consensus_total_available_reflects_all_signals(client, db):
     """total_available always equals the full signal count, regardless of tier cap."""
     _, _, headers = _make_user(db, "free_total@test.com", "free")
