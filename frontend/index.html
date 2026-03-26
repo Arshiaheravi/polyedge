@@ -3529,8 +3529,12 @@ async function loadMyFollows() {
       follows = data.follows || [];
       tier    = data.tier || 'free';
       limit   = data.limit || 0;
+    } else {
+      toast('Could not load your follows — try refreshing', 'error');
     }
-  } catch {}
+  } catch (e) {
+    if (e.message !== 'Unauthorized') toast('Could not load your follows — try refreshing', 'error');
+  }
 
   document.getElementById('follows-subtitle').textContent =
     tier === 'vip'   ? `${follows.length} bettors followed — unlimited` :
@@ -3621,7 +3625,12 @@ async function refreshFollowsActivity() {
 
   try {
     const res = await apiFetch('/follows/live');
-    if (!res.ok) return;
+    if (!res.ok) {
+      if (activityContainer.querySelector('.skeleton')) {
+        activityContainer.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--text3);font-size:13px;">Could not load positions. Try refreshing.</div>';
+      }
+      return;
+    }
     const data = await res.json();
     const bettors = data.bettors || [];
     const followsTier = data.tier || 'free';
@@ -3701,7 +3710,11 @@ async function refreshFollowsActivity() {
 
     activityContainer.innerHTML = html;
   } catch (e) {
-    // silently fail — don't wipe existing content on refresh error
+    if (activityContainer.querySelector('.skeleton')) {
+      // First load failed — replace skeleton with error message
+      activityContainer.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--text3);font-size:13px;">Could not load positions. Try refreshing.</div>';
+    }
+    // If already showing real content, silently preserve it on background refresh error
   }
 }
 
