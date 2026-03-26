@@ -3300,5 +3300,10 @@
    "summary": "Added 5 Playwright E2E tests for the Consensus tab that prove the port-8003 fix works — users no longer see 'Could not load' error; also fixed the conftest login helper which had wrong selectors and had never been run before",
    "files": ["backend/tests/playwright/test_consensus_tab.py", "backend/tests/playwright/conftest.py"],
    "tests": {"before": 426, "after": 426, "status": "pass"},
-   "frontend": {"status": "pass", "checks": 5, "failures": 0, "notes": "5 Playwright consensus tab tests all passing"}}
+   "frontend": {"status": "pass", "checks": 5, "failures": 0, "notes": "5 Playwright consensus tab tests all passing"}},
+  {"session": 150, "date": "2026-03-26", "time": "00:00", "type": "work",
+   "summary": "Fixed Playwright event loop contamination that caused 105 async tests to fail when running the full suite; added pytest.ini with asyncio_mode=auto and --ignore=tests/playwright so backend tests run cleanly; then added 18 real-world data integrity tests that verify Polymarket data quality (ETH addresses, profit ranges, trade types, MRR formula, cross-validation)",
+   "files": ["backend/pytest.ini", "backend/tests/test_alerts.py", "backend/tests/test_data_integrity.py"],
+   "tests": {"before": 426, "after": 443, "status": "pass"},
+   "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}}
 ]

@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — BUGFIX + TESTING (Session 150)
+DONE: Fixed Playwright event loop contamination (105 async tests broken) by adding pytest.ini with asyncio_mode=auto and --ignore=tests/playwright; converted 3 asyncio.get_event_loop().run_until_complete() calls to async def. Then added 18 real-world data integrity tests covering leaderboard sanity (ETH addresses, profit/accuracy ranges, no dup ranks), profile vs leaderboard consistency, recent bets validity (TRADE only, price ranges), copy simulator tier gating, admin stats math, and Polymarket cross-validation.
+IMPACT: The full test suite was silently broken (105 failures) — any new test session would have started from a red baseline. The 18 data integrity tests now catch if Polymarket sends bad data, if normalisation is wrong, or if the tier gate on copy simulator breaks.
+FILES: backend/pytest.ini, backend/tests/test_alerts.py, backend/tests/test_data_integrity.py
+
 ## 2026-03-26 — TESTING (Session 149)
 DONE: Added 5 Playwright E2E tests for the Consensus tab — confirms port-8003 fix works (no "Could not load" error), verifies free tier ≤3 signals, upgrade banner logic, and VIP no-banner. Also fixed the conftest login() helper which used wrong selectors (text=Login not found, #dashboard doesn't exist) — conftest had never successfully run before.
 IMPACT: The "Could not load consensus signals" bug was previously untested — a port regression could silently break it for all users with no failing test. Now any port or API failure is caught immediately. The conftest fix unblocks all future Playwright tests.

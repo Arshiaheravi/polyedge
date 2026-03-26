@@ -5,30 +5,6 @@
 
 ---
 
-## HIGH PRIORITY — Real-World Data Integrity Tests
-
-These tests verify the data coming from Polymarket is real, consistent, and makes sense — not just that the API returns 200. Write as `tests/test_data_integrity.py`. Cross-validate against the live Polymarket Data API directly where possible.
-
-- [ ] **Leaderboard data sanity** — GET /bettors: assert every bettor has a valid Ethereum address (matches `^0x[a-fA-F0-9]{40}$`); profit_usd is a number ≥ 0 for top 20; accuracy is between 0.0 and 1.0; volume_usd > 0; rank is a positive integer with no duplicates in the top 20; name is non-empty string
-
-- [ ] **Leaderboard vs profile consistency** — pick the top 3 bettors from GET /bettors, then GET /bettors/{address} for each one; assert their profit_usd, rank, and accuracy are within 5% of what the leaderboard shows (they come from the same source — any larger discrepancy means a normalisation bug)
-
-- [ ] **Recent bets data validity** — GET /bettors/{address} for 5 different addresses; for each bet assert: amount_usd > 0; price is between 0.01 and 0.99 (a price of exactly 0 or 1 means it already resolved and shouldn't appear); outcome is "YES" or "NO"; timestamp is in the past and within the last 90 days; market_title is a non-empty string ≥ 5 chars; type == "TRADE" (no REDEEM should appear)
-
-- [ ] **Prices are economically meaningful** — for all positions returned by GET /follows/live: avg_price must be between 0.01 and 0.99; current_price must be between 0.001 and 0.999; cur_size_usd > 0; percent_pnl is a finite number (not NaN or Infinity); cash_pnl is a finite number. A price of 0.0 or 1.0 means the market resolved — those positions should not appear as "active copyable bets"
-
-- [ ] **Copy signal logic correctness** — for each position: if copy_value_pct ≤ 10 → copy_signal must be "good"; if 10 < copy_value_pct ≤ 30 → must be "fair"; if > 30 → must be "late". Also assert copy_value_pct = round((current_price - avg_price) / avg_price * 100, 1). Test 10 real positions and verify the math is correct.
-
-- [ ] **Consensus signals are real** — GET /markets/consensus: assert signals is a list; each signal has whale_count ≥ 3 (the minimum threshold); avg_entry_price between 0.01 and 0.99; current_price between 0.001 and 0.999; outcome is "YES" or "NO" or a named team/candidate (non-empty); market_title is non-empty; condition_id matches `^0x[a-fA-F0-9]{64}$`; total_available is a non-negative integer
-
-- [ ] **Copy simulator math** — GET /bettors/{address} for 5 addresses as a Basic user: assert simulated_pnl_usd is a finite float; simulated_roi_pct = simulated_pnl_usd / (bets_analysed * 100) * 100 (within rounding); bets_analysed ≥ 0 and ≤ 20; result is economically plausible — reject if |simulated_roi_pct| > 10000% (that would mean a bug, not a real return)
-
-- [ ] **Admin stats are internally consistent** — GET /admin/stats: assert user_count ≥ 0; free_count + basic_count + vip_count == user_count; mrr_estimate == round(basic_count * 4.99 + vip_count * 9.99, 2); follow_count ≥ 0; bet_event_count ≥ 0
-
-- [ ] **Polymarket cross-validation** — pick the #1 bettor from GET /bettors; directly call `https://data-api.polymarket.com/profiles?limit=1&sortBy=profit` and compare the top address; assert PolyEdge's #1 bettor address matches Polymarket's #1 (or is at least in Polymarket's top 5); this confirms we're not showing stale/wrong leaderboard data
-
-- [ ] **No stale resolved markets in positions** — for all positions in GET /follows/live: if end_date is not null and end_date < today → assert that position does NOT appear (resolved markets should be excluded). A position with end_date in the past at current_price near 0 or 1 means the market resolved — copying it is pointless and misleading to users.
-
 ---
 
 ## HIGH PRIORITY — Tier Gate E2E Tests

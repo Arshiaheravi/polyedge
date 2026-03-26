@@ -258,4 +258,5 @@ cd backend && py -m pytest tests/playwright/ -q   # if playwright tests exist
 - Stripe/Telegram not configured — feature-gate gracefully
 - `py` not `python3` on Windows
 - Frontend is ONE file: `frontend/index.html`
-- 426 backend tests passing, 5 Playwright E2E tests passing (consensus tab) as of session 149
+- 443 backend tests passing (1 skipped), 5 Playwright E2E tests passing (consensus tab) as of session 150
+- pytest.ini excludes tests/playwright/ from default run (use `py -m pytest tests/playwright/` separately)

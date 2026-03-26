@@ -44,7 +44,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **426 passed** (as of 2026-03-26, session 147)
+- Test count: **443 passed, 1 skipped** (as of 2026-03-26, session 150)
 - Playwright checks: **132 total, 0 failures** (as of 2026-03-26, session 134 — no changes since)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -56,6 +56,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #150 Reflexion — 2026-03-26
+ACCOMPLISHED: (1) Fixed Playwright event loop contamination — session-scoped sync_playwright() fixture was leaving a running loop that broke all subsequent async tests. Fix: pytest.ini with asyncio_mode=auto + addopts=--ignore=tests/playwright. Also converted 3 asyncio.get_event_loop().run_until_complete() calls in test_alerts.py to async def. (2) Added 18 real-world data integrity tests covering leaderboard sanity, profile consistency, recent bets validity, copy simulator tier gating, admin stats math, and Polymarket cross-validation. 443 passed, 1 skipped.
+FAILED: Nothing — baseline was red (105 failures) when session started because of the Playwright contamination regression from session 149. Diagnosed and fixed cleanly on first pass.
+RULE: [2026-03-26] Playwright session-scoped fixtures using sync_playwright() contaminate the asyncio event loop for the entire pytest session. Fix: add `addopts = --ignore=tests/playwright` to pytest.ini so the default test run excludes Playwright. Run Playwright explicitly: `py -m pytest tests/playwright/`. Also set `asyncio_mode = auto` in pytest.ini to prevent STRICT mode issues.
+RULE: [2026-03-26] For data integrity tests that call real external APIs (Polymarket), use `pytest.skip()` when the response is 502 or the API is unreachable. Call `_clear_bettors_cache()` before each test to ensure the real API is called instead of module-level cached data from earlier tests.
 
 ### Session #147 Reflexion — 2026-03-26
 ACCOMPLISHED: Code quality audit of sessions 142-146 files. Fixed 3 issues: (1) asyncio.get_event_loop() → get_running_loop() in notifications.py (deprecated Python 3.10+), (2) hardcoded "PolyEdgeBot" bot username → config setting TELEGRAM_BOT_USERNAME, (3) telegram_chat_id added to _SENSITIVE_FIELDS regression test (session 141 fixed the leak but forgot the test). Logged Telegram webhook IDOR risk to tech_debt.md.
