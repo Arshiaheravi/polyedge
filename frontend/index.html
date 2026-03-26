@@ -2774,10 +2774,6 @@ function rankBadge(i) {
   return `<span class="rank-badge rank-n">${i + 1}</span>`;
 }
 
-function tierBadge(tier) {
-  return `<span class="badge badge-${tier || 'free'}">${tier || 'free'}</span>`;
-}
-
 function setBtn(id, disabled, text) {
   const b = document.getElementById(id);
   if (!b) return;
