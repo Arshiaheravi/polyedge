@@ -45,7 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **467 passed, 1 skipped** (as of 2026-03-26, session 166)
+- Test count: **475 passed, 1 skipped** (as of 2026-03-26, session 175)
 - Playwright E2E: **42 passed, 2 skipped** (as of 2026-03-26, session 156)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -74,6 +74,12 @@ ACCOMPLISHED: (1) Confirmed BRAIN_PROMPT.md background-agent prohibition is NOW 
 FAILED: Background agents launched at session start produced output (agents were running) but pattern is established — added explicit prohibition to BRAIN_PROMPT.md immediately.
 RULE: [2026-03-26] When a rule about brain session failure mode (e.g., "don't use background agents") lives only in knowledge.md, it is NOT effective — brain sessions don't read knowledge.md before launching agents. The rule must be in BRAIN_PROMPT.md itself, near the search step, to fire at the right moment.
 OPTIMIZATION: [2026-03-26] Brain session research pattern: run 2-4 direct WebSearch calls in parallel (not background agents), read results immediately, pick the top 1-2 actionable findings, implement them. Total research phase: ~5 tool calls. This is faster and more reliable than background agents.
+
+### Session #175 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added 3 targeted regression tests: (1) `test_get_settings_returns_same_instance` in test_health.py — verifies `@lru_cache` on `get_settings()` returns same object instance (Bug #9 regression guard). (2) `test_copy_simulator_skips_still_open_bets` in test_data_integrity.py — confirms 1-day-old TRADE bet with no matching REDEEM is excluded from bets_analysed (open-bet skip branch). (3) `test_auth_me_does_not_expose_sensitive_fields` in test_auth.py — asserts GET /auth/me never returns hashed_password, stripe_customer_id, telegram_chat_id. 472 → 475 tests.
+FAILED: During LOW-WATER-MARK backlog replenishment, added `_last_positions purge on unfollow` and `old-bet assumed-loss` as new backlog items — both already existed in test_scheduler.py and test_polymarket_service.py respectively. Had to grep again to find genuine gaps.
+RULE: [2026-03-26] For every new backlog item generated during LOW-WATER-MARK replenishment, the grep check MUST use the specific test description phrase, not a general concept. Don't check "test.*last_positions" — check "test.*last_positions.*purge" AND "test.*poll_bets.*purges". Two greps with different angle hits the same concept from both directions. If either grep hits, the test exists.
+RULE: [2026-03-26] Reflexion-based task generation (creating backlog items from memory of what's untested) is unreliable when the codebase has 475+ tests across 20+ files. Always grep for what exists before adding to backlog — the 10-second grep is the only authoritative check.
 
 ### Session #174 Reflexion — 2026-03-26 (CODE QUALITY AUDIT)
 ACCOMPLISHED: Audited changed files from sessions 167-171. Marcus XSS check passed on frontend/index.html — all innerHTML uses properly escape API-sourced data. Found Leo smell in polymarket.py: `asyncio`, `time`, and `datetime` were imported inside function bodies rather than at module level. Removed two unused imports (`Optional`, `timezone`). 472 tests pass unchanged.

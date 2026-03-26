@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 175)
+DONE: Added 3 regression tests covering Bug #9 (lru_cache identity), compute_copy_simulator open-bet skip branch, and GET /auth/me sensitive field absence (hashed_password, stripe_customer_id, telegram_chat_id). 472 → 475 tests.
+IMPACT: test_get_settings_returns_same_instance catches if @lru_cache is accidentally removed from config.py (causes .env re-read on every scheduler invocation). test_copy_simulator_skips_still_open_bets locks in the "still-open bets excluded" contract. test_auth_me_does_not_expose_sensitive_fields guards against accidental field exposure in /auth/me.
+FILES: backend/tests/test_health.py, backend/tests/test_data_integrity.py, backend/tests/test_auth.py
+
 ## 2026-03-26 — CODE QUALITY AUDIT (Session 174)
 DONE: Audited files changed in sessions 167-171 (polymarket.py, test_data_integrity.py, test_follows_live.py, test_polymarket_service.py, frontend/index.html). Marcus XSS check passed — all innerHTML renders properly escape API-sourced data. Found 1 Leo smell in polymarket.py: asyncio, time, and datetime were imported inside function bodies (get_bettor_profile, compute_copy_simulator, get_consensus_signals) instead of at module level. Fixed: moved all three to module-level imports and removed two unused imports (Optional from typing, timezone from datetime). No logic changed.
 IMPACT: Codebase now follows standard Python import conventions — a developer reading polymarket.py can see all dependencies at the top of the file without hunting through function bodies. Unused imports removed reduces noise.

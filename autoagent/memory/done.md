@@ -185,3 +185,4 @@
 - **[SESSION #159] VIP 5s poll interval + /readiness endpoint** — VIP users get bet alerts up to 6x faster via dedicated 5s APScheduler job; /readiness checks DB connectivity for production deployments; 450 tests passing
 
 - **[SESSION #170] Recent bets timestamp freshness test** — verifies all recent_bets from GET /bettors/{address} have timestamps within past 90 days; handles both Unix float and ISO-8601 string formats; 470→471 tests
+- **[SESSION #175] 3 regression tests** — lru_cache identity, copy simulator open-bet skip, auth/me sensitive field absence; 472 → 475 tests

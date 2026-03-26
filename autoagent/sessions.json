@@ -3908,5 +3908,28 @@
       "failures": 0,
       "notes": "No frontend files changed"
     }
+  },
+  {
+    "session": 175,
+    "date": "2026-03-26",
+    "time": "14:30",
+    "type": "work",
+    "summary": "Added 3 regression tests: lru_cache identity check for get_settings(), open-bet skip branch in copy simulator, and sensitive field absence in GET /auth/me",
+    "files": [
+      "backend/tests/test_health.py",
+      "backend/tests/test_data_integrity.py",
+      "backend/tests/test_auth.py"
+    ],
+    "tests": {
+      "before": 472,
+      "after": 475,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "No frontend files changed"
+    }
   }
 ]
