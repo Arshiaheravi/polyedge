@@ -904,6 +904,25 @@ async def test_copy_simulator_sell_side_excluded():
     assert result["simulated_roi_pct"] == 0.0
 
 
+@pytest.mark.asyncio
+async def test_copy_simulator_api_connect_error_returns_zeros():
+    """ConnectError on client.get() → except Exception branch → returns safe zeros.
+    Covers polymarket.py:333-334 — the exception path not hit by empty-response test."""
+    import httpx
+    from unittest.mock import patch, AsyncMock
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(side_effect=httpx.ConnectError("simulated network failure"))
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import compute_copy_simulator
+        result = await compute_copy_simulator("0xtest")
+
+    assert result == {"simulated_pnl_usd": 0.0, "simulated_roi_pct": 0.0, "bets_analysed": 0}
+
+
 # ── get_consensus_signals (mocked Polymarket API) ─────────────────────────────
 
 MOCK_CONDITION_ID = "0x" + "a" * 64  # valid 64-char hex
