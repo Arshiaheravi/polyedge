@@ -266,22 +266,26 @@ def _make_mock_http_client(status_code: int):
 
 
 @pytest.mark.asyncio
-async def test_send_web_push_happy_path_json_string_201():
-    """send_web_push returns True when endpoint is present and HTTP returns 201."""
+async def test_send_web_push_happy_path_json_string_vapid():
+    """send_web_push returns True when VAPID keys are present and pywebpush.webpush succeeds."""
     sub_json = '{"endpoint": "https://push.example.com/abc", "keys": {"p256dh": "x", "auth": "y"}}'
-    mock_client = _make_mock_http_client(201)
-    with patch.object(notif_mod.httpx, "AsyncClient", return_value=mock_client):
-        result = await send_web_push(sub_json, {"title": "test", "body": "hello"})
+    with patch("pywebpush.webpush", return_value=None):
+        result = await send_web_push(
+            sub_json, {"title": "test", "body": "hello"},
+            vapid_private_key="fake-private", vapid_public_key="fake-public"
+        )
     assert result is True
 
 
 @pytest.mark.asyncio
-async def test_send_web_push_happy_path_dict_200():
-    """send_web_push accepts a dict (not a string) and returns True when HTTP returns 200."""
-    sub_dict = {"endpoint": "https://push.example.com/def"}
-    mock_client = _make_mock_http_client(200)
-    with patch.object(notif_mod.httpx, "AsyncClient", return_value=mock_client):
-        result = await send_web_push(sub_dict, {"title": "test"})
+async def test_send_web_push_happy_path_dict_vapid():
+    """send_web_push accepts a dict subscription and returns True when VAPID signing succeeds."""
+    sub_dict = {"endpoint": "https://push.example.com/def", "keys": {"p256dh": "x", "auth": "y"}}
+    with patch("pywebpush.webpush", return_value=None):
+        result = await send_web_push(
+            sub_dict, {"title": "test"},
+            vapid_private_key="fake-private", vapid_public_key="fake-public"
+        )
     assert result is True
 
 

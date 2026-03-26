@@ -10,3 +10,4 @@ apscheduler==3.10.4
 python-multipart==0.0.12
 twilio>=9.0.0
 hypothesis>=6.0.0
+pywebpush>=2.0.0

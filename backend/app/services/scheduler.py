@@ -266,6 +266,9 @@ async def _poll_bets() -> None:
                             user_tier=user.subscription_tier,
                             conviction_score=_conviction_score,
                             conviction_label=_conviction_label,
+                            vapid_private_key=cfg.vapid_private_key,
+                            vapid_public_key=cfg.vapid_public_key,
+                            vapid_claims_email=cfg.vapid_claims_email,
                         )
                     except Exception as exc:
                         logger.warning("Notification failed for user %s: %s", user.id, exc)

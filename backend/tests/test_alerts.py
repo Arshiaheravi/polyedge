@@ -799,3 +799,73 @@ def test_telegram_verify_fails_without_prior_bot_connection(client, db, auth_hea
     resp = client.post("/alerts/telegram/verify", json={"code": "NOCHATID"}, headers=auth_headers)
     assert resp.status_code == 400
     assert "PolyEdgeBot" in resp.json()["detail"]
+
+
+# ── VAPID / web-push-config regression tests ────────────────────────────────
+
+def test_web_push_config_returns_available_false_when_no_vapid_keys(client):
+    """GET /alerts/web-push-config must return available=false when VAPID keys are not set.
+    No auth required — the public key is safe to expose."""
+    resp = client.get("/alerts/web-push-config")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "vapid_public_key" in data
+    assert "available" in data
+    # In the test environment VAPID keys are not configured
+    assert data["available"] is False
+    assert data["vapid_public_key"] == ""
+
+
+def test_web_push_config_no_auth_required(client):
+    """GET /alerts/web-push-config must be accessible without a JWT token."""
+    resp = client.get("/alerts/web-push-config")
+    assert resp.status_code == 200
+
+
+def test_send_web_push_returns_false_when_vapid_keys_absent():
+    """send_web_push must return False immediately when VAPID keys are empty,
+    not raise an exception or attempt a raw POST to the push endpoint."""
+    import asyncio
+    from app.services.notifications import send_web_push
+
+    sub_json = '{"endpoint": "https://fcm.googleapis.com/fcm/send/fake", "keys": {"p256dh": "BFake", "auth": "fake"}}'
+    result = asyncio.get_event_loop().run_until_complete(
+        send_web_push(sub_json, {"title": "test"}, vapid_private_key="", vapid_public_key="")
+    )
+    assert result is False
+
+
+def test_send_web_push_returns_false_when_endpoint_missing():
+    """send_web_push must return False when the subscription has no endpoint field."""
+    import asyncio
+    from app.services.notifications import send_web_push
+
+    result = asyncio.get_event_loop().run_until_complete(
+        send_web_push("{}", {"title": "test"}, vapid_private_key="fake", vapid_public_key="fake")
+    )
+    assert result is False
+
+
+def test_dispatch_bet_notification_web_push_skipped_without_vapid():
+    """dispatch_bet_notification must not crash and web_push key must be absent from result
+    when VAPID keys are not configured but push_subscription_json is provided."""
+    import asyncio
+    from app.services.notifications import dispatch_bet_notification
+
+    sub_json = '{"endpoint": "https://fcm.googleapis.com/fcm/send/fake", "keys": {"p256dh": "BFake", "auth": "fake"}}'
+    result = asyncio.get_event_loop().run_until_complete(
+        dispatch_bet_notification(
+            bettor_name="Whale",
+            market="Will X happen?",
+            outcome="YES",
+            amount=500.0,
+            telegram_chat_id=None,
+            telegram_bot_token="",
+            push_subscription_json=sub_json,
+            user_tier="basic",
+            vapid_private_key="",
+            vapid_public_key="",
+        )
+    )
+    # web_push result should be False (not absent — it was attempted and declined)
+    assert result.get("web_push") is False

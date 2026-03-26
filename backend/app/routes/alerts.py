@@ -35,6 +35,20 @@ class PhoneVerifyRequest(BaseModel):
     code: str
 
 
+@router.get("/web-push-config")
+def get_web_push_config():
+    """
+    Returns the VAPID public key needed by the browser to create a PushSubscription.
+    If vapid_public_key is empty, web push is not configured and the toggle should be hidden.
+    No auth required — the public key is safe to expose.
+    """
+    cfg = get_settings()
+    return {
+        "vapid_public_key": cfg.vapid_public_key,
+        "available": bool(cfg.vapid_public_key),
+    }
+
+
 @router.get("/settings")
 def get_alert_settings(
     db: Session = Depends(get_db),

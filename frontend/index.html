@@ -2602,6 +2602,7 @@ const API = 'http://localhost:8003';
 let currentUser = null;
 let followedAddresses = new Set();
 let alertSettings = {};
+let webPushAvailable = false;
 let currentSort = 'profit';
 const _bettorCache = new Map(); // address → bettor data (rank, pnl_usd, etc.) from leaderboard
 
@@ -3909,10 +3910,28 @@ function testChannel(channel) {
 
 async function loadAlertSettings() {
   try {
+    // Check VAPID availability first (no auth needed)
+    try {
+      const cfgRes = await fetch(`${API}/alerts/web-push-config`);
+      if (cfgRes.ok) {
+        const cfgData = await cfgRes.json();
+        webPushAvailable = cfgData.available === true;
+      }
+    } catch {}
+    if (!webPushAvailable) {
+      const toggleEl = document.getElementById('toggle-push');
+      if (toggleEl) {
+        toggleEl.style.opacity = '0.35';
+        toggleEl.style.pointerEvents = 'none';
+        toggleEl.title = 'Web push not configured (VAPID keys needed)';
+      }
+      const descEl = document.querySelector('#ch-push .acc-desc');
+      if (descEl) descEl.textContent = 'Web push not yet configured — set VAPID_PUBLIC_KEY + VAPID_PRIVATE_KEY in .env to enable.';
+    }
     const res = await apiFetch('/alerts/settings');
     if (!res.ok) return;
     alertSettings = await res.json();
-    setToggle('toggle-push', alertSettings.web_push_enabled);
+    setToggle('toggle-push', webPushAvailable && alertSettings.web_push_enabled);
     setToggle('toggle-telegram', alertSettings.telegram_enabled);
     setToggle('toggle-sms', alertSettings.sms_enabled);
     if (alertSettings.telegram_verified) {
@@ -3947,6 +3966,10 @@ function setToggle(id, on) {
 }
 
 async function toggleWebPush() {
+  if (!webPushAvailable) {
+    toast('Web push not configured — VAPID keys needed in .env', 'error');
+    return;
+  }
   const el = document.getElementById('toggle-push');
   const newVal = !el.classList.contains('on');
   if (newVal && 'Notification' in window) {

@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     twilio_from_number: str = ""  # e.g. +15005550006
     frontend_url: str = "http://localhost:3000"
     admin_password: str = "admin"
+    vapid_public_key: str = ""
+    vapid_private_key: str = ""
+    vapid_claims_email: str = "admin@polyedge.com"
 
     class Config:
         env_file = ".env"
