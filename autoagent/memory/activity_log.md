@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-160 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 184)
+DONE: Added 3 coverage-gap tests: (1) consensus route cache hit path — pre-populates cache with fresh data, verifies get_consensus_signals is NOT called on second request; (2) JWT with no `sub` claim sent to optional-auth endpoint (/markets/consensus) — verified returns 200 with tier="free" (anonymous treatment); (3) send_telegram ConnectError — mocks httpx.AsyncClient to raise ConnectError, verifies False returned without crash.
+IMPACT: Closes 3 branches that were never exercised: markets.py:29, auth.py:72-73, notifications.py:27-29. Any regression in these paths (e.g. cache skipped, exception propagated, optional auth broken) will now be caught immediately.
+FILES: backend/tests/test_tier_gates.py, backend/tests/test_security.py, backend/tests/test_notifications.py
+
 ## 2026-03-26 — BRAIN (Session 183)
 RESEARCHED: autonomous AI agent best practices 2026, LLM agent reliability patterns, FastAPI production patterns 2026, fintech SaaS notification platform benchmarks, Polymarket copy trading competitors and features 2026.
 DOWNLOADED: Nothing new — all relevant patterns already in skill files or not applicable to prompt-only agent.

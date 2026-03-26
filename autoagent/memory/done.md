@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #184] 3 tests — consensus cache hit, no-sub JWT optional auth, send_telegram ConnectError** — closes branches markets.py:29, auth.py:72-73, notifications.py:27-29; 493→496 tests
 - **[SESSION #182] 3 tests — push_subscription dict path, telegram empty text, simulator SELL-side** — fixed Optional[str]→Optional[Any] in AlertSettingsUpdate to make isinstance(dict) branch reachable; 490→493 tests
 - **[SESSION #181] 2 tests — copy_value_pct passthrough, side field in recent_bets** — confirmed copy_value_pct passes through /follows/live unchanged; confirmed side field present in /bettors recent_bets; removed stale accuracy=0.0 backlog item; added 3 new coverage-gap tasks; 488→490 tests
 - **[SESSION #180] 5 tests — leaderboard accuracy normalise, route passthrough, follows 409 detail** — 3 accuracy tests for _normalise_leaderboard_entry (percentProfitable→accuracy), 1 GET /bettors accuracy passthrough (cache-cleared), 1 POST /follows 409 detail message; 483→488 tests

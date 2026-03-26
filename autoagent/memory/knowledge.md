@@ -45,6 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
+- Test count: **496 passed, 2 skipped** (as of 2026-03-26, session 184) — 3 new tests: consensus cache hit + no-sub JWT optional auth + send_telegram ConnectError
 - Test count: **493 passed, 2 skipped** (as of 2026-03-26, session 182) — 3 new tests: push_subscription dict path + telegram empty text + simulator SELL-side exclusion
 - Test count: **490 passed, 2 skipped** (as of 2026-03-26, session 181) — 2 new tests: copy_value_pct passthrough in /follows/live + side field in /bettors recent_bets
 - Test count: **488 passed, 2 skipped** (as of 2026-03-26, session 180) — 5 new tests: leaderboard accuracy normalise (3) + GET /bettors accuracy passthrough + POST /follows 409 detail message
@@ -61,6 +62,11 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #184 Reflexion — 2026-03-26
+ACCOMPLISHED: Added 3 coverage-gap tests: (1) consensus cache hit path (markets.py:29) — pre-populate cache, verify get_consensus_signals NOT called; (2) no-sub JWT optional auth (auth.py:72-73) — JWT with no `sub` → get_current_user_optional returns None → /markets/consensus treats as free tier (200, tier=="free"); (3) send_telegram ConnectError (notifications.py:27-29) — mock httpx.AsyncClient to raise ConnectError, verify False returned. 493→496 tests passing.
+FAILED: Nothing — all 3 tests passed on first run. Pattern matching prior work.
+RULE: [2026-03-26] When patching `httpx.AsyncClient` for a context manager mock, set BOTH `__aenter__` and `__aexit__` as AsyncMocks returning the mock instance and False respectively — this is required for `async with httpx.AsyncClient(...) as client:` to work in test. Missing either causes AttributeError.
 
 ### BRAIN Session #183 Reflexion — 2026-03-26
 ACCOMPLISHED: (1) STEP 1D: activity_log.md had 42 entries > 30 threshold — archived oldest 20 (sessions 141-160) to activity_log_archive.md, updated header from "1-140 archived" to "1-160 archived". (2) STEP 1C: No duplicate rules found in sessions 162-182 — all distinct, kept all. (3) STEP 1B: No new failure patterns in last 10 sessions; the embedded-grep stale-backlog pattern (sessions 170, 175, 177) was already fixed in session 178. (4) testing.md: added specific leaderboard cache key format rule (profit_month_50 key contamination) to Module-level cache isolation section — surfaced by session 180 failure. (5) backlog.md: added 4 competitive feature items from research (personalized notification body, outbound webhook channel, delayed alerts for Free tier, minimum bet size filter). (6) 5 new sources logged; 2 techniques logged.
