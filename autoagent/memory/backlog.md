@@ -2,34 +2,159 @@
 
 ---
 
-## HIGH PRIORITY — Tier 1 Money-Making Features
+## CRITICAL BUGS — Fix First (Code Review 2026-03-26)
 
-### Tier Access Rules
-- **Free** (1 follow): See Whale Consensus (top 3 markets, read-only, no whale names), Copy Simulator on profile (teaser: shows result but blurred/locked with "Upgrade to Basic")
-- **Basic** ($4.99, 5 follows): Conviction Score in notifications, Smart Entry Timing on position cards, Copy Simulator fully unlocked
-- **VIP** ($9.99, unlimited): Everything in Basic + Exit Alerts + full Whale Consensus (all markets, whale names visible) + priority notification speed
+- [ ] **Profile cache tier gate bypass** — `_profile_cache` in `routes/bettors.py:66-88` is keyed by `address` only. VIP user fetches profile → unlocked Copy Simulator cached → free user requests same address → gets unlocked simulator for free. Fix: key cache by `(address, user_tier)` or invalidate on tier change. Write regression test: free user gets locked=True after VIP fetched same address.
+
+- [ ] **CORS wildcard + credentials** — `main.py:42-44` sets `allow_origins=["*"]` with `allow_credentials=True`. This combination is rejected by every browser (CORS spec forbids wildcard + credentials). Fix: set `allow_origins=["http://localhost:3000"]` (and production domain). Write test asserting `*` does not appear in `Access-Control-Allow-Origin` header.
+
+- [ ] **telegram_chat_id leaks in auth responses** — `routes/auth.py:47` `user_to_dict()` includes `telegram_chat_id`. This field must never appear in any API response. Fix: remove from `user_to_dict()`. Write test: POST /auth/login response body does not contain key `telegram_chat_id`.
+
+- [ ] **Telegram notifications permanently broken** — `routes/alerts.py:140-145` `telegram_verify` sets `telegram_verified=True` but never sets `telegram_chat_id`. The scheduler requires both fields to send. There is also no bot webhook endpoint anywhere to receive the Telegram update with the chat ID. Fix requires: (a) add POST /alerts/telegram/webhook endpoint that Telegram bot calls, (b) verify sets `telegram_chat_id` from the inbound message. Write test that after verify, `telegram_chat_id` is set in DB.
+
+- [ ] **Web push is a non-functional stub** — `services/notifications.py:68-97` POSTs directly to the browser push endpoint without VAPID signing or payload encryption. Chrome/Firefox/Safari all reject unsigned pushes with 401/403. The function returns False silently — users "enable" push and never receive anything. Fix requires pywebpush library + VAPID keys. Until fixed, disable web push option in UI rather than silently failing.
+
+- [ ] **accuracy field missing from leaderboard** — `services/polymarket.py:33-48` `_normalise_leaderboard_entry` does not include `accuracy` in the returned dict. Frontend displays undefined; checklist item fails. Fix: add `accuracy` calculation from API response data.
+
+- [ ] **Free user can enable web push — no tier check** — `routes/alerts.py:62-106` `update_settings` allows free users to set `web_push_enabled=True` with no tier check. They'll never receive anything (push is stub AND they have no tier access). Fix: add tier check blocking free users from enabling push (same pattern as telegram_enabled check).
+
+- [ ] **`get_settings()` not cached** — `config.py` `get_settings()` has no `@lru_cache`. It's called inside per-bet per-follower loop in `scheduler.py:245` — re-reads .env file on every notification. Fix: add `@lru_cache` decorator to `get_settings()`.
+
+- [ ] **`_last_positions` memory leak** — `services/scheduler.py:22` `_last_positions` dict is never purged when a bettor is unfollowed. Grows forever. Fix: after removing a follow, delete the key from `_last_positions` if it's no longer followed by any user.
+
+- [ ] **Backend port mismatch** — frontend/index.html has `const API = 'http://localhost:8003'` but PROJECT.md and knowledge.md previously said 8002. Verify the constant is 8003 in frontend/index.html and update any test files that hardcode 8002.
+
+- [ ] **VIP copy timing shows padlock** — VIP user sees "🔒 Copy timing — Upgrade to Basic" on position cards. Confirmed API returns tier:"vip" and copy_signal:"good" correctly. Bug is in frontend rendering. Check `renderPositionItem(p, followsTier)` — verify `followsTier` is read from `data.tier` correctly and not overridden by a stale cached value.
+
+- [ ] **Consensus "Could not load"** — was caused by port mismatch. Verify it now loads correctly on 8003 by running Playwright test that opens the Consensus tab and asserts market cards are visible.
 
 ---
 
+## HIGH PRIORITY — Real-World Data Integrity Tests
 
+These tests verify the data coming from Polymarket is real, consistent, and makes sense — not just that the API returns 200. Write as `tests/test_data_integrity.py`. Cross-validate against the live Polymarket Data API directly where possible.
 
-- [ ] Copy Ratio Setting — let users set a per-bettor copy ratio multiplier (0.1x, 0.25x, 0.5x, 1x) stored in BettorFollow table; show on follow cards as "Copy at 0.5x"; include copy_ratio in notification messages: "🔥 EXTREME conviction — Copy at 0.5x = $X". TIER GATE: Basic/VIP only (Free always shows full bet size, no ratio setting). Rationale: PolyGun (leading competitor) offers 0.1x-1x ratio as core differentiator — without it, PolyEdge users have to manually scale down each copy trade.
+- [ ] **Leaderboard data sanity** — GET /bettors: assert every bettor has a valid Ethereum address (matches `^0x[a-fA-F0-9]{40}$`); profit_usd is a number ≥ 0 for top 20; accuracy is between 0.0 and 1.0; volume_usd > 0; rank is a positive integer with no duplicates in the top 20; name is non-empty string
 
-- [ ] Insider Score — for each bettor in the top-100, compute a 0-100 confidence score estimating information-edge: factors are (win_rate × profit_usd × avg_conviction × bet_count / 50). Display as a colored badge on leaderboard cards (green >70, yellow 40-70, gray <40). Merge with Edge Score composite metric already in backlog. TIER GATE: visible badge for all tiers; numeric score shown only for Basic/VIP. Rationale: Polywhaler is only competitor offering an insider score — PolyEdge can build this with data we already have.
+- [ ] **Leaderboard vs profile consistency** — pick the top 3 bettors from GET /bettors, then GET /bettors/{address} for each one; assert their profit_usd, rank, and accuracy are within 5% of what the leaderboard shows (they come from the same source — any larger discrepancy means a normalisation bug)
+
+- [ ] **Recent bets data validity** — GET /bettors/{address} for 5 different addresses; for each bet assert: amount_usd > 0; price is between 0.01 and 0.99 (a price of exactly 0 or 1 means it already resolved and shouldn't appear); outcome is "YES" or "NO"; timestamp is in the past and within the last 90 days; market_title is a non-empty string ≥ 5 chars; type == "TRADE" (no REDEEM should appear)
+
+- [ ] **Prices are economically meaningful** — for all positions returned by GET /follows/live: avg_price must be between 0.01 and 0.99; current_price must be between 0.001 and 0.999; cur_size_usd > 0; percent_pnl is a finite number (not NaN or Infinity); cash_pnl is a finite number. A price of 0.0 or 1.0 means the market resolved — those positions should not appear as "active copyable bets"
+
+- [ ] **Copy signal logic correctness** — for each position: if copy_value_pct ≤ 10 → copy_signal must be "good"; if 10 < copy_value_pct ≤ 30 → must be "fair"; if > 30 → must be "late". Also assert copy_value_pct = round((current_price - avg_price) / avg_price * 100, 1). Test 10 real positions and verify the math is correct.
+
+- [ ] **Consensus signals are real** — GET /markets/consensus: assert signals is a list; each signal has whale_count ≥ 3 (the minimum threshold); avg_entry_price between 0.01 and 0.99; current_price between 0.001 and 0.999; outcome is "YES" or "NO" or a named team/candidate (non-empty); market_title is non-empty; condition_id matches `^0x[a-fA-F0-9]{64}$`; total_available is a non-negative integer
+
+- [ ] **Copy simulator math** — GET /bettors/{address} for 5 addresses as a Basic user: assert simulated_pnl_usd is a finite float; simulated_roi_pct = simulated_pnl_usd / (bets_analysed * 100) * 100 (within rounding); bets_analysed ≥ 0 and ≤ 20; result is economically plausible — reject if |simulated_roi_pct| > 10000% (that would mean a bug, not a real return)
+
+- [ ] **Admin stats are internally consistent** — GET /admin/stats: assert user_count ≥ 0; free_count + basic_count + vip_count == user_count; mrr_estimate == round(basic_count * 4.99 + vip_count * 9.99, 2); follow_count ≥ 0; bet_event_count ≥ 0
+
+- [ ] **Polymarket cross-validation** — pick the #1 bettor from GET /bettors; directly call `https://data-api.polymarket.com/profiles?limit=1&sortBy=profit` and compare the top address; assert PolyEdge's #1 bettor address matches Polymarket's #1 (or is at least in Polymarket's top 5); this confirms we're not showing stale/wrong leaderboard data
+
+- [ ] **No stale resolved markets in positions** — for all positions in GET /follows/live: if end_date is not null and end_date < today → assert that position does NOT appear (resolved markets should be excluded). A position with end_date in the past at current_price near 0 or 1 means the market resolved — copying it is pointless and misleading to users.
 
 ---
 
-## MAINTENANCE — Code Quality
+## HIGH PRIORITY — Tier Gate E2E Tests
 
-- [ ] Code quality audit — scan last 5 work sessions' changed files for cross-file coupling, test specificity degradation, and smells introduced by agent edits.
+- [ ] **Tier gate Playwright suite** — write a Playwright test file `tests/playwright/test_tier_gates.py` that:
+  - Logs in as Free → checks Consensus tab shows ≤3 cards + upgrade banner; position cards show 🔒 padlock; profile simulator shows blurred teaser
+  - Logs in as Basic → checks Consensus shows all cards without whale names; position cards show copy signal badge (not padlock); profile simulator shows real numbers
+  - Logs in as VIP → checks Consensus shows all cards WITH whale names; position cards show copy signal badge; profile simulator shows real numbers; Exit Alerts toggle is accessible
+  Use test accounts: free@polyedge.com/FreeTest123!, basic@polyedge.com/BasicTest123!, vip@polyedge.com/VipTest123!
+
+- [ ] **API tier gate pytest suite** — write `tests/test_tier_gates.py` that directly calls /markets/consensus, /follows/live, /bettors/{address} with JWT tokens for each tier and asserts correct fields
 
 ---
 
-## MEDIUM PRIORITY — Tier 2 Money-Making Features
+## HIGH PRIORITY — Security Tests (OWASP Top 10)
 
-- [ ] Bettor Category Specialization — analyse recent_bets market_question text for each top bettor; classify into categories using keyword matching (Politics: election/president/congress, Sports: win/match/championship/game, Crypto: bitcoin/eth/price, Finance: fed/rate/inflation); compute category_win_rate from bets where we can infer outcome (price > 0.85 at detection = likely correct prediction); add top_category and category_win_rate to bettor profile and leaderboard card display
+- [ ] **SQL injection test** — POST /auth/login with email=`' OR '1'='1'--` and email=`admin'--`; assert 401/422, not 200. Add to `tests/test_security.py`
 
-- [ ] Market Momentum Score — scheduler tracks how many unique top-100 bettors entered each market in rolling 7-day window; add momentum_score = unique_whales_7d * avg_conviction to market data; expose on GET /markets/consensus and bettor position cards; show "🚀 5 whales entered this week" badge on high-momentum markets
+- [ ] **XSS test** — register with name=`<script>alert(1)</script>`, then GET /auth/me and assert name is stored as plain text (not executed); Playwright test to verify it renders escaped in UI
+
+- [ ] **Auth bypass tests** — test tampered JWTs (wrong signature, expired, wrong user_id) all return 401; test accessing /follows, /alerts/settings, /admin/stats without token returns 401/403
+
+- [ ] **Mass assignment test** — POST /auth/register with body including `subscription_tier: "vip"` — assert registered user has tier "free" not "vip"
+
+- [ ] **Sensitive data test** — GET /auth/me, GET /bettors, GET /admin/stats — assert no response body contains `password`, `hashed_password`, or any hash string
+
+---
+
+## HIGH PRIORITY — Feature Correctness Tests
+
+- [ ] **Consensus endpoint correctness** — pytest: call GET /markets/consensus unauthenticated → assert ≤3 signals, whale_names=[]; as basic → all signals, whale_names=[]; as VIP → all signals, whale_names populated. Also assert each signal has whale_count ≥ 3.
+
+- [ ] **Copy simulator correctness** — pytest: GET /bettors/{known_address} as free → locked:true, simulated_pnl_usd:null; as basic → locked:false, simulated_pnl_usd is float, bets_analysed ≥ 0
+
+- [ ] **Recent bets — no REDEEM** — pytest: GET /bettors/{address}/recent_bets → assert no bet has type=="REDEEM", all bets have outcome and side fields populated
+
+- [ ] **Follow limits enforced** — pytest: login as free user, follow 1 bettor → 201; attempt 2nd follow → 403; login as basic, follow up to 5 → all 201; attempt 6th → 403
+
+- [ ] **Admin stats** — pytest: GET /admin/stats with correct header → 200 with mrr_estimate field; wrong password → 403; no header → 403
+
+---
+
+## HIGH PRIORITY — Frontend UI Playwright Tests
+
+- [ ] **Landing page pricing** — assert all 3 pricing cards contain the new features: "Conviction Score", "Smart Entry Timing", "Copy Portfolio Simulator", "Whale Consensus", "Exit Alerts"
+
+- [ ] **Register → Login flow** — Playwright: fill register form, submit, assert redirected to dashboard; logout; login with same credentials, assert back in dashboard
+
+- [ ] **Leaderboard renders** — Playwright: open leaderboard, assert ≥10 bettor cards visible, each has name + profit + accuracy fields
+
+- [ ] **Bettor profile opens** — Playwright: click first bettor card, assert profile modal opens with name, stats, recent bets, copy simulator section
+
+- [ ] **Consensus tab loads** — Playwright: log in as VIP, open Consensus tab, assert whale name is visible in at least one card
+
+- [ ] **Back-to-top FAB** — Playwright: scroll down >300px on leaderboard, assert FAB becomes visible; click it, assert scrolled back to top
+
+- [ ] **Mobile layout** — Playwright: set viewport to 375×812, assert mobile bottom nav is visible and all tabs navigate correctly
+
+---
+
+## MEDIUM PRIORITY — Edge Cases & Reliability
+
+- [ ] **Empty follows state** — Playwright: log in as new user with no follows, open Follows tab, assert empty state message shown (not crash)
+
+- [ ] **Polymarket timeout handling** — pytest: mock Polymarket API to return 500, assert /bettors endpoint returns graceful error not 500
+
+- [ ] **Concurrent requests** — pytest: fire 10 simultaneous GET /bettors requests, assert all return 200 without DB errors
+
+- [ ] **Scheduler duplicate prevention** — pytest: confirm _last_check is updated correctly so same bet is not notified twice
+
+---
+
+## HIGH PRIORITY — Code Review
+
+These tasks are a structural code review — not testing functionality, but reading the code to find bugs, security holes, and logic errors that tests might miss. Write findings as comments in a `tests/test_code_review.py` file or fix directly if small.
+
+- [ ] **Auth security review** — read `backend/app/auth.py`: verify JWT algorithm is HS256 or RS256 (not "none"); password hashing uses bcrypt or argon2 (not MD5/SHA1); `get_current_user` returns 401 (not 403) on bad token; no raw passwords logged anywhere
+
+- [ ] **SQL injection surface** — read all route files in `backend/app/routes/`: identify every place user input is used in a DB query; confirm all go through SQLAlchemy ORM (not raw string interpolation); flag any `f"SELECT ... {user_input}"` patterns
+
+- [ ] **Tier gate completeness** — read `follows.py`, `bettors.py`, `markets.py`: for each premium feature, verify the tier check exists on the BACKEND (not just frontend); frontend-only tier gates are security theater — the API must enforce them
+
+- [ ] **Scheduler correctness** — read `scheduler.py`: verify `_last_check` is updated AFTER `db.commit()` (not before, or a DB failure could cause missed notifications); verify `_last_positions` is not unbounded (could grow forever as bettors are added/removed); verify exit detection handles first-run correctly (no false exits on startup)
+
+- [ ] **Polymarket service review** — read `services/polymarket.py`: check all HTTP calls have timeouts (a hanging Polymarket call would freeze the scheduler); verify error handling won't leak raw API errors to users; check price normalization — are prices always 0-1, or can they come back as percentages (0-100)?
+
+- [ ] **CORS review** — read `backend/app/main.py`: verify allowed origins don't include `*` wildcard in production; check that credentials (cookies/auth headers) can't be sent cross-origin from untrusted domains
+
+- [ ] **Sensitive data leakage** — search all routes for `hashed_password`, `stripe_customer_id`, `telegram_chat_id` in response dicts; these should NEVER appear in any API response (confirm not in User model's `.dict()` if used directly)
+
+- [ ] **Frontend API error handling** — read `frontend/index.html`: for every `fetch()` call, verify there is a `.catch()` or `try/catch`; uncaught promise rejections cause silent failures; also check that expired JWT (401 response) triggers redirect to login — not a blank screen
+
+- [ ] **Dead code and unused routes** — scan for any imported but unused modules, any route registered in main.py but not documented, any model column that is defined but never written or read; flag for removal (dead code = confusion)
+
+---
+
+## NEW FEATURES (build AFTER all tests pass)
+
+- [ ] Copy Ratio Setting — let users set a per-bettor copy ratio multiplier (0.1x, 0.25x, 0.5x, 1x) stored in BettorFollow table; show on follow cards as "Copy at 0.5x"; include copy_ratio in notification messages. TIER GATE: Basic/VIP only.
+
+- [ ] Insider Score — 0-100 confidence score per bettor (win_rate × profit_usd × avg_conviction × bet_count / 50). Badge on leaderboard cards (green >70, yellow 40-70, gray <40). TIER GATE: badge visible to all; numeric score for Basic/VIP only.
 
 ---
 
