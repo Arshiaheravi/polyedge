@@ -1011,3 +1011,82 @@ async def test_get_consensus_signals_filters_resolved_markets():
         f"get_consensus_signals must filter out near-settled markets (curPrice=0.98), "
         f"but returned: {resolved_signal}"
     )
+
+
+# ── get_recent_bets conviction score / label ──────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_recent_bets_single_bet_conviction_score_is_one():
+    """Single bet → conviction_score=1.0 and conviction_label='' (avg equals amount)."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    activity = [
+        {"conditionId": "c1", "title": "Market Q", "outcome": "Yes",
+         "usdcSize": "250.0", "price": "0.60", "side": "BUY", "type": "TRADE"},
+    ]
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = activity
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_recent_bets
+        result = await get_recent_bets("0xwhale", limit=20)
+
+    assert len(result) == 1
+    assert result[0]["conviction_score"] == 1.0
+    assert result[0]["conviction_label"] == ""
+
+
+@pytest.mark.asyncio
+async def test_get_recent_bets_extreme_conviction_label_when_10x_average():
+    """19 bets of $1 + 1 bet of $1000: avg=$50.95, score=19.6 -> conviction_label='EXTREME'."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    # avg = (19*1 + 1000) / 20 = 50.95; score for $1000 = round(1000/50.95, 1) = 19.6 >= 10 -> EXTREME
+    activity = [
+        {"conditionId": f"c{i}", "title": f"Market {i}", "outcome": "Yes",
+         "usdcSize": "1.0", "price": "0.50", "side": "BUY", "type": "TRADE"}
+        for i in range(19)
+    ] + [
+        {"conditionId": "cbig", "title": "Big Bet Market", "outcome": "Yes",
+         "usdcSize": "1000.0", "price": "0.50", "side": "BUY", "type": "TRADE"},
+    ]
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = activity
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_recent_bets
+        result = await get_recent_bets("0xwhale", limit=20)
+
+    big_bet = next(r for r in result if r["market_id"] == "cbig")
+    assert big_bet["conviction_label"] == "EXTREME"
+    assert big_bet["conviction_score"] >= 10.0
+
+
+@pytest.mark.asyncio
+async def test_get_recent_bets_api_exception_returns_empty_list():
+    """API exception must return empty list without raising — conviction fields not needed."""
+    from unittest.mock import AsyncMock, patch
+    import httpx
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(side_effect=httpx.ConnectError("connection refused"))
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_recent_bets
+        result = await get_recent_bets("0xdeadbeef", limit=20)
+
+    assert result == []
