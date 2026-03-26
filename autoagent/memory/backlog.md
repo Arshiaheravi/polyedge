@@ -2,9 +2,14 @@
 
 ---
 
+## CODE QUALITY AUDIT
+
+- [ ] **Code quality audit (Session 105)** — scan changed files from last 5 work sessions (sessions 136-140) for cross-file coupling, test specificity degradation, and smells introduced by agent edits. Check: are tests too tightly coupled to implementation details? Any circular imports? Any dead code left from bug fixes?
+
+---
+
 ## CRITICAL BUGS — Fix First (Code Review 2026-03-26)
 
-- [ ] **Telegram notifications permanently broken** — `routes/alerts.py:140-145` `telegram_verify` sets `telegram_verified=True` but never sets `telegram_chat_id`. The scheduler requires both fields to send. There is also no bot webhook endpoint anywhere to receive the Telegram update with the chat ID. Fix requires: (a) add POST /alerts/telegram/webhook endpoint that Telegram bot calls, (b) verify sets `telegram_chat_id` from the inbound message. Write test that after verify, `telegram_chat_id` is set in DB.
 
 - [ ] **Web push is a non-functional stub** — `services/notifications.py:68-97` POSTs directly to the browser push endpoint without VAPID signing or payload encryption. Chrome/Firefox/Safari all reject unsigned pushes with 401/403. The function returns False silently — users "enable" push and never receive anything. Fix requires pywebpush library + VAPID keys. Until fixed, disable web push option in UI rather than silently failing.
 

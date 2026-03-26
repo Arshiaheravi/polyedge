@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — BUGFIX (Session 141)
+DONE: Fixed Telegram notifications permanently broken — added POST /alerts/telegram/webhook endpoint that the bot calls when a user sends /verify CODE. Webhook sets telegram_chat_id + telegram_verified=True. Also removed telegram_chat_id from GET /alerts/settings response (sensitive data was leaking to clients). 5 new tests added. 401 passing.
+IMPACT: Telegram notifications were completely non-functional for every user — telegram_chat_id was never set so the scheduler's send_telegram() always returned False immediately. Now the full Telegram verification flow works end-to-end once the bot is configured.
+FILES: backend/app/routes/alerts.py, backend/tests/test_alerts.py
+
 ## 2026-03-26 — BUGFIX (Session 140)
 DONE: Fixed VIP copy timing padlock bug — `_activity_cache` in routes/follows.py stored `tier` at fill-time; after free→VIP upgrade the cached response had `tier:'free'` for up to 30s, causing the frontend to show the 🔒 padlock instead of copy-signal badges for VIP users. Fix injects `current_user.subscription_tier` on every cache hit. Added 2 regression tests. 396 tests passing.
 IMPACT: Paying VIP users who just upgraded saw the same locked UI as free users for up to 30 seconds — eroding trust at the most sensitive moment (right after payment). Now the tier is always live from the DB on every response.

@@ -830,9 +830,16 @@ RULE: [2026-03-26] When caching API responses that include user-state fields (ti
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend Checks |
 |---------|--------------|-----------------|
+| 141     | 401          | 132             |
 | 140     | 396          | 132             |
 | 139     | 394          | 132             |
 | 137     | 393          | 132             |
 | 135     | 390          | 132             |
 | 134     | 384          | 132             |
 | 133     | 373          | 130             |
+
+### Session #141 Reflexion — 2026-03-26 (BUGFIX)
+ACCOMPLISHED: Fixed Telegram notifications permanently broken — added `POST /alerts/telegram/webhook` endpoint that Telegram bot calls when a user sends `/verify CODE`. The webhook extracts the chat_id from the message and sets `telegram_chat_id` + `telegram_verified=True` in the DB. Without this endpoint, `telegram_chat_id` was always null so notifications could never send. Also fixed a secondary sensitive data leak: `GET /alerts/settings` was returning `telegram_chat_id` to clients — removed it (only `telegram_verified` bool needed by frontend). Updated 1 existing test. Added 5 new webhook tests. 401 tests passing.
+FAILED: Nothing — all 401 tests passed first run.
+RULE: [2026-03-26] Telegram bot webhook endpoints are PUBLIC (no JWT) — security comes from the webhook URL being secret (registered via setWebhook). The endpoint must ALWAYS return 200 ok=True regardless of whether it processed the update — Telegram retries non-200 responses indefinitely.
+RULE: [2026-03-26] When removing a field from an API response for security reasons, grep ALL test files for assertions that the field IS present — they will fail and must be updated in the same commit. (Pattern recurs: also needed in session 137 for telegram_chat_id in login/register.)

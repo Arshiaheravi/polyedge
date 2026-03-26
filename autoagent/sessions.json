@@ -3123,5 +3123,27 @@
       "failures": 0,
       "notes": "no frontend changes this session"
     }
+  },
+  {
+    "session": 141,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Fixed Telegram notifications permanently broken — added POST /alerts/telegram/webhook so the Telegram bot can set the user's chat_id when they send /verify CODE; also removed telegram_chat_id from the alerts settings API response where it was leaking as sensitive data",
+    "files": [
+      "backend/app/routes/alerts.py",
+      "backend/tests/test_alerts.py"
+    ],
+    "tests": {
+      "before": 396,
+      "after": 401,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes this session"
+    }
   }
 ]
