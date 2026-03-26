@@ -85,6 +85,14 @@ In PolyEdge this slots into `backend/app/main.py` — pass `lifespan=lifespan` t
 - Run tests: `cd backend && py -m pytest tests/ -v`
 - Fix ALL failures — never commit red
 
+## FASTAPI PRODUCTION SAFETY RULES
+
+**CORS**: NEVER use `allow_origins=["*"]` — wildcard CORS is incompatible with `allow_credentials=True` and exposes all endpoints to any origin. Always use explicit origin list: `allow_origins=["http://localhost:3000"]`. Wildcard is silent in dev but a security regression in production.
+(Source: FastAPI best practices 2026 — fastlaunchapi.dev)
+
+**Async route discipline**: `async def` route handlers must NEVER contain blocking I/O — no `time.sleep()`, no synchronous DB calls, no blocking subprocess calls. These stall the uvicorn event loop and kill all concurrent requests. Only use sync primitives inside `asyncio.to_thread()` or background tasks.
+(Source: DEV Community production-ready FastAPI 2026)
+
 ## FRAGILE ZONES — DOUBLE-CHECK BEFORE COMMITTING
 These three files have downstream effects that tests don't fully catch. When you edit any of them, re-read the surrounding interface contract (type signatures, response shapes) before committing:
 

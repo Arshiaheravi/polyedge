@@ -4,7 +4,7 @@
 ## 2026-03-25 — BRAIN (Session 132)
 RESEARCHED: autonomous AI agent best practices 2026, LLM self-improvement techniques, Confucius Code Agent hierarchical working memory (arxiv 2512.10398), PolyGun competitor acquisition (Polymarket Analytics), prediction market copy trading features 2026, FastAPI async SQLAlchemy patterns.
 DOWNLOADED: Nothing new — ECC still at v1.9.0; no new applicable skills.
-IMPLEMENTED: (1) PROMPT.md — added phase-grouped task structure for multi-domain tasks (Phase 1/2/3 labeled sections instead of flat list, from CCA hierarchical working memory). (2) backlog.md — added copy-ratio sizing (0.1x-1x per bettor, PolyGun competitor feature) to HIGH PRIORITY. (3) knowledge.md curation — removed duplicate RULE block in Session #131 reflexion. (4) activity_log.md archived sessions 100-119 to activity_log_archive.md (32→12 entries). (5) techniques.md + sources.md updated with 7 new sources.
+IMPLEMENTED: (1) PROMPT.md — added phase-grouped task structure for multi-domain tasks (Phase 1/2/3 labeled sections instead of flat list, from CCA hierarchical working memory). (2) backlog.md — added copy-ratio sizing (0.1x-1x per bettor, PolyGun competitor feature) to HIGH PRIORITY. (3) coding.md — added FASTAPI PRODUCTION SAFETY RULES section (CORS wildcard prohibition + async route discipline). (4) knowledge.md curation — removed duplicate RULE block in Session #131 reflexion. (5) activity_log.md archived sessions 100-119 to activity_log_archive.md (32→12 entries). (6) techniques.md + sources.md updated with 13 new sources.
 BACKLOGGED: Copy ratio setting (0.1x-1x per bettor) — PolyGun's key differentiator, now in HIGH PRIORITY.
 SOURCES: 7 new sources logged in brain/sources.md.
 

@@ -168,6 +168,12 @@ Where: PROMPT.md (step 6 — current_task.md format section, Phase grouping rule
 Source: arxiv 2512.10398 (Confucius Code Agent) — hierarchical working memory for long-context reasoning; persistent note-taking for cross-session task continuity
 Expected impact: Multi-domain tasks that span sessions resume faster — agent immediately knows it's in Phase 2 (Frontend) without re-reading the entire plan; reduces re-exploration at session resumption
 
+## FastAPI production safety rules (CORS wildcard prohibition + async discipline) — implemented 2026-03-25
+What: (1) Never use `allow_origins=["*"]` in CORS config — use explicit origin list only. (2) `async def` route handlers must never contain blocking I/O (no time.sleep, no sync DB calls) — these stall the uvicorn event loop.
+Where: autoagent/skills/coding.md (FASTAPI PRODUCTION SAFETY RULES section)
+Source: fastlaunchapi.dev/blog/fastapi-best-practices-production-2026; dev.to/thesius_code production-ready FastAPI 2026
+Expected impact: Prevents silent CORS security regression (wildcard) and event-loop starvation bugs introduced by sync calls in async routes — two bugs invisible at dev time that cause production failures
+
 ## Visible-element filter for mobile Playwright checks — implemented 2026-03-25
 What: When checking element dimensions (height, width) at mobile viewport, filter by getBoundingClientRect().height > 0 to skip elements in display:none sections. Also use element+class selector (`.btn.btn-primary`) not just class (`.btn-primary`) to avoid matching links styled as buttons.
 Where: autoagent/skills/playwright.md (VISIBLE ELEMENT FILTER section)
