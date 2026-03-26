@@ -39,6 +39,20 @@ def test_duplicate_follow_rejected(client, db, auth_headers, registered_user):
     assert resp.status_code == 409
 
 
+def test_duplicate_follow_detail_message(client, db, auth_headers, registered_user):
+    """409 response must include an actionable detail message so the user knows why it failed."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
+    client.post("/follows", json={"bettor_address": BETTOR_A}, headers=auth_headers)
+    resp = client.post("/follows", json={"bettor_address": BETTOR_A}, headers=auth_headers)
+    assert resp.status_code == 409
+    assert "Already following" in resp.json()["detail"]
+
+
 def test_unfollow(client, auth_headers):
     client.post("/follows", json={"bettor_address": BETTOR_A}, headers=auth_headers)
     resp = client.delete(f"/follows/{BETTOR_A}", headers=auth_headers)

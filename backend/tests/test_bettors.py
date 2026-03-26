@@ -665,6 +665,24 @@ def test_bettor_detail_profile_includes_accuracy(client):
     assert profile["accuracy"] == pytest.approx(0.72)
 
 
+def test_leaderboard_route_passes_accuracy_through(client):
+    """GET /bettors must pass accuracy field through from the service layer to the response."""
+    import app.routes.bettors as bettors_mod
+    bettors_mod._leaderboard_cache.pop("profit_month_50", None)  # clear cached stale data
+    mock_lb = [
+        {"rank": 1, "address": "0xaaa", "name": "trader1",
+         "volume_usd": 1000.0, "pnl_usd": 500.0, "avatar_url": "", "accuracy": 0.72},
+        {"rank": 2, "address": "0xbbb", "name": "trader2",
+         "volume_usd": 800.0, "pnl_usd": 200.0, "avatar_url": "", "accuracy": None},
+    ]
+    with patch("app.routes.bettors.get_leaderboard", new=AsyncMock(return_value=mock_lb)):
+        resp = client.get("/bettors")
+    assert resp.status_code == 200
+    bettors = resp.json()["bettors"]
+    assert bettors[0]["accuracy"] == pytest.approx(0.72)
+    assert bettors[1]["accuracy"] is None
+
+
 def test_auth_me_does_not_contain_accuracy(client, auth_headers):
     """GET /auth/me is user data — it must NOT contain an 'accuracy' field (bettor metric, not user)."""
     resp = client.get("/auth/me", headers=auth_headers)

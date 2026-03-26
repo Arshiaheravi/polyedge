@@ -50,6 +50,31 @@ def test_normalise_leaderboard_zero_values():
     assert result["rank"] == 0
 
 
+def test_normalise_leaderboard_accuracy_from_percentProfitable():
+    """percentProfitable (0-100) must be converted to accuracy (0.0-1.0)."""
+    raw = {
+        "rank": "1", "proxyWallet": "0xabc", "vol": "1000", "pnl": "500",
+        "percentProfitable": 68.5,
+    }
+    result = _normalise_leaderboard_entry(raw)
+    assert result["accuracy"] == pytest.approx(0.685, abs=1e-4)
+
+
+def test_normalise_leaderboard_accuracy_none_when_missing():
+    """accuracy must be None when percentProfitable is absent from the API response."""
+    raw = {"rank": "2", "proxyWallet": "0xdef", "vol": "200", "pnl": "100"}
+    result = _normalise_leaderboard_entry(raw)
+    assert result["accuracy"] is None
+
+
+def test_normalise_leaderboard_accuracy_none_when_null():
+    """accuracy must be None when percentProfitable is explicitly null in the API response."""
+    raw = {"rank": "3", "proxyWallet": "0xghi", "vol": "300", "pnl": "150",
+           "percentProfitable": None}
+    result = _normalise_leaderboard_entry(raw)
+    assert result["accuracy"] is None
+
+
 # ── Normalise bet ─────────────────────────────────────────────────────────────
 
 def test_normalise_bet_full():
