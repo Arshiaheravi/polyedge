@@ -40,6 +40,8 @@ These tasks are a structural code review — not testing functionality, but read
 
 ## NEW FEATURES (build AFTER all tests pass)
 
+- [ ] **WebSocket scheduler (replace 30s REST poll)** — Replace `_poll_bets` and `_poll_vip_bets` REST polling with a Polymarket WebSocket subscription to `wss://ws-subscriptions-clob.polymarket.com/ws/markets`. As of January 2026, the 100-instrument cap on the Markets channel was removed (now supports 500 per socket), making this fully viable for PolyEdge's bettor pool. Impact: notification latency drops from ~30s to near-real-time for ALL tiers, eliminating the need for the separate VIP 5s poll job. Closes the latency gap vs PolyCop/PolyGun without any additional polling cost. (Source: docs.polymarket.com/market-data/websocket/overview, session 173)
+
 - [ ] **Basket consensus alert** — when 3+ followed bettors all take the same side on the same market within a short window, fire a "basket consensus" notification (stronger signal than single-whale alert). Implementable in `scheduler.py` by aggregating positions across followed bettors per conditionId before dispatching. No new external APIs needed. (Source: phemex.com Wallet Baskets Strategy, session 163)
 
 - [ ] **Time-period leaderboard filter** — add time selector buttons (Today / Week / Month / All) above the leaderboard grid, pass selected period to `/bettors` endpoint which passes it to the Polymarket API (`?sortBy=profit&timeframe=weekly` etc.). Polymarket's own leaderboard has this filter — users who come from Polymarket will immediately expect it. Show who's been profitable THIS WEEK, not just all-time. TIER GATE: none (competitive baseline feature). (Source: Polymarket leaderboard research session 153)

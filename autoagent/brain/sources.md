@@ -297,3 +297,9 @@ Add every source you read here so you never re-read it.
 - agentbets.ai/guides/polymarket-api-guide/ — Polymarket API 2026: Data API has GET /trades (historical trades) + /positions + /activity; 3 WebSockets; CLOB user WS at wss://ws-subscriptions-clob.polymarket.com/ws/user; rate limits vary by endpoint — read 2026-03-26 — implemented: GET /trades endpoint added to knowledge.md
 - github.com/aiming-lab/SimpleMem — SimpleMem: semantic lossless compression for LLM agent memory; intra-session deduplication via parallel multi-view retrieval + ID-based merge — read 2026-03-26 — skipped: requires infrastructure (ChromaDB or similar); concept (merge related rules before storing) already covered by BRAIN_PROMPT.md Step 1C curation
 - johal.in/mutation-testing-with-mutmut-python-for-code-reliability-2026/ — mutmut production integration: pre-commit hook or CI gate; fail if mutation score < 70%; catches 25% more logical bugs vs coverage-only — read 2026-03-26 — implemented: added mutation score target to testing.md recipe
+
+### Session #173 addendum (background agent findings):
+
+- docs.polymarket.com/market-data/websocket/overview — WebSocket Markets channel 100-token cap removed January 2026; now supports up to 500 instruments per connection; virtually no rate limits on WS connections — read 2026-03-26 — implemented: knowledge.md updated + WebSocket scheduler added to NEW FEATURES backlog
+- agentbets.ai/guides/polymarket-rate-limits-guide/ — confirmed REST public endpoints 60 req/min; WS no practical limit — read 2026-03-26 — confirms knowledge.md rate limit entry
+- coindesk.com/tech/2026/03/15/ai-agents-are-quietly-rewriting-prediction-market-trading (re-read session 173) — AI agents (e.g. Polystrat) increasingly placing bets autonomously; detecting AI wallets vs human wallets is now a competitive differentiator — read 2026-03-26 — backlogged: "AI bettor flag" feature idea noted
