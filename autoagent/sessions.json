@@ -2922,5 +2922,15 @@
     "files": ["backend/app/services/polymarket.py", "backend/app/routes/follows.py", "backend/tests/test_polymarket_service.py", "backend/tests/test_follows_live.py", "frontend/index.html"],
     "tests": {"before": 368, "after": 373, "status": "pass"},
     "frontend": {"status": "skip", "checks": 130, "failures": 0, "notes": "server not running"}
+  },
+  {
+    "session": 134,
+    "date": "2026-03-25",
+    "time": "23:50",
+    "type": "work",
+    "summary": "Bettor profile pages now show a Copy Simulator card — Basic/VIP users see what they would have made copying this bettor's last 10 resolved bets at $100 each; Free users see a blurred teaser with upgrade CTA",
+    "files": ["backend/app/services/polymarket.py", "backend/app/routes/bettors.py", "backend/tests/test_polymarket_service.py", "backend/tests/test_bettors.py", "frontend/index.html"],
+    "tests": {"before": 373, "after": 384, "status": "pass"},
+    "frontend": {"status": "pass", "checks": 132, "failures": 0, "notes": ""}
   }
 ]

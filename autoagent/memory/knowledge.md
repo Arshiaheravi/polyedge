@@ -33,8 +33,8 @@
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **359 passed** (as of 2026-03-25, session 129 — stable)
-- Playwright checks: **125 total, 0 failures** (as of 2026-03-25, session 129)
+- Test count: **384 passed** (as of 2026-03-25, session 134)
+- Playwright checks: **132 total, 0 failures** (as of 2026-03-25, session 134)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -45,6 +45,12 @@
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #134 Reflexion — 2026-03-25
+ACCOMPLISHED: Added Copy Portfolio Simulator — `compute_copy_simulator()` in polymarket.py infers bet resolution from REDEEM transactions in activity data (no extra API call needed); route uses asyncio.gather for parallel calls; tier gate enforced in route; frontend shows card with textContent (XSS-safe); 11 new tests all green; 384 total.
+FAILED: Used wrong function name `encode_jwt` (real name: `create_access_token`); forgot `name` is NOT NULL in User model — both fixed in < 2 minutes.
+RULE: [2026-03-25] When adding a new coroutine to asyncio.gather() in a route, existing tests that don't mock it will still pass as long as the coroutine catches exceptions internally and returns graceful empty data — no need to retroactively patch all prior tests unless they assert on the new field.
+RULE: [2026-03-25] REDEEM transactions in the Polymarket activity API indicate the whale was paid out (won that market) — this is the correct proxy for bet resolution without needing a separate price-check API call.
 
 ### BRAIN Session #132 Reflexion — 2026-03-25
 ACCOMPLISHED: (1) STEP 1B: No failure patterns in last 10 sessions — all green. (2) STEP 1C: Fixed duplicate RULE entry in Session #131 reflexion. (3) STEP 1D: Archived sessions 100-119 from activity_log.md (32→12 entries). (4) PROMPT.md — phase-grouped task structure for multi-domain tasks. (5) PROMPT.md — RULES-FIRST ARBITRATION section (memory vs explicit rules: explicit rules win). (6) coding.md — FASTAPI PRODUCTION SAFETY RULES (CORS wildcard prohibition + async discipline). (7) backlog.md — copy-ratio sizing + Insider Score added. (8) 15 new sources evaluated and logged.

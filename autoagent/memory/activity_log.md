@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — FEATURE (Session 134)
+DONE: Added Copy Portfolio Simulator to bettor profile pages — Basic/VIP users now see "Copy $100/bet on last N resolved bets → +$X (+Y%)" card; Free users see blurred value with "Upgrade to unlock" CTA. Backend infers wins via REDEEM transactions, losses via bets >7 days old with no REDEEM, skips still-open bets.
+IMPACT: Users can now quantify what following a specific bettor is actually worth in dollars — the #1 factor that convinces free users to upgrade and keeps paid users subscribed.
+FILES: backend/app/services/polymarket.py, backend/app/routes/bettors.py, backend/tests/test_polymarket_service.py, backend/tests/test_bettors.py, frontend/index.html
+
 ## 2026-03-25 — FEATURE (Session 133)
 DONE: Added Smart Entry Timing to position cards — each copyable bet now shows a copy signal badge: ✅ Good copy (<10% above entry), ⚠️ Price moved (10-30%), 🔴 Late entry (>30%); Free users see 🔒 padlock with upgrade CTA instead.
 IMPACT: Users can now instantly see whether a whale's bet is still worth copying at the current price — the single most important context for a copy decision.

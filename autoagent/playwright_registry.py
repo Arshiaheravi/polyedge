@@ -1903,6 +1903,28 @@ async def check():
         except Exception as e:
             failures.append(f"CHECK 130 error: {e}")
 
+        # CHECK 131 — #profile-simulator-card element present in DOM
+        try:
+            el = await page.query_selector("#profile-simulator-card")
+            if el:
+                checks += 1
+                print("  [CHECK 131] #profile-simulator-card present in DOM")
+            else:
+                failures.append("#profile-simulator-card element missing from DOM")
+        except Exception as e:
+            failures.append(f"CHECK 131 error: {e}")
+
+        # CHECK 132 — #profile-simulator-value element present in DOM
+        try:
+            el = await page.query_selector("#profile-simulator-value")
+            if el:
+                checks += 1
+                print("  [CHECK 132] #profile-simulator-value present in DOM")
+            else:
+                failures.append("#profile-simulator-value element missing from DOM")
+        except Exception as e:
+            failures.append(f"CHECK 132 error: {e}")
+
         await browser.close()
     return checks, failures
 

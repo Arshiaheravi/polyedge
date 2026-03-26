@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-25
+- **[SESSION #134] Copy Portfolio Simulator** — bettor profile pages now show simulated P&L if user had copied this bettor's last 10 resolved bets at $100 each; Basic/VIP see full data, Free see blurred teaser with upgrade CTA; 11 new tests, 384 total passing
 - **[SESSION #131] Conviction Score on Notifications** — scheduler now computes conviction = bet_amount / avg_bet_usd from recent bets (no extra API calls); Telegram messages show 🔥 EXTREME (>=10x) or ⚡ HIGH (>=3x) conviction labels; web push title also updated; 9 new tests added; Basic+VIP users see conviction-enhanced alerts
 - **[SESSION #129] Playwright checks 117-125 — JS function registry + DOM wiring** — 9 new checks: #toast-container DOM presence, typeof toastBet/enterDemoMode/animateCounter/runLandingCounters/showTab/loadLeaderboard/profileToggleFollow === 'function', renderBettorCard() .follow-btn has aria-label; 125 total checks, 0 failures; 359 backend tests stable
 - **[SESSION #128] Playwright checks 114-116 — follows dashboard DOM** — 3 new checks: #follows-empty present in DOM, #follows-container present in DOM, #follows-subtitle present with text content; 116 total checks, 0 failures; 359 backend tests stable
