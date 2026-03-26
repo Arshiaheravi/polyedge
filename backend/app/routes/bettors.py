@@ -1,3 +1,4 @@
+import asyncio
 import time
 from typing import Optional
 
@@ -5,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.auth import get_current_user_optional
 from app.models import User
-from app.services.polymarket import get_bettor_profile, get_leaderboard, get_recent_bets, get_live_trades
+from app.services.polymarket import get_bettor_profile, get_leaderboard, get_recent_bets, get_live_trades, compute_copy_simulator
 
 router = APIRouter(prefix="/bettors", tags=["bettors"])
 
@@ -67,11 +68,21 @@ async def bettor_detail(
         return cache_entry["data"]
 
     try:
-        profile = await get_bettor_profile(address)
-        bets = await get_recent_bets(address, limit=20)
+        profile, bets, simulator_raw = await asyncio.gather(
+            get_bettor_profile(address),
+            get_recent_bets(address, limit=20),
+            compute_copy_simulator(address, limit=10),
+        )
     except Exception as exc:
         raise HTTPException(status_code=502, detail=f"Polymarket API error: {str(exc)}")
 
-    result = {"profile": profile, "recent_bets": bets}
+    # Tier-gate the simulator: Free users see locked=True placeholder
+    tier = getattr(current_user, "subscription_tier", "free") if current_user else "free"
+    if tier in ("basic", "vip"):
+        copy_simulator = simulator_raw
+    else:
+        copy_simulator = {"locked": True}
+
+    result = {"profile": profile, "recent_bets": bets, "copy_simulator": copy_simulator}
     _profile_cache[address] = {"data": result, "ts": now}
     return result

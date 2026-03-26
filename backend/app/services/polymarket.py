@@ -296,6 +296,100 @@ async def get_bettor_profile(address: str) -> dict:
     return _normalise_profile(profile_raw, volume=volume, trade_count=trade_count, pnl_usd=pnl_usd, rank=rank)
 
 
+async def compute_copy_simulator(address: str, limit: int = 10) -> dict:
+    """
+    Simulate what a user would have made copying this bettor's last N BUY bets at $100 each.
+
+    Strategy:
+    - Fetch raw activity (limit=50) including REDEEM transactions.
+    - A REDEEM for a conditionId means the whale was paid out → they won that market.
+    - For each TRADE BUY (up to `limit`):
+        - If conditionId was redeemed → won → simulated_return = $100 * (1/price - 1)
+        - Else if bet is >7 days old → assume lost → simulated_return = -$100
+        - Else (<7 days, still open) → skip (inconclusive)
+    - Returns {simulated_pnl_usd, simulated_roi_pct, bets_analysed}
+    """
+    import time as _time
+
+    async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+        try:
+            resp = await client.get(f"{BASE_URL}/activity", params={"user": address, "limit": 50})
+            resp.raise_for_status()
+            raw_list = resp.json()
+            if not isinstance(raw_list, list):
+                raw_list = []
+        except Exception:
+            raw_list = []
+
+    # Collect conditionIds that were redeemed (whale cashed out → won)
+    redeemed_ids: set[str] = set()
+    for item in raw_list:
+        if item.get("type") == "REDEEM":
+            cid = item.get("conditionId") or ""
+            if cid:
+                redeemed_ids.add(cid)
+
+    now_ts = _time.time()
+    seven_days = 7 * 24 * 3600
+
+    total_pnl = 0.0
+    total_invested = 0.0
+    bets_analysed = 0
+
+    for item in raw_list:
+        if bets_analysed >= limit:
+            break
+        if item.get("type") == "REDEEM":
+            continue
+        # Only score BUY trades with a valid price
+        side = (item.get("side") or "").upper()
+        if side not in ("BUY", ""):  # SELL trades are exits, skip
+            continue
+        price = float(item.get("price") or 0)
+        if price <= 0 or price >= 1:
+            continue  # price=0 or price=1 means bad data
+        condition_id = item.get("conditionId") or ""
+
+        # Determine timestamp age
+        raw_ts = item.get("timestamp") or item.get("createdAt") or ""
+        bet_age_secs = seven_days + 1  # default: assume old enough to count as resolved
+        if raw_ts:
+            try:
+                ts_val = float(raw_ts) if str(raw_ts).replace(".", "").isdigit() else None
+                if ts_val:
+                    bet_age_secs = now_ts - ts_val
+                else:
+                    from datetime import datetime, timezone
+                    dt = datetime.fromisoformat(str(raw_ts).replace("Z", "+00:00"))
+                    bet_age_secs = now_ts - dt.timestamp()
+            except Exception:
+                pass
+
+        if condition_id in redeemed_ids:
+            # Won — simulate $100 profit at entry price
+            simulated_return = 100.0 * (1.0 / price - 1.0)
+        elif bet_age_secs > seven_days:
+            # Old enough to assume resolved against
+            simulated_return = -100.0
+        else:
+            # Still open — skip
+            continue
+
+        total_pnl += simulated_return
+        total_invested += 100.0
+        bets_analysed += 1
+
+    if bets_analysed == 0:
+        return {"simulated_pnl_usd": 0.0, "simulated_roi_pct": 0.0, "bets_analysed": 0}
+
+    roi_pct = round(total_pnl / total_invested * 100, 1)
+    return {
+        "simulated_pnl_usd": round(total_pnl, 2),
+        "simulated_roi_pct": roi_pct,
+        "bets_analysed": bets_analysed,
+    }
+
+
 async def get_recent_bets(address: str, limit: int = 20) -> list[dict]:
     """Get recent bets/activity for a specific address."""
     params = {"user": address, "limit": limit}

@@ -1,4 +1,5 @@
 """Tests for polymarket service — normalisation functions and active positions filter."""
+import time
 import pytest
 
 from app.services.polymarket import (
@@ -701,3 +702,132 @@ async def test_copy_signal_good_when_avg_price_is_zero():
         result = await get_active_positions("0xtest")
     assert result[0]["copy_signal"] == "good"
     assert result[0]["copy_value_pct"] == 0.0
+
+
+# ── compute_copy_simulator ────────────────────────────────────────────────────
+
+def _make_simulator_mock_client(activity_data):
+    """Build async mock client returning activity_data as JSON."""
+    from unittest.mock import AsyncMock, MagicMock
+    mock_resp = MagicMock()
+    mock_resp.raise_for_status = MagicMock()
+    mock_resp.json = MagicMock(return_value=activity_data)
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+    return mock_client
+
+
+@pytest.mark.asyncio
+async def test_copy_simulator_win_returns_positive_pnl():
+    """One TRADE BUY + matching REDEEM → simulated win → positive P&L."""
+    from unittest.mock import patch
+    old_ts = str(int(time.time()) - 10 * 24 * 3600)  # 10 days ago
+    activity = [
+        {"type": "TRADE", "side": "BUY", "price": "0.25", "conditionId": "cid1", "timestamp": old_ts},
+        {"type": "REDEEM", "conditionId": "cid1"},
+    ]
+    mock_client = _make_simulator_mock_client(activity)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import compute_copy_simulator
+        result = await compute_copy_simulator("0xtest", limit=10)
+    assert result["bets_analysed"] == 1
+    assert result["simulated_pnl_usd"] == pytest.approx(300.0, rel=0.01)  # $100 * (1/0.25 - 1) = $300
+    assert result["simulated_roi_pct"] == pytest.approx(300.0, rel=0.01)
+
+
+@pytest.mark.asyncio
+async def test_copy_simulator_loss_returns_negative_pnl():
+    """TRADE BUY with old timestamp and no REDEEM → assumed loss → -$100."""
+    from unittest.mock import patch
+    old_ts = str(int(time.time()) - 10 * 24 * 3600)
+    activity = [
+        {"type": "TRADE", "side": "BUY", "price": "0.50", "conditionId": "cid_lose", "timestamp": old_ts},
+    ]
+    mock_client = _make_simulator_mock_client(activity)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import compute_copy_simulator
+        result = await compute_copy_simulator("0xtest", limit=10)
+    assert result["bets_analysed"] == 1
+    assert result["simulated_pnl_usd"] == pytest.approx(-100.0, rel=0.01)
+    assert result["simulated_roi_pct"] == pytest.approx(-100.0, rel=0.01)
+
+
+@pytest.mark.asyncio
+async def test_copy_simulator_mixed_win_and_loss():
+    """One win (redeemed) + one loss (old, no redeem) → net P&L is sum of both."""
+    from unittest.mock import patch
+    old_ts = str(int(time.time()) - 10 * 24 * 3600)
+    activity = [
+        {"type": "TRADE", "side": "BUY", "price": "0.50", "conditionId": "cid_win", "timestamp": old_ts},
+        {"type": "REDEEM", "conditionId": "cid_win"},
+        {"type": "TRADE", "side": "BUY", "price": "0.50", "conditionId": "cid_lose", "timestamp": old_ts},
+    ]
+    mock_client = _make_simulator_mock_client(activity)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import compute_copy_simulator
+        result = await compute_copy_simulator("0xtest", limit=10)
+    assert result["bets_analysed"] == 2
+    # win: $100 * (1/0.5 - 1) = $100; loss: -$100; net = $0
+    assert result["simulated_pnl_usd"] == pytest.approx(0.0, abs=0.01)
+    assert result["simulated_roi_pct"] == pytest.approx(0.0, abs=0.1)
+
+
+@pytest.mark.asyncio
+async def test_copy_simulator_recent_bets_skipped():
+    """Bets < 7 days old with no REDEEM are open positions — skip them."""
+    from unittest.mock import patch
+    recent_ts = str(int(time.time()) - 1 * 24 * 3600)  # 1 day ago
+    activity = [
+        {"type": "TRADE", "side": "BUY", "price": "0.50", "conditionId": "cid_open", "timestamp": recent_ts},
+    ]
+    mock_client = _make_simulator_mock_client(activity)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import compute_copy_simulator
+        result = await compute_copy_simulator("0xtest", limit=10)
+    assert result["bets_analysed"] == 0
+    assert result["simulated_pnl_usd"] == 0.0
+
+
+@pytest.mark.asyncio
+async def test_copy_simulator_zero_price_skipped():
+    """BUY with price=0 is bad data — skip it."""
+    from unittest.mock import patch
+    old_ts = str(int(time.time()) - 10 * 24 * 3600)
+    activity = [
+        {"type": "TRADE", "side": "BUY", "price": "0", "conditionId": "cid_zero", "timestamp": old_ts},
+    ]
+    mock_client = _make_simulator_mock_client(activity)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import compute_copy_simulator
+        result = await compute_copy_simulator("0xtest", limit=10)
+    assert result["bets_analysed"] == 0
+
+
+@pytest.mark.asyncio
+async def test_copy_simulator_empty_response_returns_zeros():
+    """Empty activity list → bets_analysed=0, pnl=0."""
+    from unittest.mock import patch
+    mock_client = _make_simulator_mock_client([])
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import compute_copy_simulator
+        result = await compute_copy_simulator("0xtest", limit=10)
+    assert result == {"simulated_pnl_usd": 0.0, "simulated_roi_pct": 0.0, "bets_analysed": 0}
+
+
+@pytest.mark.asyncio
+async def test_copy_simulator_limit_enforced():
+    """Only up to `limit` bets are scored even if more are available."""
+    from unittest.mock import patch
+    old_ts = str(int(time.time()) - 10 * 24 * 3600)
+    # 15 losing BUY trades (old, no REDEEMs)
+    activity = [
+        {"type": "TRADE", "side": "BUY", "price": "0.5", "conditionId": f"cid{i}", "timestamp": old_ts}
+        for i in range(15)
+    ]
+    mock_client = _make_simulator_mock_client(activity)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import compute_copy_simulator
+        result = await compute_copy_simulator("0xtest", limit=5)
+    assert result["bets_analysed"] == 5

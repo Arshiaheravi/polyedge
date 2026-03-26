@@ -1108,6 +1108,17 @@
     .profile-stat-val { font-size: var(--fs-4xl); font-weight: 700; color: var(--text); font-family: var(--font-display); }
     .profile-bets-section { margin-top: var(--sp-5); }
     .profile-section-title { font-size: var(--fs-xl); font-weight: 700; color: var(--text); margin-bottom: var(--sp-3); }
+    .profile-simulator-card { background: var(--card2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: var(--sp-5); display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .profile-simulator-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(74,158,255,0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
+    .profile-simulator-body { flex: 1; min-width: 0; }
+    .profile-simulator-label { font-size: var(--fs-xs); color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .profile-simulator-value { font-size: var(--fs-2xl); font-weight: 700; font-family: var(--font-display); }
+    .profile-simulator-value.pos { color: var(--green); }
+    .profile-simulator-value.neg { color: var(--red); }
+    .profile-simulator-value.locked { color: var(--text3); filter: blur(6px); user-select: none; }
+    .profile-simulator-sub { font-size: var(--fs-xs); color: var(--text2); margin-top: 2px; }
+    .profile-simulator-cta { font-size: var(--fs-xs); color: var(--accent); cursor: pointer; text-decoration: underline; white-space: nowrap; }
+    .profile-simulator-cta:hover { color: var(--accent-hover, #7bb8ff); }
     .profile-bets-list { display: flex; flex-direction: column; gap: var(--sp-2); }
     .bet-row {
       display: flex; align-items: center; gap: var(--sp-3);
@@ -2192,6 +2203,15 @@
           </div>
           <div class="profile-stat-val" id="pstat-bets">&#8212;</div>
         </div>
+      </div>
+      <div id="profile-simulator-card" class="profile-simulator-card" style="display:none;">
+        <div class="profile-simulator-icon">&#128202;</div>
+        <div class="profile-simulator-body">
+          <div class="profile-simulator-label">Copy Simulator &mdash; $100/bet on last 10</div>
+          <div id="profile-simulator-value" class="profile-simulator-value">&mdash;</div>
+          <div id="profile-simulator-sub" class="profile-simulator-sub"></div>
+        </div>
+        <div id="profile-simulator-cta" class="profile-simulator-cta" style="display:none;" onclick="openUpgradeModal()">Upgrade to unlock</div>
       </div>
       <div class="profile-bets-section">
         <h2 class="profile-section-title">Recent Bets</h2>
@@ -4275,7 +4295,7 @@ async function showProfile(address) {
     const res = await apiFetch(`/bettors/${encodeURIComponent(address)}`);
     if (!res.ok) throw new Error(`Could not load profile (${res.status})`);
     const data = await res.json();
-    renderProfileData(data.profile, data.recent_bets);
+    renderProfileData(data.profile, data.recent_bets, data.copy_simulator);
   } catch (e) {
     document.getElementById('profile-bets-list').innerHTML =
       `<div class="empty-state"><p>${escapeHtml(e.message)}</p></div>`;
@@ -4330,7 +4350,7 @@ function _renderProfileBadges(rank, pnlUsd, volumeUsd) {
   }
 }
 
-function renderProfileData(profile, bets) {
+function renderProfileData(profile, bets, copySimulator) {
   if (!profile) return;
   _profileAddress = profile.address;
   _profileName = profile.name || profile.address;
@@ -4390,6 +4410,32 @@ function renderProfileData(profile, bets) {
   followBtn.innerHTML = isFollowing ? '&#10003; Following' : '+ Follow';
   followBtn.setAttribute('aria-pressed', String(isFollowing));
   _updateFollowPreview(isFollowing);
+
+  // Copy Simulator card
+  const simCard = document.getElementById('profile-simulator-card');
+  const simValue = document.getElementById('profile-simulator-value');
+  const simSub = document.getElementById('profile-simulator-sub');
+  const simCta = document.getElementById('profile-simulator-cta');
+  if (simCard) {
+    if (copySimulator && copySimulator.locked) {
+      simCard.style.display = 'flex';
+      simValue.className = 'profile-simulator-value locked';
+      simValue.textContent = '+$347 (+34.7%)';
+      simSub.textContent = 'Unlock to see real results';
+      simCta.style.display = 'inline';
+    } else if (copySimulator && typeof copySimulator.simulated_pnl_usd === 'number') {
+      simCard.style.display = 'flex';
+      const pnl = copySimulator.simulated_pnl_usd;
+      const roi = copySimulator.simulated_roi_pct;
+      const n = copySimulator.bets_analysed;
+      simValue.className = 'profile-simulator-value' + (pnl >= 0 ? ' pos' : ' neg');
+      simValue.textContent = (pnl >= 0 ? '+' : '') + fmtUSD(pnl) + ' (' + (roi >= 0 ? '+' : '') + roi + '%)';
+      simSub.textContent = n > 0 ? `$100/bet on last ${n} resolved bet${n === 1 ? '' : 's'}` : 'Not enough resolved bets yet';
+      simCta.style.display = 'none';
+    } else {
+      simCard.style.display = 'none';
+    }
+  }
 
   const list = document.getElementById('profile-bets-list');
   if (!bets || !bets.length) {

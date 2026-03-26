@@ -313,9 +313,98 @@ def test_bettor_detail_redeem_bets_not_in_response(client):
          "price": 0.45, "amount_usd": 50.0, "timestamp": "2026-03-01",
          "type": "BUY", "tx_hash": "", "market_icon": "", "market_slug": ""},
     ]
+    mock_sim = {"simulated_pnl_usd": -100.0, "simulated_roi_pct": -100.0, "bets_analysed": 1}
     with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=mock_profile)), \
-         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=mock_bets)):
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=mock_bets)), \
+         patch("app.routes.bettors.compute_copy_simulator", new=AsyncMock(return_value=mock_sim)):
         resp = client.get(f"/bettors/{addr}")
     assert resp.status_code == 200
     bets = resp.json()["recent_bets"]
     assert all(b["outcome"] != "" for b in bets), "all returned bets must have an outcome (REDEEM filtered)"
+
+
+# ── copy_simulator tier gate ───────────────────────────────────────────────────
+
+MOCK_PROFILE_SIM = {"address": "0xSIM", "name": "SimTrader", "rank": 1, "pnl_usd": 500.0,
+                    "volume_usd": 1000.0, "total_bets": 10, "avg_bet_usd": 100.0, "avatar_url": ""}
+MOCK_BETS_SIM = []
+MOCK_SIM_RESULT = {"simulated_pnl_usd": 347.5, "simulated_roi_pct": 34.75, "bets_analysed": 10}
+
+
+def test_bettor_detail_free_user_copy_simulator_locked(client, auth_headers):
+    """Free user (no subscription) sees copy_simulator.locked=True."""
+    import app.routes.bettors as bettors_mod
+    addr = "0xFREE_SIM"
+    bettors_mod._profile_cache.pop(addr, None)
+    # auth_headers fixture is a free-tier user by default
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=MOCK_PROFILE_SIM)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=MOCK_BETS_SIM)), \
+         patch("app.routes.bettors.compute_copy_simulator", new=AsyncMock(return_value=MOCK_SIM_RESULT)):
+        resp = client.get(f"/bettors/{addr}", headers=auth_headers)
+    assert resp.status_code == 200
+    sim = resp.json().get("copy_simulator", {})
+    assert sim.get("locked") is True, "free user must see locked=True in copy_simulator"
+    assert "simulated_pnl_usd" not in sim
+
+
+def test_bettor_detail_unauthenticated_copy_simulator_locked(client):
+    """Unauthenticated request (no token) → copy_simulator.locked=True."""
+    import app.routes.bettors as bettors_mod
+    addr = "0xANON_SIM"
+    bettors_mod._profile_cache.pop(addr, None)
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=MOCK_PROFILE_SIM)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=MOCK_BETS_SIM)), \
+         patch("app.routes.bettors.compute_copy_simulator", new=AsyncMock(return_value=MOCK_SIM_RESULT)):
+        resp = client.get(f"/bettors/{addr}")
+    assert resp.status_code == 200
+    assert resp.json()["copy_simulator"]["locked"] is True
+
+
+def test_bettor_detail_basic_user_copy_simulator_unlocked(client, db):
+    """Basic-tier user sees full copy_simulator data (not locked)."""
+    import app.routes.bettors as bettors_mod
+    from app.models import User
+    from app.auth import hash_password, create_access_token
+    addr = "0xBASIC_SIM"
+    bettors_mod._profile_cache.pop(addr, None)
+    # Create a basic-tier user
+    user = User(email="basic_sim@test.com", hashed_password=hash_password("pw"),
+                name="BasicSimUser", subscription_tier="basic")
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    token = create_access_token({"sub": str(user.id), "tier": "basic"})
+    headers = {"Authorization": f"Bearer {token}"}
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=MOCK_PROFILE_SIM)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=MOCK_BETS_SIM)), \
+         patch("app.routes.bettors.compute_copy_simulator", new=AsyncMock(return_value=MOCK_SIM_RESULT)):
+        resp = client.get(f"/bettors/{addr}", headers=headers)
+    assert resp.status_code == 200
+    sim = resp.json()["copy_simulator"]
+    assert "locked" not in sim
+    assert sim["simulated_pnl_usd"] == pytest.approx(347.5, rel=0.01)
+    assert sim["bets_analysed"] == 10
+
+
+def test_bettor_detail_vip_user_copy_simulator_unlocked(client, db):
+    """VIP-tier user sees full copy_simulator data (not locked)."""
+    import app.routes.bettors as bettors_mod
+    from app.models import User
+    from app.auth import hash_password, create_access_token
+    addr = "0xVIP_SIM"
+    bettors_mod._profile_cache.pop(addr, None)
+    user = User(email="vip_sim@test.com", hashed_password=hash_password("pw"),
+                name="VipSimUser", subscription_tier="vip")
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    token = create_access_token({"sub": str(user.id), "tier": "vip"})
+    headers = {"Authorization": f"Bearer {token}"}
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=MOCK_PROFILE_SIM)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=MOCK_BETS_SIM)), \
+         patch("app.routes.bettors.compute_copy_simulator", new=AsyncMock(return_value=MOCK_SIM_RESULT)):
+        resp = client.get(f"/bettors/{addr}", headers=headers)
+    assert resp.status_code == 200
+    sim = resp.json()["copy_simulator"]
+    assert "locked" not in sim
+    assert sim["simulated_roi_pct"] == pytest.approx(34.75, rel=0.01)
