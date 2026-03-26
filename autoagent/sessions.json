@@ -4019,5 +4019,28 @@
       "failures": 0,
       "notes": "no code changes this session"
     }
+  },
+  {
+    "session": 180,
+    "date": "2026-03-26",
+    "time": "10:10",
+    "type": "work",
+    "summary": "Added 5 tests locking in leaderboard accuracy conversion, route accuracy passthrough, and follows 409 detail message \u2014 483 to 488 tests passing",
+    "files": [
+      "backend/tests/test_polymarket_service.py",
+      "backend/tests/test_bettors.py",
+      "backend/tests/test_follows.py"
+    ],
+    "tests": {
+      "before": 483,
+      "after": 488,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

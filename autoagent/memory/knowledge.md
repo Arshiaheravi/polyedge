@@ -45,7 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **483 passed, 2 skipped** (as of 2026-03-26, session 177) — 3 new tests: resolved-market consensus filter + bettor profile accuracy passthrough + auth/me accuracy absence
+- Test count: **488 passed, 2 skipped** (as of 2026-03-26, session 180) — 5 new tests: leaderboard accuracy normalise (3) + GET /bettors accuracy passthrough + POST /follows 409 detail message
 - Test count: **480 passed, 2 skipped** (as of 2026-03-26, session 176) — 5 new tests: accuracy field regression + follows order + mocked consensus + profile accuracy
 - Test count: **475 passed, 1 skipped** (as of 2026-03-26, session 175)
 - Playwright E2E: **42 passed, 2 skipped** (as of 2026-03-26, session 156)
@@ -76,6 +76,11 @@ ACCOMPLISHED: (1) Confirmed BRAIN_PROMPT.md background-agent prohibition is NOW 
 FAILED: Background agents launched at session start produced output (agents were running) but pattern is established — added explicit prohibition to BRAIN_PROMPT.md immediately.
 RULE: [2026-03-26] When a rule about brain session failure mode (e.g., "don't use background agents") lives only in knowledge.md, it is NOT effective — brain sessions don't read knowledge.md before launching agents. The rule must be in BRAIN_PROMPT.md itself, near the search step, to fire at the right moment.
 OPTIMIZATION: [2026-03-26] Brain session research pattern: run 2-4 direct WebSearch calls in parallel (not background agents), read results immediately, pick the top 1-2 actionable findings, implement them. Total research phase: ~5 tool calls. This is faster and more reliable than background agents.
+
+### Session #180 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added 5 tests across 3 backlog items. (1) 3 tests for `_normalise_leaderboard_entry` accuracy conversion: percentProfitable=68.5→0.685, missing key→None, explicit null→None. (2) 1 test for GET /bettors accuracy passthrough (bettors_mod._leaderboard_cache.pop("profit_month_50", None) required to prevent stale cache hit). (3) 1 test for POST /follows 409 detail message asserting "Already following" in body. 483→488 tests.
+FAILED: `test_leaderboard_route_passes_accuracy_through` failed when run in the full suite but passed in isolation — cache contamination. `test_leaderboard_sort_profit` had already populated the `profit_month_50` cache key with MOCK_LEADERBOARD data (no accuracy field), so the new test hit the cache and bypassed the mock.
+RULE: [2026-03-26] When adding a new GET /bettors test that calls the endpoint with default params (sort=profit, time_period=month, limit=50), ALWAYS pop cache key `profit_month_50` before the test. MOCK_LEADERBOARD (used by earlier tests) has no accuracy field and will be served from cache on second-run, causing field assertions to fail. Pattern: `import app.routes.bettors as bettors_mod; bettors_mod._leaderboard_cache.pop("profit_month_50", None)`.
 
 ### Session #179 Reflexion — 2026-03-26 (CODE QUALITY AUDIT)
 ACCOMPLISHED: Audited sessions 169-177 changed files. Marcus (XSS): all innerHTML with user data uses escapeHtml() — buildTickerItem (line 4433), tgStatusEl chatId (line 3953), renderBettorCard (line 3162+). Leo: no dead code, no print(), no TODO, no duplicate logic. Alex: no os.getenv in services, no cross-layer imports. Minor Leo note: `import app.routes.bettors as bettors_mod` appears inside ~15 test functions — this is intentional for accessing module-level cache state in tests, not a smell. No code changes required.

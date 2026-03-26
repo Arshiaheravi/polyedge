@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 180)
+DONE: Added 5 tests across 3 backlog items: (1) 3 tests for _normalise_leaderboard_entry accuracy field — percentProfitable=68.5→0.685, missing key→None, explicit null→None; (2) 1 test for GET /bettors accuracy passthrough through route layer (cache-cleared to avoid stale data hit); (3) 1 test for POST /follows 409 detail message asserting response body says "Already following". 483→488 tests.
+IMPACT: Locks in the contract that percentProfitable is always converted correctly in the leaderboard normaliser. The cache-clear pattern in the accuracy passthrough test prevents false passes from cached stale data. The 409 detail message test ensures users see actionable feedback, not just a raw error code.
+FILES: backend/tests/test_polymarket_service.py, backend/tests/test_bettors.py, backend/tests/test_follows.py
+
 ## 2026-03-26 — CODE QUALITY AUDIT (Session 179)
 DONE: Audited changed files from sessions 169-177 (polymarket.py, test_polymarket_service.py, test_bettors.py, test_data_integrity.py, test_follows.py, test_health.py, test_auth.py, frontend/index.html). No issues found: Marcus XSS check passed on all innerHTML renders; Leo scan found no dead code, no TODO comments, no duplicate logic, no print() statements; Alex check confirmed no os.getenv in services, no route imports in services. Minor note: import app.routes.bettors as bettors_mod appears inside ~15 test functions (intentional pattern for cache manipulation, not a blocking smell). No code changes needed.
 IMPACT: Confirmed all code changes from sessions 169-177 are clean. The 483-test suite has zero smells introduced by the recent accuracy field additions and consensus filter tests.

@@ -2,11 +2,11 @@
 
 ## HIGH PRIORITY — Testing
 
-- [ ] **_normalise_leaderboard_entry accuracy field** — `test_normalise_leaderboard_full_entry` in test_polymarket_service.py does NOT check `accuracy`. Add a test: raw dict with `"percentProfitable": 68.5` → `result["accuracy"] == pytest.approx(0.685)`. Also test `percentProfitable=None` → `result["accuracy"] is None`. Grep: `grep -n "accuracy.*normalise_leaderboard\|normalise_leaderboard.*accuracy\|percentProfitable" backend/tests/test_polymarket_service.py` returns nothing.
+- [ ] **GET /follows/live active positions include copy_value_pct field** — `test_follows_live_copy_signal_is_valid_enum` asserts copy_signal enum but no test checks that `copy_value_pct` is present in the route response positions (only in the mock data). Add test: mock positions with known copy_value_pct values, assert each active position in the response includes the key with correct numeric value. Grep: `grep -n "assert.*copy_value_pct" backend/tests/test_follows_live.py` returns nothing.
 
-- [ ] **GET /bettors leaderboard response accuracy passthrough** — mock `get_leaderboard` to return bettors with `accuracy=0.72`, assert GET /bettors response bettors list items include `accuracy` key with correct value. Current MOCK_LEADERBOARD in test_bettors.py has no accuracy field — no test asserts accuracy passes through the route. Grep: `grep -n "accuracy.*MOCK_LEADERBOARD\|bettors.*accuracy.*resp" backend/tests/test_bettors.py` returns nothing.
+- [ ] **_normalise_leaderboard_entry accuracy=0.0 when percentProfitable=0** — zero is a falsy boundary case; code correctly uses `is not None` check but no test validates this. If someone changes to `if pct_profitable:` the bug would silently make all 0%-profitable bettors show accuracy=None instead of 0.0. Add test: `percentProfitable=0` → `result["accuracy"] == 0.0` (not None). Grep: `grep -n "percentProfitable.*\b0\b" backend/tests/test_polymarket_service.py` returns nothing.
 
-- [ ] **POST /follows 409 detail message** — `test_duplicate_follow_rejected` only asserts status 409, not the error message. Add test: second follow of same address returns 409 with `detail` containing "already following". Confirms the user sees an actionable message, not just a raw error code. Grep: `grep -n "already.*follow\|follow.*already\|detail.*409\|test_duplicate_follow.*detail" backend/tests/test_follows.py` returns nothing.
+- [ ] **GET /bettors/{address} recent_bets have side field populated** — checklist item: "Recent bets all have outcome and side fields populated". Test for `outcome` exists but no test asserts `side` is present and non-empty on each bet. Add test: mock bets with known side values, assert `side` in each bet in the response. Grep: `grep -rn "assert.*\bside\b.*bet\|recent_bets.*side" backend/tests/` returns nothing.
 
 ---
 
