@@ -4,6 +4,107 @@
 *(Sessions 41-60 — archived from activity_log.md on 2026-03-24)*
 *(Sessions 61-80 — archived from activity_log.md on 2026-03-25)*
 *(Sessions 81-100 — archived from activity_log.md on 2026-03-25)*
+*(Sessions 101-119 — archived from activity_log.md on 2026-03-25)*
+
+## 2026-03-25 — TESTING (Session 119)
+DONE: Added 5 mobile viewport Playwright checks (89-93) at 375px: mobile bottom nav is display:block, .lb-grid is single column, visible .btn-primary buttons are ≥44px tall, no horizontal overflow on leaderboard view, landing page screenshot saved to reports/screenshots/mobile_375_landing.png. 93 total checks, 0 failures. 359 backend tests stable.
+IMPACT: Proves the mobile layout works — nav appears, bettor cards stack vertically (not side-by-side), and buttons are tappable size on iPhone-sized screens. These are the first explicit 375px layout correctness checks.
+FILES: autoagent/playwright_registry.py
+
+## 2026-03-25 — TESTING (Session 118)
+DONE: Added 5 CORS header tests (test_cors.py) covering simple request header presence, wildcard origin acceptance, OPTIONS preflight 200 response, Authorization header allowance, and no-origin same-origin requests. 359 backend tests pass (up from 354).
+IMPACT: Proves the CORS middleware is correctly configured for cross-origin browser clients — the frontend at localhost:3000 can reach the API at localhost:8002 with credentials and custom headers. Last remaining HIGH PRIORITY security gap now covered.
+FILES: backend/tests/test_cors.py
+
+## 2026-03-25 — META (Session 117)
+DONE: Code quality audit of sessions 108–115 (9 files). All 9 virtual team checks passed. Marcus XSS greps clean — 5 innerHTML=variable patterns verified, all API-sourced strings properly escaped with escapeHtml(). 354 backend tests stable.
+IMPACT: Confirms the codebase is clean through session 115. XSS-free streak now 41+ sessions (77–117).
+FILES: autoagent/memory/knowledge.md, autoagent/memory/activity_log.md, autoagent/memory/backlog.md
+
+## 2026-03-25 — META (Session 116)
+IMPROVED: backlog.md expanded file list for audit task; added CORS test to HIGH PRIORITY; updated PROJECT.md test count 303→354; added rule to PROMPT.md to update Known Facts test count at session log time.
+FILES: autoagent/memory/backlog.md, autoagent/PROJECT.md, autoagent/PROMPT.md, autoagent/memory/knowledge.md
+
+## 2026-03-25 — TESTING (Session 115)
+DONE: Code quality audit passed; 3 new tests: bcrypt hash storage, rate-limit stability (10 rapid logins all 401), Stripe basic-tier upgrade chain (webhook → tier → follow limit 5). 354 tests pass.
+IMPACT: Proves passwords stored securely, server stable under auth abuse, Stripe→tier→permissions chain works end-to-end.
+FILES: backend/tests/test_security.py, backend/tests/test_payments.py
+
+## 2026-03-25 — TESTING (Session 114)
+DONE: 5 new Playwright checks (84-88): register form fields, login wrong-password inline error, sort button active class toggle, search filter, profile tab navigation. 88 total checks, 0 failures.
+IMPACT: Frontend E2E coverage proves full auth form, login errors, leaderboard sort, search filtering, and profile navigation.
+FILES: autoagent/playwright_registry.py
+
+## 2026-03-25 — TESTING (Session 113)
+DONE: 41 new security tests — XSS payloads, SQL injection, JWT tier bypass, auth bypass on all 9 protected endpoints. Test count: 310 → 351.
+IMPACT: Backend hardened against XSS storage, SQL injection, JWT tier forgery. All protected endpoints proven to reject unauthenticated requests.
+FILES: backend/tests/test_security_extended.py
+
+## 2026-03-25 — TESTING (Session 112)
+DONE: Bettor profile rank/pnl_usd fields exposed; REDEEM-type bets filtered; 7 new tests covering rank/pnl/outcome/price fields.
+IMPACT: Profile shows accurate rank and pnl_usd; bets list no longer shows REDEEM entries — only actual trades.
+FILES: backend/app/services/polymarket.py, frontend/index.html, backend/tests/test_bettors.py, backend/tests/test_polymarket_service.py
+
+## 2026-03-25 — BRAIN SESSION (Session 111)
+RESEARCHED: agent reliability, copy trading SaaS, FastAPI 2026, 40+ Polymarket competitors analyzed.
+IMPLEMENTED: knowledge.md curation, design.md Edge Score badge pattern, 4 FEATURE MODE backlog items.
+SOURCES: 7 new sources logged.
+
+## 2026-03-25 — UI/UX (Session 110)
+DONE: Modal keyboard shortcuts, leaderboard "last active" badge, follow button glow pulse, social proof counter animation, pricing locked-feature tooltips.
+IMPACT: Escape/Enter work on all modals; active badge makes app feel real-time; pulse draws eye to CTA; counter animation reinforces social proof; tooltips surface upgrade path at curiosity peak.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
+## 2026-03-25 — UI/UX (Session 109)
+DONE: Hero background + AI logo via NovaBanana; wired as CSS background-image with dark scrim overlay; logo.png added to nav with onerror fallback; fixed CHECK 78; updated novabana.md skill. 80 checks, 303 tests stable.
+IMPACT: Landing hero now has premium AI-generated dark fintech background image — gives immediate visual credibility.
+FILES: frontend/index.html, frontend/assets/hero-bg.jpg, frontend/assets/logo.png, autoagent/playwright_registry.py
+
+## 2026-03-25 — UI/UX (Session 108)
+DONE: Back-to-top FAB on browse leaderboard — fixed green ↑ button fades in when scrolled past 300px, resets on view change. 2 new Playwright checks (77-78).
+IMPACT: 100-item leaderboard easier to navigate — users jump back to top without manual scrolling.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
+## 2026-03-25 — META (Session 107)
+DONE: Code quality audit of sessions 99–105. All 9 virtual team checks passed. XSS-free streak 77–105 = 29+ sessions. Test count: 303 stable.
+IMPACT: Confirms code quality clean through session 105. escapeHtml discipline deeply embedded.
+FILES: autoagent/memory/backlog.md, autoagent/memory/knowledge.md, autoagent/sessions.json
+
+## 2026-03-25 — META (Session 106)
+IMPROVED: meta/PROMPT.md STEP 0.5 added; PROMPT.md PERIODIC TECH-DEBT CHECK strengthened; backlog extended with audit task + 5 UI/UX tasks.
+PATTERNS FOUND: PERIODIC TECH-DEBT CHECK missed at count=80 — two-layer enforcement added.
+FILES: autoagent/meta/PROMPT.md, autoagent/PROMPT.md, autoagent/memory/backlog.md
+
+## 2026-03-25 — UI/UX (Session 105)
+DONE: Demo mode landing page — "Try the demo" button; enterDemoMode() renders 5 mock bettors client-side with dismissable banner; exitDemoMode() returns to landing. 2 Playwright checks (75-76).
+IMPACT: Visitors explore full product UI before registering — interactive demos convert 2x better than screenshots.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
+## 2026-03-25 — UI/UX (Session 104)
+DONE: Bettor profile rich stat cards — colored gradient borders, hover lift, trend arrows. _setProfileTrend() helper wired. 2 Playwright checks (73-74).
+IMPACT: Profile stat cards feel like premium trading dashboard — color-coded borders + trend arrows give instant directional context.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
+## 2026-03-25 — UI/UX (Session 103)
+DONE: Hero section polish — h1 96px max; .hero-cycle cycling value props; CTA glow pulse; .hero-live-stats bar. 2 Playwright checks (71-72).
+IMPACT: Landing hero bolder and more dynamic — cycling value props keep message fresh, pulsing CTA draws eye, stat bar reinforces credibility.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
+## 2026-03-25 — UI/UX (Session 102)
+DONE: Nav progress bar + scroll-to-top on tab switch — 3px green gradient #page-progress bar animates on every showView/showTab call; showTab() also smoothly scrolls main-content to top. 2 Playwright checks (69-70).
+IMPACT: Every tab transition has immediate visual feedback; smooth scroll prevents mid-scroll state on tab switch.
+FILES: frontend/index.html, autoagent/playwright_registry.py
+
+## 2026-03-25 — DEEP BRAIN (Session 101)
+RESEARCHED: agent reliability 2026, ECC skills ecosystem, agentic context management, copy trading CRO 2026, FastAPI production 2026.
+IMPLEMENTED: GREP-BEFORE-PICKING rule in PROMPT.md; knowledge.md merged stale XSS streak; activity_log archived sessions 61-80.
+BACKLOGGED: Demo mode landing page (2x conversion research finding). SOURCES: 7 new sources.
+
+## 2026-03-25 — META (Session 100)
+DONE: Code quality audit of sessions 94–98. All 9 virtual team checks passed. Removed stale tech_debt entry. Test count 303 confirmed stable.
+IMPACT: XSS-free cycle confirmed through sessions 94–98. Stale debt cleared.
+FILES: autoagent/memory/tech_debt.md, autoagent/memory/backlog.md, autoagent/sessions.json
+*(Sessions 81-100 — archived from activity_log.md on 2026-03-25)*
 
 ## 2026-03-24 10:00 — TESTING (Session 40)
 DONE: Added 5 branch-coverage tests — (1) send_sms returns False when any credential is empty (early-return guard); (2) send_sms returns True when Twilio HTTP succeeds (the only success path, was untested); (3) send_sms returns False on HTTP exception (exception handler path); (4) scheduler passes phone_number and sms_enabled=True to dispatch_bet_notification for VIP user with phone_verified=True and sms_enabled=True (SMS dispatch path was fully untested); (5) dispatch_bet_notification does NOT call send_sms when phone_number=None even with sms_enabled=True and VIP tier (phone_number guard). 263→268 tests.

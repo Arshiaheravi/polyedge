@@ -46,6 +46,14 @@
 
 ## Session Reflexions
 
+### BRAIN Session #132 Reflexion — 2026-03-25
+ACCOMPLISHED: (1) STEP 1B: No failure patterns in last 10 sessions — all green. (2) STEP 1C: Fixed duplicate RULE entry in Session #131 reflexion (the RULE and test count block was duplicated — removed the second copy). (3) STEP 1D: Archived sessions 100-119 from activity_log.md to activity_log_archive.md (32 entries → 12 entries kept). (4) Implemented phase-grouped task structure for multi-domain tasks in PROMPT.md. (5) Backlogged copy-ratio sizing (PolyGun competitor feature). (6) 7 new sources evaluated and logged.
+FAILED: Background search agents returned 0-byte output files (same as session 121) — fell back to direct WebSearch/WebFetch tools as established rule says.
+RULE: [2026-03-25] When a task in current_task.md spans 3+ distinct domains (backend + frontend + tests), write steps as phase groups (Phase 1: Backend / Phase 2: Frontend / Phase 3: Tests) not a flat list. Phase labels let a resuming session immediately locate its position without re-reading all steps. Flat list ≥8 steps is harder to resume mid-task.
+RULE: [2026-03-25] PolyGun (leading competitor, acquired Polymarket Analytics March 2026) differentiates on: copy-ratio multiplier (0.1x-1x per bettor), institutional-grade analytics (position history, performance breakdown). PolyEdge must build Copy Portfolio Simulator + copy-ratio setting to compete. Both are in HIGH PRIORITY backlog.
+
+- Test count: **368 passed** (stable), **130 Playwright checks** (stable — no code changes)
+
 ### Session #129 Reflexion — 2026-03-25 (TESTING — Playwright checks 117-125)
 ACCOMPLISHED: Added 9 Playwright checks (117-125) — typeof checks for toastBet, enterDemoMode, animateCounter, runLandingCounters, showTab, loadLeaderboard, profileToggleFollow; DOM check for #toast-container; renderBettorCard() aria-label check. 125 total checks, 0 failures. 359 backend tests stable.
 FAILED: Nothing — all 9 checks passed first run.
@@ -59,8 +67,6 @@ FAILED: Nothing — all 9 tests passed first run. Full-suite failures (7 FAILED,
 RULE: [2026-03-25] To compute conviction score in scheduler without extra API calls, derive avg_bet_usd from the same bets array already fetched: avg = sum(amounts) / count. This avoids a get_bettor_profile() call (which scans the leaderboard) on every poll cycle. Only skip bets with amount==0 to avoid distorting the average.
 
 - Test count: **368 passed** (359 + 9 new conviction tests), **130 Playwright checks** (unchanged)
-FAILED: Nothing — all tests passed first run.
-RULE: [2026-03-25] To compute conviction score in scheduler without extra API calls, derive avg_bet_usd from the same bets array already fetched: avg = sum(amounts) / count. This avoids a get_bettor_profile() call (which scans the leaderboard) on every poll cycle. Only skip bets with amount==0 to avoid distorting the average.
 
 ### Session #130 Reflexion — 2026-03-25 (FEATURE — Whale Consensus Signal)
 ACCOMPLISHED: Built Whale Consensus Signal end-to-end — get_consensus_signals() in polymarket.py fetches top-100 bettor positions concurrently (semaphore=10), groups by conditionId+outcome, returns markets with 3+ whale agreement; GET /markets/consensus route with tier-gating (Free=top 3 no names, Basic=all no names, VIP=all+names); Consensus tab in frontend with loadConsensus() JS rendering market cards with entry/current price comparison and whale name badges; 5-min cache; 130 Playwright checks, 0 failures.

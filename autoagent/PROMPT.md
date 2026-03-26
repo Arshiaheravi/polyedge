@@ -44,6 +44,18 @@ Read `autoagent/PROJECT.md` first for project rules, codebase conventions, git p
    - [ ] Step 2
    - [ ] Step 3
    ```
+   **Phase grouping for multi-domain tasks**: If the task touches 3+ distinct domains (e.g., backend route + frontend UI + tests), group steps into labeled phases instead of a flat list:
+   ```
+   # Current Task: [task name]
+   Phase 1: Backend (2 steps) | Phase 2: Frontend (3 steps) | Phase 3: Tests (2 steps) | Remaining: 7
+   ## Phase 1: Backend
+   - [ ] P1.1 Add model field X
+   - [ ] P1.2 Add route GET /foo
+   ## Phase 2: Frontend
+   - [ ] P2.1 Add tab section
+   ...
+   ```
+   Phase grouping prevents context loss when a multi-domain task spans sessions — the phase header immediately tells the resuming agent WHERE in the task it is. (Source: Confucius Code Agent arxiv 2512.10398 — hierarchical working memory for long-context reasoning)
    **Step quality bar** (15-minute unit rule): Each step must be independently verifiable, have a single dominant risk, and have a clear done condition. If a step can't be verified in isolation → split it. (Source: ECC agentic-engineering skill)
    Update the "remaining" count as you check off steps. If remaining > 5 and context is getting long, sub-divide the rest into a continuation task rather than trying to finish everything in one window.
    **CONTEXT_SUMMARY gate**: When your context is more than half full (many tool calls made, long file reads completed), emit this block before continuing:

@@ -162,6 +162,12 @@ Where: PROMPT.md (WHEN A TOOL CALL FAILS section)
 Source: arxiv 2508.11126 (AI Agentic Programming Survey)
 Expected impact: Faster root-cause identification in fix-test-retry cycles; fewer misdiagnosed hypotheses
 
+## Phase-grouped task structure for multi-domain tasks — implemented 2026-03-25
+What: When a task touches 3+ distinct domains (backend + frontend + tests), group steps into labeled phases in current_task.md (Phase 1: Backend / Phase 2: Frontend / Phase 3: Tests) instead of a flat numbered list. The phase header tells a resuming agent WHERE in the task it is without re-reading all steps.
+Where: PROMPT.md (step 6 — current_task.md format section, Phase grouping rule)
+Source: arxiv 2512.10398 (Confucius Code Agent) — hierarchical working memory for long-context reasoning; persistent note-taking for cross-session task continuity
+Expected impact: Multi-domain tasks that span sessions resume faster — agent immediately knows it's in Phase 2 (Frontend) without re-reading the entire plan; reduces re-exploration at session resumption
+
 ## Visible-element filter for mobile Playwright checks — implemented 2026-03-25
 What: When checking element dimensions (height, width) at mobile viewport, filter by getBoundingClientRect().height > 0 to skip elements in display:none sections. Also use element+class selector (`.btn.btn-primary`) not just class (`.btn-primary`) to avoid matching links styled as buttons.
 Where: autoagent/skills/playwright.md (VISIBLE ELEMENT FILTER section)

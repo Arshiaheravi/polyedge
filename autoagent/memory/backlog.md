@@ -17,6 +17,8 @@
 
 - [ ] Exit Alerts — in scheduler.py maintain _last_positions dict per bettor address; each poll compare current positions to previous; if a conditionId that existed last poll is now gone or size reduced by >50%, it is an exit; call dispatch_bet_notification() with type="EXIT" and message "⚡ [BettorName] EXITING [Market] — consider taking profit". TIER GATE: only send EXIT notifications to VIP users (tier == "vip"). Store exit events as BetEvent with type="EXIT" for all tiers (for future analytics).
 
+- [ ] Copy Ratio Setting — let users set a per-bettor copy ratio multiplier (0.1x, 0.25x, 0.5x, 1x) stored in BettorFollow table; show on follow cards as "Copy at 0.5x"; include copy_ratio in notification messages: "🔥 EXTREME conviction — Copy at 0.5x = $X". TIER GATE: Basic/VIP only (Free always shows full bet size, no ratio setting). Rationale: PolyGun (leading competitor) offers 0.1x-1x ratio as core differentiator — without it, PolyEdge users have to manually scale down each copy trade.
+
 ---
 
 ## MEDIUM PRIORITY — Tier 2 Money-Making Features

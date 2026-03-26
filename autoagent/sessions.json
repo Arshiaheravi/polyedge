@@ -2902,4 +2902,15 @@
       "notes": "frontend not changed"
     }
   }
+,
+  {
+    "session": 132,
+    "date": "2026-03-25",
+    "time": "12:00",
+    "type": "brain",
+    "summary": "Added phase-grouped task structure for multi-domain tasks in PROMPT.md; backlogged copy-ratio sizing (PolyGun competitor feature); archived 20 oldest activity log entries; fixed duplicate rule in knowledge.md",
+    "files": ["autoagent/PROMPT.md", "autoagent/memory/backlog.md", "autoagent/memory/knowledge.md", "autoagent/memory/activity_log.md", "autoagent/memory/activity_log_archive.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md"],
+    "tests": {"before": 368, "after": 368, "status": "skip"},
+    "frontend": {"status": "skip", "checks": 130, "failures": 0, "notes": "brain session — no code changes"}
+  }
 ]
