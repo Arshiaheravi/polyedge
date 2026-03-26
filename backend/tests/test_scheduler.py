@@ -12,7 +12,7 @@ from app.auth import hash_password
 from app.config import get_settings
 from app.database import Base
 from app.models import BetEvent, BettorFollow, User
-from app.services.scheduler import _parse_timestamp, _poll_bets
+from app.services.scheduler import _parse_timestamp, _poll_bets, _poll_vip_bets
 
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -951,6 +951,99 @@ def test_vip_poll_interval_config():
     cfg = get_settings()
     assert cfg.vip_poll_interval_seconds == 5
     assert cfg.default_poll_interval_seconds == 30
+
+
+# ── _poll_vip_bets behavioural ────────────────────────────────────────────────
+
+
+def test_poll_vip_bets_no_vip_users_skips_api(sched_db):
+    """When no VIP users exist in DB, _poll_vip_bets returns without calling Polymarket.
+
+    Scenario: only free/basic users are in DB → early-return guard fires and
+    get_recent_bets must never be called.
+    """
+    session, Session = sched_db
+
+    # Free user with a follow — but no VIP users
+    user = User(
+        email="free_vip@x.com", hashed_password=hash_password("p"),
+        name="FreeUser", subscription_tier="free",
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xfreeaddr", bettor_name="whale"))
+    session.commit()
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock()) as mock_fetch:
+        run(_poll_vip_bets())
+
+    mock_fetch.assert_not_called()
+
+
+def test_poll_vip_bets_only_polls_vip_followed_addresses(sched_db):
+    """_poll_vip_bets only fetches bets for addresses followed by VIP users.
+
+    A free-user-only followed address (0xfreeonly) must NOT be polled.
+    The VIP-followed address (0xvipaddr) MUST be polled exactly once.
+    """
+    session, Session = sched_db
+
+    free_user = User(
+        email="free2@x.com", hashed_password=hash_password("p"),
+        name="FreeUser2", subscription_tier="free",
+    )
+    vip_user = User(
+        email="vip2@x.com", hashed_password=hash_password("p"),
+        name="VipUser2", subscription_tier="vip",
+    )
+    session.add_all([free_user, vip_user])
+    session.flush()
+    # Free user follows 0xfreeonly; VIP user follows 0xvipaddr
+    session.add(BettorFollow(user_id=free_user.id, bettor_address="0xfreeonly"))
+    session.add(BettorFollow(user_id=vip_user.id, bettor_address="0xvipaddr"))
+    session.commit()
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[])) as mock_fetch, \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()):
+        run(_poll_vip_bets())
+
+    polled = [call.args[0] for call in mock_fetch.call_args_list]
+    assert "0xvipaddr" in polled, "VIP-followed address must be polled"
+    assert "0xfreeonly" not in polled, "Free-only-followed address must NOT be polled by VIP fast-path"
+
+
+def test_poll_vip_bets_new_bet_creates_event_and_notifies_vip_follower(sched_db):
+    """New bet on a VIP-followed address is saved as BetEvent and VIP follower is notified.
+
+    Mirrors test_poll_bets_creates_bet_event but for the VIP fast-path.
+    """
+    session, Session = sched_db
+
+    vip_user = User(
+        email="vip3@x.com", hashed_password=hash_password("p"),
+        name="VipUser3", subscription_tier="vip",
+    )
+    session.add(vip_user)
+    session.flush()
+    session.add(BettorFollow(user_id=vip_user.id, bettor_address="0xvip3", bettor_name="bigwhale"))
+    session.commit()
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()) as mock_notify:
+        run(_poll_vip_bets())
+
+    verify = Session()
+    events = verify.query(BetEvent).all()
+    verify.close()
+
+    assert len(events) == 1, "BetEvent must be created for the new bet"
+    assert events[0].bettor_address == "0xvip3"
+    assert events[0].market_id == "mkt1"
+    assert events[0].notified is True
+    assert mock_notify.call_count == 1, "dispatch_bet_notification must fire for the VIP follower"
 
 
 def test_start_scheduler_registers_two_jobs():

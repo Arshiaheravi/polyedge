@@ -464,6 +464,57 @@ def test_profile_cache_tier_gate_not_bypassed(client, db):
     )
 
 
+def test_profile_cache_free_first_then_vip_gets_unlocked(client, db):
+    """Free user fetches first (caches locked entry) → VIP fetches same address → locked=False.
+
+    Reverse-order complement to test_profile_cache_tier_gate_not_bypassed.
+    Confirms the (address, tier) cache key works in BOTH directions:
+    - VIP must not see a stale locked entry from a prior free-user fetch.
+    """
+    import app.routes.bettors as bettors_mod
+    from app.models import User
+    from app.auth import hash_password, create_access_token
+
+    addr = "0xCACHE_FREE_FIRST"
+    for tier in ("free", "basic", "vip"):
+        bettors_mod._profile_cache.pop((addr, tier), None)
+
+    # Free user fetches first — populates cache with locked entry
+    free_user = User(email="free_ff@test.com", hashed_password=hash_password("pw"),
+                     name="FreeFFirst", subscription_tier="free")
+    db.add(free_user)
+    db.commit()
+    db.refresh(free_user)
+    free_token = create_access_token({"sub": str(free_user.id)})
+    free_headers = {"Authorization": f"Bearer {free_token}"}
+
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=MOCK_PROFILE_SIM)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=MOCK_BETS_SIM)), \
+         patch("app.routes.bettors.compute_copy_simulator", new=AsyncMock(return_value=MOCK_SIM_RESULT)):
+        free_resp = client.get(f"/bettors/{addr}", headers=free_headers)
+    assert free_resp.status_code == 200
+    assert free_resp.json()["copy_simulator"].get("locked") is True, "Free user should see locked=True"
+
+    # VIP user fetches the SAME address — must get their own unlocked entry
+    vip_user = User(email="vip_ff@test.com", hashed_password=hash_password("pw"),
+                    name="VipFFirst", subscription_tier="vip")
+    db.add(vip_user)
+    db.commit()
+    db.refresh(vip_user)
+    vip_token = create_access_token({"sub": str(vip_user.id)})
+    vip_headers = {"Authorization": f"Bearer {vip_token}"}
+
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=MOCK_PROFILE_SIM)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=MOCK_BETS_SIM)), \
+         patch("app.routes.bettors.compute_copy_simulator", new=AsyncMock(return_value=MOCK_SIM_RESULT)):
+        vip_resp = client.get(f"/bettors/{addr}", headers=vip_headers)
+    assert vip_resp.status_code == 200
+    assert vip_resp.json()["copy_simulator"].get("locked") is not True, (
+        "VIP user must see locked=False even after free user cached the same address — "
+        "cache key must include tier (Bug #1 reverse-order regression)"
+    )
+
+
 # ── Polymarket HTTP 500 resilience (httpx transport level) ────────────────────
 
 

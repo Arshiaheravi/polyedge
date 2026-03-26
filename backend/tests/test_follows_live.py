@@ -263,6 +263,85 @@ def test_follows_live_vip_user_gets_vip_tier(client, db, auth_headers, registere
     assert resp.json()["tier"] == "vip"
 
 
+def test_follows_live_positions_include_conviction_fields(client, auth_headers):
+    """active_positions items must include conviction_score and conviction_label keys.
+
+    These fields are computed by _conviction() in _fetch_one. Even when avg_bet is zero
+    (no recent bets), the keys must be present (score=None, label='').
+    """
+    import app.routes.follows as follows_module
+    follows_module._activity_cache.clear()
+
+    client.post("/follows", json={"bettor_address": "0xconv1", "bettor_name": "ConvWhale"},
+                headers=auth_headers)
+
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=MOCK_POSITIONS)), \
+         patch("app.routes.follows.get_recent_bets", new=AsyncMock(return_value=[])):
+        resp = client.get("/follows/live", headers=auth_headers)
+
+    assert resp.status_code == 200
+    pos = resp.json()["bettors"][0]["active_positions"][0]
+    assert "conviction_score" in pos, "conviction_score key must always be present"
+    assert "conviction_label" in pos, "conviction_label key must always be present"
+
+
+def test_follows_live_conviction_extreme_when_10x_avg_bet(client, auth_headers):
+    """When initial_value_usd is >= 10x avg_bet, conviction_label must be 'EXTREME'.
+
+    _conviction() returns ('EXTREME') when score = amount / avg >= 10.0.
+    Here: initial_value_usd=1000, avg_bet=100 → score=10.0 → EXTREME.
+    """
+    import app.routes.follows as follows_module
+    follows_module._activity_cache.clear()
+
+    client.post("/follows", json={"bettor_address": "0xconv2", "bettor_name": "BigWhale"},
+                headers=auth_headers)
+
+    big_position = [dict(MOCK_POSITIONS[0], initial_value_usd=1000.0)]
+    # 10 recent bets of $100 each → avg_bet = 100 → score = 1000/100 = 10.0 → EXTREME
+    recent_bets = [{"amount_usd": 100.0, "timestamp": "2026-01-01T00:00:00Z"} for _ in range(10)]
+
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=big_position)), \
+         patch("app.routes.follows.get_recent_bets", new=AsyncMock(return_value=recent_bets)):
+        resp = client.get("/follows/live", headers=auth_headers)
+
+    assert resp.status_code == 200
+    pos = resp.json()["bettors"][0]["active_positions"][0]
+    assert pos["conviction_label"] == "EXTREME", (
+        f"Expected EXTREME but got '{pos['conviction_label']}' — "
+        f"score={pos.get('conviction_score')} (initial=1000, avg_bet=100)"
+    )
+    assert pos["conviction_score"] == 10.0
+
+
+def test_follows_live_conviction_empty_when_below_3x_avg_bet(client, auth_headers):
+    """When initial_value_usd is < 3x avg_bet, conviction_label must be '' (empty).
+
+    _conviction() returns '' when score = amount / avg < 3.0.
+    Here: initial_value_usd=200, avg_bet=100 → score=2.0 → ''.
+    """
+    import app.routes.follows as follows_module
+    follows_module._activity_cache.clear()
+
+    client.post("/follows", json={"bettor_address": "0xconv3", "bettor_name": "NormalWhale"},
+                headers=auth_headers)
+
+    small_position = [dict(MOCK_POSITIONS[0], initial_value_usd=200.0)]
+    recent_bets = [{"amount_usd": 100.0, "timestamp": "2026-01-01T00:00:00Z"} for _ in range(10)]
+
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=small_position)), \
+         patch("app.routes.follows.get_recent_bets", new=AsyncMock(return_value=recent_bets)):
+        resp = client.get("/follows/live", headers=auth_headers)
+
+    assert resp.status_code == 200
+    pos = resp.json()["bettors"][0]["active_positions"][0]
+    assert pos["conviction_label"] == "", (
+        f"Expected empty label but got '{pos['conviction_label']}' — "
+        f"score={pos.get('conviction_score')} (initial=200, avg_bet=100)"
+    )
+    assert pos["conviction_score"] == 2.0
+
+
 def test_follows_live_stale_cache_returns_current_tier_after_upgrade(
     client, db, auth_headers, registered_user
 ):
