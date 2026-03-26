@@ -691,3 +691,38 @@ def test_auth_me_does_not_contain_accuracy(client, auth_headers):
     assert "accuracy" not in data, (
         "GET /auth/me must not expose 'accuracy' — that is a bettor-profile metric, not user account data"
     )
+
+
+def test_bettor_detail_recent_bets_have_side_field(client):
+    """GET /bettors/{address} recent_bets must include 'side' field on each bet, non-empty.
+
+    Checklist item: 'Recent bets all have outcome and side fields populated.'
+    The route passes bets through from get_recent_bets() — this confirms 'side' is not
+    stripped in transit and arrives with a non-empty value.
+    """
+    import app.routes.bettors as bettors_mod
+    addr = "0xBET_SIDE"
+    bettors_mod._profile_cache.pop(addr, None)
+    mock_profile = {
+        "address": addr, "name": "SideFieldTrader", "rank": 0, "pnl_usd": 0.0,
+        "volume_usd": 100.0, "total_bets": 2, "avg_bet_usd": 75.0, "avatar_url": "",
+    }
+    mock_bets = [
+        {"market_id": "m1", "market_question": "Will BTC hit $200k?",
+         "outcome": "Yes", "price": 0.55, "side": "BUY",
+         "amount_usd": 100.0, "timestamp": "2026-03-01", "type": "BUY",
+         "tx_hash": "", "market_icon": "", "market_slug": ""},
+        {"market_id": "m2", "market_question": "Will ETH flip BTC?",
+         "outcome": "No", "price": 0.30, "side": "BUY",
+         "amount_usd": 50.0, "timestamp": "2026-03-02", "type": "BUY",
+         "tx_hash": "", "market_icon": "", "market_slug": ""},
+    ]
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=mock_profile)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=mock_bets)):
+        resp = client.get(f"/bettors/{addr}")
+    assert resp.status_code == 200
+    bets = resp.json()["recent_bets"]
+    assert len(bets) == 2
+    for bet in bets:
+        assert "side" in bet, f"'side' key missing from bet: {bet}"
+        assert bet["side"], f"'side' is empty for bet: {bet}"

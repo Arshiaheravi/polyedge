@@ -374,6 +374,48 @@ def test_follows_live_stale_cache_returns_current_tier_after_upgrade(
     )
 
 
+def test_follows_live_positions_include_copy_value_pct(client, auth_headers):
+    """copy_value_pct must be present in each active position with the correct numeric value.
+
+    The route passes positions through from get_active_positions() — this test confirms
+    the field is not stripped in transit. Uses 3 positions with distinct known values
+    so a generic passthrough doesn't accidentally match a wrong field.
+    """
+    import app.routes.follows as follows_module
+    follows_module._activity_cache.clear()
+
+    client.post(
+        "/follows",
+        json={"bettor_address": "0xcvp_test", "bettor_name": "CopyValueWhale"},
+        headers=auth_headers,
+    )
+
+    positions_with_copy_value = [
+        {**MOCK_POSITIONS[0], "copy_value_pct": 5.0, "copy_signal": "good"},
+        {**MOCK_POSITIONS[0], "copy_value_pct": 22.5, "copy_signal": "fair",
+         "market_title": "Fair market", "outcome": "No"},
+        {**MOCK_POSITIONS[0], "copy_value_pct": 47.3, "copy_signal": "late",
+         "market_title": "Late market", "outcome": "Yes"},
+    ]
+    expected_values = [5.0, 22.5, 47.3]
+
+    with patch("app.routes.follows.get_active_positions",
+               new=AsyncMock(return_value=positions_with_copy_value)), \
+         patch("app.routes.follows.get_recent_bets", new=AsyncMock(return_value=[])):
+        resp = client.get("/follows/live", headers=auth_headers)
+
+    assert resp.status_code == 200
+    positions = resp.json()["bettors"][0]["active_positions"]
+    assert len(positions) == 3, "All 3 positions must be present in the response"
+    for pos, expected in zip(positions, expected_values):
+        assert "copy_value_pct" in pos, (
+            f"copy_value_pct key missing from position: {pos}"
+        )
+        assert pos["copy_value_pct"] == expected, (
+            f"Expected copy_value_pct={expected} but got {pos['copy_value_pct']}"
+        )
+
+
 def test_follows_live_copy_signal_is_valid_enum(client, auth_headers):
     """copy_signal on every active position must be one of 'good', 'fair', 'late'.
 
