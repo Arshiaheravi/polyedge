@@ -3527,5 +3527,15 @@
     "files": ["autoagent/skills/playwright.md", "autoagent/memory/backlog.md"],
     "tests": {"before": 0, "after": 0, "status": "skip"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "meta session — no code changes"}
+  },
+  {
+    "session": 159,
+    "date": "2026-03-26",
+    "time": "14:00",
+    "type": "work",
+    "summary": "VIP users now get bet alerts up to 6x faster — added a dedicated 5-second poll for bettors followed by VIP users (vs 30s for everyone else), plus a /readiness endpoint that checks database connectivity for production deployments",
+    "files": ["backend/app/config.py", "backend/app/services/scheduler.py", "backend/app/main.py", "backend/tests/test_health.py", "backend/tests/test_scheduler.py"],
+    "tests": {"before": 446, "after": 450, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]

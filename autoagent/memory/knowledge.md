@@ -44,7 +44,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **446 passed, 1 skipped** (as of 2026-03-26, session 157)
+- Test count: **450 passed, 1 skipped** (as of 2026-03-26, session 159)
 - Playwright E2E: **42 passed, 2 skipped** (as of 2026-03-26, session 156)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -56,6 +56,11 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #159 Reflexion — 2026-03-26
+ACCOMPLISHED: Added VIP-tier 5-second poll interval — second APScheduler job (_poll_vip_bets) queries only bettor addresses followed by at least one VIP user and runs every 5s. Main job still runs every 30s for all addresses. Duplicate prevention handled by DB duplicate check (bettor_address + market_id + timestamp). Also added GET /readiness endpoint with DB connectivity check. 4 new tests; 450 total.
+FAILED: test_start_scheduler_registers_two_jobs initially failed with RuntimeError (no current event loop) — AsyncIOScheduler.start() requires a running asyncio event loop in non-async test context. Fix: patch AsyncIOScheduler.start with patch.object before calling start_scheduler().
+RULE: [2026-03-26] APScheduler.start() requires a running asyncio event loop. In synchronous pytest tests, use `patch.object(AsyncIOScheduler, "start")` so add_job() still registers jobs (they're stored in-memory tentatively) but start() is a no-op. Also reset the module-level `_scheduler = None` after the test to prevent state leakage into other scheduler tests.
 
 ### Session #157 Reflexion — 2026-03-26
 ACCOMPLISHED: Added 3 reliability tests: (1) Polymarket HTTP 500 at httpx transport layer → service swallows it, route returns 200 with empty list — confirmed `except Exception: break` in `get_leaderboard` and `except Exception: return []` in `_fetch_activity` actually work. (2) Same for bettor detail endpoint. (3) 10 concurrent GET /bettors threads via Python `threading.Thread` all return 200.

@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 14:00 — FEATURE (Session 159)
+DONE: Added VIP-tier 5-second poll interval (vs 30s for all tiers) — scheduler now runs two APScheduler jobs: _poll_vip_bets every 5s for addresses followed by VIP users, _poll_bets every 30s for all addresses. Also added GET /readiness endpoint that checks DB connectivity (SELECT 1) and returns 200/503 for production deployments. 4 new tests added (450 total).
+IMPACT: VIP users receive bet notifications up to 6x faster, closing the competitive gap vs PolyCop/PolyGun. The readiness probe enables safe k8s/Docker deployments with proper health gating.
+FILES: backend/app/config.py, backend/app/services/scheduler.py, backend/app/main.py, backend/tests/test_health.py, backend/tests/test_scheduler.py
+
 ## 2026-03-26 — META (Session 158)
 IMPROVED: (1) playwright.md — added TIMER TESTING section: page.clock.fast_forward() pattern used in session 156 but never documented; includes install-before-goto rule and when-to-use guidance. (2) backlog.md — removed empty "HIGH PRIORITY — Frontend UI Playwright Tests" section header (all tasks completed sessions 149–157, empty section was confusing). (3) backlog.md — restored "Frontend API error handling" and "Dead code" code review items that were explicitly kept in session 148 but silently dropped in subsequent backlog cleanups.
 PATTERNS FOUND: (a) Useful Playwright patterns (page.clock) get used in work sessions but never filed back to playwright.md — only enters knowledge.md at best. (b) Backlog items can silently disappear when sections get cleaned up; session 148 META kept two items but they were gone by session 157.

@@ -11,12 +11,6 @@
 
 ---
 
-## HIGH PRIORITY — Quick Wins (VIP differentiators + production readiness)
-
-- [ ] **VIP tier: reduce scheduler poll from 30s to 5s** — CLAUDE.md already promises "Priority speed" for VIP tier but scheduler polls at the same 30s interval for all tiers. Fix: add `VIP_POLL_INTERVAL_SECONDS = 5` config; scheduler runs two APScheduler jobs (5s VIP, 30s basic/free) or dynamically adjusts. Closes the competitive gap vs. PolyCop/PolyGun who claim sub-second alerts. One-line config change + minor scheduler split. (Source: Medium polybots 2026 + CLAUDE.md VIP tier description, session 153)
-
-- [ ] **GET /health + GET /readiness endpoints** — Add `routes/health.py` with two endpoints: `/health` returns 200 immediately (liveness probe), `/readiness` checks DB connectivity (`db.execute("SELECT 1")`) and returns 200 or 503. Required before any production deployment or Docker/k8s setup. (Source: render.com FastAPI best practices 2026, session 153)
-
 ---
 
 ## MEDIUM PRIORITY — Edge Cases & Reliability
