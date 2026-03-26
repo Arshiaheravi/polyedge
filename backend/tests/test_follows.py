@@ -272,6 +272,52 @@ def test_delete_follow_with_multiple_follows_removes_only_correct_one(client, db
     assert "0xaaa_multi" not in addresses
 
 
+def test_follows_list_order_is_newest_first(client, db, auth_headers, registered_user):
+    """GET /follows returns follows ordered newest-first (created_at DESC).
+
+    Directly sets created_at timestamps after DB insert to guarantee a deterministic
+    ordering gap — avoids flakiness from fast execution collapsing timestamps to same second.
+    """
+    from datetime import datetime, timedelta
+    from app.models import BettorFollow, User
+
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
+    addresses = ["0xorder_first", "0xorder_second", "0xorder_third"]
+    for addr in addresses:
+        client.post("/follows", json={"bettor_address": addr}, headers=auth_headers)
+
+    # Assign explicit created_at values so order is unambiguous
+    now = datetime.utcnow()
+    follows = (
+        db.query(BettorFollow)
+        .filter(BettorFollow.user_id == user.id)
+        .order_by(BettorFollow.id)
+        .all()
+    )
+    assert len(follows) == 3
+    follows[0].created_at = now - timedelta(hours=2)   # oldest
+    follows[1].created_at = now - timedelta(hours=1)   # middle
+    follows[2].created_at = now                        # newest
+    db.commit()
+
+    resp = client.get("/follows", headers=auth_headers)
+    assert resp.status_code == 200
+    result = resp.json()["follows"]
+    assert len(result) == 3
+
+    # First item must have the most recent created_at
+    ts0 = result[0]["created_at"]
+    ts1 = result[1]["created_at"]
+    ts2 = result[2]["created_at"]
+    assert ts0 > ts1 > ts2, (
+        f"Follows not ordered newest-first: {ts0} > {ts1} > {ts2} violated"
+    )
+
+
 def test_get_follows_unknown_tier_returns_limit_zero(client, db, auth_headers, registered_user):
     """GET /follows for a user with an unrecognised tier returns limit=0.
     TIER_LIMITS.get("enterprise", 0) == 0; tier field reflects the actual DB value."""
