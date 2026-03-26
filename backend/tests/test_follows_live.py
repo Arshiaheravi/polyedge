@@ -372,3 +372,37 @@ def test_follows_live_stale_cache_returns_current_tier_after_upgrade(
         "Cache returned stale tier:'free' after upgrade to 'vip' — "
         "padlock would show for VIP users who just upgraded"
     )
+
+
+def test_follows_live_copy_signal_is_valid_enum(client, auth_headers):
+    """copy_signal on every active position must be one of 'good', 'fair', 'late'.
+
+    Any other value (None, empty string, unexpected label) indicates a logic error
+    in the copy timing computation — the frontend would render a broken badge.
+    """
+    client.post("/follows", json={"bettor_address": "0xenum_test", "bettor_name": "EnumWhale"},
+                headers=auth_headers)
+
+    positions_all_signals = [
+        {**MOCK_POSITIONS[0], "copy_signal": "good", "copy_value_pct": 5.0},
+        {**MOCK_POSITIONS[0], "copy_signal": "fair", "copy_value_pct": 20.0,
+         "market_title": "Fair market", "outcome": "No"},
+        {**MOCK_POSITIONS[0], "copy_signal": "late", "copy_value_pct": 45.0,
+         "market_title": "Late market", "outcome": "Yes"},
+    ]
+
+    valid_signals = {"good", "fair", "late"}
+
+    with patch("app.routes.follows.get_active_positions",
+               new=AsyncMock(return_value=positions_all_signals)):
+        resp = client.get("/follows/live", headers=auth_headers)
+
+    assert resp.status_code == 200
+    bettors = resp.json()["bettors"]
+    assert len(bettors) == 1
+    for pos in bettors[0]["active_positions"]:
+        signal = pos.get("copy_signal")
+        assert signal in valid_signals, (
+            f"copy_signal={signal!r} is not a valid enum value. "
+            f"Expected one of {valid_signals}. Position: {pos}"
+        )

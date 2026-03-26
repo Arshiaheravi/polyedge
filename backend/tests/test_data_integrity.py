@@ -448,3 +448,83 @@ def test_polymarket_cross_validation_top_bettor(client):
         f"PolyEdge #1 bettor {polyedge_top!r} not in Polymarket top 5: {pm_top5}. "
         "Possible stale or mismatched leaderboard data."
     )
+
+
+# ── Active positions price range ─────────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_active_positions_price_range_filters_resolved_markets():
+    """get_active_positions must exclude positions with cur_price outside 0.001–0.999.
+
+    A position with price=0 has missing data; price>=1 means the YES outcome
+    has fully resolved. Serving these as 'copyable' positions is a data quality bug.
+    """
+    from unittest.mock import AsyncMock, patch
+
+    raw_positions = [
+        # Resolved market — price = 0 (should be excluded)
+        {"redeemable": False, "title": "Resolved Low", "outcome": "Yes",
+         "avgPrice": 0.50, "curPrice": 0.0, "eventSlug": "resolved-low"},
+        # Resolved market — price = 1 (should be excluded)
+        {"redeemable": False, "title": "Resolved High", "outcome": "Yes",
+         "avgPrice": 0.80, "curPrice": 1.0, "eventSlug": "resolved-high"},
+        # Valid open market (should be included)
+        {"redeemable": False, "title": "Open Market", "outcome": "Yes",
+         "avgPrice": 0.40, "curPrice": 0.50, "eventSlug": "open-market"},
+        # Edge valid — near-zero but above threshold (should be included)
+        {"redeemable": False, "title": "Cheap Market", "outcome": "Yes",
+         "avgPrice": 0.002, "curPrice": 0.005, "eventSlug": "cheap-market"},
+    ]
+
+    mock_resp = AsyncMock()
+    mock_resp.raise_for_status = AsyncMock()
+    mock_resp.json = lambda: raw_positions
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest_price_range")
+
+    assert len(result) == 2, (
+        f"Expected 2 positions (resolved filtered out), got {len(result)}: "
+        f"{[r['market_title'] for r in result]}"
+    )
+    for pos in result:
+        assert 0.001 <= pos["avg_price"] <= 0.999 or pos["avg_price"] == 0.0, (
+            f"avg_price {pos['avg_price']} out of expected range"
+        )
+        assert 0.001 <= pos["cur_price"] <= 0.999, (
+            f"cur_price {pos['cur_price']} outside [0.001, 0.999] — resolved market leaked through: {pos}"
+        )
+
+
+# ── Consensus signal data quality ────────────────────────────────────────────
+
+def test_consensus_whale_count_and_price_range(client):
+    """Each consensus signal must have whale_count >= 3 and avg_entry_price in 0.01–0.99.
+
+    whale_count < 3 would be a filter bypass; price outside range = resolved market leaked through.
+    Skips gracefully if Polymarket is unreachable.
+    """
+    resp = client.get("/markets/consensus")
+    if resp.status_code == 502:
+        pytest.skip("Polymarket API unavailable (consensus returned 502)")
+    assert resp.status_code == 200
+
+    signals = resp.json().get("signals", [])
+    if not signals:
+        pytest.skip("No consensus signals returned — Polymarket may have no qualifying markets")
+
+    for sig in signals:
+        wc = sig.get("whale_count", 0)
+        assert wc >= 3, (
+            f"Consensus signal has whale_count={wc} — below minimum threshold of 3: {sig}"
+        )
+        price = sig.get("avg_entry_price", 0)
+        assert 0.01 <= price <= 0.99, (
+            f"avg_entry_price={price} outside [0.01, 0.99] — resolved market in consensus: {sig}"
+        )

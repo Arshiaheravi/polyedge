@@ -357,6 +357,7 @@ async def test_get_active_positions_uses_slug_when_no_event_slug():
             "title": "Slug Market",
             "outcome": "Yes",
             "slug": "slug-only-market",
+            "curPrice": 0.50,
             # no eventSlug key
         }
     ]
@@ -387,6 +388,7 @@ async def test_get_active_positions_uses_default_url_when_no_slugs():
             "redeemable": False,
             "title": "No Slug Market",
             "outcome": "No",
+            "curPrice": 0.50,
             # no eventSlug, no slug
         }
     ]

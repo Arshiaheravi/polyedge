@@ -209,6 +209,12 @@ async def get_active_positions(address: str, limit: int = 20) -> list[dict]:
         cur_price = float(p.get("curPrice") or 0)
         avg_price = float(p.get("avgPrice") or 0)
 
+        # Skip positions with out-of-range prices — resolved markets have price
+        # exactly 0 (data missing) or ≥1 (YES outcome settled). Showing these
+        # as "copyable" positions would confuse users.
+        if cur_price < 0.001 or cur_price > 0.999:
+            continue
+
         # Copy timing signal: how far has price moved since whale entry?
         if avg_price > 0:
             copy_value_pct = round((cur_price - avg_price) / avg_price * 100, 1)
