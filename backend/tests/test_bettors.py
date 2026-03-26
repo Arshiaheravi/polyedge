@@ -462,3 +462,133 @@ def test_profile_cache_tier_gate_not_bypassed(client, db):
         "Free user must see locked=True even after VIP cached the same address — "
         "cache key must include tier to prevent paywall bypass (Bug #1 regression)"
     )
+
+
+# ── Polymarket HTTP 500 resilience (httpx transport level) ────────────────────
+
+
+def test_leaderboard_polymarket_http500_returns_200_empty_list(client):
+    """When Polymarket returns HTTP 500, get_leaderboard swallows it and returns [].
+    The route must return 200 with an empty bettors list — not propagate the 500.
+
+    This tests the service layer's resilience at the httpx level, not just the
+    route-level try/except (which is covered by test_leaderboard_api_error_returns_502).
+    """
+    import httpx
+    from unittest.mock import MagicMock
+
+    import app.routes.bettors as bettors_mod
+    # Use a unique cache key so this test doesn't collide with cached results
+    bettors_mod._leaderboard_cache.pop("profit_all_3", None)
+
+    # Build a mock that simulates Polymarket returning HTTP 500
+    mock_resp = MagicMock()
+    mock_resp.status_code = 500
+    mock_resp.raise_for_status.side_effect = httpx.HTTPStatusError(
+        "500 Internal Server Error",
+        request=MagicMock(),
+        response=mock_resp,
+    )
+
+    mock_http_client = AsyncMock()
+    mock_http_client.get = AsyncMock(return_value=mock_resp)
+
+    mock_cm = MagicMock()
+    mock_cm.__aenter__ = AsyncMock(return_value=mock_http_client)
+    mock_cm.__aexit__ = AsyncMock(return_value=False)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_cm):
+        resp = client.get("/bettors?sort=profit&time_period=all&limit=3")
+
+    assert resp.status_code == 200, (
+        f"Route must return 200 (graceful) when Polymarket is down, got {resp.status_code}"
+    )
+    data = resp.json()
+    assert "bettors" in data
+    assert data["bettors"] == [], (
+        "Service swallows upstream 500 — route must return empty list, not propagate the error"
+    )
+
+
+def test_bettor_detail_polymarket_http500_returns_200_empty_profile(client):
+    """When Polymarket returns HTTP 500 for activity/profile, service returns empty data.
+    Route must return 200 with a fallback profile — not propagate the upstream 500.
+    """
+    import httpx
+    from unittest.mock import MagicMock
+
+    import app.routes.bettors as bettors_mod
+    addr = "0xHTTP500TEST"
+    for tier in ("free", "basic", "vip"):
+        bettors_mod._profile_cache.pop((addr, tier), None)
+
+    mock_resp = MagicMock()
+    mock_resp.status_code = 500
+    mock_resp.raise_for_status.side_effect = httpx.HTTPStatusError(
+        "500 Internal Server Error",
+        request=MagicMock(),
+        response=mock_resp,
+    )
+
+    mock_http_client = AsyncMock()
+    mock_http_client.get = AsyncMock(return_value=mock_resp)
+
+    mock_cm = MagicMock()
+    mock_cm.__aenter__ = AsyncMock(return_value=mock_http_client)
+    mock_cm.__aexit__ = AsyncMock(return_value=False)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_cm):
+        resp = client.get(f"/bettors/{addr}")
+
+    assert resp.status_code == 200, (
+        f"Route must not propagate Polymarket 500 to callers, got {resp.status_code}"
+    )
+    data = resp.json()
+    assert "profile" in data
+    assert "recent_bets" in data
+
+
+# ── Concurrent requests ───────────────────────────────────────────────────────
+
+
+def test_concurrent_leaderboard_requests_all_succeed(client):
+    """10 threads firing GET /bettors simultaneously must all return 200.
+
+    Verifies the module-level _leaderboard_cache dict and async service layer
+    handle concurrent access without crashing or returning errors.
+    Unauthenticated GET /bettors does not touch the DB — safe to share one client.
+    """
+    import threading
+
+    import app.routes.bettors as bettors_mod
+    # Use a unique cache key so this test's concurrent writes don't collide with others
+    bettors_mod._leaderboard_cache.pop("volume_day_4", None)
+
+    mock_data = [
+        {"rank": 1, "address": "0xaaa", "name": "whale1", "volume_usd": 1000.0,
+         "pnl_usd": 500.0, "avatar_url": "", "accuracy": 0.65},
+    ]
+
+    results: list[int] = []
+    errors: list[str] = []
+    lock = threading.Lock()
+
+    def make_request():
+        try:
+            resp = client.get("/bettors?sort=volume&time_period=day&limit=4")
+            with lock:
+                results.append(resp.status_code)
+        except Exception as exc:
+            with lock:
+                errors.append(str(exc))
+
+    with patch("app.routes.bettors.get_leaderboard", new=AsyncMock(return_value=mock_data)):
+        threads = [threading.Thread(target=make_request) for _ in range(10)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(timeout=30)
+
+    assert len(errors) == 0, f"Concurrent requests raised exceptions: {errors}"
+    assert len(results) == 10, f"Not all 10 threads completed — got {len(results)} results"
+    assert all(s == 200 for s in results), f"Not all 200: {results}"
