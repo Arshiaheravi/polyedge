@@ -3,9 +3,11 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from sqlalchemy import text
 
 from app.config import get_settings
-from app.database import Base, engine
+from app.database import Base, SessionLocal, engine
 from app.routes import admin, alerts, auth, bettors, follows, markets, payments
 from app.services.scheduler import start_scheduler, stop_scheduler
 
@@ -66,3 +68,17 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/readiness")
+def readiness():
+    """Readiness probe — checks DB connectivity. Returns 200 if DB is reachable, 503 otherwise."""
+    db = SessionLocal()
+    try:
+        db.execute(text("SELECT 1"))
+        return {"status": "ready"}
+    except Exception as exc:
+        logger.error("Readiness check failed: %s", exc)
+        return JSONResponse(status_code=503, content={"status": "unavailable", "detail": str(exc)})
+    finally:
+        db.close()

@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 
 import app.services.scheduler as scheduler_module
 from app.auth import hash_password
+from app.config import get_settings
 from app.database import Base
 from app.models import BetEvent, BettorFollow, User
 from app.services.scheduler import _parse_timestamp, _poll_bets
@@ -943,3 +944,31 @@ def test_detect_exits_api_error_skips_address(sched_db):
     events = verify.query(BetEvent).filter(BetEvent.event_type == "EXIT").all()
     verify.close()
     assert len(events) == 0
+
+
+def test_vip_poll_interval_config():
+    """VIP poll interval is 5s and default poll interval is 30s."""
+    cfg = get_settings()
+    assert cfg.vip_poll_interval_seconds == 5
+    assert cfg.default_poll_interval_seconds == 30
+
+
+def test_start_scheduler_registers_two_jobs():
+    """start_scheduler registers both poll_bets (30s) and poll_vip_bets (5s) jobs."""
+    import app.services.scheduler as sched_mod
+    from app.services.scheduler import start_scheduler
+
+    # Patch .start() so APScheduler doesn't need a running event loop in tests
+    with patch.object(sched_mod.AsyncIOScheduler, "start"):
+        scheduler = start_scheduler()
+
+    job_ids = {job.id for job in scheduler.get_jobs()}
+    assert "poll_bets" in job_ids
+    assert "poll_vip_bets" in job_ids
+
+    jobs = {job.id: job for job in scheduler.get_jobs()}
+    assert jobs["poll_vip_bets"].trigger.interval.total_seconds() == 5
+    assert jobs["poll_bets"].trigger.interval.total_seconds() == 30
+
+    # Reset module-level _scheduler so other tests aren't affected
+    sched_mod._scheduler = None

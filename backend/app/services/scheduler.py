@@ -288,12 +288,149 @@ async def _poll_bets() -> None:
         db.close()
 
 
+async def _poll_vip_bets() -> None:
+    """Fast-path poll (every 5s) for bettor addresses followed by at least one VIP user."""
+    global _last_check
+
+    db: Session = SessionLocal()
+    try:
+        # Only poll addresses where a VIP user is a follower
+        vip_user_ids = [
+            row[0]
+            for row in db.query(User.id).filter(User.subscription_tier == "vip").all()
+        ]
+        if not vip_user_ids:
+            return
+
+        addresses = [
+            row[0]
+            for row in db.query(BettorFollow.bettor_address)
+            .filter(BettorFollow.user_id.in_(vip_user_ids))
+            .distinct()
+            .all()
+        ]
+        if not addresses:
+            return
+
+        check_time = datetime.now(tz=timezone.utc)
+
+        for address in addresses:
+            try:
+                bets = await get_recent_bets(address, limit=10)
+            except Exception as exc:
+                logger.warning("VIP poll: failed to fetch bets for %s: %s", address, exc)
+                continue
+
+            bet_amounts = [b.get("amount_usd", 0.0) for b in bets if b.get("amount_usd", 0.0) > 0]
+            avg_bet_usd = sum(bet_amounts) / len(bet_amounts) if bet_amounts else 0.0
+
+            for bet in bets:
+                ts = _parse_timestamp(bet.get("timestamp"))
+                if ts and ts <= _last_check:
+                    continue
+
+                exists = (
+                    db.query(BetEvent)
+                    .filter(
+                        BetEvent.bettor_address == address,
+                        BetEvent.market_id == bet.get("market_id", ""),
+                        BetEvent.timestamp == ts,
+                    )
+                    .first()
+                )
+                if exists:
+                    continue
+
+                bet_amount = bet.get("amount_usd", 0.0)
+                if avg_bet_usd > 0 and bet_amount > 0:
+                    _conviction_score = round(bet_amount / avg_bet_usd, 1)
+                else:
+                    _conviction_score = 1.0
+                _conviction_label = (
+                    "EXTREME" if _conviction_score >= 10.0 else "HIGH" if _conviction_score >= 3.0 else ""
+                )
+
+                event = BetEvent(
+                    bettor_address=address,
+                    market_id=bet.get("market_id", ""),
+                    market_question=bet.get("market_question", ""),
+                    outcome=str(bet.get("outcome", "")),
+                    amount_usd=bet_amount,
+                    timestamp=ts,
+                    notified=False,
+                    conviction_score=_conviction_score,
+                    conviction_label=_conviction_label,
+                )
+                db.add(event)
+                db.flush()
+
+                followers = (
+                    db.query(BettorFollow)
+                    .filter(BettorFollow.bettor_address == address)
+                    .all()
+                )
+
+                cfg = get_settings()
+
+                for follow in followers:
+                    user: Optional[User] = db.query(User).filter(User.id == follow.user_id).first()
+                    if not user or not user.is_active or user.subscription_tier == "free":
+                        continue
+
+                    alert = (
+                        db.query(AlertSetting)
+                        .filter(AlertSetting.user_id == user.id)
+                        .first()
+                    )
+
+                    try:
+                        await dispatch_bet_notification(
+                            bettor_name=follow.bettor_name or address[:12],
+                            market=bet.get("market_question", ""),
+                            outcome=str(bet.get("outcome", "")),
+                            amount=bet_amount,
+                            telegram_chat_id=user.telegram_chat_id if (alert and alert.telegram_enabled and user.telegram_verified) else None,
+                            telegram_bot_token=cfg.telegram_bot_token,
+                            push_subscription_json=alert.push_subscription if (alert and alert.web_push_enabled) else None,
+                            phone_number=user.phone_number if (alert and alert.sms_enabled and user.phone_verified) else None,
+                            sms_enabled=bool(alert and alert.sms_enabled and user.phone_verified),
+                            twilio_account_sid=cfg.twilio_account_sid,
+                            twilio_auth_token=cfg.twilio_auth_token,
+                            twilio_from_number=cfg.twilio_from_number,
+                            user_tier=user.subscription_tier,
+                            conviction_score=_conviction_score,
+                            conviction_label=_conviction_label,
+                            vapid_private_key=cfg.vapid_private_key,
+                            vapid_public_key=cfg.vapid_public_key,
+                            vapid_claims_email=cfg.vapid_claims_email,
+                        )
+                    except Exception as exc:
+                        logger.warning("VIP notification failed for user %s: %s", user.id, exc)
+
+                event.notified = True
+
+        db.commit()
+        _last_check = check_time
+
+    except Exception as exc:
+        logger.error("VIP poll_bets error: %s", exc)
+        db.rollback()
+    finally:
+        db.close()
+
+
 def start_scheduler() -> AsyncIOScheduler:
     global _scheduler
+    cfg = get_settings()
     _scheduler = AsyncIOScheduler()
-    _scheduler.add_job(_poll_bets, "interval", seconds=30, id="poll_bets", replace_existing=True)
+    _scheduler.add_job(_poll_bets, "interval", seconds=cfg.default_poll_interval_seconds, id="poll_bets", replace_existing=True)
+    _scheduler.add_job(_poll_vip_bets, "interval", seconds=cfg.vip_poll_interval_seconds, id="poll_vip_bets", replace_existing=True)
     _scheduler.start()
-    logger.info("Scheduler started — polling every 30 seconds")
+    logger.info(
+        "Scheduler started — default poll every %ds, VIP poll every %ds",
+        cfg.default_poll_interval_seconds,
+        cfg.vip_poll_interval_seconds,
+    )
     return _scheduler
 
 

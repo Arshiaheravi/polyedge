@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     vapid_public_key: str = ""
     vapid_private_key: str = ""
     vapid_claims_email: str = "admin@polyedge.com"
+    vip_poll_interval_seconds: int = 5
+    default_poll_interval_seconds: int = 30
 
     class Config:
         env_file = ".env"

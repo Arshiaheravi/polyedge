@@ -1,4 +1,5 @@
 """Tests for health/root endpoints and general API behaviour."""
+from unittest.mock import MagicMock, patch
 
 
 def test_health_endpoint(client):
@@ -49,6 +50,27 @@ def test_cors_headers_present(client):
     )
     # Either 200 (preflight handled) or the GET itself — either way origin is allowed
     assert resp.status_code in (200, 405)
+
+
+def test_readiness_endpoint_healthy(client):
+    """Readiness probe returns 200 with ready status when DB is reachable."""
+    resp = client.get("/readiness")
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "ready"}
+
+
+def test_readiness_endpoint_db_failure(client):
+    """Readiness probe returns 503 when DB is unavailable."""
+    mock_session = MagicMock()
+    mock_session.execute.side_effect = Exception("DB unavailable")
+
+    with patch("app.main.SessionLocal", return_value=mock_session):
+        resp = client.get("/readiness")
+
+    assert resp.status_code == 503
+    data = resp.json()
+    assert data["status"] == "unavailable"
+    assert "DB unavailable" in data["detail"]
 
 
 def test_unauthenticated_protected_routes(client):
