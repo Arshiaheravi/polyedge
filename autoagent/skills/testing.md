@@ -150,6 +150,8 @@ bettors_mod._leaderboard_cache = {"data": None, "ts": 0}
 ```
 Or use a unique query-param combo not seen by earlier tests (e.g. `time_period=day` instead of `month`).
 
+**Leaderboard cache key format**: `_leaderboard_cache` keys are composed as `{sort}_{time_period}_{limit}` (e.g. `profit_month_50`). Earlier tests that call `GET /bettors` with default params (sort=profit, time_period=month, limit=50) populate `profit_month_50` with MOCK_LEADERBOARD data (which has no `accuracy` field). If your new test asserts on fields that MOCK_LEADERBOARD doesn't have, it will get a cache hit from the earlier test and silently fail. Fix: `bettors_mod._leaderboard_cache.pop("profit_month_50", None)` at test start. (Session 180: test_leaderboard_route_passes_accuracy_through failed in suite due to this exact contamination.)
+
 ### Module-level settings monkeypatching
 `alerts.py` (and similar files) do `settings = get_settings()` at module import time — the `settings` object is bound once and never re-fetched. `monkeypatch.setattr` on `get_settings` won't work. Patch the attribute directly on the already-bound object:
 ```python

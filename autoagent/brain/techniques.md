@@ -491,3 +491,15 @@ What: Run `py -m pytest tests/ -q --cov=app --cov-report=term-missing` first to 
 Where: autoagent/skills/testing.md (BRANCH AUDIT WORKFLOW section, COVERAGE-FIRST APPROACH)
 Source: arxiv 2603.23443 (LLMs rely on surface patterns; specific-line prompts outperform generic); arxiv 2602.21997 (remove covered code from context, keep only uncovered lines)
 Expected impact: Fewer "already covered" test additions; faster convergence on genuine gaps; more targeted test session descriptions
+
+## Leaderboard cache key format rule — implemented 2026-03-26
+What: _leaderboard_cache keys use format {sort}_{time_period}_{limit} (e.g. profit_month_50). Tests that add assertions for fields absent from MOCK_LEADERBOARD must pop this key before the test to avoid serving stale cached data that silently passes without calling the mock.
+Where: autoagent/skills/testing.md (Module-level cache isolation section)
+Source: Session 180 cache contamination failure — test_leaderboard_route_passes_accuracy_through passed in isolation but failed in suite due to profit_month_50 cache key pollution from earlier tests
+Expected impact: Eliminates false-passing tests caused by leaderboard cache contamination when asserting fields not in MOCK_LEADERBOARD
+
+## Competitive notification feature backlog additions — implemented 2026-03-26
+What: Added 4 competitive feature items to backlog: personalized notification body (bettor rank + user name), outbound webhook notification channel (differentiator vs all competitors), delayed alerts for Free tier (10min delay creates upgrade incentive), and minimum bet size filter (reduces notification noise).
+Where: autoagent/memory/backlog.md (NEW FEATURES section)
+Source: pushwoosh.com fintech CTR benchmarks, defiprime.com Polymarket ecosystem guide, signals.coincodecap.com alert bots review (session 183 research)
+Expected impact: 4 implementable competitive features now documented and ready to be picked in FEATURE MODE sessions

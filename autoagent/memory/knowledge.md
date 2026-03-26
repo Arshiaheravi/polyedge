@@ -62,6 +62,14 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 
 ## Session Reflexions
 
+### BRAIN Session #183 Reflexion — 2026-03-26
+ACCOMPLISHED: (1) STEP 1D: activity_log.md had 42 entries > 30 threshold — archived oldest 20 (sessions 141-160) to activity_log_archive.md, updated header from "1-140 archived" to "1-160 archived". (2) STEP 1C: No duplicate rules found in sessions 162-182 — all distinct, kept all. (3) STEP 1B: No new failure patterns in last 10 sessions; the embedded-grep stale-backlog pattern (sessions 170, 175, 177) was already fixed in session 178. (4) testing.md: added specific leaderboard cache key format rule (profit_month_50 key contamination) to Module-level cache isolation section — surfaced by session 180 failure. (5) backlog.md: added 4 competitive feature items from research (personalized notification body, outbound webhook channel, delayed alerts for Free tier, minimum bet size filter). (6) 5 new sources logged; 2 techniques logged.
+FAILED: Nothing — heredoc bash syntax failed for archive append (single quotes in content), recovered immediately by writing a Python helper script.
+RULE: [2026-03-26] When appending multi-line content with single quotes to a file via bash heredoc, the heredoc will fail with "unexpected EOF looking for matching quote". Fix: write content to a Python file and run it, or use Python one-liner with a triple-quoted string written to a temp file first.
+OPTIMIZATION: [2026-03-26] For brain session competitive research, run two agents in parallel — one for agent/LLM techniques, one for domain-specific (fintech/FastAPI/Polymarket). This halves research wall-time vs. sequential searching. Agent results contain more depth per topic than single WebSearch calls.
+
+- Test count: **493 passed, 2 skipped** (unchanged — no code changes this brain session)
+
 ### Session #166 Reflexion — 2026-03-26 (CODE QUALITY AUDIT)
 ACCOMPLISHED: Audit triggered by work session count = 125 (multiple of 5). Found 2 Leo smells in sessions 161-165 changes: (1) identical 8-line conviction score logic duplicated in `_poll_bets` and `_poll_vip_bets`; (2) stale docstring in `test_cors_headers_present` saying "CORS allows all origins" after CORS was restricted. Fixed both: extracted `_compute_conviction(bet_amount, avg_bet_usd)` helper, added 5 unit tests for it (normal/HIGH/EXTREME/zero-avg/zero-bet), fixed docstring. All 467 pass (462 before).
 FAILED: Nothing — all fixes passed on first run.

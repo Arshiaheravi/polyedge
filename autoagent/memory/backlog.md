@@ -41,6 +41,14 @@ These tasks are a structural code review — not testing functionality, but read
 
 - [ ] **Category-specific leaderboard filter** — let users filter the leaderboard by market category (crypto/politics/sports/mentions) matching Polymarket's native categories; show per-category win rate badge on bettor cards (e.g. "95% in politics"). Competitor Polymarket Analytics (Primo Data) offers this as differentiating free feature. Add category filter chips above the leaderboard grid. TIER GATE: Free/Basic/VIP (no gate — competitive baseline).
 
+- [ ] **Personalized notification body** — embed the bettor's leaderboard rank + the user's first name in every notification message (e.g. "Hey Alex — #7 ranked whale just bet $5,000 on [market]"). Requires one DB query per alert for the bettor's rank. Industry benchmarks show named notifications get 2x CTR vs generic. TIER GATE: Basic/VIP. (Source: pushwoosh.com fintech push benchmarks, session 183)
+
+- [ ] **Outbound webhook notification channel** — add `webhook_url` field to `AlertSetting`; in `dispatch_bet_notification()` fire an HTTP POST with the bet payload to the user's webhook URL (Zapier/Slack/custom scripts). No competitor at the free/basic tier offers this. Implementable: `httpx.post(webhook_url, json=payload)` in notifications.py. TIER GATE: VIP only (power user feature). (Source: defiprime.com Polymarket ecosystem guide, session 183)
+
+- [ ] **Delayed alerts for Free tier** — store notification in a queue when created; dispatch to Free-tier users after 10 minutes, Basic after 1 minute, VIP immediately (already polling at 5s). Creates concrete upgrade incentive — users experience the 10-minute lag before seeing the opportunity close. APScheduler supports delayed job scheduling natively. (Source: signals.coincodecap.com top Polymarket alert bots 2026, session 183)
+
+- [ ] **Minimum bet size filter in AlertSetting** — add `min_bet_usd` field (default 0) to `AlertSetting`; in scheduler, skip `dispatch_bet_notification()` if `bet.amount_usd < user.alert_settings.min_bet_usd`. UI: slider or input on alerts settings page. Reduces noise for users who only want to know about large conviction bets. TIER GATE: Basic/VIP. (Source: pushwoosh.com behavioral segmentation research, session 183)
+
 - [ ] Copy Ratio Setting — let users set a per-bettor copy ratio multiplier (0.1x, 0.25x, 0.5x, 1x) stored in BettorFollow table; show on follow cards as "Copy at 0.5x"; include copy_ratio in notification messages. TIER GATE: Basic/VIP only.
 
 - [ ] Insider Score — 0-100 confidence score per bettor (win_rate × profit_usd × avg_conviction × bet_count / 50). Badge on leaderboard cards (green >70, yellow 40-70, gray <40). TIER GATE: badge visible to all; numeric score for Basic/VIP only.

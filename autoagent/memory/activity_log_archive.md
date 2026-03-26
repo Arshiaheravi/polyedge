@@ -717,3 +717,104 @@ SOURCES: 8 new sources.
 ## 2026-03-25 — TESTING (Session 120)
 DONE: Added 5 Playwright checks (94-98) — alerts toggles, Telegram card, 3 pricing cards, Most Popular badge, follows empty CTA. 98 total checks.
 FILES: autoagent/playwright_registry.py
+
+
+## 2026-03-26 — BUGFIX (Session 141)
+DONE: Fixed Telegram notifications permanently broken — added POST /alerts/telegram/webhook endpoint that the bot calls when a user sends /verify CODE. Webhook sets telegram_chat_id + telegram_verified=True. Also removed telegram_chat_id from GET /alerts/settings response (sensitive data leaking). 5 new tests added. 401 passing.
+IMPACT: Telegram notifications were completely non-functional for every user — telegram_chat_id was never set so send_telegram() always returned False immediately.
+FILES: backend/app/routes/alerts.py, backend/tests/test_alerts.py
+
+## 2026-03-26 — TESTING (Session 142)
+DONE: Added API tier gate test suite (tests/test_tier_gates.py) — 12 new tests covering /markets/consensus (free/basic/VIP signal count caps + whale name visibility) and /follows/live tier field correctness. 413 tests now passing.
+IMPACT: Previously zero tests existed for the consensus endpoint tier gates — the most important paywall correctness check.
+FILES: backend/tests/test_tier_gates.py
+
+## 2026-03-26 — DEEP BRAIN (Session 143)
+RESEARCHED: autonomous AI agent best practices 2026, LLM self-improvement (TIMGS arxiv 2603.10600), Claude Code March 2026 updates, ECC v1.9.0 re-check, Polymarket Analytics competitor, FastAPI async patterns.
+IMPLEMENTED: PROMPT.md STEP 0 Q6+Q7 write-time gates; testing.md tier gate breakage pattern; PROMPT.md OPTIMIZATION tag; BRAIN_PROMPT three-category tip classification; knowledge.md merged duplicate rules.
+BACKLOGGED: Category-specific bettor leaderboard.
+SOURCES: 6 new sources logged.
+
+## 2026-03-26 — CODE QUALITY AUDIT (Session 144)
+DONE: Audited sessions 136-142; fixed telegram_verify half-verified bug; moved scheduler.py inline imports to module level; removed conviction variable aliasing. Added 1 regression test.
+IMPACT: Users who called /telegram/verify before messaging the bot were silently left in a broken state.
+FILES: backend/app/routes/alerts.py, backend/app/services/scheduler.py, backend/tests/test_alerts.py, backend/tests/test_follows_live.py
+
+## 2026-03-26 — BUGFIX (Session 145)
+DONE: Fixed web push non-functional stub — replaced unsigned raw POST with proper VAPID signing via pywebpush; added graceful no-op when keys absent; added GET /alerts/web-push-config endpoint. 419 tests passing.
+IMPACT: Users could enable web push and never receive any notification — Chrome/Firefox silently reject unsigned pushes.
+FILES: backend/app/config.py, backend/app/routes/alerts.py, backend/app/services/notifications.py, backend/app/services/scheduler.py, backend/requirements.txt, backend/tests/test_alerts.py, backend/tests/test_notifications.py, frontend/index.html
+
+## 2026-03-26 — TESTING (Session 146)
+DONE: Added 7 OWASP security tests — mass assignment (3 tests) + sensitive data leakage (4 tests verify hashed_password and stripe_customer_id never appear in responses). 426 tests passing.
+IMPACT: Mass assignment lets attackers escalate to paid tiers via the register API — now regression-tested.
+FILES: backend/tests/test_security.py
+
+## 2026-03-26 — AUDIT (Session 147)
+DONE: Code quality audit of sessions 142-146; fixed asyncio.get_event_loop() deprecation in notifications.py, moved hardcoded Telegram bot username to config, added telegram_chat_id to sensitive field regression tests. 426 tests passing.
+IMPACT: asyncio.get_event_loop() raises DeprecationWarning in Python 3.10+ — replaced with get_running_loop().
+FILES: backend/app/config.py, backend/app/routes/alerts.py, backend/app/services/notifications.py, backend/tests/test_security.py
+
+## 2026-03-26 — META (Session 148)
+IMPROVED: testing.md — added 2 POLYEDGE-SPECIFIC rules (admin password pattern + stale HTTP mock pattern). .gitignore — added backend/.hypothesis/. backlog.md — removed 5 clean code review items.
+PATTERNS FOUND: Rules from failed tests saved to knowledge.md but not testing.md — testing sessions read the skill file at start and miss the fix.
+
+## 2026-03-26 — TESTING (Session 149)
+DONE: Added 5 Playwright E2E tests for the Consensus tab — confirms port-8003 fix works, verifies free tier <=3 signals, upgrade banner logic, and VIP no-banner. Fixed conftest login() helper which used wrong selectors.
+IMPACT: The could not load consensus signals bug was previously untested. The conftest fix unblocks all future Playwright tests.
+FILES: backend/tests/playwright/test_consensus_tab.py, backend/tests/playwright/conftest.py
+
+## 2026-03-26 — BUGFIX + TESTING (Session 150)
+DONE: Fixed Playwright event loop contamination (105 async tests broken) by adding pytest.ini with asyncio_mode=auto. Added 18 real-world data integrity tests covering leaderboard sanity, profile consistency, recent bets validity, copy simulator tier gating, admin stats math, and Polymarket cross-validation.
+IMPACT: The full test suite was silently broken (105 failures).
+FILES: backend/pytest.ini, backend/tests/test_alerts.py, backend/tests/test_data_integrity.py
+
+## 2026-03-26 — TESTING (Session 151)
+DONE: Added 12 Playwright E2E tier gate tests across 3 paywall dimensions: Consensus, position cards, and profile simulator. Fixed _open_first_profile to use data-addr attribute.
+IMPACT: First tests to verify tier gates work end-to-end in the browser UI, not just at API level.
+FILES: backend/tests/playwright/test_tier_gates.py
+
+## 2026-03-26 — TESTING (Session 152)
+DONE: Added 14 Playwright UI flow tests: landing page pricing, full register/logout/login journey, leaderboard renders, and bettor profile. Fixed logout step to call page.evaluate logout().
+IMPACT: Core user journeys are now E2E verified.
+FILES: backend/tests/playwright/test_ui_flows.py
+
+## 2026-03-26 — BRAIN (Session 153)
+RESEARCHED: autonomous AI agent best practices 2026, FastAPI 2025-2026 release notes, Polymarket copytrade-wars competitor research, Playwright best practices 2026, prediction market bot competitive landscape.
+IMPLEMENTED: playwright.md DATA ATTRIBUTE SELECTORS section; coding.md FastAPI v0.132 Content-Type rule; activity_log.md archived sessions 120-140.
+BACKLOGGED: VIP poll 30s->5s, /health + /readiness endpoints, data-testid on index.html, Time-period leaderboard filter, Hedging position filter, SQLAlchemy production pool settings.
+SOURCES: 12 new sources logged.
+
+## 2026-03-26 — TESTING (Session 154)
+DONE: Added 7 Playwright E2E tests: back-to-top FAB (appears after scrolling >300px) and mobile layout (bottom nav visible at 375px, all 5 nav buttons present). Removed stale Consensus-VIP backlog item.
+IMPACT: FAB and mobile nav are now regression-tested.
+FILES: backend/tests/playwright/test_ui_flows.py
+
+## 2026-03-26 — TESTING (Session 155)
+DONE: Fixed Bug #12 — replaced _consensusLoaded boolean (never cleared) with 60-second TTL timestamp. Added data-testid attributes to 9 key HTML elements. Added 5 Playwright tests: TTL re-fetch regression + data-testid presence checks.
+IMPACT: Users on the Consensus tab no longer see stale whale data for the entire session.
+FILES: frontend/index.html, backend/tests/playwright/test_consensus_tab.py, backend/tests/playwright/test_ui_flows.py
+
+## 2026-03-26 — BUGFIX + TESTING (Session 156)
+DONE: Fixed follows refresh timer leak — after logout, the 30s setInterval kept firing refreshFollowsActivity() redirecting users back to login. Fix: showView() now clears _followsRefreshTimer when navigating away from dashboard. Added 1 Playwright test using page.clock.fast_forward(31s).
+IMPACT: Users no longer get silently bounced back to the login page 30 seconds after logging out.
+FILES: frontend/index.html, backend/app/routes/follows.py, backend/tests/playwright/test_ui_flows.py
+
+## 2026-03-26 — TESTING (Session 157)
+DONE: Added 3 reliability tests — Polymarket HTTP 500 at transport level returns graceful 200 empty list (leaderboard + bettor detail), 10 concurrent GET /bettors threads all return 200 without crashing.
+IMPACT: First tests that verify Polymarket 500 resilience at the HTTP layer.
+FILES: backend/tests/test_bettors.py
+
+## 2026-03-26 — META (Session 158)
+IMPROVED: playwright.md — added TIMER TESTING section with page.clock.fast_forward() pattern. backlog.md — removed empty section header, restored Frontend API error handling and Dead code items.
+PATTERNS FOUND: Useful Playwright patterns get used in work sessions but never filed back to playwright.md. Backlog items can silently disappear when sections get cleaned up.
+
+## 2026-03-26 14:00 — FEATURE (Session 159)
+DONE: Added VIP-tier 5-second poll interval — scheduler now runs two APScheduler jobs: _poll_vip_bets every 5s for VIP users, _poll_bets every 30s for all. Also added GET /readiness endpoint. 4 new tests added (450 total).
+IMPACT: VIP users receive bet notifications up to 6x faster. The readiness probe enables safe k8s/Docker deployments.
+FILES: backend/app/config.py, backend/app/services/scheduler.py, backend/app/main.py, backend/tests/test_health.py, backend/tests/test_scheduler.py
+
+## 2026-03-26 — BUGFIX (Session 160)
+DONE: Fixed 3 silent error swallowing bugs in the follows tab — users now see a clear error message instead of stuck skeleton cards when the positions API fails on first load.
+IMPACT: Users no longer see infinite loading skeletons when the API is slow or returns an error on the follows tab.
+FILES: frontend/index.html
