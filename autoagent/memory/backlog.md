@@ -17,8 +17,6 @@
 
 ## MEDIUM PRIORITY — Edge Cases & Reliability
 
-- [ ] **Rate limiting on auth routes** — add slowapi/starlette middleware to limit POST /auth/register and POST /auth/login to 10 req/min per IP; rapid brute-force attacks currently not blocked. Competitors + 2026 FastAPI best practices both flag this as production-critical. (Source: fastlaunchapi.dev 2026)
-
 - [ ] **Bot filtering on leaderboard** — flag or exclude Polymarket accounts with suspiciously uniform bet timing (e.g. always placing identical size bets at consistent intervals = algorithmic trader). Reduces noise in the followed-bettor list for copy-traders. Add `is_bot_suspected` flag to leaderboard normaliser. (Source: competitor research, session 143)
 
 - [ ] **Configurable scheduler poll interval** — add `POLL_INTERVAL_SECONDS` to config.py (default 30); read in scheduler.py instead of hardcoded `30`. Allows tightening to 10s during high-traffic events without code changes. (Source: FastAPI SaaS best practices 2026, session 143)
@@ -30,6 +28,11 @@
 
 ## HIGH PRIORITY — Testing
 
+- [ ] **scheduler: _last_positions not purged on unfollow (Bug #10)** — After a bettor is unfollowed, `_last_positions[address]` is never deleted in `services/scheduler.py`. Write a unit test: follow bettor A → unfollow → verify `_last_positions` no longer contains address A. Fix the purge if test fails. Memory grows forever without this fix.
+
+- [ ] **rate limiting: health + readiness endpoints must NOT be rate limited** — `GET /health` and `GET /readiness` must never return 429 regardless of call rate (k8s probes call these continuously). Write a test that calls each 20 times in a loop and asserts all return 200.
+
+- [ ] **Playwright: consensus data re-fetches after stale load (_consensusLoaded Bug #12)** — `_consensusLoaded` flag is set once and never cleared, so the consensus tab never re-fetches within the same session. Write a Playwright test using `page.clock.fast_forward()` to advance time past the cache window, reload the consensus tab, and assert fresh data loads (or at minimum that the fetch is triggered again).
 
 ---
 

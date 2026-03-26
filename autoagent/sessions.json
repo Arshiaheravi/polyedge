@@ -3591,7 +3591,7 @@
     "date": "2026-03-26",
     "time": "16:00",
     "type": "work",
-    "summary": "Code quality audit of sessions 156-160 — fixed readiness endpoint exposing DB error details in 503 response body (Marcus security fix) and updated stale scheduler docstring",
+    "summary": "Code quality audit of sessions 156-160 \u00e2\u20ac\u201d fixed readiness endpoint exposing DB error details in 503 response body (Marcus security fix) and updated stale scheduler docstring",
     "files": [
       "backend/app/main.py",
       "backend/app/services/scheduler.py",
@@ -3614,7 +3614,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 7 behavioral tests covering _poll_vip_bets fast-path (3 scenarios), /follows/live conviction score fields (3 scenarios), and profile cache reverse-order tier gate — 450→457 tests passing",
+    "summary": "Added 7 behavioral tests covering _poll_vip_bets fast-path (3 scenarios), /follows/live conviction score fields (3 scenarios), and profile cache reverse-order tier gate \u00e2\u20ac\u201d 450\u00e2\u2020\u2019457 tests passing",
     "files": [
       "backend/tests/test_scheduler.py",
       "backend/tests/test_follows_live.py",
@@ -3637,7 +3637,7 @@
     "date": "2026-03-26",
     "time": "06:43",
     "type": "brain",
-    "summary": "Fixed stale port and StockCards paths in coding.md, created rate-limiting.md skill with SlowAPI recipe for auth routes, added FastAPI streaming/deprecation patterns — sessions running with correct port 8003 now",
+    "summary": "Fixed stale port and StockCards paths in coding.md, created rate-limiting.md skill with SlowAPI recipe for auth routes, added FastAPI streaming/deprecation patterns \u00e2\u20ac\u201d sessions running with correct port 8003 now",
     "files": [
       "autoagent/skills/coding.md",
       "autoagent/skills/rate-limiting.md",
@@ -3656,7 +3656,33 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session — no code changes"
+      "notes": "brain session \u00e2\u20ac\u201d no code changes"
+    }
+  },
+  {
+    "session": 164,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added rate limiting to auth routes \u2014 POST /auth/register and POST /auth/login now return 429 after 10 requests per minute per IP, blocking brute-force and mass account creation attacks",
+    "files": [
+      "backend/requirements.txt",
+      "backend/app/limiter.py",
+      "backend/app/main.py",
+      "backend/app/routes/auth.py",
+      "backend/tests/conftest.py",
+      "backend/tests/test_auth.py"
+    ],
+    "tests": {
+      "before": 457,
+      "after": 459,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend code changed"
     }
   }
 ]

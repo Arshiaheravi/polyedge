@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — SECURITY (Session 164)
+DONE: Added rate limiting to POST /auth/register and POST /auth/login — 10 req/min per IP via slowapi; shared limiter singleton in app/limiter.py; conftest resets limiter storage between tests; 2 regression tests added (459 total).
+IMPACT: Brute-force password attacks and mass account creation are now blocked at the server layer. The 11th request in a burst returns 429 Too Many Requests automatically.
+FILES: backend/requirements.txt, backend/app/limiter.py, backend/app/main.py, backend/app/routes/auth.py, backend/tests/conftest.py, backend/tests/test_auth.py
+
 ## 2026-03-26 — BRAIN (Session 163)
 DONE: Fixed stale coding.md (port 8002→8003, StockCards 8-STEP CHAIN→PolyEdge FEATURE WIRING CHAIN with tier-gate cache key rule); created autoagent/skills/rate-limiting.md with complete SlowAPI recipe for auth routes; added FastAPI v0.134 streaming JSON Lines + v0.131 ORJSONResponse deprecation to coding.md; added rate-limiting row to INDEX.md; logged 6 new sources.
 IMPACT: Coding sessions will no longer be misled by wrong port (8002) or non-existent PolyEdge file paths (analysis.py, StockSignal). Rate limiting implementation now has a ready-to-use recipe so the implementing session won't need to rediscover the mandatory `request: Request` param that causes 500 errors.

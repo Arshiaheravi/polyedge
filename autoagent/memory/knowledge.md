@@ -44,7 +44,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **450 passed, 1 skipped** (as of 2026-03-26, session 161 — no change this session)
+- Test count: **459 passed, 1 skipped** (as of 2026-03-26, session 164)
 - Playwright E2E: **42 passed, 2 skipped** (as of 2026-03-26, session 156)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -56,6 +56,14 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #164 Reflexion — 2026-03-26 (SECURITY)
+ACCOMPLISHED: Added slowapi rate limiting to POST /auth/register and POST /auth/login — 10 req/min per IP. Created `app/limiter.py` as a singleton module to avoid circular imports between `main.py` (which wires app.state.limiter) and `routes/auth.py` (which uses @limiter.limit). Added limiter storage reset in conftest `client` fixture so rate limit state doesn't accumulate across tests. 2 regression tests added; full suite 457→459, all pass on first run.
+FAILED: Nothing — all tests passed on first attempt.
+RULE: [2026-03-26] For slowapi in FastAPI: define `limiter = Limiter(key_func=get_remote_address)` in a dedicated `app/limiter.py` module, not in `main.py`. This prevents circular imports when route files import the limiter. `main.py` imports from `app.limiter`; route files import from `app.limiter`. Each needs the same instance.
+RULE: [2026-03-26] slowapi's in-memory storage persists across test functions when using module-level `Limiter`. Add `limiter._storage.reset()` in the `client` conftest fixture (before `yield`) so each test starts with a clean rate limit counter. Without this, tests calling /auth/register or /auth/login accumulate against the 10/min limit and eventually 429.
+
+- Test count: **459 passed, 1 skipped** (as of 2026-03-26, session 164)
 
 ### BRAIN Session #163 Reflexion — 2026-03-26
 ACCOMPLISHED: (1) STEP 1B: No recurring failure patterns in sessions 153-162 — all clean. (2) STEP 1C: coding.md had stale port 8002 (PROJECT.md says 8003 since 2026-03-26) + stale 8-STEP WIRING CHAIN referencing StockCards files (services/analysis.py, StockSignal) that don't exist in PolyEdge — fixed both + replaced with PolyEdge FEATURE WIRING CHAIN covering tier-gate cache key rule. (3) STEP 1D: 22 activity_log entries (< 30 — no archiving needed). (4) SlowAPI rate limiting — fetched full implementation recipe, created autoagent/skills/rate-limiting.md (new skill file) covering PolyEdge auth routes. (5) FastAPI v0.134 streaming JSON Lines + v0.131 ORJSONResponse deprecation added to coding.md. (6) INDEX.md updated with rate-limiting.md row. (7) 6 new sources evaluated and logged to sources.md (session 163 section). ECC still at v1.9.0.

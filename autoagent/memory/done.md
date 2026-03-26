@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #164] Rate limiting on auth routes** — POST /auth/register and POST /auth/login now 429 after 10 req/min per IP via slowapi; 457→459 tests passing
 - **[SESSION #162] _poll_vip_bets + conviction score + profile cache reverse-order tests** — 7 new behavioral tests covering 3 previously untested code paths; 450→457 tests passing
 - **[SESSION #161] Code quality audit** — found and fixed readiness endpoint exposing SQLAlchemy error details in 503 response body (security info leakage); updated stale scheduler docstring; logged _last_check race condition to tech_debt; 450 tests stable
 - **[SESSION #160] Frontend API error handling audit** — fixed 3 silent-swallow bugs in follows tab: skeleton cards no longer persist forever on first-load API failure; follows-list errors now show a toast instead of misleading empty state; 450 backend + 42 Playwright tests passing
