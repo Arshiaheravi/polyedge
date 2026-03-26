@@ -406,7 +406,20 @@ async def get_recent_bets(address: str, limit: int = 20) -> list[dict]:
             raw_list = []
 
     # Only include TRADE type — REDEEM is cashing out winnings (no outcome/price data)
-    return [_normalise_bet(b) for b in raw_list if isinstance(b, dict) and b.get("type") != "REDEEM"]
+    bets = [_normalise_bet(b) for b in raw_list if isinstance(b, dict) and b.get("type") != "REDEEM"]
+
+    # Compute conviction score for each bet relative to this bettor's average bet size
+    amounts = [b["amount_usd"] for b in bets if b["amount_usd"] > 0]
+    avg = sum(amounts) / len(amounts) if amounts else 0.0
+    for b in bets:
+        if avg > 0 and b["amount_usd"] > 0:
+            score = round(b["amount_usd"] / avg, 1)
+        else:
+            score = 1.0
+        b["conviction_score"] = score
+        b["conviction_label"] = "EXTREME" if score >= 10.0 else "HIGH" if score >= 3.0 else ""
+
+    return bets
 
 
 async def get_consensus_signals(min_whales: int = 3) -> list[dict]:
@@ -492,6 +505,10 @@ async def get_consensus_signals(min_whales: int = 3) -> list[dict]:
     for g in groups.values():
         count = len(g["whale_names"])
         if count < min_whales:
+            continue
+        # Skip resolved markets — price near 0 or 1 means the market already settled
+        cur_price = g["current_price"]
+        if cur_price < 0.05 or cur_price > 0.95:
             continue
         avg_entry = round(sum(g["avg_entry_prices"]) / count, 4) if g["avg_entry_prices"] else 0.0
         signals.append({

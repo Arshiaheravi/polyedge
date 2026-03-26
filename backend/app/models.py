@@ -76,4 +76,6 @@ class BetEvent(Base):
     timestamp = Column(DateTime, nullable=True)
     notified = Column(Boolean, default=False)
     event_type = Column(String, default="BET", nullable=True)  # "BET" or "EXIT"
+    conviction_score = Column(Float, nullable=True)   # bet_amount / bettor_avg_bet
+    conviction_label = Column(String, nullable=True)  # "" / "HIGH" / "EXTREME"
     created_at = Column(DateTime, default=datetime.utcnow)

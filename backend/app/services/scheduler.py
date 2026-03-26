@@ -196,6 +196,19 @@ async def _poll_bets() -> None:
                 if exists:
                     continue
 
+                # Compute conviction score here so it can be stored on the event
+                bet_amount = bet.get("amount_usd", 0.0)
+                if avg_bet_usd > 0 and bet_amount > 0:
+                    _conviction_score = round(bet_amount / avg_bet_usd, 1)
+                else:
+                    _conviction_score = 1.0
+                if _conviction_score >= 10.0:
+                    _conviction_label = "EXTREME"
+                elif _conviction_score >= 3.0:
+                    _conviction_label = "HIGH"
+                else:
+                    _conviction_label = ""
+
                 # Save new bet event
                 event = BetEvent(
                     bettor_address=address,
@@ -205,6 +218,8 @@ async def _poll_bets() -> None:
                     amount_usd=bet.get("amount_usd", 0.0),
                     timestamp=ts,
                     notified=False,
+                    conviction_score=_conviction_score,
+                    conviction_label=_conviction_label,
                 )
                 db.add(event)
                 db.flush()
@@ -230,18 +245,9 @@ async def _poll_bets() -> None:
                     from app.config import get_settings
                     cfg = get_settings()
 
-                    # Compute conviction score: how large is this bet vs bettor's average?
-                    bet_amount = bet.get("amount_usd", 0.0)
-                    if avg_bet_usd > 0 and bet_amount > 0:
-                        conviction_score = round(bet_amount / avg_bet_usd, 1)
-                    else:
-                        conviction_score = 1.0
-                    if conviction_score >= 10.0:
-                        conviction_label = "EXTREME"
-                    elif conviction_score >= 3.0:
-                        conviction_label = "HIGH"
-                    else:
-                        conviction_label = ""
+                    # Reuse conviction already computed above
+                    conviction_score = _conviction_score
+                    conviction_label = _conviction_label
 
                     try:
                         await dispatch_bet_notification(

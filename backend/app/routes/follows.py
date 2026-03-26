@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
 from app.database import get_db
-from app.models import BettorFollow, User
-from app.services.polymarket import get_active_positions
+from app.models import BetEvent, BettorFollow, User
+from app.services.polymarket import get_active_positions, get_recent_bets
 
 router = APIRouter(prefix="/follows", tags=["follows"])
 
@@ -133,12 +133,34 @@ async def follows_activity(
         _activity_cache[current_user.id] = {"data": result, "ts": now}
         return result
 
+    def _conviction(amount: float, avg: float) -> tuple:
+        if avg <= 0 or amount <= 0:
+            return (None, "")
+        score = round(amount / avg, 1)
+        label = "EXTREME" if score >= 10.0 else "HIGH" if score >= 3.0 else ""
+        return (score, label)
+
     async def _fetch_one(follow: BettorFollow):
         addr = follow.bettor_address
         try:
-            positions = await get_active_positions(addr)
+            positions, recent_bets = await asyncio.gather(
+                get_active_positions(addr),
+                get_recent_bets(addr, limit=20),
+            )
         except Exception:
-            positions = []
+            positions, recent_bets = [], []
+
+        # Compute avg bet size from recent bets for live conviction on positions
+        amounts = [b["amount_usd"] for b in recent_bets if b.get("amount_usd", 0) > 0]
+        avg_bet = sum(amounts) / len(amounts) if amounts else 0.0
+
+        for pos in positions:
+            # Position initial_value_usd = what they originally put in
+            invested = pos.get("initial_value_usd") or 0.0
+            score, label = _conviction(invested, avg_bet)
+            pos["conviction_score"] = score
+            pos["conviction_label"] = label
+
         return {
             "address": addr,
             "name": follow.bettor_name or addr[:12] + "...",

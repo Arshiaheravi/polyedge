@@ -1501,10 +1501,12 @@
           <li><span class="check">&#10003;</span> Top 100 leaderboard + bettor profiles</li>
           <li><span class="check">&#10003;</span> Full bet history &amp; stats</li>
           <li><span class="check">&#10003;</span> Follow <strong>1 bettor</strong></li>
+          <li><span class="check">&#10003;</span> Whale Consensus <span style="font-size:11px;color:var(--text3)">(top 3 markets)</span></li>
           <li class="dim" data-tip="Unlock with Basic $4.99/mo →"><span class="cross">&#10007;</span> Instant bet alerts (within 30s)</li>
-          <li class="dim" data-tip="Unlock with Basic $4.99/mo →"><span class="cross">&#10007;</span> Web push &amp; Telegram notifications</li>
-          <li class="dim" data-tip="Unlock with VIP $9.99/mo →"><span class="cross">&#10007;</span> SMS text alerts</li>
-          <li class="dim" data-tip="Unlock with VIP $9.99/mo →"><span class="cross">&#10007;</span> Priority speed (fastest alerts)</li>
+          <li class="dim" data-tip="Unlock with Basic $4.99/mo →"><span class="cross">&#10007;</span> Conviction Score on alerts</li>
+          <li class="dim" data-tip="Unlock with Basic $4.99/mo →"><span class="cross">&#10007;</span> Smart Entry Timing</li>
+          <li class="dim" data-tip="Unlock with Basic $4.99/mo →"><span class="cross">&#10007;</span> Copy Portfolio Simulator</li>
+          <li class="dim" data-tip="Unlock with VIP $9.99/mo →"><span class="cross">&#10007;</span> Exit Alerts &amp; Full Consensus</li>
         </ul>
         <button class="btn btn-secondary w-full btn-lg" onclick="showView('auth', 'register')">Get Started Free</button>
         <div class="pricing-cta-note">No credit card required</div>
@@ -1525,7 +1527,12 @@
           <li><span class="check">&#10003;</span> Follow up to <strong>5 bettors</strong></li>
           <li><span class="check">&#10003;</span> <strong>Get alerted within 30s</strong> when they bet</li>
           <li><span class="check">&#10003;</span> Web push &amp; Telegram notifications</li>
-          <li class="dim" data-tip="Unlock with VIP $9.99/mo →"><span class="cross">&#10007;</span> SMS text alerts</li>
+          <li><span class="check">&#10003;</span> <strong>Conviction Score</strong> on every alert</li>
+          <li><span class="check">&#10003;</span> <strong>Smart Entry Timing</strong> on position cards</li>
+          <li><span class="check">&#10003;</span> <strong>Copy Portfolio Simulator</strong></li>
+          <li><span class="check">&#10003;</span> Whale Consensus <span style="font-size:11px;color:var(--text3)">(top 3 markets)</span></li>
+          <li class="dim" data-tip="Unlock with VIP $9.99/mo →"><span class="cross">&#10007;</span> Exit Alerts (whale selling)</li>
+          <li class="dim" data-tip="Unlock with VIP $9.99/mo →"><span class="cross">&#10007;</span> Full Consensus + whale names</li>
           <li class="dim" data-tip="Unlock with VIP $9.99/mo →"><span class="cross">&#10007;</span> Priority speed (fastest alerts)</li>
         </ul>
         <button class="btn btn-primary w-full btn-lg" onclick="showView('auth', 'register')">Start Basic &rarr;</button>
@@ -1546,6 +1553,11 @@
           <li><span class="check">&#10003;</span> <strong>Unlimited</strong> bettor follows</li>
           <li><span class="check">&#10003;</span> <strong>Get alerted within 30s</strong> when they bet</li>
           <li><span class="check">&#10003;</span> Web push &amp; Telegram notifications</li>
+          <li><span class="check">&#10003;</span> <strong>Conviction Score</strong> on every alert</li>
+          <li><span class="check">&#10003;</span> <strong>Smart Entry Timing</strong> on position cards</li>
+          <li><span class="check">&#10003;</span> <strong>Copy Portfolio Simulator</strong></li>
+          <li><span class="check">&#10003;</span> <strong>Full Whale Consensus</strong> + whale names</li>
+          <li><span class="check">&#10003;</span> <strong>Exit Alerts</strong> &mdash; know when whales sell</li>
           <li><span class="check">&#10003;</span> <strong>SMS text alerts</strong> (instant to your phone)</li>
           <li><span class="check">&#10003;</span> <strong>Priority speed</strong> &mdash; fastest alerts, first to copy</li>
         </ul>
@@ -1778,12 +1790,15 @@
         <span class="nav-icon" aria-hidden="true">&#11088;</span> My Follows
         <span id="follow-count-badge" aria-label="followed bettors count" style="margin-left:auto;background:var(--accent);color:#000;border-radius:100px;padding:1px 7px;font-size:11px;font-weight:700;display:none;">0</span>
       </div>
-      <div class="nav-item" id="nav-alerts" onclick="showTab('alerts')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')showTab('alerts')">
-        <span class="nav-icon" aria-hidden="true">&#128276;</span> Alerts
-      </div>
       <div class="nav-item" id="nav-consensus" onclick="showTab('consensus')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')showTab('consensus')">
         <span class="nav-icon" aria-hidden="true">&#129302;</span> Consensus
         <span style="margin-left:auto;background:var(--accent);color:#000;border-radius:100px;padding:1px 7px;font-size:10px;font-weight:700;">HOT</span>
+      </div>
+      <div class="nav-item" id="nav-alerts" onclick="showTab('alerts')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')showTab('alerts')">
+        <span class="nav-icon" aria-hidden="true">&#128276;</span> Alerts
+      </div>
+      <div class="nav-item" id="nav-guide" onclick="showTab('guide')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')showTab('guide')">
+        <span class="nav-icon" aria-hidden="true">&#128218;</span> How It Works
       </div>
       <div class="nav-item" id="nav-account" onclick="showTab('account')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')showTab('account')">
         <span class="nav-icon" aria-hidden="true">&#128100;</span> Account
@@ -2148,6 +2163,153 @@
       </div>
     </div>
 
+    <!-- GUIDE TAB -->
+    <div id="tab-guide" class="hidden">
+      <div class="page-header">
+        <h1>&#128218; How PolyEdge Works</h1>
+        <p>Everything you need to know to start copying the best bettors on Polymarket</p>
+      </div>
+
+      <!-- Quick start -->
+      <div style="background:linear-gradient(135deg,rgba(0,201,122,0.1),rgba(99,102,241,0.08));border:1px solid rgba(0,201,122,0.3);border-radius:16px;padding:24px 28px;margin-bottom:28px;">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent2);margin-bottom:12px;">&#9889; Quick Start</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#000;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+            <div><strong style="color:var(--text);">Browse the Leaderboard</strong> <span style="color:var(--text2);font-size:13px;">— Find a top bettor whose stats you trust. Look at their profit, win rate, and how many bets they've placed.</span></div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#000;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+            <div><strong style="color:var(--text);">Click their name → Follow them</strong> <span style="color:var(--text2);font-size:13px;">— You'll get notified the instant they place a new bet.</span></div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#000;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+            <div><strong style="color:var(--text);">Check My Follows → Copyable Bets</strong> <span style="color:var(--text2);font-size:13px;">— See every open position your followed bettors hold right now. Click a card to open the same market on Polymarket and copy the bet.</span></div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#000;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div>
+            <div><strong style="color:var(--text);">Check Whale Consensus</strong> <span style="color:var(--text2);font-size:13px;">— See markets where multiple top bettors all agree. That's the strongest signal on this whole platform.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature cards -->
+      <div style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:16px;letter-spacing:-0.3px;">&#127381; Understanding Each Feature</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:32px;">
+
+        <!-- Leaderboard -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;">
+          <div style="font-size:22px;margin-bottom:10px;">&#127942;</div>
+          <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:8px;">Leaderboard</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px;">The top 100 most profitable Polymarket bettors, ranked. These are real people with real track records — not bots, not hype.</div>
+          <div style="font-size:12px;color:var(--text3);border-top:1px solid var(--border);padding-top:12px;">
+            <div style="margin-bottom:5px;"><strong style="color:var(--text2);">Profit</strong> — total USD made on Polymarket</div>
+            <div style="margin-bottom:5px;"><strong style="color:var(--text2);">Win rate</strong> — % of bets that paid out</div>
+            <div><strong style="color:var(--text2);">Volume</strong> — total amount bet (bigger = more experienced)</div>
+          </div>
+        </div>
+
+        <!-- Copy Timing -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;">
+          <div style="font-size:22px;margin-bottom:10px;">&#128270;</div>
+          <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:8px;">Smart Entry Timing <span style="font-size:10px;font-weight:700;background:rgba(74,158,255,0.15);color:#60a5fa;border-radius:100px;padding:2px 7px;vertical-align:middle;">Basic+</span></div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px;">Shows you whether the price has moved since the whale entered. If a whale bought YES at 30¢ and it's now 80¢ — copying now means you're paying nearly 3× what they paid. That's a bad copy.</div>
+          <div style="font-size:12px;border-top:1px solid var(--border);padding-top:12px;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:8px;"><span style="background:rgba(0,201,122,0.15);color:var(--green);border:1px solid rgba(0,201,122,0.3);border-radius:100px;padding:2px 9px;font-weight:700;font-size:11px;">✅ Good copy</span><span style="color:var(--text2);">Price within 10% of whale's entry — copy now</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="background:rgba(255,171,0,0.12);color:#ffab00;border:1px solid rgba(255,171,0,0.3);border-radius:100px;padding:2px 9px;font-weight:700;font-size:11px;">⚠️ Price moved</span><span style="color:var(--text2);">10–30% above entry — proceed with care</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="background:rgba(255,77,77,0.12);color:#ff4d4d;border:1px solid rgba(255,77,77,0.3);border-radius:100px;padding:2px 9px;font-weight:700;font-size:11px;">🔴 Late entry</span><span style="color:var(--text2);">Over 30% above entry — probably too late</span></div>
+          </div>
+        </div>
+
+        <!-- Conviction Score -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;">
+          <div style="font-size:22px;margin-bottom:10px;">&#128293;</div>
+          <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:8px;">Conviction Score <span style="font-size:10px;font-weight:700;background:rgba(74,158,255,0.15);color:#60a5fa;border-radius:100px;padding:2px 7px;vertical-align:middle;">Basic+</span></div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px;">Every bettor has an average bet size. When they bet much more than usual, that means they're unusually confident. A 10× conviction bet is a whale going all-in — that's when you want to copy with more size too.</div>
+          <div style="font-size:12px;border-top:1px solid var(--border);padding-top:12px;display:flex;flex-direction:column;gap:6px;">
+            <div style="color:var(--text2);"><span style="color:#ffab00;font-weight:700;">⚡ HIGH (3×+)</span> — betting 3× their average. Pay attention.</div>
+            <div style="color:var(--text2);"><span style="color:#ff4d4d;font-weight:700;">🔥 EXTREME (10×+)</span> — betting 10× their average. This is a strong signal. Copy with size.</div>
+          </div>
+        </div>
+
+        <!-- Whale Consensus -->
+        <div style="background:var(--card);border:1px solid rgba(0,201,122,0.3);border-radius:14px;padding:22px;">
+          <div style="font-size:22px;margin-bottom:10px;">&#129302;</div>
+          <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:8px;">Whale Consensus <span style="font-size:10px;font-weight:700;background:rgba(0,201,122,0.2);color:var(--accent2);border-radius:100px;padding:2px 7px;vertical-align:middle;">All tiers</span></div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px;">The single most powerful signal on PolyEdge. When 3, 5, or 10 of the top 100 bettors independently all bet the same outcome on the same market — that's not a coincidence. These people don't talk to each other. They just all did their own research and came to the same conclusion.</div>
+          <div style="font-size:12px;border-top:1px solid var(--border);padding-top:12px;color:var(--text3);">Free: see top 3 signals &nbsp;·&nbsp; Basic: see all &nbsp;·&nbsp; VIP: see which whales are in each market</div>
+        </div>
+
+        <!-- Copy Simulator -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;">
+          <div style="font-size:22px;margin-bottom:10px;">&#129518;</div>
+          <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:8px;">Copy Portfolio Simulator <span style="font-size:10px;font-weight:700;background:rgba(74,158,255,0.15);color:#60a5fa;border-radius:100px;padding:2px 7px;vertical-align:middle;">Basic+</span></div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px;">Before you follow someone, see their actual track record in dollars. The simulator calculates: "If you had copied this bettor's last 10 bets with $100 each — how much money would you have made?" This tells you who's actually worth following, not just who got lucky once.</div>
+          <div style="font-size:12px;border-top:1px solid var(--border);padding-top:12px;color:var(--text3);">Visible on every bettor's profile page. Click any bettor name to see their simulator result.</div>
+        </div>
+
+        <!-- Exit Alerts -->
+        <div style="background:var(--card);border:1px solid rgba(245,158,11,0.3);border-radius:14px;padding:22px;">
+          <div style="font-size:22px;margin-bottom:10px;">&#9889;</div>
+          <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:8px;">Exit Alerts <span style="font-size:10px;font-weight:700;background:rgba(245,158,11,0.15);color:var(--gold2);border-radius:100px;padding:2px 7px;vertical-align:middle;">VIP only</span></div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px;">Right now we alert you when a whale <em>enters</em> a position. Exit Alerts tell you when they <em>leave</em> one. If a whale you're copying suddenly closes or reduces their position — that's a signal to take your profit too. Smart money is getting out for a reason.</div>
+          <div style="font-size:12px;border-top:1px solid var(--border);padding-top:12px;color:var(--text3);">You receive a push notification: "⚡ [Name] is EXITING YES on [Market] — consider taking profit"</div>
+        </div>
+
+      </div>
+
+      <!-- FAQ -->
+      <div style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:16px;letter-spacing:-0.3px;">&#10067; Common Questions</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:32px;">
+
+        <details style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;cursor:pointer;">
+          <summary style="font-size:14px;font-weight:700;color:var(--text);list-style:none;display:flex;justify-content:space-between;align-items:center;">What is Polymarket? <span style="color:var(--text3);font-size:18px;">+</span></summary>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:12px;">Polymarket is a prediction market platform where people bet real money (USDC) on the outcome of real-world events — elections, sports, crypto prices, economic data. Unlike traditional sports betting, Polymarket prices reflect what the market collectively thinks will happen. A price of 75¢ means the crowd thinks there's a 75% chance of YES.</div>
+        </details>
+
+        <details style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;cursor:pointer;">
+          <summary style="font-size:14px;font-weight:700;color:var(--text);list-style:none;display:flex;justify-content:space-between;align-items:center;">What does the price in ¢ mean? <span style="color:var(--text3);font-size:18px;">+</span></summary>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:12px;">Every market has two outcomes (YES / NO). The price is in cents and represents the probability. If YES costs 32¢, the market thinks there's a 32% chance it happens. If YES wins (the event happens), each share pays out $1. So if you bought YES at 32¢ and it resolves YES, you made 68¢ profit per share — a 2.1× return.</div>
+        </details>
+
+        <details style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;cursor:pointer;">
+          <summary style="font-size:14px;font-weight:700;color:var(--text);list-style:none;display:flex;justify-content:space-between;align-items:center;">How do I actually copy a bet? <span style="color:var(--text3);font-size:18px;">+</span></summary>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:12px;">Go to <strong>My Follows → Copyable Bets</strong>. Each card shows a market the whale currently holds. Click any card — it opens that exact market on Polymarket.com. Connect your Polymarket wallet, choose the same outcome (YES or NO), enter the amount you want to bet, and confirm. That's it.</div>
+        </details>
+
+        <details style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;cursor:pointer;">
+          <summary style="font-size:14px;font-weight:700;color:var(--text);list-style:none;display:flex;justify-content:space-between;align-items:center;">When should I NOT copy a bet? <span style="color:var(--text3);font-size:18px;">+</span></summary>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:12px;">
+            <strong style="color:var(--text);">🔴 Late entry badge</strong> — The price has moved more than 30% above what the whale paid. You'd be entering at a much worse price.<br><br>
+            <strong style="color:var(--text);">Low whale count on Consensus</strong> — Only 3 whales agree? That's the minimum. 7+ whales agreeing is a much stronger signal.<br><br>
+            <strong style="color:var(--text);">Market closes soon</strong> — If a market closes in 1–2 days, there's less time for price movement and the outcome is almost set. High risk copying this late.
+          </div>
+        </details>
+
+        <details style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;cursor:pointer;">
+          <summary style="font-size:14px;font-weight:700;color:var(--text);list-style:none;display:flex;justify-content:space-between;align-items:center;">How fast do I get alerts? <span style="color:var(--text3);font-size:18px;">+</span></summary>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:12px;">Our scheduler checks Polymarket every 30 seconds. From when a whale bets to when you get your notification is typically under 1 minute. VIP users get priority processing. Free users don't receive notifications — you'd need to check the Follows tab manually.</div>
+        </details>
+
+        <details style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;cursor:pointer;">
+          <summary style="font-size:14px;font-weight:700;color:var(--text);list-style:none;display:flex;justify-content:space-between;align-items:center;">What's the difference between Basic and VIP? <span style="color:var(--text3);font-size:18px;">+</span></summary>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:12px;">
+            <strong style="color:var(--accent2);">Basic ($4.99/mo)</strong> — Follow 5 bettors, get instant alerts with conviction score, see copy timing badges, unlock the copy portfolio simulator.<br><br>
+            <strong style="color:var(--gold2);">VIP ($9.99/mo)</strong> — Unlimited follows, everything in Basic, plus: full Whale Consensus with whale names, Exit Alerts when whales sell, SMS notifications, and priority alert speed.
+          </div>
+        </details>
+
+      </div>
+
+      <!-- CTA -->
+      <div style="background:linear-gradient(135deg,rgba(0,201,122,0.08),rgba(99,102,241,0.06));border:1px solid rgba(0,201,122,0.2);border-radius:16px;padding:28px;text-align:center;">
+        <div style="font-size:22px;margin-bottom:10px;">&#128640;</div>
+        <div style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:8px;">Ready to start copying?</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">Go to the Leaderboard, find a bettor you trust, and hit Follow.</div>
+        <button class="btn btn-primary" onclick="showTab('leaderboard')" style="padding:12px 32px;">Browse Top Traders &rarr;</button>
+      </div>
+    </div>
+
     <!-- BETTOR PROFILE TAB -->
     <div id="tab-profile" class="hidden">
       <div class="profile-back-bar">
@@ -2238,13 +2400,13 @@
         <span class="mob-icon">&#11088;</span>
         <span>Follows</span>
       </button>
-      <button class="mobile-nav-btn" id="mob-nav-alerts" onclick="showTab('alerts')">
-        <span class="mob-icon">&#128276;</span>
-        <span>Alerts</span>
-      </button>
       <button class="mobile-nav-btn" id="mob-nav-consensus" onclick="showTab('consensus')">
         <span class="mob-icon">&#129302;</span>
         <span>Consensus</span>
+      </button>
+      <button class="mobile-nav-btn" id="mob-nav-alerts" onclick="showTab('alerts')">
+        <span class="mob-icon">&#128276;</span>
+        <span>Alerts</span>
       </button>
       <button class="mobile-nav-btn" id="mob-nav-account" onclick="showTab('account')">
         <span class="mob-icon">&#128100;</span>
@@ -2436,7 +2598,7 @@
      JAVASCRIPT
 ============================================================ -->
 <script>
-const API = 'http://localhost:8002';
+const API = 'http://localhost:8003';
 let currentUser = null;
 let followedAddresses = new Set();
 let alertSettings = {};
@@ -2662,11 +2824,11 @@ function showTab(tab) {
   // Scroll active main-content to top on tab switch
   const mc = document.querySelector('#view-dashboard .main-content, #view-browse .main-content');
   if (mc) mc.scrollTo({ top: 0, behavior: 'smooth' });
-  ['leaderboard', 'follows', 'alerts', 'account', 'profile', 'consensus'].forEach(t => {
+  ['leaderboard', 'follows', 'alerts', 'account', 'profile', 'consensus', 'guide'].forEach(t => {
     const el = document.getElementById(`tab-${t}`);
     if (el) el.classList.toggle('hidden', t !== tab);
   });
-  ['leaderboard', 'follows', 'alerts', 'account', 'consensus'].forEach(t => {
+  ['leaderboard', 'follows', 'alerts', 'account', 'consensus', 'guide'].forEach(t => {
     const nav = document.getElementById(`nav-${t}`);
     if (nav) nav.classList.toggle('active', t === tab);
     const mob = document.getElementById(`mob-nav-${t}`);
@@ -3472,6 +3634,17 @@ async function refreshFollowsActivity() {
         _avatarUrl: `https://api.dicebear.com/7.x/identicon/svg?seed=${b.address}` }))
     );
 
+    // Sort: EXTREME conviction first → HIGH → good copy signal → by invested size
+    const convictionRank = l => l === 'EXTREME' ? 3 : l === 'HIGH' ? 2 : 1;
+    const signalRank = s => s === 'good' ? 3 : s === 'fair' ? 2 : 1;
+    allPositions.sort((a, b) => {
+      const cv = convictionRank(b.conviction_label) - convictionRank(a.conviction_label);
+      if (cv !== 0) return cv;
+      const sv = signalRank(b.copy_signal) - signalRank(a.copy_signal);
+      if (sv !== 0) return sv;
+      return (b.initial_value_usd || 0) - (a.initial_value_usd || 0);
+    });
+
     // Update summary strip: copyable bet count + cumulative P&L
     const activeBetsEl = document.getElementById('active-bets-count');
     if (activeBetsEl) activeBetsEl.textContent = allPositions.length;
@@ -3561,6 +3734,16 @@ function renderPositionItem(p, tier) {
   const safePolyUrl     = escapeHtml(p.poly_url || '#');
   const safeAvatarUrl   = escapeHtml(p._avatarUrl || '');
 
+  // Conviction badge (Basic/VIP only)
+  let convictionHtml = '';
+  if ((tier === 'basic' || tier === 'vip') && p.conviction_label) {
+    if (p.conviction_label === 'EXTREME') {
+      convictionHtml = `<span style="font-size:11px;font-weight:700;background:rgba(255,77,77,0.12);color:#ff4d4d;border:1px solid rgba(255,77,77,0.3);border-radius:100px;padding:2px 9px;white-space:nowrap;" title="${p.conviction_score}x their average bet">🔥 ${p.conviction_score}x EXTREME</span>`;
+    } else if (p.conviction_label === 'HIGH') {
+      convictionHtml = `<span style="font-size:11px;font-weight:700;background:rgba(255,171,0,0.12);color:#ffab00;border:1px solid rgba(255,171,0,0.3);border-radius:100px;padding:2px 9px;white-space:nowrap;" title="${p.conviction_score}x their average bet">⚡ ${p.conviction_score}x HIGH</span>`;
+    }
+  }
+
   // Copy signal badge (Basic/VIP only)
   const canSeeCopySignal = tier === 'basic' || tier === 'vip';
   let copySignalHtml = '';
@@ -3597,6 +3780,7 @@ function renderPositionItem(p, tier) {
       <span style="background:rgba(0,201,122,0.12);color:var(--green);padding:3px 11px;border-radius:100px;font-size:13px;font-weight:800;border:1px solid rgba(0,201,122,0.2);">${safeOutcome}</span>
       <span style="font-size:12px;color:var(--text3);">now <strong style="color:var(--text);">${curPricePct}¢</strong></span>
       ${priceMoved ? `<span style="font-size:11px;color:${priceDirColor};">${priceDir} from ${avgPricePct}¢</span>` : ''}
+      ${convictionHtml}
       ${copySignalHtml}
     </div>
 
@@ -4460,6 +4644,14 @@ function renderBetRow(bet) {
   const priceVal = bet.price ? Math.round(bet.price * 100) : null;
   const priceHtml = priceVal !== null ? ` <span class="bet-outcome-price">${priceVal}\u00a2</span>` : '';
 
+  // Conviction badge on bet rows
+  let betConvictionHtml = '';
+  if (bet.conviction_label === 'EXTREME') {
+    betConvictionHtml = `<span style="font-size:10px;font-weight:700;background:rgba(255,77,77,0.12);color:#ff4d4d;border:1px solid rgba(255,77,77,0.25);border-radius:100px;padding:1px 7px;">🔥 ${bet.conviction_score}x</span>`;
+  } else if (bet.conviction_label === 'HIGH') {
+    betConvictionHtml = `<span style="font-size:10px;font-weight:700;background:rgba(255,171,0,0.1);color:#ffab00;border:1px solid rgba(255,171,0,0.25);border-radius:100px;padding:1px 7px;">⚡ ${bet.conviction_score}x</span>`;
+  }
+
   let dateStr = '';
   let betAge = Infinity;
   if (bet.timestamp) {
@@ -4485,6 +4677,7 @@ function renderBetRow(bet) {
       <div class="bet-row-question">${question}</div>
       <div class="bet-row-meta">
         <span class="bet-outcome ${outcomeClass}">${outcomeLabel}${priceHtml}</span>
+        ${betConvictionHtml}
         ${activeBadge}
         ${dateStr ? `<span class="bet-date">${dateStr}</span>` : ''}
         ${polyLink ? `<a href="${escapeHtml(polyLink)}" target="_blank" rel="noopener noreferrer" class="bet-copy-link">Copy bet &#8599;</a>` : ''}
