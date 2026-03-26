@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 165)
+DONE: Added 3 regression tests — (1) `test_poll_bets_purges_stale_last_positions`: verifies `_poll_bets` cleans up `_last_positions` entries for bettors no longer followed (Bug #10 regression coverage); (2) `test_health_not_rate_limited`: 20 consecutive calls to GET /health all return 200; (3) `test_readiness_not_rate_limited`: 20 consecutive calls to GET /readiness all return 200. 459→462 tests passing.
+IMPACT: Memory leak from unfollowed bettors is now regression-tested. k8s liveness/readiness probes are confirmed to never get 429-blocked — without this test, a future rate limiter change could silently break deployments.
+FILES: backend/tests/test_scheduler.py, backend/tests/test_health.py
+
 ## 2026-03-26 — SECURITY (Session 164)
 DONE: Added rate limiting to POST /auth/register and POST /auth/login — 10 req/min per IP via slowapi; shared limiter singleton in app/limiter.py; conftest resets limiter storage between tests; 2 regression tests added (459 total).
 IMPACT: Brute-force password attacks and mass account creation are now blocked at the server layer. The 11th request in a burst returns 429 Too Many Requests automatically.

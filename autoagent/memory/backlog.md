@@ -28,10 +28,6 @@
 
 ## HIGH PRIORITY — Testing
 
-- [ ] **scheduler: _last_positions not purged on unfollow (Bug #10)** — After a bettor is unfollowed, `_last_positions[address]` is never deleted in `services/scheduler.py`. Write a unit test: follow bettor A → unfollow → verify `_last_positions` no longer contains address A. Fix the purge if test fails. Memory grows forever without this fix.
-
-- [ ] **rate limiting: health + readiness endpoints must NOT be rate limited** — `GET /health` and `GET /readiness` must never return 429 regardless of call rate (k8s probes call these continuously). Write a test that calls each 20 times in a loop and asserts all return 200.
-
 - [ ] **Playwright: consensus data re-fetches after stale load (_consensusLoaded Bug #12)** — `_consensusLoaded` flag is set once and never cleared, so the consensus tab never re-fetches within the same session. Write a Playwright test using `page.clock.fast_forward()` to advance time past the cache window, reload the consensus tab, and assert fresh data loads (or at minimum that the fetch is triggered again).
 
 ---

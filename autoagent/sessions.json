@@ -3684,5 +3684,27 @@
       "failures": 0,
       "notes": "no frontend code changed"
     }
+  },
+  {
+    "session": 165,
+    "date": "2026-03-26",
+    "time": "14:00",
+    "type": "work",
+    "summary": "Added 3 regression tests: _last_positions purge on unfollow (memory leak fix) and health/readiness endpoints not rate-limited (k8s probe protection). 459\u2192462 tests passing.",
+    "files": [
+      "backend/tests/test_scheduler.py",
+      "backend/tests/test_health.py"
+    ],
+    "tests": {
+      "before": 459,
+      "after": 462,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend code changed"
+    }
   }
 ]
