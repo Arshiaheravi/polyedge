@@ -44,8 +44,8 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **390 passed** (as of 2026-03-26, session 135)
-- Playwright checks: **132 total, 0 failures** (as of 2026-03-26, session 135)
+- Test count: **393 passed** (as of 2026-03-26, session 137)
+- Playwright checks: **132 total, 0 failures** (as of 2026-03-26, session 134 — no changes since)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 

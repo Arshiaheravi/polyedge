@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — META (Session 138)
+IMPROVED: (1) PROMPT.md — added CODE REVIEW CROSS-CHECK rule: when a bugfix addresses an item also tracked in the Code Review section, remove that backlog item in the same session (session 137 fixed CORS + telegram_chat_id but left both code review items unchecked). (2) meta/PROMPT.md — added sessions.json logging step (was missing — that's why session 136 is absent from sessions.json; also added sessions 136 and 138 retroactively). (3) backlog.md — removed "CORS review" item (fully addressed by session 137); updated "Sensitive data leakage" item to note telegram_chat_id was fixed, hashed_password/stripe_customer_id still need checking. (4) knowledge.md — updated test count from 390 to 393 (session 137 result).
+PATTERNS FOUND: META sessions were missing sessions.json entries (meta/PROMPT.md had no such instruction). Work sessions fixing code-review bugs don't clean up the corresponding code review backlog items. Test count in knowledge.md goes stale when bugfix sessions don't update it.
+PREDICTED IMPACT: Sessions.json will now have complete coverage of all sessions including META. Next work session fixing a code review bug will remove the corresponding backlog item. Test count drift eliminated.
+
 ## 2026-03-26 — BUGFIX (Session 137)
 DONE: Fixed 3 CRITICAL bugs: (1) profile cache tier bypass — keyed by (address, tier) instead of address alone so VIP cached profile can't be served to free users; (2) CORS wildcard removed — allow_origins now set to explicit localhost:3000 list; (3) telegram_chat_id removed from all auth responses — field was leaking in login/register/me. Added 3 regression tests + updated 4 stale tests. 393 total passing.
 IMPACT: Paywall was completely bypassable — any free user could see unlocked Copy Simulator by requesting the same bettor address that a VIP had cached. CORS misconfiguration meant API calls from the browser would be silently rejected. telegram_chat_id is private infrastructure data that must never reach API consumers.

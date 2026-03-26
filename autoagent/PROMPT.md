@@ -204,6 +204,7 @@ Use git commands as configured. For two-repo projects, check `autoagent/PROJECT.
 4. For autoagent changes: commit to the autoagent repo with its own prefix (e.g. `meta: <what>`)
 4.5. **Overwrite `autoagent/memory/current_task.md` with `# No current task`** — do this IMMEDIATELY after push, before logging. Skipping this step causes the next session to waste time re-verifying already-committed work.
 5. Update `autoagent/memory/backlog.md` — **REMOVE** the completed task entirely (do NOT leave it with [x])
+   **CODE REVIEW CROSS-CHECK**: If the task you just completed was a bugfix or security fix, scan the "Code Review" section of the backlog. If any item there specifically tracks the issue you just fixed (e.g., you fixed CORS wildcard → remove "CORS review" item; you removed telegram_chat_id from responses → update "Sensitive data leakage" item), remove or update it now. Work sessions that skip this leave stale code review items that waste the next session re-examining already-fixed code. (Source: Session 137 fixed CORS + telegram_chat_id but left both code review items unchecked.)
    Then append one line to `autoagent/memory/done.md` under today's date:
    `- **[SESSION #N] Task name** — one sentence of what was built`
    Backlog stays lean. done.md is the permanent record.

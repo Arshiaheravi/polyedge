@@ -77,6 +77,16 @@ PATTERNS FOUND: [what kept failing]
 PREDICTED IMPACT: [what should get better]
 ```
 
+Append one entry to `autoagent/sessions.json` (same format as work sessions):
+```json
+{"session": N, "date": "YYYY-MM-DD", "time": "HH:MM", "type": "meta",
+ "summary": "ONE sentence — what system improvement was made and why",
+ "files": ["autoagent/PROMPT.md", "autoagent/memory/backlog.md"],
+ "tests": {"before": 0, "after": 0, "status": "skip"},
+ "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "meta session — no code changes"}}
+```
+This step was missing from prior META sessions — session 136 is absent from sessions.json because of this gap.
+
 ## WHAT SUCCESS LOOKS LIKE
 - At least 2 concrete changes to PROMPT.md, skill files, or backlog
 - Every change traceable to a real failure in the activity log

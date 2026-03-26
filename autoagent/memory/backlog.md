@@ -134,9 +134,7 @@ These tasks are a structural code review — not testing functionality, but read
 
 - [ ] **Polymarket service review** — read `services/polymarket.py`: check all HTTP calls have timeouts (a hanging Polymarket call would freeze the scheduler); verify error handling won't leak raw API errors to users; check price normalization — are prices always 0-1, or can they come back as percentages (0-100)?
 
-- [ ] **CORS review** — read `backend/app/main.py`: verify allowed origins don't include `*` wildcard in production; check that credentials (cookies/auth headers) can't be sent cross-origin from untrusted domains
-
-- [ ] **Sensitive data leakage** — search all routes for `hashed_password`, `stripe_customer_id`, `telegram_chat_id` in response dicts; these should NEVER appear in any API response (confirm not in User model's `.dict()` if used directly)
+- [ ] **Sensitive data leakage** — search all routes for `hashed_password`, `stripe_customer_id` in response dicts; these should NEVER appear in any API response. NOTE: `telegram_chat_id` was fixed in session 137 (removed from login/register/me responses). Still need to verify `hashed_password` and `stripe_customer_id` are not leaking.
 
 - [ ] **Frontend API error handling** — read `frontend/index.html`: for every `fetch()` call, verify there is a `.catch()` or `try/catch`; uncaught promise rejections cause silent failures; also check that expired JWT (401 response) triggers redirect to login — not a blank screen
 
