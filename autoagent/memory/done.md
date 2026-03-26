@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #161] Code quality audit** — found and fixed readiness endpoint exposing SQLAlchemy error details in 503 response body (security info leakage); updated stale scheduler docstring; logged _last_check race condition to tech_debt; 450 tests stable
 - **[SESSION #160] Frontend API error handling audit** — fixed 3 silent-swallow bugs in follows tab: skeleton cards no longer persist forever on first-load API failure; follows-list errors now show a toast instead of misleading empty state; 450 backend + 42 Playwright tests passing
 - **[SESSION #157] Polymarket 500 resilience + concurrent request tests** — 3 new tests prove the service swallows Polymarket HTTP 500 errors gracefully (tested at httpx transport level), and 10 concurrent GET /bettors threads all return 200; 446 unit tests passing
 - **[SESSION #156] Follows timer leak fix + dead import cleanup** — showView() now clears _followsRefreshTimer when leaving dashboard, preventing users from being bounced back to login 30s after logout; removed unused BetEvent import from follows.py; added Playwright test using page.clock.fast_forward to verify fix; 42 Playwright + 443 unit tests passing

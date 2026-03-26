@@ -44,7 +44,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **450 passed, 1 skipped** (as of 2026-03-26, session 159)
+- Test count: **450 passed, 1 skipped** (as of 2026-03-26, session 161 — no change this session)
 - Playwright E2E: **42 passed, 2 skipped** (as of 2026-03-26, session 156)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -56,6 +56,11 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #161 Reflexion — 2026-03-26 (CODE QUALITY AUDIT)
+ACCOMPLISHED: Virtual team audit of sessions 156-160 changed files (scheduler.py, main.py, config.py, follows.py, test_health.py, test_scheduler.py, frontend/index.html). Found and fixed 2 issues: (1) Marcus BLOCKING — readiness endpoint `/readiness` returned `str(exc)` in 503 body, which could expose DB file paths or SQLAlchemy error internals to public callers. Fixed to return generic "Database connectivity check failed" and log the real error server-side. (2) Leo MINOR — stale docstring in scheduler.py said "polls every 30 seconds" but VIP poll now runs every 5s. Updated docstring. Marcus XSS audit (two greps): clean. Logged _last_check shared-state race condition to tech_debt.md. 450 tests pass (no change in count).
+FAILED: Nothing failed.
+RULE: [2026-03-26] Monitoring endpoints (readiness, health) are often deployed without auth on internal networks but can be publicly exposed. `str(exc)` in a 503 response body is a Marcus violation: SQLAlchemy errors include DB file paths, table names, and connection strings. Pattern: log at ERROR level (already done), return generic `"detail": "Database connectivity check failed"` in the HTTP response. Operators read logs; users (and attackers) read HTTP responses.
 
 ### Session #160 Reflexion — 2026-03-26
 ACCOMPLISHED: Frontend API error handling audit — found and fixed 3 silent-swallow bugs in follows tab: (1) refreshFollowsActivity `if (!res.ok) return` on first load left skeleton visible forever; (2) same for network errors in catch; (3) loadMyFollows `catch {}` silently showed empty state on /follows API failure. All other error handlers (login, register, follow/unfollow, alerts toggles, Telegram, SMS, payments) were already correct — using toast() which internally uses textContent (XSS-safe). No innerHTML/escapeHtml issues in error paths.

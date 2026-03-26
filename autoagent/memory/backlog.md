@@ -13,10 +13,6 @@
 
 ---
 
-## HIGH PRIORITY — Code Quality
-
-- [ ] **Code quality audit (session 160)** — scan last 5 work sessions' changed files (scheduler.py, main.py, config.py, test_scheduler.py, test_health.py, test_bettors.py, follows.py, test_ui_flows.py, test_alerts.py, test_data_integrity.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits. (Triggered by 120 work-session milestone per PROMPT.md De-Sloppify pattern)
-
 ---
 
 ## MEDIUM PRIORITY — Edge Cases & Reliability
@@ -29,6 +25,16 @@
 
 - [ ] **Empty follows state** — Playwright: log in as new user with no follows, open Follows tab, assert empty state message shown (not crash)
 
+
+---
+
+## HIGH PRIORITY — Testing
+
+- [ ] **`_poll_vip_bets` behavioral unit tests** — 3 scenarios currently untested: (a) no VIP users in DB → function returns without polling Polymarket; (b) only addresses followed by VIP users are polled (free/basic-only followed addresses are skipped); (c) new bet on VIP-followed address creates BetEvent in DB and notification is dispatched to VIP follower. Pattern mirrors existing `test_poll_bets_*` tests in test_scheduler.py but for the VIP fast-path. (Source: session 161 audit — `_poll_vip_bets` function has zero behavioral tests despite being a distinct code path)
+
+- [ ] **`/follows/live` conviction score field tests** — add 3 tests to test_follows_live.py: (a) `active_positions` items each contain `conviction_score` (float or None) and `conviction_label` ("EXTREME"/"HIGH"/"") keys; (b) when position's initial_value_usd is 10x the avg bet → `conviction_label == "EXTREME"`; (c) when below 3x → label is empty string. Currently zero tests in test_follows_live.py touch these fields even though `_fetch_one` explicitly computes them. (Source: session 161 grep — `grep -n "conviction" tests/test_follows_live.py` returns nothing)
+
+- [ ] **`POST /bettors/{address}` profile cache tier gate regression** — add 2 tests to test_bettors.py: (a) VIP user fetches a profile (populates cache) → free user fetches same address → `locked == True` (Bug #1 regression — cache must be keyed by address+tier, not address only); (b) free user fetches profile first → VIP user fetches same address → `locked == False`. These are explicitly called out in PROJECT.md checklist but no test was written when Bug #1 was fixed. grep: `grep -n "profile_cache_tier" tests/test_bettors.py` returns only `test_profile_cache_tier_gate_not_bypassed` — verify it covers both orderings.
 
 ---
 

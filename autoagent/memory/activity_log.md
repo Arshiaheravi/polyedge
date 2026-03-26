@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — CODE QUALITY AUDIT (Session 161)
+DONE: Audited last 5 sessions' changed files; found and fixed readiness endpoint leaking exception details in 503 body and stale scheduler docstring. Logged _last_check race condition to tech_debt.md.
+IMPACT: Readiness endpoint no longer exposes DB file paths or SQLAlchemy error strings to public callers — internal error is logged server-side while users see a generic "Database connectivity check failed" message.
+FILES: backend/app/main.py, backend/app/services/scheduler.py, backend/tests/test_health.py
+
 ## 2026-03-26 — BUGFIX (Session 160)
 DONE: Fixed 3 silent error swallowing bugs in the follows tab — users now see "Could not load positions. Try refreshing." instead of stuck skeleton cards when the positions API fails on first load; follows-list errors show a toast instead of a misleading empty state.
 IMPACT: Users no longer see infinite loading skeletons when the API is slow or returns an error on the follows tab. Reliable error feedback replaces silent failures that made the app look broken.
