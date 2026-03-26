@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 171)
+DONE: Activated the CONDITION_ID_RE regex assertion (^0x[a-fA-F0-9]{64}$) inside test_consensus_whale_count_and_price_range — the regex was defined at test_data_integrity.py:21 but never used in any assertion. Now validates that every consensus signal's condition_id is a properly-formatted 64-char hex ID.
+IMPACT: Catches malformed or missing condition_ids from the Polymarket API before they reach users; ensures the condition_id field is a genuine market identifier and not an empty string or garbage value. 471 tests stable.
+FILES: backend/tests/test_data_integrity.py
+
 ## 2026-03-26 — TESTING (Session 170)
 DONE: Added `test_recent_bets_timestamps_within_90_days` to test_data_integrity.py — verifies that all recent bets from GET /bettors/{address} have timestamps within the past 90 days; handles both Unix float string and ISO-8601 string formats; skips gracefully when no bets available or Polymarket is unreachable. Also removed 2 stale backlog tasks (copy_value_pct and exit-alerts-VIP) whose tests already existed, and added 3 new HIGH PRIORITY testing tasks. 470→471 tests.
 IMPACT: Stale Polymarket data (>90-day-old bets served as "recent") would give copy-traders wrong context — the timestamp check is a data freshness guard that catches Polymarket API caching failures.

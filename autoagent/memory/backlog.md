@@ -2,8 +2,6 @@
 
 ## HIGH PRIORITY — Testing
 
-- [ ] **Consensus condition_id format validation** — `CONDITION_ID_RE = re.compile(r"^0x[a-fA-F0-9]{64}$")` is defined at test_data_integrity.py:21 but never used in any assertion. The PROJECT.md checklist explicitly requires "condition_id is valid 64-char hex" for consensus signals. Add assertion inside `test_consensus_whale_count_and_price_range` (or separate test) that each signal's `condition_id` field matches the regex. Grep: zero uses of `CONDITION_ID_RE` in any test assertion confirmed.
-
 - [ ] **Leaderboard accuracy vs profile accuracy cross-check** — `test_leaderboard_vs_profile_pnl_consistent` in test_data_integrity.py verifies pnl_usd is consistent between leaderboard and profile endpoints, but does NOT check the `accuracy` field. Add a companion test that for the top bettor, if `accuracy` is non-null in the leaderboard response, the profile endpoint returns the same value (within ±0.02 tolerance). Grep: no test for accuracy cross-validation exists.
 
 - [ ] **Copy simulator extreme price unit test** — `compute_copy_simulator` has no cap on `simulated_roi_pct`; at price=0.001 (valid, passes the `<= 0` filter), a bet win yields 99,900% simulated ROI. The real-data test at line 390 only checks live Polymarket data. Add a unit test with all-winning bets at price=0.01 to document the upper bound behavior, and add a ±10000% cap to the function. Grep: no test covers extreme-price scenarios in compute_copy_simulator.

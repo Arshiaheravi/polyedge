@@ -1,6 +1,8 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #171] Consensus condition_id format validation** — activated CONDITION_ID_RE regex assertion inside test_consensus_whale_count_and_price_range; catches malformed/missing condition_ids from Polymarket API; 471 tests stable
+- **[SESSION #170] Timestamp freshness test** — added test_recent_bets_timestamps_within_90_days to test_data_integrity.py; verifies recent bets are within 90 days; handles Unix float string and ISO-8601 formats; 470→471 tests
 - **[SESSION #169] Active positions price filter + 3 data integrity tests** — filtered resolved-market positions (price=0 or 1) from get_active_positions; added 3 tests for price range, copy_signal enum, consensus whale_count; 467→470 tests
 - **[SESSION #167] Dead code audit** — scanned all JS function definitions in frontend/index.html and all imports in backend/app/; found and removed only 1 dead function (tierBadge, 3 lines); 467 tests still passing
 - **[SESSION #166] Code quality audit — sessions 161-165** — extracted _compute_conviction helper (eliminated duplicate logic in _poll_bets/_poll_vip_bets), fixed stale CORS docstring, added 5 unit tests; 462→467 passing

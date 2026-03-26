@@ -3819,5 +3819,15 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 171,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Activated the condition_id regex assertion in consensus test — CONDITION_ID_RE was defined but never used; now each consensus signal is validated to have a 64-char hex condition_id, catching missing or malformed market IDs from Polymarket",
+    "files": ["backend/tests/test_data_integrity.py"],
+    "tests": {"before": 471, "after": 471, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]

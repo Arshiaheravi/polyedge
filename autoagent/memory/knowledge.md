@@ -65,7 +65,12 @@ RULE: [2026-03-26] Docstrings in test files go stale quickly when the underlying
 
 - Test count: **467 passed, 1 skipped** (as of 2026-03-26, session 167) *(unchanged — dead code removal, no new tests)*
 - Test count: **470 passed, 1 skipped** (as of 2026-03-26, session 169) — added 3 data integrity/validation tests
-- Test count: **471 passed, 1 skipped** (as of 2026-03-26, session 170) — added timestamp freshness test
+- Test count: **471 passed, 1 skipped** (as of 2026-03-26, session 171) — added condition_id assertion to consensus test (no new test functions; count stable)
+
+### Session #171 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added `CONDITION_ID_RE` assertion to `test_consensus_whale_count_and_price_range`. The regex `^0x[a-fA-F0-9]{64}$` was compiled at line 21 of test_data_integrity.py but never used. Added assertion to the loop that iterates signals — if condition_id is missing or malformed, the test now fails. 471 tests stable.
+FAILED: Nothing — passed first run.
+RULE: [2026-03-26] When a defined-but-unused regex is in a test file, the fix is always adding the assertion inside the closest loop that iterates the relevant objects (here: the `for sig in signals:` loop). Never create a new test function just to use an existing regex — the natural home is next to the existing assertions on the same object.
 
 ### Session #170 Reflexion — 2026-03-26 (TESTING)
 ACCOMPLISHED: Added `test_recent_bets_timestamps_within_90_days` to test_data_integrity.py. Test hits real Polymarket API via test client, parses both Unix float and ISO-8601 timestamp formats, and asserts age ≤ 90 days. Also discovered `CONDITION_ID_RE` defined at line 21 of test_data_integrity.py but never used in any assertion — added to backlog as a quick coverage gap. Removed 2 stale backlog items (copy_value_pct formula test and exit-alerts-VIP) that had existing coverage the backlog descriptions didn't know about. 470→471 tests.
