@@ -485,3 +485,9 @@ What: Added explicit rule at top of STEP 2 in BRAIN_PROMPT.md: never launch back
 Where: autoagent/meta/BRAIN_PROMPT.md (STEP 2 header, before 2A)
 Source: Sessions 121/132/163 — three independent BRAIN sessions all experienced the same failure; rule was in knowledge.md but not in BRAIN_PROMPT.md (wrong location)
 Expected impact: Eliminates the recurring wait-then-fallback pattern in every BRAIN session; WebSearch runs in ~1 tool call vs background agent overhead
+
+## Coverage-gap-targeted test prompts — implemented 2026-03-26
+What: Run `py -m pytest tests/ -q --cov=app --cov-report=term-missing` first to get specific uncovered line numbers. Feed those line numbers (not the whole module) into the test task description. "Line 47 of polymarket.py (the `if price > 0.99` branch) has no test" produces better tests than "write tests for polymarket.py."
+Where: autoagent/skills/testing.md (BRANCH AUDIT WORKFLOW section, COVERAGE-FIRST APPROACH)
+Source: arxiv 2603.23443 (LLMs rely on surface patterns; specific-line prompts outperform generic); arxiv 2602.21997 (remove covered code from context, keep only uncovered lines)
+Expected impact: Fewer "already covered" test additions; faster convergence on genuine gaps; more targeted test session descriptions

@@ -108,6 +108,14 @@ Rules:
 
 ## BRANCH AUDIT WORKFLOW — how to find coverage gaps systematically
 
+**COVERAGE-FIRST APPROACH** (more efficient than manual branch counting):
+Before manually scanning branches, run coverage to get a precise uncovered-line list:
+```bash
+cd backend && py -m pytest tests/ -q --cov=app --cov-report=term-missing 2>/dev/null | grep -E "app/.*[0-9]%"
+```
+This shows each file's uncovered line numbers directly. Feed the specific line numbers into your test task description — e.g., "line 47 of polymarket.py (the `if price > 0.99` branch) has no test." Coverage-gap-targeted descriptions produce better tests than generic "write tests for polymarket.py" prompts.
+(Source: arxiv 2603.23443 — LLMs rely on surface-level patterns; specific uncovered-line prompts outperform generic module prompts. arxiv 2602.21997 — remove covered code from context, keep only uncovered code.)
+
 When the backlog is empty, use this audit loop to find 5+ gaps in ~10 minutes:
 
 1. **Pick one service file** (e.g. `polymarket.py`, `notifications.py`, `stripe_service.py`)
