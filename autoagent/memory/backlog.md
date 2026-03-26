@@ -1,11 +1,5 @@
 # Backlog
 
-## HIGH PRIORITY — Code Quality Audit
-
-- [ ] **Code quality audit — sessions 169-177** — scan changed files from sessions 169-177 (polymarket.py, test_polymarket_service.py, test_bettors.py, test_data_integrity.py, test_follows.py, test_health.py, test_auth.py) for cross-file coupling, test specificity degradation, XSS patterns, and smells introduced by agent edits. Run Marcus (XSS), Leo (smells), and unused-import greps per audit.md. (Triggered: work session count = 135, multiple of 5)
-
----
-
 ## HIGH PRIORITY — Testing
 
 - [ ] **_normalise_leaderboard_entry accuracy field** — `test_normalise_leaderboard_full_entry` in test_polymarket_service.py does NOT check `accuracy`. Add a test: raw dict with `"percentProfitable": 68.5` → `result["accuracy"] == pytest.approx(0.685)`. Also test `percentProfitable=None` → `result["accuracy"] is None`. Grep: `grep -n "accuracy.*normalise_leaderboard\|normalise_leaderboard.*accuracy\|percentProfitable" backend/tests/test_polymarket_service.py` returns nothing.

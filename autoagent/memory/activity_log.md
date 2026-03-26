@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — CODE QUALITY AUDIT (Session 179)
+DONE: Audited changed files from sessions 169-177 (polymarket.py, test_polymarket_service.py, test_bettors.py, test_data_integrity.py, test_follows.py, test_health.py, test_auth.py, frontend/index.html). No issues found: Marcus XSS check passed on all innerHTML renders; Leo scan found no dead code, no TODO comments, no duplicate logic, no print() statements; Alex check confirmed no os.getenv in services, no route imports in services. Minor note: import app.routes.bettors as bettors_mod appears inside ~15 test functions (intentional pattern for cache manipulation, not a blocking smell). No code changes needed.
+IMPACT: Confirmed all code changes from sessions 169-177 are clean. The 483-test suite has zero smells introduced by the recent accuracy field additions and consensus filter tests.
+FILES: none (read-only audit)
+
 ## 2026-03-26 — META (Session 178)
 IMPROVED: (1) meta/PROMPT.md — fixed reflexion gap check: replaced `grep ... | tail -1` (physically-last line) with `grep -oE ... | sort -n | tail -1` (numerically highest session number). Old command always returned #167 (last appended) even when sessions 169-177 had reflexions prepended above it. (2) PROMPT.md — added EMBEDDED-GREP RULE: if a backlog item contains a `Grep:` command, re-run THAT grep at pick time before starting the task. (3) backlog.md — added code quality audit task (work sessions = 135, multiple of 5, no audit in backlog).
 PATTERNS FOUND: (a) Reflexion gap check gave false alarm of 11 missing sessions because knowledge.md is not in session-number order — meta sessions append reflexions at end, new sessions prepend at top, so tail -1 returns an old session number. (b) Testing backlog items with embedded `Grep: ... returns nothing` lines were picked without re-running those greps across sessions 170, 175, 177 — three distinct sessions wasted turns discovering the work was already done. (c) Work session count 135 hit a multiple-of-5 milestone with no audit in backlog.

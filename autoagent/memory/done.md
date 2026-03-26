@@ -188,3 +188,5 @@
 
 - **[SESSION #170] Recent bets timestamp freshness test** — verifies all recent_bets from GET /bettors/{address} have timestamps within past 90 days; handles both Unix float and ISO-8601 string formats; 470→471 tests
 - **[SESSION #175] 3 regression tests** — lru_cache identity, copy simulator open-bet skip, auth/me sensitive field absence; 472 → 475 tests
+
+- **[SESSION #179] Code quality audit — sessions 169-177** — all changed files passed Marcus XSS, Leo smells, and Alex architecture checks; no code changes required; 483 tests unchanged
