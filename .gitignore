@@ -35,5 +35,8 @@ env/
 .coverage
 htmlcov/
 
+# Hypothesis test artifacts
+.hypothesis/
+
 # Distribution / packaging
 *.tar.gz
