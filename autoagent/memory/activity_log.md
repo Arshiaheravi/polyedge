@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 176)
+DONE: Added accuracy field to bettor profile endpoint (_normalise_profile was missing it; leaderboard already had it). Added 5 new tests: leaderboard vs profile accuracy cross-check, follows list order (newest-first, deterministic via DB timestamp offsets), mocked get_consensus_signals (5 whales, whale_count=5 assertion), and 3 unit tests locking in _normalise_profile accuracy field conversion. 475 → 480 tests.
+IMPACT: Free users and premium users now get consistent accuracy data across leaderboard and profile pages. Follows list order test prevents silent regression of the DESC sort. Mocked consensus test provides CI-safe deterministic coverage of the signal grouping logic (all live API tests skip on timeout).
+FILES: backend/app/services/polymarket.py, backend/tests/test_data_integrity.py, backend/tests/test_follows.py, backend/tests/test_polymarket_service.py
+
 ## 2026-03-26 — TESTING (Session 175)
 DONE: Added 3 regression tests covering Bug #9 (lru_cache identity), compute_copy_simulator open-bet skip branch, and GET /auth/me sensitive field absence (hashed_password, stripe_customer_id, telegram_chat_id). 472 → 475 tests.
 IMPACT: test_get_settings_returns_same_instance catches if @lru_cache is accidentally removed from config.py (causes .env re-read on every scheduler invocation). test_copy_simulator_skips_still_open_bets locks in the "still-open bets excluded" contract. test_auth_me_does_not_expose_sensitive_fields guards against accidental field exposure in /auth/me.

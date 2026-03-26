@@ -3931,5 +3931,29 @@
       "failures": 0,
       "notes": "No frontend files changed"
     }
+  },
+  {
+    "session": 176,
+    "date": "2026-03-26",
+    "time": "14:00",
+    "type": "work",
+    "summary": "Added accuracy field to bettor profile endpoint, wrote 5 tests: leaderboard vs profile accuracy cross-check, follows list order, mocked consensus signals, and 3 accuracy unit tests for _normalise_profile",
+    "files": [
+      "backend/app/services/polymarket.py",
+      "backend/tests/test_data_integrity.py",
+      "backend/tests/test_follows.py",
+      "backend/tests/test_polymarket_service.py"
+    ],
+    "tests": {
+      "before": 475,
+      "after": 480,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

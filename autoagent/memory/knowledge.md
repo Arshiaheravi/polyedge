@@ -75,6 +75,13 @@ FAILED: Background agents launched at session start produced output (agents were
 RULE: [2026-03-26] When a rule about brain session failure mode (e.g., "don't use background agents") lives only in knowledge.md, it is NOT effective — brain sessions don't read knowledge.md before launching agents. The rule must be in BRAIN_PROMPT.md itself, near the search step, to fire at the right moment.
 OPTIMIZATION: [2026-03-26] Brain session research pattern: run 2-4 direct WebSearch calls in parallel (not background agents), read results immediately, pick the top 1-2 actionable findings, implement them. Total research phase: ~5 tool calls. This is faster and more reliable than background agents.
 
+### Session #176 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: (1) Added `accuracy` field to `_normalise_profile` + `get_bettor_profile` — profile endpoint was missing the field that leaderboard already returned. (2) `test_leaderboard_vs_profile_accuracy_consistent` — live API cross-check (skips on timeout). (3) `test_follows_list_order_is_newest_first` — uses DB fixture to set explicit created_at offsets (2h/1h/now), then asserts DESC order. (4) `test_get_consensus_signals_with_mocked_api` — mocks get_leaderboard + httpx.AsyncClient; 5 whales YES on same market → whale_count=5 assertion. (5) 3 unit tests for _normalise_profile accuracy field. 475 → 480 tests.
+FAILED: Nothing — all new tests passed first run.
+RULE: [2026-03-26] When adding a field to a shared normaliser (_normalise_profile, _normalise_leaderboard_entry), check ALL callers of that normaliser and all tests for those callers — the field may be missing from sibling functions that share the same normaliser. `_normalise_profile` was called from `get_bettor_profile` which had the leaderboard data available (lb_entry) but didn't pass percentProfitable through.
+RULE: [2026-03-26] For ordering tests, avoid sleep(). Instead: create the rows, then directly set their `created_at` timestamps in the DB using explicit datetime offsets (timedelta). This makes the test deterministic regardless of execution speed and avoids CI flakiness from sub-second timestamps.
+RULE: [2026-03-26] For async service unit tests that call get_leaderboard + httpx internally, mock both: `patch("app.services.polymarket.get_leaderboard", AsyncMock(...))` for the leaderboard call, and `patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client)` for the HTTP calls. Using `return_value=mock_client` (not `side_effect`) means all N concurrent AsyncClient() invocations return the same mock — correct for testing aggregation logic.
+
 ### Session #175 Reflexion — 2026-03-26 (TESTING)
 ACCOMPLISHED: Added 3 targeted regression tests: (1) `test_get_settings_returns_same_instance` in test_health.py — verifies `@lru_cache` on `get_settings()` returns same object instance (Bug #9 regression guard). (2) `test_copy_simulator_skips_still_open_bets` in test_data_integrity.py — confirms 1-day-old TRADE bet with no matching REDEEM is excluded from bets_analysed (open-bet skip branch). (3) `test_auth_me_does_not_expose_sensitive_fields` in test_auth.py — asserts GET /auth/me never returns hashed_password, stripe_customer_id, telegram_chat_id. 472 → 475 tests.
 FAILED: During LOW-WATER-MARK backlog replenishment, added `_last_positions purge on unfollow` and `old-bet assumed-loss` as new backlog items — both already existed in test_scheduler.py and test_polymarket_service.py respectively. Had to grep again to find genuine gaps.
@@ -970,6 +977,13 @@ RULE: [2026-03-26] When caching API responses that include user-state fields (ti
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend (Playwright) |
 |---------|--------------|----------------------|
+| 176     | 480          | 42                   |
+| 175     | 475          | 42                   |
+| 174     | 472          | 42                   |
+| 172     | 472          | 42                   |
+| 171     | 471          | 42                   |
+| 170     | 471          | 42                   |
+| 169     | 470          | 42                   |
 | 167     | 467          | 42                   |
 | 166     | 467          | 42                   |
 | 165     | 462          | 42                   |
