@@ -1,6 +1,7 @@
 """
-APScheduler background job — polls Polymarket every 30 seconds for new bets
-and fires notifications to subscribed users.
+APScheduler background jobs — polls Polymarket for new bets and fires notifications.
+Default poll: every 30 seconds for all followed bettors.
+VIP poll: every 5 seconds for bettors followed by at least one VIP user.
 """
 import logging
 from datetime import datetime, timezone

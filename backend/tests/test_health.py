@@ -70,7 +70,7 @@ def test_readiness_endpoint_db_failure(client):
     assert resp.status_code == 503
     data = resp.json()
     assert data["status"] == "unavailable"
-    assert "DB unavailable" in data["detail"]
+    assert data["detail"] == "Database connectivity check failed"
 
 
 def test_unauthenticated_protected_routes(client):

@@ -79,6 +79,6 @@ def readiness():
         return {"status": "ready"}
     except Exception as exc:
         logger.error("Readiness check failed: %s", exc)
-        return JSONResponse(status_code=503, content={"status": "unavailable", "detail": str(exc)})
+        return JSONResponse(status_code=503, content={"status": "unavailable", "detail": "Database connectivity check failed"})
     finally:
         db.close()
