@@ -461,3 +461,15 @@ What: (1) FastAPI v0.132+ enforces Content-Type: application/json for JSON bodie
 Where: autoagent/skills/coding.md (FASTAPI PRODUCTION SAFETY RULES section)
 Source: fastapi.tiangolo.com release notes 2026
 Expected impact: Prevents silent 415 errors when upgrading FastAPI; enables native SSE implementation without third-party libraries
+
+## SlowAPI rate limiting skill — implemented 2026-03-26
+What: Created autoagent/skills/rate-limiting.md documenting the complete SlowAPI implementation pattern for PolyEdge auth routes — pip install, Limiter setup in main.py, @limiter.limit("10/minute") decorator syntax, mandatory request: Request param, 429 response handling, test pattern, and multi-worker Redis caveat.
+Where: autoagent/skills/rate-limiting.md (new file)
+Source: slowapi.readthedocs.io, read 2026-03-26
+Expected impact: Next session implementing rate limiting (backlog item) has a concrete ready-to-use recipe; won't need to rediscover the mandatory request param requirement that causes 500 errors
+
+## coding.md port + stale section fixes — implemented 2026-03-26
+What: Fixed three stale issues in coding.md: (1) port 8002 → 8003 in backend/frontend constants and Gunicorn line; (2) replaced StockCards 8-STEP WIRING CHAIN with PolyEdge-specific POLYEDGE FEATURE WIRING CHAIN covering tier gates, cache key tier-inclusion, and reverse-order cache test; (3) added FastAPI v0.134 streaming JSON Lines pattern + v0.131 ORJSONResponse deprecation note.
+Where: autoagent/skills/coding.md
+Source: PROJECT.md Known Facts (port 8003), FastAPI release notes v0.134-0.135, session 91 partial fix that left stale paths
+Expected impact: Prevents a coding session from writing to services/analysis.py (StockCards file that doesn't exist in PolyEdge) and from using wrong port 8002 in test assertions

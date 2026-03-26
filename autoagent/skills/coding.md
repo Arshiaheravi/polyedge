@@ -21,12 +21,12 @@ Over-engineering is the #1 agent failure mode. 3 lines that work > 30 that are "
 - Admin endpoints: use `x-admin-password` header check (see `routes/admin.py`)
 - External API calls: ONLY in `services/` layer — routes must never call Polymarket/Stripe/Telegram directly
 - Python command: `py` (not python, not python3)
-- Backend port: **8002** — never 8001 or 8000
+- Backend port: **8003** — never 8001, 8000, or 8002 (8002 was retired 2026-03-26)
 
 ## FRONTEND PATTERNS (PolyEdge)
 - All JS and CSS in `frontend/index.html` — single-file SPA, no separate app.js/styles.css
 - Dark theme, no emojis in UI text (use inline SVGs instead)
-- API base: `http://localhost:8002`
+- API base: `http://localhost:8003`
 - JWT token: stored in `localStorage` as `pe_token`
 - Global state variables: `_bettorCache` (Map), `_disclosureCache` (Map), `alertSettings` (object)
 
@@ -37,16 +37,16 @@ When a function returns a dict with new keys:
 3. Frontend uses same key names
 Missing any layer = silent bug
 
-## 8-STEP WIRING CHAIN (scoring features)
-When adding a new scoring dimension, check all 8 layers — missing any produces wrong scores or missing chips with NO error message:
-1. Pure function in `services/analysis.py` (no I/O)
-2. Call it in `routes/dashboard.py` with the price data
-3. Pass result as parameter to `signals.generate_signal()`
-4. Add parameter to `generate_signal()` signature
-5. Add scoring logic inside `generate_signal()`
-6. Add to `score_breakdown` dict in `dashboard.py`
-7. Pass to `StockSignal()` constructor
-8. Add field to `StockSignal` model + frontend badge
+## POLYEDGE FEATURE WIRING CHAIN
+When adding a new tier-gated feature, verify all layers — missing any silently exposes premium content or hides it from paying users:
+1. Service function in `backend/app/services/polymarket.py` (no I/O side effects)
+2. Route in `backend/app/routes/` — imports service, checks `current_user.subscription_tier`
+3. Tier gate: enforce in route with `if user.subscription_tier == "free": return locked_response`
+4. Register route in `backend/app/main.py` with `app.include_router()`
+5. Frontend JS: call endpoint, render gated content per tier
+6. Cache key includes tier if response differs by tier (bug #1 pattern: profile cache must key on `{address}_{tier}`)
+7. Write test for each tier (free/basic/vip) asserting correct content visible/locked
+8. Check profile cache reverse-order (free caches first → VIP should still get unlocked)
 
 ## EXTERNAL API ERROR HANDLING PATTERNS
 
@@ -58,7 +58,7 @@ When adding a new scoring dimension, check all 8 layers — missing any produces
 
 **Production startup** — use Gunicorn + Uvicorn workers instead of raw `uvicorn`:
 ```
-gunicorn -k uvicorn.workers.UvicornWorker -w 4 app.main:app --port 8002
+gunicorn -k uvicorn.workers.UvicornWorker -w 4 app.main:app --port 8003
 ```
 This adds process-level fault isolation and CPU parallelism — critical for concurrent API calls.
 
@@ -98,6 +98,22 @@ In PolyEdge this slots into `backend/app/main.py` — pass `lifespan=lifespan` t
 
 **FastAPI native SSE (v0.135.0)**: FastAPI now has first-class SSE support via StreamingResponse + `yield`. For PolyEdge's bet alert stream, use `StreamingResponse(generate_events(), media_type="text/event-stream")` where `generate_events()` is an async generator yielding `f"data: {json.dumps(event)}\n\n"`. Eliminates the need for external SSE libraries.
 (Source: FastAPI release notes v0.135.0, 2026)
+
+**FastAPI v0.134.0 streaming JSON Lines**: `yield` inside route handlers now streams JSON Lines directly. Pattern:
+```python
+async def generate_bets():
+    async for bet in poll_bets():
+        yield json.dumps(bet) + "\n"
+
+@router.get("/stream/bets")
+async def stream_bets():
+    return StreamingResponse(generate_bets(), media_type="application/x-ndjson")
+```
+Requires Starlette ≥ 0.46.0. Useful for PolyEdge's real-time bet feed endpoint (backlogged SSE item).
+(Source: FastAPI release notes v0.134.0, 2026)
+
+**FastAPI v0.131.0 deprecation**: `ORJSONResponse` and `UJSONResponse` are deprecated. Use standard `JSONResponse` (now Pydantic/Rust-backed for performance in v0.130+). If you see `DeprecationWarning: ORJSONResponse`, switch to `JSONResponse`.
+(Source: FastAPI release notes v0.131.0, 2026)
 
 ## FRAGILE ZONES — DOUBLE-CHECK BEFORE COMMITTING
 These three files have downstream effects that tests don't fully catch. When you edit any of them, re-read the surrounding interface contract (type signatures, response shapes) before committing:

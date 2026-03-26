@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — BRAIN (Session 163)
+DONE: Fixed stale coding.md (port 8002→8003, StockCards 8-STEP CHAIN→PolyEdge FEATURE WIRING CHAIN with tier-gate cache key rule); created autoagent/skills/rate-limiting.md with complete SlowAPI recipe for auth routes; added FastAPI v0.134 streaming JSON Lines + v0.131 ORJSONResponse deprecation to coding.md; added rate-limiting row to INDEX.md; logged 6 new sources.
+IMPACT: Coding sessions will no longer be misled by wrong port (8002) or non-existent PolyEdge file paths (analysis.py, StockSignal). Rate limiting implementation now has a ready-to-use recipe so the implementing session won't need to rediscover the mandatory `request: Request` param that causes 500 errors.
+FILES: autoagent/skills/coding.md, autoagent/skills/rate-limiting.md, autoagent/skills/INDEX.md, autoagent/brain/sources.md, autoagent/brain/techniques.md, autoagent/memory/knowledge.md
+
 ## 2026-03-26 — TESTING (Session 162)
 DONE: Added 7 behavioral tests across 3 files — (1) _poll_vip_bets: no-VIP-users early return, VIP-only-addresses filtering, and new-bet creates BetEvent+notification; (2) /follows/live conviction score: keys always present, EXTREME label at 10x avg_bet, empty label below 3x; (3) profile cache: reverse-order test confirms VIP gets unlocked simulator even after free user cached same address.
 IMPACT: Three previously untested code paths now have regression coverage — a broken VIP fast-path, a missing conviction field, or a cache key regression would now be caught automatically instead of shipping silently broken to users.

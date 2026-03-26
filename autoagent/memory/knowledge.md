@@ -57,6 +57,14 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 
 ## Session Reflexions
 
+### BRAIN Session #163 Reflexion — 2026-03-26
+ACCOMPLISHED: (1) STEP 1B: No recurring failure patterns in sessions 153-162 — all clean. (2) STEP 1C: coding.md had stale port 8002 (PROJECT.md says 8003 since 2026-03-26) + stale 8-STEP WIRING CHAIN referencing StockCards files (services/analysis.py, StockSignal) that don't exist in PolyEdge — fixed both + replaced with PolyEdge FEATURE WIRING CHAIN covering tier-gate cache key rule. (3) STEP 1D: 22 activity_log entries (< 30 — no archiving needed). (4) SlowAPI rate limiting — fetched full implementation recipe, created autoagent/skills/rate-limiting.md (new skill file) covering PolyEdge auth routes. (5) FastAPI v0.134 streaming JSON Lines + v0.131 ORJSONResponse deprecation added to coding.md. (6) INDEX.md updated with rate-limiting.md row. (7) 6 new sources evaluated and logged to sources.md (session 163 section). ECC still at v1.9.0.
+FAILED: Background search agents returned 0-byte output files (confirmed pattern from sessions 121/132). Fell back to direct WebFetch/Bash tools immediately per knowledge.md rule — no time lost.
+RULE: [2026-03-26] coding.md port and stale paths are a class of bug that brain sessions must explicitly check: grep coding.md for the current port number AND for any non-PolyEdge file paths (analysis.py, StockSignal, dashboard.py scoring). These silently mislead coding sessions into writing code in wrong files. Fix: search for "8002\|analysis.py\|StockSignal\|generate_signal" at the start of each brain session's STEP 1B.
+OPTIMIZATION: [2026-03-26] SlowAPI implementation has one mandatory gotcha: `request: Request` must be in the route function signature or you get a 500. Save to skills/rate-limiting.md (done) so the implementing session reads it at skill-read time rather than hitting the 500 and debugging.
+
+- Test count: **457 passed, 1 skipped** (unchanged — no code changes this session)
+
 ### Session #162 Reflexion — 2026-03-26 (TESTING)
 ACCOMPLISHED: Added 7 behavioral tests to cover three previously untested code paths: (1) `_poll_vip_bets` — no-VIP-users early-return, VIP-only-address filtering, new-bet creates BetEvent and notification; (2) `/follows/live` conviction score — `conviction_score`/`conviction_label` keys always present, EXTREME label at 10x avg_bet, empty label below 3x; (3) profile cache reverse-order — free-first then VIP gets unlocked (complements existing VIP-first then free test). All 7 passed on first run. Baseline 450→457.
 FAILED: Nothing — all tests passed on first attempt.
