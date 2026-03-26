@@ -3076,5 +3076,30 @@
       "failures": 0,
       "notes": "meta session \u2014 no code changes"
     }
+  },
+  {
+    "session": 139,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Fixed 5 medium bugs: accuracy field in leaderboard, get_settings lru_cache, web push tier gate for free users, _last_positions memory leak, get_settings moved outside hot loop",
+    "files": [
+      "backend/app/config.py",
+      "backend/app/routes/alerts.py",
+      "backend/app/services/polymarket.py",
+      "backend/app/services/scheduler.py",
+      "backend/tests/test_alerts.py"
+    ],
+    "tests": {
+      "before": 393,
+      "after": 394,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no running server"
+    }
   }
 ]

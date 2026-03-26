@@ -8,15 +8,6 @@
 
 - [ ] **Web push is a non-functional stub** — `services/notifications.py:68-97` POSTs directly to the browser push endpoint without VAPID signing or payload encryption. Chrome/Firefox/Safari all reject unsigned pushes with 401/403. The function returns False silently — users "enable" push and never receive anything. Fix requires pywebpush library + VAPID keys. Until fixed, disable web push option in UI rather than silently failing.
 
-- [ ] **accuracy field missing from leaderboard** — `services/polymarket.py:33-48` `_normalise_leaderboard_entry` does not include `accuracy` in the returned dict. Frontend displays undefined; checklist item fails. Fix: add `accuracy` calculation from API response data.
-
-- [ ] **Free user can enable web push — no tier check** — `routes/alerts.py:62-106` `update_settings` allows free users to set `web_push_enabled=True` with no tier check. They'll never receive anything (push is stub AND they have no tier access). Fix: add tier check blocking free users from enabling push (same pattern as telegram_enabled check).
-
-- [ ] **`get_settings()` not cached** — `config.py` `get_settings()` has no `@lru_cache`. It's called inside per-bet per-follower loop in `scheduler.py:245` — re-reads .env file on every notification. Fix: add `@lru_cache` decorator to `get_settings()`.
-
-- [ ] **`_last_positions` memory leak** — `services/scheduler.py:22` `_last_positions` dict is never purged when a bettor is unfollowed. Grows forever. Fix: after removing a follow, delete the key from `_last_positions` if it's no longer followed by any user.
-
-- [ ] **Backend port mismatch** — frontend/index.html has `const API = 'http://localhost:8003'` but PROJECT.md and knowledge.md previously said 8002. Verify the constant is 8003 in frontend/index.html and update any test files that hardcode 8002.
 
 - [ ] **VIP copy timing shows padlock** — VIP user sees "🔒 Copy timing — Upgrade to Basic" on position cards. Confirmed API returns tier:"vip" and copy_signal:"good" correctly. Bug is in frontend rendering. Check `renderPositionItem(p, followsTier)` — verify `followsTier` is read from `data.tier` correctly and not overridden by a stale cached value.
 

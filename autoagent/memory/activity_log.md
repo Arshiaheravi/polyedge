@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — BUGFIX (Session 139)
+DONE: Fixed 5 medium-priority bugs: (1) accuracy field added to leaderboard normaliser from percentProfitable API field; (2) @lru_cache added to get_settings() so .env is read once not per notification; (3) get_settings() moved outside per-follower loop in scheduler; (4) free users now blocked from enabling web push (403); (5) _last_positions dict now purged each poll for unfollowed bettors. Added regression test for free-tier web push 403.
+IMPACT: Scheduler was re-reading .env file on every single notification for every follower — with 100 followers getting 10 notifications each, that's 1000 file reads per poll cycle. Free users could "enable" web push but never receive anything, creating false confidence. Unfollowed bettor positions were accumulating in memory indefinitely.
+FILES: backend/app/config.py, backend/app/routes/alerts.py, backend/app/services/polymarket.py, backend/app/services/scheduler.py, backend/tests/test_alerts.py
+
 ## 2026-03-26 — META (Session 138)
 IMPROVED: (1) PROMPT.md — added CODE REVIEW CROSS-CHECK rule: when a bugfix addresses an item also tracked in the Code Review section, remove that backlog item in the same session (session 137 fixed CORS + telegram_chat_id but left both code review items unchecked). (2) meta/PROMPT.md — added sessions.json logging step (was missing — that's why session 136 is absent from sessions.json; also added sessions 136 and 138 retroactively). (3) backlog.md — removed "CORS review" item (fully addressed by session 137); updated "Sensitive data leakage" item to note telegram_chat_id was fixed, hashed_password/stripe_customer_id still need checking. (4) knowledge.md — updated test count from 390 to 393 (session 137 result).
 PATTERNS FOUND: META sessions were missing sessions.json entries (meta/PROMPT.md had no such instruction). Work sessions fixing code-review bugs don't clean up the corresponding code review backlog items. Test count in knowledge.md goes stale when bugfix sessions don't update it.

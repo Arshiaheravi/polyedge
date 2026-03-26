@@ -816,9 +816,16 @@ FAILED: Two existing tests (`test_login_response_has_all_7_fields`, `test_regist
 RULE: [2026-03-26] When fixing a security bug that removes a field from an API response, grep ALL test files for that field name before committing — existing tests may be asserting the field IS present and will fail. Fix those tests simultaneously, not in a follow-up session.
 RULE: [2026-03-26] Profile cache in multi-tier SaaS MUST include tier in the cache key. Any cache keyed only by resource ID will serve the highest-permission cached response to lower-permission users — a silent paywall bypass that doesn't throw errors.
 
+### Session #139 Reflexion — 2026-03-26 (BUGFIX)
+ACCOMPLISHED: Fixed 5 medium-priority bugs: accuracy field in leaderboard normaliser (from percentProfitable API field), @lru_cache on get_settings(), get_settings() moved outside per-follower inner loop, free users blocked from enabling web push (403), _last_positions purged for unfollowed bettors each poll cycle. 4 existing tests updated (used free tier for web_push but free is now blocked). 1 regression test added. 394 tests passing.
+FAILED: 4 test failures on first run — existing tests for web_push_enabled used free user (default auth_headers fixture); new tier check correctly blocked them with 403. Fix was to upgrade users to "basic" tier in those tests.
+RULE: [2026-03-26] When adding a tier gate to an existing endpoint, grep ALL tests for calls to that endpoint and check if they use a free-tier user. Tier checks break free-tier tests that previously worked.
+RULE: [2026-03-26] @lru_cache(maxsize=1) on get_settings() is critical for settings called in hot loops (per-bet, per-follower). Without it, each call re-reads .env file from disk — 1000+ file reads per scheduler poll cycle.
+
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend Checks |
 |---------|--------------|-----------------|
+| 139     | 394          | 132             |
 | 137     | 393          | 132             |
 | 135     | 390          | 132             |
 | 134     | 384          | 132             |
