@@ -464,6 +464,47 @@ async def test_copy_simulator_extreme_price_roi_cap():
     )
 
 
+@pytest.mark.asyncio
+async def test_copy_simulator_skips_still_open_bets():
+    """compute_copy_simulator must exclude bets that are <7 days old and NOT in redeemed_ids.
+    These are still-open positions — the outcome is unknown so they must not count as losses.
+    bets_analysed must equal 0 when the only TRADE bet is fresh and unresolved (Bug coverage — open-bet skip branch)."""
+    import time as _time
+    from unittest.mock import AsyncMock, MagicMock, patch
+    from app.services.polymarket import compute_copy_simulator
+
+    now_ts = _time.time()
+    recent_ts = str(now_ts - 1 * 24 * 3600)  # 1 day ago — well under 7-day threshold
+
+    # One TRADE BUY bet placed 1 day ago, conditionId NOT in any REDEEM → still open
+    raw = [
+        {
+            "type": "TRADE",
+            "side": "BUY",
+            "price": "0.60",
+            "conditionId": "cid-open",
+            "timestamp": recent_ts,
+        }
+    ]
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = raw
+    mock_resp.raise_for_status = MagicMock()
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        result = await compute_copy_simulator("0x" + "c" * 40, limit=10)
+
+    assert result["bets_analysed"] == 0, (
+        f"Still-open bet (1 day old, not redeemed) must be skipped — got bets_analysed={result['bets_analysed']}"
+    )
+    assert result["simulated_pnl_usd"] == 0.0, (
+        f"No analysed bets → pnl must be 0.0, got {result['simulated_pnl_usd']}"
+    )
+
+
 # ── Admin stats internal consistency ────────────────────────────────────────
 
 def test_admin_stats_user_counts_sum_to_total(client, db):

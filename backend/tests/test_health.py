@@ -87,6 +87,17 @@ def test_readiness_not_rate_limited(client):
         assert resp.status_code == 200, f"Expected 200 but got {resp.status_code}"
 
 
+def test_get_settings_returns_same_instance():
+    """get_settings() must be @lru_cache — two calls must return the exact same object (Bug #9 regression)."""
+    from app.config import get_settings
+    first = get_settings()
+    second = get_settings()
+    assert first is second, (
+        "get_settings() returns a new Settings() object on each call — @lru_cache is missing or broken. "
+        "This causes .env to be re-read on every scheduler invocation."
+    )
+
+
 def test_unauthenticated_protected_routes(client):
     """All protected routes return 403 without a token, not 500."""
     protected = [

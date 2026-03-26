@@ -410,6 +410,24 @@ def test_login_rate_limit_triggers_429_after_10_requests(client):
     assert resp.status_code == 429, f"Expected 429 after 10 login attempts, got {resp.status_code}"
 
 
+def test_auth_me_does_not_expose_sensitive_fields(client):
+    """GET /auth/me must never return hashed_password, stripe_customer_id, or telegram_chat_id.
+    These fields exist in the DB model but must be stripped from every API response."""
+    resp = client.post("/auth/register", json={
+        "email": "sensitivefields@example.com", "password": "pw123", "name": "SensitiveCheck"
+    })
+    assert resp.status_code == 201
+    token = resp.json()["access_token"]
+
+    me_resp = client.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
+    assert me_resp.status_code == 200
+    user = me_resp.json()["user"]
+
+    assert "hashed_password" not in user, "GET /auth/me must not expose hashed_password"
+    assert "stripe_customer_id" not in user, "GET /auth/me must not expose stripe_customer_id"
+    assert "telegram_chat_id" not in user, "GET /auth/me must not expose telegram_chat_id"
+
+
 def test_register_rate_limit_triggers_429_after_10_requests(client):
     """POST /auth/register is limited to 10 req/min per IP — the 11th request must return 429."""
     # Make 10 register attempts with unique emails (all should succeed 201)
