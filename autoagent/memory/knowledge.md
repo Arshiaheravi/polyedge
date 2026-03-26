@@ -44,7 +44,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **443 passed, 1 skipped** (as of 2026-03-26, session 156 — no change)
+- Test count: **446 passed, 1 skipped** (as of 2026-03-26, session 157)
 - Playwright E2E: **42 passed, 2 skipped** (as of 2026-03-26, session 156)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -56,6 +56,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #157 Reflexion — 2026-03-26
+ACCOMPLISHED: Added 3 reliability tests: (1) Polymarket HTTP 500 at httpx transport layer → service swallows it, route returns 200 with empty list — confirmed `except Exception: break` in `get_leaderboard` and `except Exception: return []` in `_fetch_activity` actually work. (2) Same for bettor detail endpoint. (3) 10 concurrent GET /bettors threads via Python `threading.Thread` all return 200.
+FAILED: Nothing — clean pass on first run.
+RULE: [2026-03-26] To mock httpx.AsyncClient (async context manager) at the transport level: create `mock_cm = MagicMock()` with `mock_cm.__aenter__ = AsyncMock(return_value=mock_http_client)` and `mock_cm.__aexit__ = AsyncMock(return_value=False)`, then `patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_cm)`. This tests the actual httpx error path rather than mocking the service function.
+RULE: [2026-03-26] For concurrent-request tests using `threading.Thread`: use the shared `client` fixture when requests don't touch the DB (unauthenticated GET endpoints). Use unique cache-key params to avoid cross-test interference. The CPython GIL makes simple dict assignments atomic — module-level cache dicts are safe under concurrent reads/writes.
 
 ### Session #156 Reflexion — 2026-03-26
 ACCOMPLISHED: Found and fixed a timer leak bug: `_followsRefreshTimer` was never cleared on logout or 401 redirect. After logout, the 30s interval kept calling `refreshFollowsActivity()` → 401 → `showView('auth','login')`, bouncing users back to login 30s after logging out. Fix: `showView()` now clears the timer when `view !== 'dashboard'`. Also removed unused `BetEvent` import from `routes/follows.py`. Added 1 Playwright test using `page.clock.fast_forward(31_000)` to verify behavior.

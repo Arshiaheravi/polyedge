@@ -3496,5 +3496,26 @@
       "failures": 0,
       "notes": "+1 new timer cleanup Playwright test"
     }
+  },
+  {
+    "session": 157,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 3 reliability tests proving Polymarket HTTP 500 errors are swallowed gracefully by the service layer (not propagated to callers), and that 10 concurrent GET /bettors requests all succeed \u2014 confirms the module-level cache dict is safe under concurrent access",
+    "files": [
+      "backend/tests/test_bettors.py"
+    ],
+    "tests": {
+      "before": 443,
+      "after": 446,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

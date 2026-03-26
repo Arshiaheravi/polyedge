@@ -34,11 +34,6 @@
 
 - [ ] **Empty follows state** — Playwright: log in as new user with no follows, open Follows tab, assert empty state message shown (not crash)
 
-- [ ] **Polymarket timeout handling** — pytest: mock Polymarket API to return 500, assert /bettors endpoint returns graceful error not 500
-
-- [ ] **Concurrent requests** — pytest: fire 10 simultaneous GET /bettors requests, assert all return 200 without DB errors
-
-- [ ] **Scheduler duplicate prevention** — pytest: confirm _last_check is updated correctly so same bet is not notified twice
 
 ---
 

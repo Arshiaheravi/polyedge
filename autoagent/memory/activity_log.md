@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 157)
+DONE: Added 3 new reliability tests in test_bettors.py — (1) Polymarket HTTP 500 at httpx transport level returns graceful 200 empty list (leaderboard), (2) same for bettor detail endpoint, (3) 10 concurrent GET /bettors threads using Python threading all return 200 without crashing. Also removed 3 already-covered items from backlog (timeout handling, concurrent requests, scheduler duplicate prevention — all already tested).
+IMPACT: First tests that verify Polymarket 500 resilience at the HTTP layer (not just the mock-at-service-function level). Proves the service's `except Exception: break` pattern actually swallows upstream errors correctly. Concurrent test confirms the module-level cache dict handles concurrent writes safely via CPython GIL.
+FILES: backend/tests/test_bettors.py
+
 ## 2026-03-26 — BUGFIX + TESTING (Session 156)
 DONE: Fixed follows refresh timer leak — after logout (or JWT expiry), the 30s setInterval kept firing refreshFollowsActivity(), which got 401 and called showView('auth','login'), redirecting users back to the login page 30 seconds after logging out. Fix: showView() now clears _followsRefreshTimer when navigating away from dashboard. Also removed unused BetEvent import from routes/follows.py. Added 1 Playwright test using page.clock.fast_forward(31s) to verify the timer is cleared on logout.
 IMPACT: Users no longer get silently bounced back to the login page 30 seconds after logging out. The dead import cleanup prevents future confusion about what follows.py uses.
