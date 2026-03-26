@@ -4,12 +4,6 @@
 
 ## CRITICAL BUGS — Fix First (Code Review 2026-03-26)
 
-- [ ] **Profile cache tier gate bypass** — `_profile_cache` in `routes/bettors.py:66-88` is keyed by `address` only. VIP user fetches profile → unlocked Copy Simulator cached → free user requests same address → gets unlocked simulator for free. Fix: key cache by `(address, user_tier)` or invalidate on tier change. Write regression test: free user gets locked=True after VIP fetched same address.
-
-- [ ] **CORS wildcard + credentials** — `main.py:42-44` sets `allow_origins=["*"]` with `allow_credentials=True`. This combination is rejected by every browser (CORS spec forbids wildcard + credentials). Fix: set `allow_origins=["http://localhost:3000"]` (and production domain). Write test asserting `*` does not appear in `Access-Control-Allow-Origin` header.
-
-- [ ] **telegram_chat_id leaks in auth responses** — `routes/auth.py:47` `user_to_dict()` includes `telegram_chat_id`. This field must never appear in any API response. Fix: remove from `user_to_dict()`. Write test: POST /auth/login response body does not contain key `telegram_chat_id`.
-
 - [ ] **Telegram notifications permanently broken** — `routes/alerts.py:140-145` `telegram_verify` sets `telegram_verified=True` but never sets `telegram_chat_id`. The scheduler requires both fields to send. There is also no bot webhook endpoint anywhere to receive the Telegram update with the chat ID. Fix requires: (a) add POST /alerts/telegram/webhook endpoint that Telegram bot calls, (b) verify sets `telegram_chat_id` from the inbound message. Write test that after verify, `telegram_chat_id` is set in DB.
 
 - [ ] **Web push is a non-functional stub** — `services/notifications.py:68-97` POSTs directly to the browser push endpoint without VAPID signing or payload encryption. Chrome/Firefox/Safari all reject unsigned pushes with 401/403. The function returns False silently — users "enable" push and never receive anything. Fix requires pywebpush library + VAPID keys. Until fixed, disable web push option in UI rather than silently failing.

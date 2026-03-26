@@ -809,3 +809,17 @@ RULE: [2026-03-25] When Playwright-testing that a function sets skeleton HTML (l
 ACCOMPLISHED: Built Smart Entry Timing on position cards. get_active_positions already had avg_price and cur_price — added copy_signal (good/fair/late) and copy_value_pct computed inline. Added tier to /follows/live both paths (empty and populated). Frontend renderPositionItem now accepts tier param and renders color-coded badge for Basic/VIP, padlock for Free. 5 copy_signal unit tests + 2 tier field tests added. 373 total, +5.
 FAILED: Two existing tests asserted `resp.json() == {"bettors": []}` (exact match). Adding tier broke them. Fixed by changing to `resp.json()["bettors"] == []` (key-level assertion). Lesson: exact-dict response assertions are fragile — prefer key-level checks.
 RULE: [2026-03-25] Exact response dict assertions (`assert resp.json() == {"key": val}`) break whenever a new field is added. Always assert at key level (`assert resp.json()["key"] == val`) unless testing that NO extra fields exist.
+
+### Session #137 Reflexion — 2026-03-26 (BUGFIX)
+ACCOMPLISHED: Fixed 3 CRITICAL bugs from code review: (1) profile cache tier bypass — changed cache key from `address` to `(address, tier)`; (2) CORS wildcard removed — explicit `["http://localhost:3000", "http://127.0.0.1:3000"]`; (3) telegram_chat_id removed from user_to_dict(). 3 regression tests added. Also committed lingering uncommitted changes (conviction scoring persistence + pricing UI updates). 393 tests passing.
+FAILED: Two existing tests (`test_login_response_has_all_7_fields`, `test_register_response_has_all_7_fields`) explicitly asserted that `telegram_chat_id` IS present — had to update them alongside adding the new security regression test. Also one existing CORS test (`test_cors_allows_any_origin`) was asserting wildcard behaviour that we just fixed — needed to rewrite it.
+RULE: [2026-03-26] When fixing a security bug that removes a field from an API response, grep ALL test files for that field name before committing — existing tests may be asserting the field IS present and will fail. Fix those tests simultaneously, not in a follow-up session.
+RULE: [2026-03-26] Profile cache in multi-tier SaaS MUST include tier in the cache key. Any cache keyed only by resource ID will serve the highest-permission cached response to lower-permission users — a silent paywall bypass that doesn't throw errors.
+
+## Test Suite History (updated)
+| Session | Backend Tests | Frontend Checks |
+|---------|--------------|-----------------|
+| 137     | 393          | 132             |
+| 135     | 390          | 132             |
+| 134     | 384          | 132             |
+| 133     | 373          | 130             |

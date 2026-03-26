@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — BUGFIX (Session 137)
+DONE: Fixed 3 CRITICAL bugs: (1) profile cache tier bypass — keyed by (address, tier) instead of address alone so VIP cached profile can't be served to free users; (2) CORS wildcard removed — allow_origins now set to explicit localhost:3000 list; (3) telegram_chat_id removed from all auth responses — field was leaking in login/register/me. Added 3 regression tests + updated 4 stale tests. 393 total passing.
+IMPACT: Paywall was completely bypassable — any free user could see unlocked Copy Simulator by requesting the same bettor address that a VIP had cached. CORS misconfiguration meant API calls from the browser would be silently rejected. telegram_chat_id is private infrastructure data that must never reach API consumers.
+FILES: backend/app/routes/bettors.py, backend/app/routes/auth.py, backend/app/main.py, backend/tests/test_bettors.py, backend/tests/test_auth.py, backend/tests/test_cors.py
+
 ## 2026-03-26 — FEATURE (Session 135)
 DONE: Built Exit Alerts — scheduler detects when a followed whale closes or reduces a position by >50% and fires exit notifications to VIP users only (Telegram + web push); BetEvent rows with event_type="EXIT" stored for all tiers; format_exit_message() added; condition_id added to get_active_positions() result; event_type column added to BetEvent model; 6 new tests, 390 total.
 IMPACT: VIP users now know WHEN to exit a copied position — the final missing signal in the copy-trading loop. When a whale exits, users holding the same position get an immediate alert to consider taking profit.

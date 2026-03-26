@@ -2942,5 +2942,15 @@
     "files": ["backend/app/models.py", "backend/app/services/notifications.py", "backend/app/services/polymarket.py", "backend/app/services/scheduler.py", "backend/tests/test_scheduler.py"],
     "tests": {"before": 384, "after": 390, "status": "pass"},
     "frontend": {"status": "pass", "checks": 132, "failures": 0, "notes": "no frontend changes"}
+  },
+  {
+    "session": 137,
+    "date": "2026-03-26",
+    "time": "07:00",
+    "type": "work",
+    "summary": "Fixed 3 critical security bugs: profile cache now keyed by tier so free users can't see VIP content; CORS wildcard replaced with explicit origin list so browser API calls actually work; telegram_chat_id removed from login/register/me responses so private infrastructure data stays private",
+    "files": ["backend/app/routes/bettors.py", "backend/app/routes/auth.py", "backend/app/main.py", "backend/tests/test_bettors.py", "backend/tests/test_auth.py", "backend/tests/test_cors.py"],
+    "tests": {"before": 390, "after": 393, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes this session"}
   }
 ]
