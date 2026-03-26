@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 146)
+DONE: Added 7 OWASP security tests — mass assignment (3 tests verify register with subscription_tier in body always yields free tier) + sensitive data leakage (4 tests verify hashed_password and stripe_customer_id never appear in register/login/me/admin responses). 426 tests passing.
+IMPACT: Mass assignment lets attackers escalate to paid tiers via the register API — now regression-tested. Sensitive field leakage exposes bcrypt hashes and internal IDs — now verified absent from all auth and admin endpoints.
+FILES: backend/tests/test_security.py
+
 ## 2026-03-26 — BUGFIX (Session 145)
 DONE: Fixed web push non-functional stub — replaced unsigned raw POST with proper VAPID signing via pywebpush; added graceful no-op when keys absent; added GET /alerts/web-push-config endpoint; frontend disables push toggle when VAPID unconfigured. 419 tests passing.
 IMPACT: Users could "enable" web push and never receive any notification — Chrome/Firefox silently reject unsigned pushes with 401/403. Now the UI honestly reflects whether push is available, and when VAPID keys are configured, pushes are properly signed and will be delivered.

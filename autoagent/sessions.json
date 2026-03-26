@@ -3219,10 +3219,52 @@
     }
   },
   {
-    "session": 145, "date": "2026-03-26", "time": "10:00", "type": "work",
-    "summary": "Fixed web push silently failing for every user — replaced unsigned raw POST stub with proper VAPID-signed pywebpush; frontend now disables push toggle when VAPID keys not configured so users aren't misled",
-    "files": ["backend/app/config.py", "backend/app/routes/alerts.py", "backend/app/services/notifications.py", "backend/app/services/scheduler.py", "backend/requirements.txt", "backend/tests/test_alerts.py", "backend/tests/test_notifications.py", "frontend/index.html"],
-    "tests": {"before": 414, "after": 419, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "Toggle logic is DOM manipulation; no complex rendering changed"}
+    "session": 145,
+    "date": "2026-03-26",
+    "time": "10:00",
+    "type": "work",
+    "summary": "Fixed web push silently failing for every user \u00e2\u20ac\u201d replaced unsigned raw POST stub with proper VAPID-signed pywebpush; frontend now disables push toggle when VAPID keys not configured so users aren't misled",
+    "files": [
+      "backend/app/config.py",
+      "backend/app/routes/alerts.py",
+      "backend/app/services/notifications.py",
+      "backend/app/services/scheduler.py",
+      "backend/requirements.txt",
+      "backend/tests/test_alerts.py",
+      "backend/tests/test_notifications.py",
+      "frontend/index.html"
+    ],
+    "tests": {
+      "before": 414,
+      "after": 419,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "Toggle logic is DOM manipulation; no complex rendering changed"
+    }
+  },
+  {
+    "session": 146,
+    "date": "2026-03-26",
+    "time": "03:20",
+    "type": "work",
+    "summary": "Added 7 OWASP security tests: mass assignment (register with subscription_tier in body gets free tier) and sensitive data leakage (hashed_password/stripe_customer_id never appear in auth/admin responses)",
+    "files": [
+      "backend/tests/test_security.py"
+    ],
+    "tests": {
+      "before": 419,
+      "after": 426,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

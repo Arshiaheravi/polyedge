@@ -44,7 +44,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **419 passed** (as of 2026-03-26, session 145)
+- Test count: **426 passed** (as of 2026-03-26, session 146)
 - Playwright checks: **132 total, 0 failures** (as of 2026-03-26, session 134 — no changes since)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -56,6 +56,11 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #146 Reflexion — 2026-03-26
+ACCOMPLISHED: Added 7 OWASP security tests — mass assignment (3 tests) + sensitive data leakage (4 tests). 426 total tests.
+FAILED: test_admin_stats_response_has_no_sensitive_fields failed first run because I hardcoded "admin" as admin password instead of reading from `get_settings().admin_password`. In test env the .env is loaded so the real password is "polyedge-admin-2026".
+RULE: [2026-03-26] Always use `get_settings().admin_password` when authenticating to admin endpoints in tests — never hardcode "admin" even though that's the config default. The .env overrides the default and test env loads .env.
 
 ### Session #145 Reflexion — 2026-03-26
 ACCOMPLISHED: Fixed web push non-functional stub — replaced raw POST with proper VAPID signing via pywebpush; added graceful no-op when VAPID keys absent; added GET /alerts/web-push-config endpoint exposing public key availability; frontend now disables push toggle when VAPID not configured; 5 new tests (VAPID absent → False, config endpoint, dispatch_bet_notification passthrough); 2 stale tests updated to mock pywebpush instead of httpx. 419 total tests.

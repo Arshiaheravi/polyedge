@@ -153,3 +153,5 @@
 
 ### 2026-03-26
 - **[SESSION #144] Code quality audit + telegram_verify half-verified bug fix** — Found and fixed alert where telegram_verify could return "Telegram linked successfully" even when notifications would still never fire; also fixed scheduler inline import smell and misleading test comment; 414 tests passing
+
+- **[SESSION #146] OWASP security tests** — added mass assignment and sensitive data leakage tests; 426 tests passing

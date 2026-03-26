@@ -6,8 +6,6 @@
 ## CRITICAL BUGS — Fix First (Code Review 2026-03-26)
 
 
-- [ ] **Web push is a non-functional stub** — `services/notifications.py:68-97` POSTs directly to the browser push endpoint without VAPID signing or payload encryption. Chrome/Firefox/Safari all reject unsigned pushes with 401/403. The function returns False silently — users "enable" push and never receive anything. Fix requires pywebpush library + VAPID keys. Until fixed, disable web push option in UI rather than silently failing.
-
 
 - [ ] **Consensus "Could not load"** — was caused by port mismatch. Verify it now loads correctly on 8003 by running Playwright test that opens the Consensus tab and asserts market cards are visible.
 
@@ -48,30 +46,6 @@ These tests verify the data coming from Polymarket is real, consistent, and make
   Use test accounts: free@polyedge.com/FreeTest123!, basic@polyedge.com/BasicTest123!, vip@polyedge.com/VipTest123!
 
 ---
-
-## HIGH PRIORITY — Security Tests (OWASP Top 10)
-
-- [ ] **SQL injection test** — POST /auth/login with email=`' OR '1'='1'--` and email=`admin'--`; assert 401/422, not 200. Add to `tests/test_security.py`
-
-- [ ] **XSS test** — register with name=`<script>alert(1)</script>`, then GET /auth/me and assert name is stored as plain text (not executed); Playwright test to verify it renders escaped in UI
-
-- [ ] **Auth bypass tests** — test tampered JWTs (wrong signature, expired, wrong user_id) all return 401; test accessing /follows, /alerts/settings, /admin/stats without token returns 401/403
-
-- [ ] **Mass assignment test** — POST /auth/register with body including `subscription_tier: "vip"` — assert registered user has tier "free" not "vip"
-
-- [ ] **Sensitive data test** — GET /auth/me, GET /bettors, GET /admin/stats — assert no response body contains `password`, `hashed_password`, or any hash string
-
----
-
-## HIGH PRIORITY — Feature Correctness Tests
-
-- [ ] **Copy simulator correctness** — pytest: GET /bettors/{known_address} as free → locked:true, simulated_pnl_usd:null; as basic → locked:false, simulated_pnl_usd is float, bets_analysed ≥ 0
-
-- [ ] **Recent bets — no REDEEM** — pytest: GET /bettors/{address}/recent_bets → assert no bet has type=="REDEEM", all bets have outcome and side fields populated
-
-- [ ] **Follow limits enforced** — pytest: login as free user, follow 1 bettor → 201; attempt 2nd follow → 403; login as basic, follow up to 5 → all 201; attempt 6th → 403
-
-- [ ] **Admin stats** — pytest: GET /admin/stats with correct header → 200 with mrr_estimate field; wrong password → 403; no header → 403
 
 ---
 
@@ -125,7 +99,6 @@ These tasks are a structural code review — not testing functionality, but read
 
 - [ ] **Polymarket service review** — read `services/polymarket.py`: check all HTTP calls have timeouts (a hanging Polymarket call would freeze the scheduler); verify error handling won't leak raw API errors to users; check price normalization — are prices always 0-1, or can they come back as percentages (0-100)?
 
-- [ ] **Sensitive data leakage** — search all routes for `hashed_password`, `stripe_customer_id` in response dicts; these should NEVER appear in any API response. NOTE: `telegram_chat_id` was fixed in session 137 (removed from login/register/me responses). Still need to verify `hashed_password` and `stripe_customer_id` are not leaking.
 
 - [ ] **Frontend API error handling** — read `frontend/index.html`: for every `fetch()` call, verify there is a `.catch()` or `try/catch`; uncaught promise rejections cause silent failures; also check that expired JWT (401 response) triggers redirect to login — not a blank screen
 
