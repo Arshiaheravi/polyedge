@@ -643,3 +643,33 @@ def test_concurrent_leaderboard_requests_all_succeed(client):
     assert len(errors) == 0, f"Concurrent requests raised exceptions: {errors}"
     assert len(results) == 10, f"Not all 10 threads completed — got {len(results)} results"
     assert all(s == 200 for s in results), f"Not all 200: {results}"
+
+
+def test_bettor_detail_profile_includes_accuracy(client):
+    """GET /bettors/{address} profile must include 'accuracy' field (added session 176)."""
+    import app.routes.bettors as bettors_mod
+    addr = "0xACCURACY_CHECK"
+    bettors_mod._profile_cache.pop((addr, "free"), None)
+    mock_profile = {
+        "address": addr, "name": "AccuracyTrader",
+        "rank": 3, "pnl_usd": 500.0, "accuracy": 0.72,
+        "volume_usd": 2000.0, "total_bets": 10, "avg_bet_usd": 200.0, "avatar_url": "",
+    }
+    with patch("app.routes.bettors.get_bettor_profile", new=AsyncMock(return_value=mock_profile)), \
+         patch("app.routes.bettors.get_recent_bets", new=AsyncMock(return_value=[])), \
+         patch("app.routes.bettors.compute_copy_simulator", new=AsyncMock(return_value=None)):
+        resp = client.get(f"/bettors/{addr}")
+    assert resp.status_code == 200
+    profile = resp.json()["profile"]
+    assert "accuracy" in profile, "profile must contain 'accuracy' field (added session 176)"
+    assert profile["accuracy"] == pytest.approx(0.72)
+
+
+def test_auth_me_does_not_contain_accuracy(client, auth_headers):
+    """GET /auth/me is user data — it must NOT contain an 'accuracy' field (bettor metric, not user)."""
+    resp = client.get("/auth/me", headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "accuracy" not in data, (
+        "GET /auth/me must not expose 'accuracy' — that is a bettor-profile metric, not user account data"
+    )

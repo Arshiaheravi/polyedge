@@ -918,3 +918,51 @@ async def test_get_consensus_signals_with_mocked_api():
         f"avg_entry_price {target['avg_entry_price']} out of expected range"
     )
     assert target["condition_id"] == MOCK_CONDITION_ID
+
+
+@pytest.mark.asyncio
+async def test_get_consensus_signals_filters_resolved_markets():
+    """Unit test: positions with curPrice=0.98 (near-settled YES) must be excluded.
+
+    The guard `cur_price > 0.95` must filter these out, producing 0 signals
+    even when 5 whales all hold the same market.
+    """
+    from unittest.mock import AsyncMock, MagicMock, patch
+    from app.services.polymarket import get_consensus_signals
+
+    mock_leaderboard = [
+        {"address": f"0x{i:040x}", "name": f"whale{i}", "pnl_usd": 1000.0 * (5 - i), "rank": i}
+        for i in range(1, 6)
+    ]
+
+    # curPrice=0.98 — near-settled YES market; should be filtered by the > 0.95 guard
+    mock_position = {
+        "conditionId": MOCK_CONDITION_ID,
+        "outcome": "Yes",
+        "title": "Already decided market",
+        "avgPrice": "0.50",
+        "curPrice": "0.98",
+        "redeemable": False,
+        "eventSlug": "settled-event",
+    }
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = [mock_position]
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with (
+        patch("app.services.polymarket.get_leaderboard", new=AsyncMock(return_value=mock_leaderboard)),
+        patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client),
+    ):
+        signals = await get_consensus_signals(min_whales=3)
+
+    # No signal should be returned — the market is near-settled (curPrice > 0.95)
+    resolved_signal = next((s for s in signals if s.get("condition_id") == MOCK_CONDITION_ID), None)
+    assert resolved_signal is None, (
+        f"get_consensus_signals must filter out near-settled markets (curPrice=0.98), "
+        f"but returned: {resolved_signal}"
+    )
