@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 152)
+DONE: Added 14 Playwright UI flow tests across 4 suites: landing page pricing (all 5 features per tier card), full register→logout→login journey, leaderboard renders (≥10 bettor cards with names+stats), and bettor profile (name/stats/recent bets/simulator locked for free/unlocked for basic). Fixed logout step to call page.evaluate('logout()') instead of clicking the hidden #tab-account button at desktop viewport.
+IMPACT: Core user journeys — sign up, browse leaderboard, view a bettor, see pricing — are now E2E verified. A broken registration flow, broken leaderboard render, or broken pricing copy would now be caught automatically instead of discovered by a paying user.
+FILES: backend/tests/playwright/test_ui_flows.py
+
 ## 2026-03-26 — TESTING (Session 151)
 DONE: Added 12 Playwright E2E tier gate tests across 3 paywall dimensions: Consensus (free ≤3 signals + no whale names, basic all signals + whale-name lock, VIP all signals + names visible), position cards (free padlock badge, basic/VIP no upgrade prompt), and profile simulator (free blurred/locked + upgrade CTA, basic/VIP unlocked numbers + no CTA). Fixed a selector bug where `_open_first_profile` extracted address from onclick attribute (not there) instead of `data-addr` attribute; fixed wait condition from `display !== ''` to `display === 'flex'`.
 IMPACT: First tests to verify tier gates work end-to-end in the browser UI, not just at API level. A paywall bypass in profile cache (Bug #1) would now be caught by these tests, not just in a code review. Also validates the full copy simulator locked/unlocked UX flow that paying users see.

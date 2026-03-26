@@ -3291,24 +3291,114 @@
       "notes": "no frontend changes"
     }
   },
-  {"session": 148, "date": "2026-03-26", "time": "00:00", "type": "meta",
-   "summary": "Added admin-password and stale-mock rules to testing.md so testing sessions see them at skill-read time; added .hypothesis/ to .gitignore to stop test artifact noise in STEP 0 git status; trimmed 5 already-confirmed code review items from backlog",
-   "files": ["autoagent/skills/testing.md", "autoagent/memory/backlog.md", ".gitignore"],
-   "tests": {"before": 0, "after": 0, "status": "skip"},
-   "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "meta session — no code changes"}},
-  {"session": 149, "date": "2026-03-26", "time": "00:00", "type": "work",
-   "summary": "Added 5 Playwright E2E tests for the Consensus tab that prove the port-8003 fix works — users no longer see 'Could not load' error; also fixed the conftest login helper which had wrong selectors and had never been run before",
-   "files": ["backend/tests/playwright/test_consensus_tab.py", "backend/tests/playwright/conftest.py"],
-   "tests": {"before": 426, "after": 426, "status": "pass"},
-   "frontend": {"status": "pass", "checks": 5, "failures": 0, "notes": "5 Playwright consensus tab tests all passing"}},
-  {"session": 150, "date": "2026-03-26", "time": "00:00", "type": "work",
-   "summary": "Fixed Playwright event loop contamination that caused 105 async tests to fail when running the full suite; added pytest.ini with asyncio_mode=auto and --ignore=tests/playwright so backend tests run cleanly; then added 18 real-world data integrity tests that verify Polymarket data quality (ETH addresses, profit ranges, trade types, MRR formula, cross-validation)",
-   "files": ["backend/pytest.ini", "backend/tests/test_alerts.py", "backend/tests/test_data_integrity.py"],
-   "tests": {"before": 426, "after": 443, "status": "pass"},
-   "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}},
-  {"session": 151, "date": "2026-03-26", "time": "00:00", "type": "work",
-   "summary": "Added 12 Playwright tier gate E2E tests that verify paywall correctness in the browser UI for all 3 tiers — Consensus signal count caps, whale name visibility, profile simulator blurred vs unlocked, and position card copy timing badges",
-   "files": ["backend/tests/playwright/test_tier_gates.py"],
-   "tests": {"before": 443, "after": 443, "status": "pass"},
-   "frontend": {"status": "pass", "checks": 10, "failures": 0, "notes": "10 Playwright tier gate tests passing; 2 skipped (free/basic users have no follows)"}}
+  {
+    "session": 148,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "meta",
+    "summary": "Added admin-password and stale-mock rules to testing.md so testing sessions see them at skill-read time; added .hypothesis/ to .gitignore to stop test artifact noise in STEP 0 git status; trimmed 5 already-confirmed code review items from backlog",
+    "files": [
+      "autoagent/skills/testing.md",
+      "autoagent/memory/backlog.md",
+      ".gitignore"
+    ],
+    "tests": {
+      "before": 0,
+      "after": 0,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "meta session \u00e2\u20ac\u201d no code changes"
+    }
+  },
+  {
+    "session": 149,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 5 Playwright E2E tests for the Consensus tab that prove the port-8003 fix works \u00e2\u20ac\u201d users no longer see 'Could not load' error; also fixed the conftest login helper which had wrong selectors and had never been run before",
+    "files": [
+      "backend/tests/playwright/test_consensus_tab.py",
+      "backend/tests/playwright/conftest.py"
+    ],
+    "tests": {
+      "before": 426,
+      "after": 426,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 5,
+      "failures": 0,
+      "notes": "5 Playwright consensus tab tests all passing"
+    }
+  },
+  {
+    "session": 150,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Fixed Playwright event loop contamination that caused 105 async tests to fail when running the full suite; added pytest.ini with asyncio_mode=auto and --ignore=tests/playwright so backend tests run cleanly; then added 18 real-world data integrity tests that verify Polymarket data quality (ETH addresses, profit ranges, trade types, MRR formula, cross-validation)",
+    "files": [
+      "backend/pytest.ini",
+      "backend/tests/test_alerts.py",
+      "backend/tests/test_data_integrity.py"
+    ],
+    "tests": {
+      "before": 426,
+      "after": 443,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
+  },
+  {
+    "session": 151,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 12 Playwright tier gate E2E tests that verify paywall correctness in the browser UI for all 3 tiers \u00e2\u20ac\u201d Consensus signal count caps, whale name visibility, profile simulator blurred vs unlocked, and position card copy timing badges",
+    "files": [
+      "backend/tests/playwright/test_tier_gates.py"
+    ],
+    "tests": {
+      "before": 443,
+      "after": 443,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 10,
+      "failures": 0,
+      "notes": "10 Playwright tier gate tests passing; 2 skipped (free/basic users have no follows)"
+    }
+  },
+  {
+    "session": 152,
+    "date": "2026-03-26",
+    "time": "14:00",
+    "type": "work",
+    "summary": "Added 14 Playwright UI flow tests covering landing page pricing cards (all 5 features per tier), full register/login/logout journey, leaderboard renders (>=10 cards with names+stats), and bettor profile (name/stats/bets/simulator locked+unlocked) \u2014 core user journeys now E2E verified",
+    "files": [
+      "backend/tests/playwright/test_ui_flows.py"
+    ],
+    "tests": {
+      "before": 443,
+      "after": 443,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 14,
+      "failures": 0,
+      "notes": "All 14 Playwright UI flow tests pass with live servers"
+    }
+  }
 ]

@@ -13,14 +13,6 @@
 
 ## HIGH PRIORITY — Frontend UI Playwright Tests
 
-- [ ] **Landing page pricing** — assert all 3 pricing cards contain the new features: "Conviction Score", "Smart Entry Timing", "Copy Portfolio Simulator", "Whale Consensus", "Exit Alerts"
-
-- [ ] **Register → Login flow** — Playwright: fill register form, submit, assert redirected to dashboard; logout; login with same credentials, assert back in dashboard
-
-- [ ] **Leaderboard renders** — Playwright: open leaderboard, assert ≥10 bettor cards visible, each has name + profit + accuracy fields
-
-- [ ] **Bettor profile opens** — Playwright: click first bettor card, assert profile modal opens with name, stats, recent bets, copy simulator section
-
 - [ ] **Consensus tab loads** — Playwright: log in as VIP, open Consensus tab, assert whale name is visible in at least one card
 
 - [ ] **Back-to-top FAB** — Playwright: scroll down >300px on leaderboard, assert FAB becomes visible; click it, assert scrolled back to top
