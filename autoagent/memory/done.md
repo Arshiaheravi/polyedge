@@ -160,3 +160,7 @@
 
 ## 2026-03-26
 - **[SESSION #147] Code quality audit** — fixed asyncio deprecation, hardcoded bot username, and missing sensitive-field regression test for telegram_chat_id
+- **[SESSION #148] Meta: testing.md + .gitignore + backlog cleanup** — admin-password rule and stale-mock rule added to testing.md; .hypothesis/ excluded from git
+- **[SESSION #149] Playwright consensus tab tests** — 5 E2E tests confirm port-8003 fix works; conftest login helper fixed
+- **[SESSION #150] Playwright event loop fix + data integrity tests** — 105 broken async tests fixed; 18 data integrity tests added
+- **[SESSION #151] Playwright tier gate E2E tests** — 12 tests verify all 3 tiers see correct paywall UI in browser (Consensus, position cards, profile simulator)

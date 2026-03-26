@@ -7,14 +7,6 @@
 
 ---
 
-## HIGH PRIORITY — Tier Gate E2E Tests
-
-- [ ] **Tier gate Playwright suite** — write a Playwright test file `tests/playwright/test_tier_gates.py` that:
-  - Logs in as Free → checks Consensus tab shows ≤3 cards + upgrade banner; position cards show 🔒 padlock; profile simulator shows blurred teaser
-  - Logs in as Basic → checks Consensus shows all cards without whale names; position cards show copy signal badge (not padlock); profile simulator shows real numbers
-  - Logs in as VIP → checks Consensus shows all cards WITH whale names; position cards show copy signal badge; profile simulator shows real numbers; Exit Alerts toggle is accessible
-  Use test accounts: free@polyedge.com/FreeTest123!, basic@polyedge.com/BasicTest123!, vip@polyedge.com/VipTest123!
-
 ---
 
 ---

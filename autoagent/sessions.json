@@ -3305,5 +3305,10 @@
    "summary": "Fixed Playwright event loop contamination that caused 105 async tests to fail when running the full suite; added pytest.ini with asyncio_mode=auto and --ignore=tests/playwright so backend tests run cleanly; then added 18 real-world data integrity tests that verify Polymarket data quality (ETH addresses, profit ranges, trade types, MRR formula, cross-validation)",
    "files": ["backend/pytest.ini", "backend/tests/test_alerts.py", "backend/tests/test_data_integrity.py"],
    "tests": {"before": 426, "after": 443, "status": "pass"},
-   "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}}
+   "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}},
+  {"session": 151, "date": "2026-03-26", "time": "00:00", "type": "work",
+   "summary": "Added 12 Playwright tier gate E2E tests that verify paywall correctness in the browser UI for all 3 tiers — Consensus signal count caps, whale name visibility, profile simulator blurred vs unlocked, and position card copy timing badges",
+   "files": ["backend/tests/playwright/test_tier_gates.py"],
+   "tests": {"before": 443, "after": 443, "status": "pass"},
+   "frontend": {"status": "pass", "checks": 10, "failures": 0, "notes": "10 Playwright tier gate tests passing; 2 skipped (free/basic users have no follows)"}}
 ]

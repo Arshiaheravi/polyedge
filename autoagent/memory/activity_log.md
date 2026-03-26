@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 151)
+DONE: Added 12 Playwright E2E tier gate tests across 3 paywall dimensions: Consensus (free ≤3 signals + no whale names, basic all signals + whale-name lock, VIP all signals + names visible), position cards (free padlock badge, basic/VIP no upgrade prompt), and profile simulator (free blurred/locked + upgrade CTA, basic/VIP unlocked numbers + no CTA). Fixed a selector bug where `_open_first_profile` extracted address from onclick attribute (not there) instead of `data-addr` attribute; fixed wait condition from `display !== ''` to `display === 'flex'`.
+IMPACT: First tests to verify tier gates work end-to-end in the browser UI, not just at API level. A paywall bypass in profile cache (Bug #1) would now be caught by these tests, not just in a code review. Also validates the full copy simulator locked/unlocked UX flow that paying users see.
+FILES: backend/tests/playwright/test_tier_gates.py
+
 ## 2026-03-26 — BUGFIX + TESTING (Session 150)
 DONE: Fixed Playwright event loop contamination (105 async tests broken) by adding pytest.ini with asyncio_mode=auto and --ignore=tests/playwright; converted 3 asyncio.get_event_loop().run_until_complete() calls to async def. Then added 18 real-world data integrity tests covering leaderboard sanity (ETH addresses, profit/accuracy ranges, no dup ranks), profile vs leaderboard consistency, recent bets validity (TRADE only, price ranges), copy simulator tier gating, admin stats math, and Polymarket cross-validation.
 IMPACT: The full test suite was silently broken (105 failures) — any new test session would have started from a red baseline. The 18 data integrity tests now catch if Polymarket sends bad data, if normalisation is wrong, or if the tier gate on copy simulator breaks.

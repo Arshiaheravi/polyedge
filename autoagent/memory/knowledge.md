@@ -896,3 +896,19 @@ RULE: [2026-03-26] For PolyEdge Playwright conftest: (1) Never use `text=Login` 
 RULE: [2026-03-26] A conftest.py with no test files that import it has never been run and must be treated as untested code. Before relying on conftest helpers in new test files, grep for any existing test that calls them: `grep -r "from .conftest import\|from conftest import" tests/playwright/`. If zero matches, validate the helper against the live frontend first.
 
 - Test count: **426 passed** (backend, unchanged), **5 new Playwright tests passing**
+
+### Session #150 Reflexion — 2026-03-26 (BUGFIX + TESTING)
+ACCOMPLISHED: Fixed Playwright event loop contamination (105 async tests broken) — asyncio.get_event_loop().run_until_complete() in 3 test functions conflicted with anyio/asyncio_mode=auto. Added pytest.ini with asyncio_mode=auto and testpaths/ignore to exclude playwright/ from default run. Added 18 real-world data integrity tests covering ETH address formats, profit ranges, trade type validation, MRR formula correctness, and live Polymarket API cross-validation.
+FAILED: Nothing failed in this session — the fix was clear from the error (ScopeMismatch: anyio and asyncio_mode conflict).
+RULE: [2026-03-26] When adding pytest.ini with asyncio_mode=auto, also add --ignore=tests/playwright to avoid event loop conflicts between sync playwright fixtures and async test modes. These two settings must co-exist.
+
+- Test count: **443 passed** (was 426, +17 data integrity tests), **5 Playwright tests passing**
+
+### Session #151 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added 12 Playwright E2E tier gate tests covering Consensus (3 tiers × 2 assertions), position cards (3 tiers), and profile simulator (3 tiers). 10 passed, 2 skipped (free/basic accounts have no follows in DB, expected). Profile simulator tests initially all skipped due to two bugs in `_open_first_profile`: (1) extracted address from onclick attribute (doesn't exist on .lb-card — uses toggleLbCardExpand, address is in data-addr); (2) wait condition was `display !== ''` which passed immediately since display:none is truthy. Fixed to use data-addr + wait for display === 'flex'.
+FAILED: Profile simulator tests skipped on first run (not failed). Root cause traced via DOM inspection pattern.
+RULE: [2026-03-26] For PolyEdge leaderboard card address extraction: use `cards[0].getAttribute('data-addr')` — NOT onclick parsing. The .lb-card onclick is `toggleLbCardExpand()`, not `showProfile()`. The address lives in `data-addr`.
+RULE: [2026-03-26] When waiting for an element whose initial state is `display:none` to become visible after an async JS operation, wait for the TARGET display value (e.g., `display === 'flex'`), NOT for `display !== ''` — `display:none` is already non-empty and will pass immediately.
+OPTIMIZATION: [2026-03-26] When a Playwright test skips instead of fails, check the skip condition in the helper function first, not the test body — the helper may be returning None/falsy and triggering pytest.skip() without any error output.
+
+- Test count: **443 passed** (backend unchanged), **10 new Playwright tier gate tests passing, 2 skipped**
