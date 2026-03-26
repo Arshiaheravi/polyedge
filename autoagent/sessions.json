@@ -4064,5 +4064,28 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 182,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 3 tests covering dead code paths found by coverage analysis: push_subscription dict path (required model fix Optional[str]\u2192Optional[Any]), telegram webhook empty text, and copy simulator SELL-side exclusion \u2014 490\u2192493 tests",
+    "files": [
+      "backend/app/routes/alerts.py",
+      "backend/tests/test_alerts.py",
+      "backend/tests/test_polymarket_service.py"
+    ],
+    "tests": {
+      "before": 490,
+      "after": 493,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

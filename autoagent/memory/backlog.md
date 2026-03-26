@@ -2,11 +2,12 @@
 
 ## HIGH PRIORITY — Testing
 
-- [ ] **PUT /alerts/settings: push_subscription as Python dict gets json.dumps'd** — alerts.py line 104 is uncovered: `alert.push_subscription = json.dumps(payload.push_subscription)`. Existing test sends a JSON string; no test sends a Python dict. Add test: PUT with `push_subscription` as a dict value (FastAPI will deserialize it), verify the response is 200 and GET retrieves it correctly. Grep: `grep -n "push_subscription.*{.*endpoint\|dict.*push_sub" backend/tests/test_alerts.py` returns only the GET-parses-to-dict test (not a PUT-with-dict test).
+- [ ] **GET /markets/consensus: cache hit path (markets.py:30)** — every existing test clears `_consensus_cache` before calling the endpoint, so the cache-hit branch (`signals = _consensus_cache["data"]`) is never exercised. Add test: pre-populate `_consensus_cache["data"]` with known signals and set `_consensus_cache["ts"]` to `time.time()` (fresh), mock `get_consensus_signals` to assert it is NOT called, verify the route returns the pre-populated data. Grep: `grep -rn "def test.*consensus.*cache.*hit\|_consensus_cache.*time" backend/tests/` returns nothing.
 
-- [ ] **Telegram webhook: message present but empty text returns {"ok": True}** — alerts.py line 159 uncovered: `return {"ok": True}` when `not chat_id or not text`. Existing tests cover no-message key (line 153 return) and non-verify text (line 159 not hit). Add test: POST webhook with message having text="" or no text key, assert {"ok": True} returned, no DB change. Grep: `grep -n "def test_telegram_webhook.*empty\|not.*chat_id\|empty.*text" backend/tests/test_alerts.py` returns nothing.
+- [ ] **get_current_user_optional: JWT with no sub claim → returns None (auth.py:72-73)** — the path where `payload.get("sub")` is None is not covered. Add test: craft a JWT with no `sub` field (use `jwt.encode({"role": "ghost"}, SECRET, "HS256")`), call GET /markets/consensus with it as Bearer token, verify response is 200 and `tier == "free"` (treated as anonymous). Grep: `grep -rn "def test.*optional.*no.sub\|sub.*None.*optional\|no.*sub.*claim" backend/tests/` returns nothing.
 
-- [ ] **compute_copy_simulator: SELL-side trades excluded from bets_analysed** — polymarket.py line 359 uncovered: `if side not in ("BUY", ""): continue`. Add unit test: mock activity API with a SELL trade (side="SELL"), assert result bets_analysed=0. Confirms simulator skips exit trades. Grep: `grep -rn "def test.*simulator.*sell\|SELL.*bets_analysed\|simulator.*SELL" backend/tests/` returns nothing.
+- [ ] **send_telegram_message: HTTP exception path returns False (notifications.py:27-29)** — the exception handler returning `False` and logging the warning is not covered. Add test: mock `httpx.AsyncClient` to raise `httpx.ConnectError`, call `send_telegram_message("bot_token", "chat_123", "hello")` directly, assert result is `False`. Grep: `grep -rn "def test.*telegram.*fail\|ConnectError.*telegram\|send_telegram.*exception" backend/tests/` returns nothing.
+
 
 ---
 

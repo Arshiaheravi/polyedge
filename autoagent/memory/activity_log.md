@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 182)
+DONE: Added 3 coverage-gap tests: (1) PUT /alerts/settings with push_subscription as dict object — also fixed AlertSettingsUpdate.push_subscription field from Optional[str]→Optional[Any] so the isinstance(dict) branch at alerts.py:104 is reachable in Pydantic v2; (2) Telegram webhook with message present but empty text — asserts ok=True, no DB change; (3) compute_copy_simulator SELL-side trades excluded — bets_analysed=0 when all trades are SELL. 490→493 tests.
+IMPACT: Closes all 3 coverage gaps identified via --cov in session 181. The model fix also means API clients can now send push subscriptions as JSON objects directly (not just pre-stringified), which is more intuitive for callers.
+FILES: backend/app/routes/alerts.py, backend/tests/test_alerts.py, backend/tests/test_polymarket_service.py
+
 ## 2026-03-26 — TESTING (Session 181)
 DONE: Added 2 tests covering checklist field-presence items: (1) test_follows_live_positions_include_copy_value_pct — mocks 3 positions with known copy_value_pct values (5.0, 22.5, 47.3), asserts each arrives in the route response unchanged; (2) test_bettor_detail_recent_bets_have_side_field — mocks 2 bets with side="BUY", asserts "side" key is present and non-empty on each bet. Removed stale backlog item (accuracy=0.0 boundary already tested at test_polymarket_service.py:572). Added 3 new coverage-gap tasks from automated --cov analysis. 488→490 tests.
 IMPACT: Locks in the contract that copy_value_pct and side fields are not silently stripped when passing through route handlers. Previously a route refactor could drop either field and no test would catch it.

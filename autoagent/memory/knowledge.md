@@ -45,6 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
+- Test count: **493 passed, 2 skipped** (as of 2026-03-26, session 182) — 3 new tests: push_subscription dict path + telegram empty text + simulator SELL-side exclusion
 - Test count: **490 passed, 2 skipped** (as of 2026-03-26, session 181) — 2 new tests: copy_value_pct passthrough in /follows/live + side field in /bettors recent_bets
 - Test count: **488 passed, 2 skipped** (as of 2026-03-26, session 180) — 5 new tests: leaderboard accuracy normalise (3) + GET /bettors accuracy passthrough + POST /follows 409 detail message
 - Test count: **480 passed, 2 skipped** (as of 2026-03-26, session 176) — 5 new tests: accuracy field regression + follows order + mocked consensus + profile accuracy
@@ -77,6 +78,11 @@ ACCOMPLISHED: (1) Confirmed BRAIN_PROMPT.md background-agent prohibition is NOW 
 FAILED: Background agents launched at session start produced output (agents were running) but pattern is established — added explicit prohibition to BRAIN_PROMPT.md immediately.
 RULE: [2026-03-26] When a rule about brain session failure mode (e.g., "don't use background agents") lives only in knowledge.md, it is NOT effective — brain sessions don't read knowledge.md before launching agents. The rule must be in BRAIN_PROMPT.md itself, near the search step, to fire at the right moment.
 OPTIMIZATION: [2026-03-26] Brain session research pattern: run 2-4 direct WebSearch calls in parallel (not background agents), read results immediately, pick the top 1-2 actionable findings, implement them. Total research phase: ~5 tool calls. This is faster and more reliable than background agents.
+
+### Session #182 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added 3 coverage-gap tests from session 181 backlog: (1) push_subscription dict path — required changing AlertSettingsUpdate.push_subscription from Optional[str] to Optional[Any] to make the isinstance(dict) branch reachable in Pydantic v2; (2) telegram webhook empty text returns ok=True with no DB change; (3) compute_copy_simulator SELL-side trades excluded (bets_analysed=0). 490→493 tests.
+FAILED: Nothing — all 3 tests passed on first run.
+RULE: [2026-03-26] When a Pydantic model field is Optional[str] but the route contains an isinstance(dict) guard for that field, the guard is dead code in Pydantic v2 (dicts cannot coerce to str). Fix by changing the field to Optional[Any] to make the defensive branch reachable and testable.
 
 ### Session #181 Reflexion — 2026-03-26 (TESTING)
 ACCOMPLISHED: Added 2 field-presence tests covering checklist items: test_follows_live_positions_include_copy_value_pct (3 positions, 3 known values, asserts each passes through the route) and test_bettor_detail_recent_bets_have_side_field (2 bets, side=BUY, asserts key present and non-empty). Removed stale backlog item (accuracy=0.0 boundary case already covered at test_polymarket_service.py:572 — embedded grep confirmed). Added 3 coverage-gap tasks from --cov analysis (alerts.py lines 104/159, polymarket.py line 359). 488→490 tests.
