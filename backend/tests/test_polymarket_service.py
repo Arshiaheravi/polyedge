@@ -527,6 +527,30 @@ def test_normalise_profile_rank_and_pnl_default_to_zero():
     assert result["pnl_usd"] == 0.0
 
 
+def test_normalise_profile_accuracy_from_pct():
+    """_normalise_profile converts accuracy_pct (0-100) to 0.0-1.0 float."""
+    from app.services.polymarket import _normalise_profile
+    raw = {"proxyWallet": "0xabc"}
+    result = _normalise_profile(raw, accuracy_pct=75.5)
+    assert result["accuracy"] == pytest.approx(0.7550, abs=1e-4)
+
+
+def test_normalise_profile_accuracy_none_when_not_provided():
+    """accuracy is None when accuracy_pct is omitted (bettor not on leaderboard)."""
+    from app.services.polymarket import _normalise_profile
+    raw = {"proxyWallet": "0xabc"}
+    result = _normalise_profile(raw)
+    assert result["accuracy"] is None
+
+
+def test_normalise_profile_accuracy_zero():
+    """accuracy_pct=0 (0% profitable) normalises to 0.0, not None."""
+    from app.services.polymarket import _normalise_profile
+    raw = {"proxyWallet": "0xabc"}
+    result = _normalise_profile(raw, accuracy_pct=0)
+    assert result["accuracy"] == 0.0
+
+
 # ── get_recent_bets REDEEM filter ─────────────────────────────────────────────
 
 @pytest.mark.asyncio
