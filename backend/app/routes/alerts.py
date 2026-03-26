@@ -66,6 +66,8 @@ def update_alert_settings(
     current_user: User = Depends(get_current_user),
 ):
     # Tier checks
+    if payload.web_push_enabled and current_user.subscription_tier == "free":
+        raise HTTPException(status_code=403, detail="Web push alerts require Basic or VIP tier")
     if payload.telegram_enabled and current_user.subscription_tier == "free":
         raise HTTPException(status_code=403, detail="Telegram alerts require Basic or VIP tier")
     if payload.sms_enabled and current_user.subscription_tier != "vip":

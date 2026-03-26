@@ -38,6 +38,9 @@ def _normalise_leaderboard_entry(raw: dict) -> dict:
     pnl = float(raw.get("pnl") or 0)
     # rank comes as string from API
     rank = int(raw.get("rank") or 0)
+    # percentProfitable is a 0-100 value from the API; normalise to 0.0-1.0
+    pct_profitable = raw.get("percentProfitable")
+    accuracy = round(float(pct_profitable) / 100.0, 4) if pct_profitable is not None else None
     return {
         "rank": rank,
         "address": address,
@@ -45,6 +48,7 @@ def _normalise_leaderboard_entry(raw: dict) -> dict:
         "volume_usd": round(vol, 2),
         "pnl_usd": round(pnl, 2),
         "avatar_url": avatar_url,
+        "accuracy": accuracy,
     }
 
 

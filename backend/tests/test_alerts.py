@@ -11,10 +11,23 @@ def test_get_alert_settings(client, auth_headers):
     assert data["phone_verified"] is False
 
 
-def test_enable_web_push(client, auth_headers):
+def test_enable_web_push(client, db, auth_headers, registered_user):
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
     resp = client.put("/alerts/settings", json={"web_push_enabled": True}, headers=auth_headers)
     assert resp.status_code == 200
     assert resp.json()["web_push_enabled"] is True
+
+
+def test_web_push_blocked_for_free_tier(client, auth_headers):
+    """Free users must receive 403 when attempting to enable web push."""
+    resp = client.put("/alerts/settings", json={"web_push_enabled": True}, headers=auth_headers)
+    assert resp.status_code == 403
+    assert "Basic or VIP" in resp.json()["detail"]
 
 
 def test_disable_web_push_returns_false(client, auth_headers):
@@ -228,9 +241,15 @@ def test_telegram_verify_correct_code_links_account(client, db, auth_headers, re
     assert resp.json()["verified"] is True
 
 
-def test_web_push_enabled_independent_of_push_subscription(client, auth_headers):
-    """Setting web_push_enabled=True without providing push_subscription succeeds.
+def test_web_push_enabled_independent_of_push_subscription(client, db, auth_headers, registered_user):
+    """Setting web_push_enabled=True without providing push_subscription succeeds for paid tier.
     The two fields are independent — enabling the flag does not require a subscription object."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
     resp = client.put("/alerts/settings", json={"web_push_enabled": True}, headers=auth_headers)
     assert resp.status_code == 200
     assert resp.json()["web_push_enabled"] is True
@@ -525,7 +544,7 @@ def test_put_alert_settings_autocreates_when_no_row_exists(client, db):
         email="noalert_put@x.com",
         hashed_password=hash_password("pass"),
         name="NoAlertPut",
-        subscription_tier="free",
+        subscription_tier="basic",
     )
     db.add(user)
     db.commit()
@@ -586,8 +605,14 @@ def test_telegram_verify_lowercase_code_is_accepted(client, db, auth_headers, re
     assert resp.json()["verified"] is True
 
 
-def test_put_alert_settings_response_includes_telegram_and_phone_verified(client, auth_headers):
+def test_put_alert_settings_response_includes_telegram_and_phone_verified(client, db, auth_headers, registered_user):
     """PUT /alerts/settings response body must include telegram_verified and phone_verified fields."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
     resp = client.put("/alerts/settings", json={"web_push_enabled": True}, headers=auth_headers)
 
     assert resp.status_code == 200

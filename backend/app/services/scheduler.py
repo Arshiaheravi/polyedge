@@ -165,6 +165,11 @@ async def _poll_bets() -> None:
         if not addresses:
             return
 
+        # Purge stale _last_positions entries for bettors no longer followed
+        stale = [addr for addr in _last_positions if addr not in addresses]
+        for addr in stale:
+            del _last_positions[addr]
+
         check_time = datetime.now(tz=timezone.utc)
 
         for address in addresses:
@@ -231,6 +236,9 @@ async def _poll_bets() -> None:
                     .all()
                 )
 
+                from app.config import get_settings
+                cfg = get_settings()
+
                 for follow in followers:
                     user: Optional[User] = db.query(User).filter(User.id == follow.user_id).first()
                     if not user or not user.is_active or user.subscription_tier == "free":
@@ -241,9 +249,6 @@ async def _poll_bets() -> None:
                         .filter(AlertSetting.user_id == user.id)
                         .first()
                     )
-
-                    from app.config import get_settings
-                    cfg = get_settings()
 
                     # Reuse conviction already computed above
                     conviction_score = _conviction_score
