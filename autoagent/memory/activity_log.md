@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — CODE REVIEW (Session 167)
+DONE: Dead code audit — scanned all JS function definitions in frontend/index.html and all imports in backend/app/. Found and removed 1 dead function: `tierBadge(tier)` (3 lines, generated a tier badge HTML string but was never called from any code path or HTML attribute). All other suspects confirmed live (enterDemoMode, toggleSms, daysUntil, etc. all called from onclick attributes). All backend imports verified in use. 467 tests stable.
+IMPACT: Codebase is slightly cleaner; tierBadge was producing a string that was never rendered anywhere — a silent dead weight. Audit confirmed the codebase has very little true dead code after 166 sessions of iterative agent editing.
+FILES: frontend/index.html
+
 ## 2026-03-26 — CODE QUALITY AUDIT (Session 166)
 DONE: Extracted `_compute_conviction(bet_amount, avg_bet_usd)` helper into scheduler.py — eliminated the identical 8-line conviction score logic that was duplicated in `_poll_bets` and `_poll_vip_bets`. Fixed stale docstring in `test_cors_headers_present`. Added 5 unit tests for `_compute_conviction` covering normal/HIGH/EXTREME/zero-avg/zero-bet cases. 462→467 tests passing.
 IMPACT: Conviction score thresholds now live in one place — a future threshold change (e.g. raising EXTREME from 10x to 15x) only requires editing one function instead of two, eliminating the risk of inconsistent notification behavior between VIP-fast-path and standard poll.

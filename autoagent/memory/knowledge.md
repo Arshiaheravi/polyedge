@@ -63,7 +63,13 @@ FAILED: Nothing — all fixes passed on first run.
 RULE: [2026-03-26] When _poll_bets and _poll_vip_bets both exist, any logic change to conviction scoring, exit detection, or bet processing must be applied in BOTH functions — or better, extracted to a helper. Audit checklist: at end of any scheduler.py change, grep for the changed logic block in both functions. `grep -n "conviction\|_last_check\|avg_bet" backend/app/services/scheduler.py | sort` is the quick check.
 RULE: [2026-03-26] Docstrings in test files go stale quickly when the underlying implementation changes. At audit time, grep for words like "all origins", "always", "never" in test docstrings and verify they still match the current behavior.
 
-- Test count: **467 passed, 1 skipped** (as of 2026-03-26, session 166)
+- Test count: **467 passed, 1 skipped** (as of 2026-03-26, session 167) *(unchanged — dead code removal, no new tests)*
+
+### Session #167 Reflexion — 2026-03-26 (CODE REVIEW — Dead Code Audit)
+ACCOMPLISHED: Full dead code audit on frontend/index.html (all function definitions) and backend/app/ (all imports). Found exactly 1 dead function: `tierBadge(tier)` — defined at line 2777, never called from any JS code path or HTML onclick attribute. Removed it (4 lines). All 467 tests still pass. All backend imports verified in use.
+FAILED: Nothing — clean on first run.
+RULE: [2026-03-26] Dead code audit on a well-maintained, heavily-tested codebase will find very little. After 166 sessions, only 1 dead function survived. Most suspects are called via HTML `onclick=""` attributes — grep for the bare function name, not `"function name"`, to catch these. Example: `grep -n "tierBadge" frontend/index.html` finds all definitions AND calls together, so seeing only 1 hit (the definition) confirms it's dead.
+OPTIMIZATION: [2026-03-26] To audit backend imports quickly, use `grep -rn "^from \|^import " backend/app/ | grep -v "__pycache__" | sort` then check each name against actual usage. For functions: `grep -n "^async def \|^def " service.py` then check each against route imports. Total time: ~5 minutes for the full backend audit.
 
 ### Session #165 Reflexion — 2026-03-26 (TESTING)
 ACCOMPLISHED: Added 3 regression tests — _last_positions purge on unfollow (confirms Bug #10 fix runs correctly in poll cycle), plus health/readiness not rate-limited (20-call loops assert no 429). 459→462 tests. Both backlog tasks verified done on first try.

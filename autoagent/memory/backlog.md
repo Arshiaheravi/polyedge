@@ -28,7 +28,11 @@
 
 ## HIGH PRIORITY — Testing
 
-- [ ] **Playwright: consensus data re-fetches after stale load (_consensusLoaded Bug #12)** — `_consensusLoaded` flag is set once and never cleared, so the consensus tab never re-fetches within the same session. Write a Playwright test using `page.clock.fast_forward()` to advance time past the cache window, reload the consensus tab, and assert fresh data loads (or at minimum that the fetch is triggered again).
+- [ ] **Active positions price range validation** — `GET /follows/live` returns positions with `avg_price` and `current_price` fields; add a test to `test_data_integrity.py` that verifies both values are between 0.001–0.999 for all returned positions (price = 0 or 1 means a resolved/expired market — serving these is a data quality bug). Grep confirms: no test for this exists yet.
+
+- [ ] **copy_signal enum validation in follows/live** — `GET /follows/live` positions include a `copy_signal` field; add a unit test verifying it is always one of `["good", "fair", "late"]` (never None, empty, or an unknown string). Add to `test_follows_live.py`. Grep confirms: no test validates the enum constraint — only the numeric threshold logic is tested.
+
+- [ ] **Consensus signal whale_count and price range** — `GET /markets/consensus` each signal must have `whale_count >= 3` and `avg_entry_price` between 0.01–0.99. Add a data integrity test in `test_data_integrity.py` verifying these constraints on a real API call (skip gracefully if Polymarket unreachable). Grep confirms: whale_count and price range are not tested in any existing test file.
 
 ---
 
@@ -38,7 +42,7 @@ These tasks are a structural code review — not testing functionality, but read
 
 *(Auth review, SQL injection, CORS, tier gate completeness, scheduler correctness, Polymarket service review — all confirmed clean in code review 2026-03-26 and sessions 137–147. Removed to prevent re-auditing already-verified areas.)*
 
-- [ ] **Dead code audit** — scan `frontend/index.html` for functions defined but never called; scan `backend/app/` for imported names not referenced in their module. Remove anything genuinely unreachable. Candidate areas: frontend helper functions added in early sessions before the card-grid refactor, any `routes/*.py` imports removed during bugfixes. (Session 148: kept for audit — not yet reviewed)
+*(Dead code audit: completed session 167 — only 1 dead function found (tierBadge, 3 lines) and removed. All backend imports verified in use.)*
 
 
 ---

@@ -3729,5 +3729,26 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 167,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Dead code audit: scanned all JS function definitions in the frontend and all imports in the backend — found and removed 1 dead function (tierBadge, 3 lines) that was defined but never called anywhere; 467 tests still passing",
+    "files": [
+      "frontend/index.html"
+    ],
+    "tests": {
+      "before": 467,
+      "after": 467,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "removed dead code only — no new HTML or JS patterns added"
+    }
   }
 ]
