@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #185] 3 tests — conviction_score/label fields in get_recent_bets** — single-bet score=1.0, EXTREME label for 19.6x outlier, API exception → empty list; 496→499 tests
 - **[SESSION #184] 3 tests — consensus cache hit, no-sub JWT optional auth, send_telegram ConnectError** — closes branches markets.py:29, auth.py:72-73, notifications.py:27-29; 493→496 tests
 - **[SESSION #182] 3 tests — push_subscription dict path, telegram empty text, simulator SELL-side** — fixed Optional[str]→Optional[Any] in AlertSettingsUpdate to make isinstance(dict) branch reachable; 490→493 tests
 - **[SESSION #181] 2 tests — copy_value_pct passthrough, side field in recent_bets** — confirmed copy_value_pct passes through /follows/live unchanged; confirmed side field present in /bettors recent_bets; removed stale accuracy=0.0 backlog item; added 3 new coverage-gap tasks; 488→490 tests

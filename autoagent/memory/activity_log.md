@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-160 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 185)
+DONE: Added 3 tests for conviction_score and conviction_label fields in get_recent_bets: (1) single bet → score=1.0, label=""; (2) 19 small bets + $1000 outlier → score=19.6, label="EXTREME"; (3) API ConnectError → empty list returned safely. 496→499 tests.
+IMPACT: Locks in the conviction label contract (EXTREME/HIGH/empty) at the service layer — any change to the scoring thresholds in polymarket.py:431 will now immediately fail a test. Closes the last untested branch in get_recent_bets.
+FILES: backend/tests/test_polymarket_service.py
+
 ## 2026-03-26 — TESTING (Session 184)
 DONE: Added 3 coverage-gap tests: (1) consensus route cache hit path — pre-populates cache with fresh data, verifies get_consensus_signals is NOT called on second request; (2) JWT with no `sub` claim sent to optional-auth endpoint (/markets/consensus) — verified returns 200 with tier="free" (anonymous treatment); (3) send_telegram ConnectError — mocks httpx.AsyncClient to raise ConnectError, verifies False returned without crash.
 IMPACT: Closes 3 branches that were never exercised: markets.py:29, auth.py:72-73, notifications.py:27-29. Any regression in these paths (e.g. cache skipped, exception propagated, optional auth broken) will now be caught immediately.

@@ -45,6 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
+- Test count: **499 passed, 2 skipped** (as of 2026-03-26, session 185)
 - Test count: **496 passed, 2 skipped** (as of 2026-03-26, session 184) — 3 new tests: consensus cache hit + no-sub JWT optional auth + send_telegram ConnectError
 - Test count: **493 passed, 2 skipped** (as of 2026-03-26, session 182) — 3 new tests: push_subscription dict path + telegram empty text + simulator SELL-side exclusion
 - Test count: **490 passed, 2 skipped** (as of 2026-03-26, session 181) — 2 new tests: copy_value_pct passthrough in /follows/live + side field in /bettors recent_bets
@@ -62,6 +63,11 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #185 Reflexion — 2026-03-26
+ACCOMPLISHED: Added 3 tests for conviction_score/label in get_recent_bets: single-bet score=1.0 label="", 19-small+1-large (score=19.6) label="EXTREME", API ConnectError → []. All 3 passed first run. 496→499 tests.
+FAILED: Nothing — direct pattern reuse from prior get_recent_bets tests.
+RULE: [2026-03-26] To trigger conviction_label="EXTREME" (score>=10) in tests, use 19 bets of $1 + 1 bet of $1000: avg=(19+1000)/20=50.95, score=round(1000/50.95,1)=19.6. With fewer background bets, the large bet pulls the average up and the ratio never reaches 10.
 
 ### Session #184 Reflexion — 2026-03-26
 ACCOMPLISHED: Added 3 coverage-gap tests: (1) consensus cache hit path (markets.py:29) — pre-populate cache, verify get_consensus_signals NOT called; (2) no-sub JWT optional auth (auth.py:72-73) — JWT with no `sub` → get_current_user_optional returns None → /markets/consensus treats as free tier (200, tier=="free"); (3) send_telegram ConnectError (notifications.py:27-29) — mock httpx.AsyncClient to raise ConnectError, verify False returned. 493→496 tests passing.

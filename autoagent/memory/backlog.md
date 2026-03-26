@@ -2,11 +2,9 @@
 
 ## HIGH PRIORITY — Testing
 
-- [ ] **get_recent_bets: conviction_score and conviction_label fields not tested (polymarket.py:422-431)** — the function computes conviction_score and conviction_label for each bet based on ratio vs avg amount, but no test verifies these fields are present or correct. Add 3 tests: (1) single bet → conviction_score=1.0, conviction_label="" (avg == amount); (2) 2 bets where one is 10x the other → the large one gets conviction_label="EXTREME"; (3) API exception → returns empty list without crash. Grep: `grep -rn "conviction_score\|conviction_label\|EXTREME.*bets\|get_recent_bets.*conviction" backend/tests/test_polymarket_service.py` returns nothing.
-
 - [ ] **compute_copy_simulator: API exception path returns zeros (polymarket.py:333-334)** — the `except Exception: raw_list = []` branch at lines 333-334 is not tested separately from the empty-response test. Add test: mock `httpx.AsyncClient.get` to raise `httpx.ConnectError`, call `compute_copy_simulator("0xtest")` directly, assert result is `{simulated_pnl_usd: 0.0, simulated_roi_pct: 0.0, bets_analysed: 0}` — function must not crash and must return safe zeros. Grep: `grep -rn "def test.*compute_copy.*exception\|compute_copy.*api_error\|httpx.*compute_copy\|ConnectError.*compute" backend/tests/` returns nothing.
 
-- [ ] **GET /follows: empty follows list returns correct shape (routes/follows.py:31-55)** — verify that when the authenticated user has no follows, `GET /follows` returns `{"follows": []}` (not an empty array without the key). Also verify the `followed_at` field is present in each returned follow. Grep: `grep -rn "def test.*list_follows.*empty\|follows.*empty.*shape\|GET_follows_empty" backend/tests/` returns nothing.
+- [ ] **Code quality audit — scan last 5 work sessions' changed files for cross-file coupling, test specificity degradation, and smells introduced by agent edits** (triggered: work session count = 140, multiple of 5)
 
 ---
 
