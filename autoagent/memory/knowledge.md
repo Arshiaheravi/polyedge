@@ -75,6 +75,14 @@ FAILED: Background agents launched at session start produced output (agents were
 RULE: [2026-03-26] When a rule about brain session failure mode (e.g., "don't use background agents") lives only in knowledge.md, it is NOT effective — brain sessions don't read knowledge.md before launching agents. The rule must be in BRAIN_PROMPT.md itself, near the search step, to fire at the right moment.
 OPTIMIZATION: [2026-03-26] Brain session research pattern: run 2-4 direct WebSearch calls in parallel (not background agents), read results immediately, pick the top 1-2 actionable findings, implement them. Total research phase: ~5 tool calls. This is faster and more reliable than background agents.
 
+### Session #174 Reflexion — 2026-03-26 (CODE QUALITY AUDIT)
+ACCOMPLISHED: Audited changed files from sessions 167-171. Marcus XSS check passed on frontend/index.html — all innerHTML uses properly escape API-sourced data. Found Leo smell in polymarket.py: `asyncio`, `time`, and `datetime` were imported inside function bodies rather than at module level. Removed two unused imports (`Optional`, `timezone`). 472 tests pass unchanged.
+FAILED: Nothing — single fix, passed first run.
+RULE: [2026-03-26] When a module has stdlib imports inside function bodies (asyncio, time, datetime), always move them to the top of the module. Standard library modules have no circular import risk. The test that reveals this: audit grep is `grep -n "^\s*import \|^\s*from " backend/app/services/polymarket.py | grep -v "^[0-9]*:import\|^[0-9]*:from"` — lines with leading whitespace are inside functions.
+RULE: [2026-03-26] At audit time, always grep for imported names that are defined in an import statement but never appear elsewhere in the file: `grep -n "Optional\|timezone" polymarket.py` — if they only appear in the import line, they're unused and should be removed.
+
+- Test count: **472 passed, 1 skipped** (as of 2026-03-26, session 174) *(unchanged — import reorganization only)*
+
 ### Session #172 Reflexion — 2026-03-26 (TESTING)
 ACCOMPLISHED: Added ±10000% ROI cap (`max(-10000.0, min(10000.0, roi_pct))`) to `compute_copy_simulator` in polymarket.py. Added `test_copy_simulator_extreme_price_roi_cap` unit test with two scenarios: single all-winning bet at price=0.01 (expects ~9900%, within cap) and 5 all-winning bets at price=0.01 (same per-bet math, still within cap). 471→472 tests.
 FAILED: Nothing — test passed first run.

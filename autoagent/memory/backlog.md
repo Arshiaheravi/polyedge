@@ -1,11 +1,5 @@
 # Backlog
 
-## HIGH PRIORITY — Code Quality
-
-- [ ] **Code quality audit (sessions 167-171)** — scan changed files from sessions 167-171 for cross-file coupling, test specificity degradation, and smells introduced by agent edits. Key files: test_data_integrity.py, polymarket.py, scheduler.py, test_follows_live.py, test_polymarket_service.py.
-
----
-
 ## HIGH PRIORITY — Testing
 
 - [ ] **Leaderboard accuracy vs profile accuracy cross-check** — `test_leaderboard_vs_profile_pnl_consistent` in test_data_integrity.py verifies pnl_usd is consistent between leaderboard and profile endpoints, but does NOT check the `accuracy` field. Add a companion test that for the top bettor, if `accuracy` is non-null in the leaderboard response, the profile endpoint returns the same value (within ±0.02 tolerance). Grep: no test for accuracy cross-validation exists.

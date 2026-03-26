@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #174] Code quality audit sessions 167-171** — moved inline asyncio/time/datetime imports to module level in polymarket.py, removed 2 unused imports; 472 tests stable
 - **[SESSION #172] Copy simulator ROI cap + extreme-price unit test** — added ±10000% clamp to compute_copy_simulator and unit test covering all-winning bets at price=0.01; 471→472 tests
 - **[SESSION #171] Consensus condition_id format validation** — activated CONDITION_ID_RE regex assertion inside test_consensus_whale_count_and_price_range; catches malformed/missing condition_ids from Polymarket API; 471 tests stable
 - **[SESSION #170] Timestamp freshness test** — added test_recent_bets_timestamps_within_90_days to test_data_integrity.py; verifies recent bets are within 90 days; handles Unix float string and ISO-8601 formats; 470→471 tests

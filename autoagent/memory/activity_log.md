@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — CODE QUALITY AUDIT (Session 174)
+DONE: Audited files changed in sessions 167-171 (polymarket.py, test_data_integrity.py, test_follows_live.py, test_polymarket_service.py, frontend/index.html). Marcus XSS check passed — all innerHTML renders properly escape API-sourced data. Found 1 Leo smell in polymarket.py: asyncio, time, and datetime were imported inside function bodies (get_bettor_profile, compute_copy_simulator, get_consensus_signals) instead of at module level. Fixed: moved all three to module-level imports and removed two unused imports (Optional from typing, timezone from datetime). No logic changed.
+IMPACT: Codebase now follows standard Python import conventions — a developer reading polymarket.py can see all dependencies at the top of the file without hunting through function bodies. Unused imports removed reduces noise.
+FILES: backend/app/services/polymarket.py
+
 ## 2026-03-26 — BRAIN (Session 173)
 RESEARCHED: autonomous AI agent best practices 2026, mutation testing for Python/pytest, Polymarket Data API endpoints, LLM agent memory deduplication techniques.
 DOWNLOADED: Nothing — mutmut already on PyPI, no new skill files needed.
