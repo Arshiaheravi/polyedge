@@ -294,7 +294,7 @@ class TestMassAssignment:
 # Sensitive Data Leakage — no internal fields in API responses
 # ---------------------------------------------------------------------------
 
-_SENSITIVE_FIELDS = ("hashed_password", "stripe_customer_id")
+_SENSITIVE_FIELDS = ("hashed_password", "stripe_customer_id", "telegram_chat_id")
 
 
 class TestSensitiveDataLeakage:

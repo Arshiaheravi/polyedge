@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     stripe_basic_price_id: str = ""
     stripe_vip_price_id: str = ""
     telegram_bot_token: str = ""
+    telegram_bot_username: str = "PolyEdgeBot"
     twilio_account_sid: str = ""
     twilio_auth_token: str = ""
     twilio_from_number: str = ""  # e.g. +15005550006

@@ -133,7 +133,7 @@ def telegram_start(
     current_user.telegram_verify_code = code
     db.commit()
 
-    bot_username = "PolyEdgeBot"  # Replace with your actual bot username
+    bot_username = get_settings().telegram_bot_username
     return {
         "code": code,
         "instructions": f"Send this code to @{bot_username} on Telegram: /verify {code}",
@@ -195,7 +195,7 @@ def telegram_verify(
     if not current_user.telegram_chat_id:
         raise HTTPException(
             status_code=400,
-            detail="Your Telegram is not connected yet. Send /verify " + payload.code.upper().strip() + " to @PolyEdgeBot first.",
+            detail="Your Telegram is not connected yet. Send /verify " + payload.code.upper().strip() + " to @" + get_settings().telegram_bot_username + " first.",
         )
 
     current_user.telegram_verified = True
