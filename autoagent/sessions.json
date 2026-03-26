@@ -3290,5 +3290,10 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
-  }
+  },
+  {"session": 148, "date": "2026-03-26", "time": "00:00", "type": "meta",
+   "summary": "Added admin-password and stale-mock rules to testing.md so testing sessions see them at skill-read time; added .hypothesis/ to .gitignore to stop test artifact noise in STEP 0 git status; trimmed 5 already-confirmed code review items from backlog",
+   "files": ["autoagent/skills/testing.md", "autoagent/memory/backlog.md", ".gitignore"],
+   "tests": {"before": 0, "after": 0, "status": "skip"},
+   "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "meta session — no code changes"}}
 ]

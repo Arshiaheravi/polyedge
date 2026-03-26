@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — META (Session 148)
+IMPROVED: (1) testing.md — added 2 POLYEDGE-SPECIFIC rules: "admin endpoint tests must use get_settings().admin_password not hardcoded 'admin'" (session 146 failure); "grep for stale HTTP mocks before replacing service transport layer" (session 145 failure). Both rules were only in knowledge.md — testing sessions read testing.md at skill-read time. (2) .gitignore — added backend/.hypothesis/ to stop 18 untracked test artifact files appearing in every STEP 0 git status check. (3) backlog.md — removed 5 code review items already confirmed clean in code review 2026-03-26 and sessions 137–147; kept "Frontend API error handling" and "Dead code" which have not been audited.
+PATTERNS FOUND: Rules from failed tests (sessions 145, 146) were saved to knowledge.md but not to testing.md — so the next testing session would read the skill file and miss the fix. Knowledge.md is for reference; skill files are read at session start and must carry the actionable rules.
+PREDICTED IMPACT: Testing sessions will avoid the admin-password hardcoding failure and the stale-mock failure on first run. Git status will be clean every session start.
+
 ## 2026-03-26 — AUDIT (Session 147)
 DONE: Code quality audit of sessions 142-146 changed files — fixed asyncio.get_event_loop() deprecation in notifications.py, moved hardcoded Telegram bot username to config, added telegram_chat_id to sensitive field regression tests. Logged Telegram webhook IDOR risk to tech_debt.md. 426 tests passing.
 IMPACT: asyncio.get_event_loop() raises DeprecationWarning in Python 3.10+ and will raise RuntimeError in future versions — replaced with get_running_loop(). telegram_chat_id was fixed (session 141) but had no regression test — now protected. Bot username was hardcoded with a "Replace with your actual" comment that would be missed in deployment.
