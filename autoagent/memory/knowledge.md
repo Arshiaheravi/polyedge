@@ -44,7 +44,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **393 passed** (as of 2026-03-26, session 137)
+- Test count: **413 passed** (as of 2026-03-26, session 142)
 - Playwright checks: **132 total, 0 failures** (as of 2026-03-26, session 134 — no changes since)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -830,6 +830,7 @@ RULE: [2026-03-26] When caching API responses that include user-state fields (ti
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend Checks |
 |---------|--------------|-----------------|
+| 142     | 413          | 132             |
 | 141     | 401          | 132             |
 | 140     | 396          | 132             |
 | 139     | 394          | 132             |
@@ -843,3 +844,8 @@ ACCOMPLISHED: Fixed Telegram notifications permanently broken — added `POST /a
 FAILED: Nothing — all 401 tests passed first run.
 RULE: [2026-03-26] Telegram bot webhook endpoints are PUBLIC (no JWT) — security comes from the webhook URL being secret (registered via setWebhook). The endpoint must ALWAYS return 200 ok=True regardless of whether it processed the update — Telegram retries non-200 responses indefinitely.
 RULE: [2026-03-26] When removing a field from an API response for security reasons, grep ALL test files for assertions that the field IS present — they will fail and must be updated in the same commit. (Pattern recurs: also needed in session 137 for telegram_chat_id in login/register.)
+
+### Session #142 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added API tier gate test suite (tests/test_tier_gates.py) — 12 tests covering /markets/consensus tier enforcement (free cap at 3 signals, basic/VIP get all, VIP gets whale names) and /follows/live tier field correctness for all 3 tiers. Also added Bug #140 regression test (stale cache must not serve old tier). 413 tests total.
+FAILED: Nothing — all 12 new tests passed on first run.
+RULE: [2026-03-26] The consensus cache is a fixed-key dict {"data": None, "ts": 0}, NOT a per-key dict. To isolate tests, reset with `_consensus_cache["data"] = None` and `_consensus_cache["ts"] = 0` — do NOT call `.clear()` on it (that removes the keys and the next access fails with a KeyError when the route tries `_consensus_cache["data"]`).

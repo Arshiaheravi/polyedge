@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 142)
+DONE: Added API tier gate test suite (tests/test_tier_gates.py) — 12 new tests covering /markets/consensus (free/basic/VIP signal count caps + whale name visibility) and /follows/live (tier field correctness for all 3 tiers + Bug #140 regression). 413 tests now passing.
+IMPACT: Previously zero tests existed for the consensus endpoint tier gates — the most important paywall correctness check. A regression in whale name visibility or signal count capping would have been undetectable. Now any such regression fails immediately.
+FILES: backend/tests/test_tier_gates.py
+
 ## 2026-03-26 — BUGFIX (Session 141)
 DONE: Fixed Telegram notifications permanently broken — added POST /alerts/telegram/webhook endpoint that the bot calls when a user sends /verify CODE. Webhook sets telegram_chat_id + telegram_verified=True. Also removed telegram_chat_id from GET /alerts/settings response (sensitive data was leaking to clients). 5 new tests added. 401 passing.
 IMPACT: Telegram notifications were completely non-functional for every user — telegram_chat_id was never set so the scheduler's send_telegram() always returned False immediately. Now the full Telegram verification flow works end-to-end once the bot is configured.

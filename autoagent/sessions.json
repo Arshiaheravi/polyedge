@@ -3129,7 +3129,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Fixed Telegram notifications permanently broken — added POST /alerts/telegram/webhook so the Telegram bot can set the user's chat_id when they send /verify CODE; also removed telegram_chat_id from the alerts settings API response where it was leaking as sensitive data",
+    "summary": "Fixed Telegram notifications permanently broken \u00e2\u20ac\u201d added POST /alerts/telegram/webhook so the Telegram bot can set the user's chat_id when they send /verify CODE; also removed telegram_chat_id from the alerts settings API response where it was leaking as sensitive data",
     "files": [
       "backend/app/routes/alerts.py",
       "backend/tests/test_alerts.py"
@@ -3144,6 +3144,27 @@
       "checks": 0,
       "failures": 0,
       "notes": "no frontend changes this session"
+    }
+  },
+  {
+    "session": 142,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added API tier gate test suite covering consensus and follows/live endpoints \u2014 verifies whale name visibility, signal count caps, and tier field correctness for free/basic/VIP users",
+    "files": [
+      "backend/tests/test_tier_gates.py"
+    ],
+    "tests": {
+      "before": 401,
+      "after": 413,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
     }
   }
 ]

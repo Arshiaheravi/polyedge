@@ -52,8 +52,6 @@ These tests verify the data coming from Polymarket is real, consistent, and make
   - Logs in as VIP → checks Consensus shows all cards WITH whale names; position cards show copy signal badge; profile simulator shows real numbers; Exit Alerts toggle is accessible
   Use test accounts: free@polyedge.com/FreeTest123!, basic@polyedge.com/BasicTest123!, vip@polyedge.com/VipTest123!
 
-- [ ] **API tier gate pytest suite** — write `tests/test_tier_gates.py` that directly calls /markets/consensus, /follows/live, /bettors/{address} with JWT tokens for each tier and asserts correct fields
-
 ---
 
 ## HIGH PRIORITY — Security Tests (OWASP Top 10)
@@ -71,8 +69,6 @@ These tests verify the data coming from Polymarket is real, consistent, and make
 ---
 
 ## HIGH PRIORITY — Feature Correctness Tests
-
-- [ ] **Consensus endpoint correctness** — pytest: call GET /markets/consensus unauthenticated → assert ≤3 signals, whale_names=[]; as basic → all signals, whale_names=[]; as VIP → all signals, whale_names populated. Also assert each signal has whale_count ≥ 3.
 
 - [ ] **Copy simulator correctness** — pytest: GET /bettors/{known_address} as free → locked:true, simulated_pnl_usd:null; as basic → locked:false, simulated_pnl_usd is float, bets_analysed ≥ 0
 
