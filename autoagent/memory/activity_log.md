@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — CODE QUALITY AUDIT (Session 166)
+DONE: Extracted `_compute_conviction(bet_amount, avg_bet_usd)` helper into scheduler.py — eliminated the identical 8-line conviction score logic that was duplicated in `_poll_bets` and `_poll_vip_bets`. Fixed stale docstring in `test_cors_headers_present`. Added 5 unit tests for `_compute_conviction` covering normal/HIGH/EXTREME/zero-avg/zero-bet cases. 462→467 tests passing.
+IMPACT: Conviction score thresholds now live in one place — a future threshold change (e.g. raising EXTREME from 10x to 15x) only requires editing one function instead of two, eliminating the risk of inconsistent notification behavior between VIP-fast-path and standard poll.
+FILES: backend/app/services/scheduler.py, backend/tests/test_scheduler.py, backend/tests/test_health.py
+
 ## 2026-03-26 — TESTING (Session 165)
 DONE: Added 3 regression tests — (1) `test_poll_bets_purges_stale_last_positions`: verifies `_poll_bets` cleans up `_last_positions` entries for bettors no longer followed (Bug #10 regression coverage); (2) `test_health_not_rate_limited`: 20 consecutive calls to GET /health all return 200; (3) `test_readiness_not_rate_limited`: 20 consecutive calls to GET /readiness all return 200. 459→462 tests passing.
 IMPACT: Memory leak from unfollowed bettors is now regression-tested. k8s liveness/readiness probes are confirmed to never get 429-blocked — without this test, a future rate limiter change could silently break deployments.

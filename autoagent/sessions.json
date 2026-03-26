@@ -3706,5 +3706,28 @@
       "failures": 0,
       "notes": "no frontend code changed"
     }
+  },
+  {
+    "session": 166,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Code quality audit for sessions 161-165: extracted _compute_conviction helper to eliminate duplicated 8-line conviction score logic from _poll_bets and _poll_vip_bets; fixed stale CORS docstring; added 5 unit tests for the new helper \u2014 462 to 467 tests passing",
+    "files": [
+      "backend/app/services/scheduler.py",
+      "backend/tests/test_scheduler.py",
+      "backend/tests/test_health.py"
+    ],
+    "tests": {
+      "before": 462,
+      "after": 467,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

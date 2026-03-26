@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #166] Code quality audit — sessions 161-165** — extracted _compute_conviction helper (eliminated duplicate logic in _poll_bets/_poll_vip_bets), fixed stale CORS docstring, added 5 unit tests; 462→467 passing
 - **[SESSION #165] _last_positions purge + health/readiness rate limit tests** — 3 regression tests: scheduler purges stale positions on unfollow; /health and /readiness never return 429; 459→462 tests passing
 - **[SESSION #164] Rate limiting on auth routes** — POST /auth/register and POST /auth/login now 429 after 10 req/min per IP via slowapi; 457→459 tests passing
 - **[SESSION #162] _poll_vip_bets + conviction score + profile cache reverse-order tests** — 7 new behavioral tests covering 3 previously untested code paths; 450→457 tests passing

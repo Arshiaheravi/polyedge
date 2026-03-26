@@ -44,7 +44,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **462 passed, 1 skipped** (as of 2026-03-26, session 165)
+- Test count: **467 passed, 1 skipped** (as of 2026-03-26, session 166)
 - Playwright E2E: **42 passed, 2 skipped** (as of 2026-03-26, session 156)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -56,6 +56,14 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #166 Reflexion — 2026-03-26 (CODE QUALITY AUDIT)
+ACCOMPLISHED: Audit triggered by work session count = 125 (multiple of 5). Found 2 Leo smells in sessions 161-165 changes: (1) identical 8-line conviction score logic duplicated in `_poll_bets` and `_poll_vip_bets`; (2) stale docstring in `test_cors_headers_present` saying "CORS allows all origins" after CORS was restricted. Fixed both: extracted `_compute_conviction(bet_amount, avg_bet_usd)` helper, added 5 unit tests for it (normal/HIGH/EXTREME/zero-avg/zero-bet), fixed docstring. All 467 pass (462 before).
+FAILED: Nothing — all fixes passed on first run.
+RULE: [2026-03-26] When _poll_bets and _poll_vip_bets both exist, any logic change to conviction scoring, exit detection, or bet processing must be applied in BOTH functions — or better, extracted to a helper. Audit checklist: at end of any scheduler.py change, grep for the changed logic block in both functions. `grep -n "conviction\|_last_check\|avg_bet" backend/app/services/scheduler.py | sort` is the quick check.
+RULE: [2026-03-26] Docstrings in test files go stale quickly when the underlying implementation changes. At audit time, grep for words like "all origins", "always", "never" in test docstrings and verify they still match the current behavior.
+
+- Test count: **467 passed, 1 skipped** (as of 2026-03-26, session 166)
 
 ### Session #165 Reflexion — 2026-03-26 (TESTING)
 ACCOMPLISHED: Added 3 regression tests — _last_positions purge on unfollow (confirms Bug #10 fix runs correctly in poll cycle), plus health/readiness not rate-limited (20-call loops assert no 429). 459→462 tests. Both backlog tasks verified done on first try.
