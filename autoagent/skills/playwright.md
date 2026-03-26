@@ -415,6 +415,30 @@ min_height = min(visible_btn_heights) if visible_btn_heights else 0
 
 ---
 
+## TIMER TESTING WITH page.clock (PolyEdge-specific)
+
+When testing behavior that depends on `setTimeout` / `setInterval` timers (e.g., refresh intervals, auto-logout, polling loops), use Playwright's `page.clock.fast_forward()` to advance fake time without actually waiting:
+
+```python
+# WRONG — actually waits 31 seconds in real time:
+await asyncio.sleep(31)
+
+# CORRECT — fast-forward fake time by 31 seconds instantly:
+await page.clock.install()          # install BEFORE goto, so page starts with fake clock
+await page.goto("http://localhost:3000")
+await page.evaluate("login()")      # or whatever setup is needed
+await page.clock.fast_forward(31000)  # advance 31 seconds (milliseconds)
+# Now assert that the timer-triggered behavior occurred
+```
+
+**Rule**: Always call `page.clock.install()` BEFORE `page.goto()` — if the clock is installed after page load, timers that fired during load (e.g. setInterval at DOMContentLoaded) will have already started with the real clock and `fast_forward` won't affect them.
+
+**When to use**: Any test that verifies timer cleanup (e.g., logout clears a follow-refresh interval), polling intervals (scheduler fires after N seconds), TTL cache expiry, or auto-logout timeouts.
+
+(Source: Session #156 — tested follows refresh timer leak: after logout, 30s setInterval kept calling refreshFollowsActivity(). Used page.clock.fast_forward(31000) to verify the interval was cleared on logout.)
+
+---
+
 ## DATA ATTRIBUTE SELECTORS (PolyEdge-specific)
 
 PolyEdge bettor cards store the wallet address in `data-addr` attributes on the card element — NOT in `onclick` attributes. When writing a helper that extracts an address from a card to open a profile, always use `getAttribute('data-addr')`, not `getAttribute('onclick')`.

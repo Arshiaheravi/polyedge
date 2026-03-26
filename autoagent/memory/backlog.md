@@ -11,11 +11,6 @@
 
 ---
 
-## HIGH PRIORITY — Frontend UI Playwright Tests
-
-
----
-
 ## HIGH PRIORITY — Quick Wins (VIP differentiators + production readiness)
 
 - [ ] **VIP tier: reduce scheduler poll from 30s to 5s** — CLAUDE.md already promises "Priority speed" for VIP tier but scheduler polls at the same 30s interval for all tiers. Fix: add `VIP_POLL_INTERVAL_SECONDS = 5` config; scheduler runs two APScheduler jobs (5s VIP, 30s basic/free) or dynamically adjusts. Closes the competitive gap vs. PolyCop/PolyGun who claim sub-second alerts. One-line config change + minor scheduler split. (Source: Medium polybots 2026 + CLAUDE.md VIP tier description, session 153)
@@ -42,6 +37,10 @@
 These tasks are a structural code review — not testing functionality, but reading the code to find bugs, security holes, and logic errors that tests might miss. Write findings as comments in a `tests/test_code_review.py` file or fix directly if small.
 
 *(Auth review, SQL injection, CORS, tier gate completeness, scheduler correctness, Polymarket service review — all confirmed clean in code review 2026-03-26 and sessions 137–147. Removed to prevent re-auditing already-verified areas.)*
+
+- [ ] **Frontend API error handling audit** — scan `frontend/index.html` for every `catch` block and `.then(err =>` handler: verify each shows a user-visible error message (not silently swallows), and that error messages use `escapeHtml()` before `innerHTML`. Focus on: login/register failures, follow/unfollow API errors, Telegram verify errors, payment redirect failures. (Session 148: kept for audit — not yet reviewed)
+
+- [ ] **Dead code audit** — scan `frontend/index.html` for functions defined but never called; scan `backend/app/` for imported names not referenced in their module. Remove anything genuinely unreachable. Candidate areas: frontend helper functions added in early sessions before the card-grid refactor, any `routes/*.py` imports removed during bugfixes. (Session 148: kept for audit — not yet reviewed)
 
 
 ---
