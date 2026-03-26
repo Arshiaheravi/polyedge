@@ -32,11 +32,21 @@ def page(browser: Browser):
 
 
 def login(page: Page, tier: str) -> None:
-    """Helper: open app, log in as the given tier account."""
+    """Helper: open app, log in as the given tier account.
+
+    Nav buttons are display:none at desktop viewport — navigate via JS evaluate.
+    Input IDs are #login-email / #login-password; submit button is #login-submit.
+    """
     creds = ACCOUNTS[tier]
     page.goto(BASE_URL)
-    page.click("text=Login")
-    page.fill("input[type=email]", creds["email"])
-    page.fill("input[type=password]", creds["password"])
-    page.click("button[type=submit]")
-    page.wait_for_selector("#dashboard", timeout=10_000)
+    page.wait_for_load_state("networkidle", timeout=10_000)
+    # Navigate to login form via JS (avoids clicking display:none nav elements)
+    page.evaluate("showView('auth', 'login')")
+    page.fill("#login-email", creds["email"])
+    page.fill("#login-password", creds["password"])
+    page.click("#login-submit")
+    # Wait for the dashboard view to become visible (class 'hidden' is removed on login)
+    page.wait_for_function(
+        "!document.getElementById('view-dashboard').classList.contains('hidden')",
+        timeout=10_000,
+    )
