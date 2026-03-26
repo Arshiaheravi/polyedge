@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.database import Base, engine
-from app.routes import admin, alerts, auth, bettors, follows, payments
+from app.routes import admin, alerts, auth, bettors, follows, markets, payments
 from app.services.scheduler import start_scheduler, stop_scheduler
 
 logging.basicConfig(
@@ -50,6 +50,7 @@ app.include_router(auth.router)
 app.include_router(bettors.router)
 app.include_router(follows.router)
 app.include_router(alerts.router)
+app.include_router(markets.router)
 app.include_router(payments.router)
 app.include_router(admin.router)
 

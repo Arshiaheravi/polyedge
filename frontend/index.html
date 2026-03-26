@@ -1770,6 +1770,10 @@
       <div class="nav-item" id="nav-alerts" onclick="showTab('alerts')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')showTab('alerts')">
         <span class="nav-icon" aria-hidden="true">&#128276;</span> Alerts
       </div>
+      <div class="nav-item" id="nav-consensus" onclick="showTab('consensus')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')showTab('consensus')">
+        <span class="nav-icon" aria-hidden="true">&#129302;</span> Consensus
+        <span style="margin-left:auto;background:var(--accent);color:#000;border-radius:100px;padding:1px 7px;font-size:10px;font-weight:700;">HOT</span>
+      </div>
       <div class="nav-item" id="nav-account" onclick="showTab('account')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')showTab('account')">
         <span class="nav-icon" aria-hidden="true">&#128100;</span> Account
       </div>
@@ -2113,6 +2117,26 @@
       </div>
     </div>
 
+    <!-- CONSENSUS TAB -->
+    <div id="tab-consensus" class="hidden">
+      <div class="page-header">
+        <h1>&#129302; Whale Consensus</h1>
+        <p>Markets where 3+ top bettors all hold the same outcome &mdash; the strongest signal in prediction markets</p>
+      </div>
+      <div id="consensus-loading" style="text-align:center;padding:40px 0;color:var(--text2);font-size:14px;">Loading consensus signals&hellip;</div>
+      <div id="consensus-list" style="display:flex;flex-direction:column;gap:14px;"></div>
+      <div id="consensus-upgrade-banner" class="hidden" style="margin-top:20px;background:linear-gradient(135deg,rgba(0,201,122,0.08),rgba(99,102,241,0.08));border:1px solid var(--accent);border-radius:14px;padding:20px 24px;text-align:center;">
+        <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;">&#128274; More consensus signals available</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">Upgrade to Basic or VIP to see all consensus markets. Upgrade to VIP to see which whales are in each market.</div>
+        <button class="btn btn-primary" onclick="openUpgradeModal()">Upgrade to See All &rarr;</button>
+      </div>
+      <div id="consensus-empty" class="hidden" style="text-align:center;padding:60px 0;">
+        <div style="font-size:40px;margin-bottom:14px;">&#129300;</div>
+        <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;">No consensus signals right now</div>
+        <div style="font-size:13px;color:var(--text2);">When 3+ top bettors agree on the same market outcome, it appears here. Check back soon.</div>
+      </div>
+    </div>
+
     <!-- BETTOR PROFILE TAB -->
     <div id="tab-profile" class="hidden">
       <div class="profile-back-bar">
@@ -2197,6 +2221,10 @@
       <button class="mobile-nav-btn" id="mob-nav-alerts" onclick="showTab('alerts')">
         <span class="mob-icon">&#128276;</span>
         <span>Alerts</span>
+      </button>
+      <button class="mobile-nav-btn" id="mob-nav-consensus" onclick="showTab('consensus')">
+        <span class="mob-icon">&#129302;</span>
+        <span>Consensus</span>
       </button>
       <button class="mobile-nav-btn" id="mob-nav-account" onclick="showTab('account')">
         <span class="mob-icon">&#128100;</span>
@@ -2614,11 +2642,11 @@ function showTab(tab) {
   // Scroll active main-content to top on tab switch
   const mc = document.querySelector('#view-dashboard .main-content, #view-browse .main-content');
   if (mc) mc.scrollTo({ top: 0, behavior: 'smooth' });
-  ['leaderboard', 'follows', 'alerts', 'account', 'profile'].forEach(t => {
+  ['leaderboard', 'follows', 'alerts', 'account', 'profile', 'consensus'].forEach(t => {
     const el = document.getElementById(`tab-${t}`);
     if (el) el.classList.toggle('hidden', t !== tab);
   });
-  ['leaderboard', 'follows', 'alerts', 'account'].forEach(t => {
+  ['leaderboard', 'follows', 'alerts', 'account', 'consensus'].forEach(t => {
     const nav = document.getElementById(`nav-${t}`);
     if (nav) nav.classList.toggle('active', t === tab);
     const mob = document.getElementById(`mob-nav-${t}`);
@@ -2631,6 +2659,7 @@ function showTab(tab) {
   if (tab === 'follows')     loadMyFollows();
   if (tab === 'alerts')      loadAlertSettings();
   if (tab === 'account')     renderAccount();
+  if (tab === 'consensus')   loadConsensus();
 }
 
 // ── Init ─────────────────────────────────────────────────────
@@ -3817,6 +3846,95 @@ async function verifySmsOtp() {
     document.getElementById('sms-verified-number').textContent = phone;
   } catch (e) {
     toast(e.message, 'error');
+  }
+}
+
+// ── Consensus ─────────────────────────────────────────────────
+
+let _consensusLoaded = false;
+
+async function loadConsensus() {
+  if (_consensusLoaded) return; // already fetched this session
+  const loadingEl = document.getElementById('consensus-loading');
+  const listEl = document.getElementById('consensus-list');
+  const emptyEl = document.getElementById('consensus-empty');
+  const bannerEl = document.getElementById('consensus-upgrade-banner');
+  if (!listEl) return;
+
+  if (loadingEl) loadingEl.style.display = 'block';
+  listEl.innerHTML = '';
+  if (emptyEl) emptyEl.classList.add('hidden');
+  if (bannerEl) bannerEl.classList.add('hidden');
+
+  try {
+    const res = await apiFetch('/markets/consensus');
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    if (loadingEl) loadingEl.style.display = 'none';
+
+    const signals = data.signals || [];
+    const tier = data.tier || 'free';
+    const namesVisible = data.names_visible || false;
+    const totalAvailable = data.total_available || 0;
+
+    if (signals.length === 0) {
+      if (emptyEl) emptyEl.classList.remove('hidden');
+      return;
+    }
+
+    signals.forEach(s => {
+      const entryPct = Math.round((s.avg_entry_price || 0) * 100);
+      const curPct   = Math.round((s.current_price  || 0) * 100);
+      const delta = s.avg_entry_price > 0
+        ? Math.round(((s.current_price - s.avg_entry_price) / s.avg_entry_price) * 100)
+        : 0;
+      const priceColor = delta <= 10 ? 'var(--accent)' : delta <= 30 ? '#f59e0b' : '#ef4444';
+      const priceLabel = delta <= 10 ? '&#9989; Good copy price' : delta <= 30 ? '&#9888;&#65039; Price moved' : '&#128308; Significant move';
+      const marketUrl = s.event_slug
+        ? 'https://polymarket.com/event/' + encodeURIComponent(s.event_slug)
+        : 'https://polymarket.com';
+
+      const namesHtml = namesVisible && s.whale_names && s.whale_names.length
+        ? '<div style="margin-top:10px;font-size:12px;color:var(--text2);">Whales: '
+          + s.whale_names.slice(0, 6).map(n => '<span style="background:var(--card2);border-radius:6px;padding:2px 8px;margin-right:4px;">' + escapeHtml(n) + '</span>').join('')
+          + (s.whale_names.length > 6 ? '<span style="color:var(--text3);">+' + (s.whale_names.length - 6) + ' more</span>' : '')
+          + '</div>'
+        : (tier === 'vip' ? '' : '<div style="margin-top:8px;font-size:12px;color:var(--text3);">&#128274; Upgrade to VIP to see whale names</div>');
+
+      const card = document.createElement('div');
+      card.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;';
+      card.innerHTML = `
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:200px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
+              <span style="background:linear-gradient(135deg,var(--accent),var(--accent3));color:#000;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:800;">&#129302; ${escapeHtml(String(s.whale_count))} WHALES AGREE</span>
+              <span style="font-size:13px;font-weight:700;color:${escapeHtml(s.outcome.toLowerCase() === 'yes' ? 'var(--accent)' : '#ef4444')};">${escapeHtml(s.outcome.toUpperCase())}</span>
+            </div>
+            <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.4;">${escapeHtml(s.market_title)}</div>
+            ${namesHtml}
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:12px;color:var(--text3);margin-bottom:2px;">Avg Entry</div>
+            <div style="font-size:18px;font-weight:800;color:var(--text);">${entryPct}&cent;</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px;">Now: <strong style="color:${priceColor};">${curPct}&cent;</strong></div>
+            <div style="font-size:11px;color:${priceColor};margin-top:2px;">${priceLabel}</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <span style="font-size:12px;color:var(--text3);">&#128064; ${escapeHtml(String(s.whale_count))} of the top 100 bettors hold ${escapeHtml(s.outcome)} on this market</span>
+          <a href="${escapeHtml(marketUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:600;color:var(--accent);text-decoration:none;">View on Polymarket &#8594;</a>
+        </div>`;
+      listEl.appendChild(card);
+    });
+
+    // Show upgrade banner for free/basic users if more signals exist
+    if (bannerEl && totalAvailable > signals.length) {
+      bannerEl.classList.remove('hidden');
+    }
+    _consensusLoaded = true;
+  } catch (e) {
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--text3);font-size:13px;">Could not load consensus signals. Try again later.</div>';
   }
 }
 

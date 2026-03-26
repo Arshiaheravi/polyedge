@@ -297,3 +297,104 @@ async def get_recent_bets(address: str, limit: int = 20) -> list[dict]:
 
     # Only include TRADE type — REDEEM is cashing out winnings (no outcome/price data)
     return [_normalise_bet(b) for b in raw_list if isinstance(b, dict) and b.get("type") != "REDEEM"]
+
+
+async def get_consensus_signals(min_whales: int = 3) -> list[dict]:
+    """
+    Find markets where 3+ top-100 bettors hold the same outcome.
+
+    1. Fetch the top-100 leaderboard to get all bettor addresses.
+    2. Fetch open positions for each bettor concurrently (semaphore to respect rate limits).
+    3. Group positions by (conditionId, outcome).
+    4. Return groups with whale_count >= min_whales, sorted descending by whale_count.
+
+    Each result dict contains:
+      market_title, condition_id, outcome, whale_count, avg_entry_price,
+      current_price, whale_names (list of bettor names — caller decides whether to expose)
+    """
+    import asyncio
+
+    # Step 1: Get top-100 bettor addresses
+    leaderboard = await get_leaderboard(sort_by="profit", time_period="month", limit=100)
+    addresses = [(e["address"], e["name"]) for e in leaderboard if e.get("address")]
+
+    # Step 2: Fetch positions concurrently with a semaphore (max 10 parallel)
+    semaphore = asyncio.Semaphore(10)
+
+    async def _fetch_positions(address: str, name: str):
+        async with semaphore:
+            async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+                try:
+                    resp = await client.get(
+                        f"{BASE_URL}/positions",
+                        params={"user": address, "sizeThreshold": "0.01", "limit": 500},
+                    )
+                    resp.raise_for_status()
+                    raw = resp.json()
+                    if not isinstance(raw, list):
+                        raw = []
+                except Exception:
+                    raw = []
+            result = []
+            for p in raw:
+                if p.get("redeemable"):
+                    continue
+                cid = p.get("conditionId") or ""
+                outcome = p.get("outcome") or ""
+                if not cid or not outcome:
+                    continue
+                result.append({
+                    "condition_id": cid,
+                    "outcome": outcome,
+                    "market_title": p.get("title") or "Unknown Market",
+                    "avg_price": round(float(p.get("avgPrice") or 0), 4),
+                    "cur_price": round(float(p.get("curPrice") or 0), 4),
+                    "whale_name": name,
+                    "whale_address": address,
+                    "event_slug": p.get("eventSlug") or p.get("slug") or "",
+                })
+            return result
+
+    all_results = await asyncio.gather(*[_fetch_positions(addr, name) for addr, name in addresses])
+
+    # Step 3: Group by (condition_id, outcome)
+    groups: dict[tuple, dict] = {}
+    for positions in all_results:
+        for pos in positions:
+            key = (pos["condition_id"], pos["outcome"].lower())
+            if key not in groups:
+                groups[key] = {
+                    "condition_id": pos["condition_id"],
+                    "outcome": pos["outcome"],
+                    "market_title": pos["market_title"],
+                    "avg_entry_prices": [],
+                    "current_price": pos["cur_price"],
+                    "whale_names": [],
+                    "whale_addresses": [],
+                    "event_slug": pos["event_slug"],
+                }
+            groups[key]["avg_entry_prices"].append(pos["avg_price"])
+            groups[key]["whale_names"].append(pos["whale_name"])
+            groups[key]["whale_addresses"].append(pos["whale_address"])
+
+    # Step 4: Filter and sort
+    signals = []
+    for g in groups.values():
+        count = len(g["whale_names"])
+        if count < min_whales:
+            continue
+        avg_entry = round(sum(g["avg_entry_prices"]) / count, 4) if g["avg_entry_prices"] else 0.0
+        signals.append({
+            "market_title": g["market_title"],
+            "condition_id": g["condition_id"],
+            "outcome": g["outcome"],
+            "whale_count": count,
+            "avg_entry_price": avg_entry,
+            "current_price": g["current_price"],
+            "whale_names": g["whale_names"],
+            "whale_addresses": g["whale_addresses"],
+            "event_slug": g["event_slug"],
+        })
+
+    signals.sort(key=lambda x: x["whale_count"], reverse=True)
+    return signals
