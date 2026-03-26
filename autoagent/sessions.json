@@ -4158,5 +4158,26 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 186,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 1 test for compute_copy_simulator network failure path — proves ConnectError is caught and safe zeros are returned, covering the except branch not hit by the empty-response test",
+    "files": [
+      "backend/tests/test_polymarket_service.py"
+    ],
+    "tests": {
+      "before": 499,
+      "after": 500,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

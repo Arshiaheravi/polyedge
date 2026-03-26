@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-160 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 186)
+DONE: Added 1 test for compute_copy_simulator API exception path — mocks httpx.ConnectError on client.get, asserts function returns {simulated_pnl_usd: 0.0, simulated_roi_pct: 0.0, bets_analysed: 0}. 499→500 tests.
+IMPACT: Closes the except Exception branch (polymarket.py:333-334) that was unreachable by existing tests — a network failure during simulator fetch previously had zero test coverage.
+FILES: backend/tests/test_polymarket_service.py
+
 ## 2026-03-26 — TESTING (Session 185)
 DONE: Added 3 tests for conviction_score and conviction_label fields in get_recent_bets: (1) single bet → score=1.0, label=""; (2) 19 small bets + $1000 outlier → score=19.6, label="EXTREME"; (3) API ConnectError → empty list returned safely. 496→499 tests.
 IMPACT: Locks in the conviction label contract (EXTREME/HIGH/empty) at the service layer — any change to the scoring thresholds in polymarket.py:431 will now immediately fail a test. Closes the last untested branch in get_recent_bets.

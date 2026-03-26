@@ -2,8 +2,6 @@
 
 ## HIGH PRIORITY — Testing
 
-- [ ] **compute_copy_simulator: API exception path returns zeros (polymarket.py:333-334)** — the `except Exception: raw_list = []` branch at lines 333-334 is not tested separately from the empty-response test. Add test: mock `httpx.AsyncClient.get` to raise `httpx.ConnectError`, call `compute_copy_simulator("0xtest")` directly, assert result is `{simulated_pnl_usd: 0.0, simulated_roi_pct: 0.0, bets_analysed: 0}` — function must not crash and must return safe zeros. Grep: `grep -rn "def test.*compute_copy.*exception\|compute_copy.*api_error\|httpx.*compute_copy\|ConnectError.*compute" backend/tests/` returns nothing.
-
 - [ ] **Code quality audit — scan last 5 work sessions' changed files for cross-file coupling, test specificity degradation, and smells introduced by agent edits** (triggered: work session count = 140, multiple of 5)
 
 ---

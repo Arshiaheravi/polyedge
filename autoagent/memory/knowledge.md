@@ -64,6 +64,11 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 
 ## Session Reflexions
 
+### Session #186 Reflexion — 2026-03-26
+ACCOMPLISHED: Added 1 test for compute_copy_simulator API ConnectError path — mocks httpx.ConnectError on async client.get, asserts safe zeros returned. Passed first run. 499→500 tests.
+FAILED: Nothing.
+RULE: [2026-03-26] An empty-response test (mock returns []) does NOT cover the exception branch (except Exception: raw_list = []) — the two paths look identical in outcome but are reached by different code paths. Always add a separate ConnectError test for any function with a try/except wrapping an HTTP call.
+
 ### Session #185 Reflexion — 2026-03-26
 ACCOMPLISHED: Added 3 tests for conviction_score/label in get_recent_bets: single-bet score=1.0 label="", 19-small+1-large (score=19.6) label="EXTREME", API ConnectError → []. All 3 passed first run. 496→499 tests.
 FAILED: Nothing — direct pattern reuse from prior get_recent_bets tests.

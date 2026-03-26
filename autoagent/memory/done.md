@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #186] 1 test — compute_copy_simulator ConnectError returns safe zeros** — covers except Exception branch (polymarket.py:333-334) unreachable by empty-response test; 499→500 tests
 - **[SESSION #185] 3 tests — conviction_score/label fields in get_recent_bets** — single-bet score=1.0, EXTREME label for 19.6x outlier, API exception → empty list; 496→499 tests
 - **[SESSION #184] 3 tests — consensus cache hit, no-sub JWT optional auth, send_telegram ConnectError** — closes branches markets.py:29, auth.py:72-73, notifications.py:27-29; 493→496 tests
 - **[SESSION #182] 3 tests — push_subscription dict path, telegram empty text, simulator SELL-side** — fixed Optional[str]→Optional[Any] in AlertSettingsUpdate to make isinstance(dict) branch reachable; 490→493 tests
