@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #145] Web push VAPID fix** — replaced silent-failing raw POST stub with proper VAPID-signed pywebpush implementation; frontend now disables push toggle when keys not configured; 5 new regression tests; 419 total passing
 - **[SESSION #142] API tier gate test suite** — 12 new tests in test_tier_gates.py covering /markets/consensus (free/basic/VIP caps, whale names) and /follows/live (tier field correctness + Bug #140 regression); 413 total passing
 - **[SESSION #141] Telegram webhook fix** — added POST /alerts/telegram/webhook so the bot can set telegram_chat_id on users (was always null — notifications could never send); removed telegram_chat_id from GET /alerts/settings response (data leak); 5 new tests, 401 total passing
 - **[SESSION #135] Exit Alerts** — scheduler now detects when a whale closes or reduces a position by >50% and sends VIP-only exit notifications (Telegram + web push); BetEvent rows with event_type="EXIT" stored for all tiers; 6 new tests, 390 total passing

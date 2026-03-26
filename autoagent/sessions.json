@@ -3217,5 +3217,12 @@
       "failures": 0,
       "notes": "No frontend files changed"
     }
+  },
+  {
+    "session": 145, "date": "2026-03-26", "time": "10:00", "type": "work",
+    "summary": "Fixed web push silently failing for every user — replaced unsigned raw POST stub with proper VAPID-signed pywebpush; frontend now disables push toggle when VAPID keys not configured so users aren't misled",
+    "files": ["backend/app/config.py", "backend/app/routes/alerts.py", "backend/app/services/notifications.py", "backend/app/services/scheduler.py", "backend/requirements.txt", "backend/tests/test_alerts.py", "backend/tests/test_notifications.py", "frontend/index.html"],
+    "tests": {"before": 414, "after": 419, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "Toggle logic is DOM manipulation; no complex rendering changed"}
   }
 ]

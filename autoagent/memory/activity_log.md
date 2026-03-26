@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — BUGFIX (Session 145)
+DONE: Fixed web push non-functional stub — replaced unsigned raw POST with proper VAPID signing via pywebpush; added graceful no-op when keys absent; added GET /alerts/web-push-config endpoint; frontend disables push toggle when VAPID unconfigured. 419 tests passing.
+IMPACT: Users could "enable" web push and never receive any notification — Chrome/Firefox silently reject unsigned pushes with 401/403. Now the UI honestly reflects whether push is available, and when VAPID keys are configured, pushes are properly signed and will be delivered.
+FILES: backend/app/config.py, backend/app/routes/alerts.py, backend/app/services/notifications.py, backend/app/services/scheduler.py, backend/requirements.txt, backend/tests/test_alerts.py, backend/tests/test_notifications.py, frontend/index.html
+
 ## 2026-03-26 — DEEP BRAIN (Session 143)
 RESEARCHED: autonomous AI agent best practices 2026, LLM self-improvement (Trajectory-Informed Memory Generation arxiv 2603.10600), Claude Code March 2026 updates, ECC v1.9.0 re-check, Polymarket Analytics competitor (category leaderboards), AgentDevel release engineering, FastAPI async patterns.
 DOWNLOADED: Nothing new — ECC still at v1.9.0; no new skills applicable.

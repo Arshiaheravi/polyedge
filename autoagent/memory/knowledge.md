@@ -44,7 +44,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **414 passed** (as of 2026-03-26, session 144)
+- Test count: **419 passed** (as of 2026-03-26, session 145)
 - Playwright checks: **132 total, 0 failures** (as of 2026-03-26, session 134 — no changes since)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -56,6 +56,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #145 Reflexion — 2026-03-26
+ACCOMPLISHED: Fixed web push non-functional stub — replaced raw POST with proper VAPID signing via pywebpush; added graceful no-op when VAPID keys absent; added GET /alerts/web-push-config endpoint exposing public key availability; frontend now disables push toggle when VAPID not configured; 5 new tests (VAPID absent → False, config endpoint, dispatch_bet_notification passthrough); 2 stale tests updated to mock pywebpush instead of httpx. 419 total tests.
+FAILED: 2 existing tests (test_send_web_push_happy_path_json_string_201, test_send_web_push_happy_path_dict_200) immediately failed because they mocked `httpx.AsyncClient` — the old raw-POST path — but the new implementation uses pywebpush and skips httpx entirely. Fixed by patching `pywebpush.webpush` instead.
+RULE: [2026-03-26] When replacing a service function's HTTP implementation (e.g. raw httpx → signed library), existing tests that mock the HTTP client become stale immediately — run `grep -n "test.*happy_path\|test.*returns_true" tests/test_notifications.py` before the commit to find tests that assert True (they mock the success path) and update them to mock the new library instead. Tests that assert False (early exits) usually still pass because the new guard fires before the old code path.
+OPTIMIZATION: [2026-03-26] For "replace stub with real library" tasks: implement the guard first (check keys, return False if absent), then update the implementation, then grep for existing tests that expected True — those are the only ones that break.
 
 ### Session #135 Reflexion — 2026-03-26
 ACCOMPLISHED: Built Exit Alerts — `_detect_exits()` in scheduler.py compares `_last_positions[address]` (conditionId→size map) to current open positions each poll; exits fire when a conditionId disappears or size drops >50%; VIP-only Telegram+web push notifications; BetEvent(event_type="EXIT") stored for all tiers; `format_exit_message()` added to notifications.py; `condition_id` added to `get_active_positions()` result; `event_type` column added to BetEvent model; 6 new tests green; 390 total.
