@@ -53,6 +53,15 @@ RULE: [2026-03-25] typeof window.funcName === 'function' checks are the fastest 
 
 - Test count: **359 passed** (stable), **125 Playwright checks** (116 → 125)
 
+### Session #131 Reflexion — 2026-03-25 (FEATURE — Conviction Score on Notifications)
+ACCOMPLISHED: Added conviction scoring to notifications — format_bet_message() and dispatch_bet_notification() now accept conviction_score + conviction_label; scheduler computes avg_bet_usd from the same recent-bets array (no extra API calls) and computes conviction = bet_amount / avg; >=10x = EXTREME (🔥), >=3x = HIGH (⚡), else empty. Telegram message and web push title both include conviction label. 9 new tests added.
+FAILED: Nothing — all 9 tests passed first run. Full-suite failures (7 FAILED, 30 ERROR) are pre-existing SQLite teardown race condition, confirmed by git stash test.
+RULE: [2026-03-25] To compute conviction score in scheduler without extra API calls, derive avg_bet_usd from the same bets array already fetched: avg = sum(amounts) / count. This avoids a get_bettor_profile() call (which scans the leaderboard) on every poll cycle. Only skip bets with amount==0 to avoid distorting the average.
+
+- Test count: **368 passed** (359 + 9 new conviction tests), **130 Playwright checks** (unchanged)
+FAILED: Nothing — all tests passed first run.
+RULE: [2026-03-25] To compute conviction score in scheduler without extra API calls, derive avg_bet_usd from the same bets array already fetched: avg = sum(amounts) / count. This avoids a get_bettor_profile() call (which scans the leaderboard) on every poll cycle. Only skip bets with amount==0 to avoid distorting the average.
+
 ### Session #130 Reflexion — 2026-03-25 (FEATURE — Whale Consensus Signal)
 ACCOMPLISHED: Built Whale Consensus Signal end-to-end — get_consensus_signals() in polymarket.py fetches top-100 bettor positions concurrently (semaphore=10), groups by conditionId+outcome, returns markets with 3+ whale agreement; GET /markets/consensus route with tier-gating (Free=top 3 no names, Basic=all no names, VIP=all+names); Consensus tab in frontend with loadConsensus() JS rendering market cards with entry/current price comparison and whale name badges; 5-min cache; 130 Playwright checks, 0 failures.
 FAILED: Full test suite showed 5 failures, but confirmed pre-existing intermittent — all 5 failed tests pass in isolation with my changes. Caused by file-based SQLite race condition in test teardown (drop_all from test N races with create_all for test N+1) — not caused by my code.

@@ -2878,5 +2878,28 @@
       "failures": 0,
       "notes": "5 new consensus checks (126-130) all pass"
     }
+  },
+  {
+    "session": 131,
+    "date": "2026-03-25",
+    "time": "12:00",
+    "type": "work",
+    "summary": "Added Conviction Score to notifications \u2014 whales who bet more than their average now show a \ud83d\udd25 EXTREME or \u26a1 HIGH conviction label in Telegram messages and web push alerts, helping users prioritize which bets to copy",
+    "files": [
+      "backend/app/services/notifications.py",
+      "backend/app/services/scheduler.py",
+      "backend/tests/test_notifications.py"
+    ],
+    "tests": {
+      "before": 359,
+      "after": 368,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 130,
+      "failures": 0,
+      "notes": "frontend not changed"
+    }
   }
 ]

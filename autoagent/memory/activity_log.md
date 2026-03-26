@@ -2,6 +2,11 @@
 *(Sessions 1-80 archived — see activity_log_archive.md)*
 *(Sessions 81-100 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — FEATURE (Session 131)
+DONE: Added Conviction Score to notifications — when a whale places a bet, the scheduler computes conviction = bet_size / avg_bet_size from that bettor's recent bets; >=10x = EXTREME (🔥), >=3x = HIGH (⚡); Telegram messages and web push titles now include the conviction label; 9 new tests cover all conviction label paths.
+IMPACT: Users now see HOW strong each whale's conviction is — a 🔥 42x conviction bet deserves the user's full budget, not just a casual copy. This is the single most impactful signal improvement to copy-trading alerts.
+FILES: backend/app/services/notifications.py, backend/app/services/scheduler.py, backend/tests/test_notifications.py
+
 ## 2026-03-25 — TESTING (Session 129)
 DONE: Added 9 Playwright checks (117-125): CHECK 117 — #toast-container DOM presence; CHECK 118 — typeof window.toastBet === 'function'; CHECK 119 — typeof window.enterDemoMode === 'function'; CHECK 120 — typeof window.animateCounter === 'function'; CHECK 121 — typeof window.runLandingCounters === 'function'; CHECK 122 — typeof window.showTab === 'function'; CHECK 123 — typeof window.loadLeaderboard === 'function'; CHECK 124 — typeof window.profileToggleFollow === 'function'; CHECK 125 — renderBettorCard() .follow-btn has aria-label attribute. 125 total checks, 0 failures. 359 backend tests stable.
 IMPACT: Proves that all critical JS functions used for notifications, demo mode, animations, tab navigation, leaderboard loading, and profile follow toggling are correctly defined and accessible — a missing function would silently break a core user flow.
