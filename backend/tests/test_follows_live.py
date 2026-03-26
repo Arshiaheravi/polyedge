@@ -243,3 +243,54 @@ def test_follows_live_empty_response_has_no_tier(client, auth_headers):
     data = resp.json()
     assert "bettors" in data
     assert data["bettors"] == []
+
+
+def test_follows_live_vip_user_gets_vip_tier(client, db, auth_headers, registered_user):
+    """VIP user must always get tier:'vip' in /follows/live response."""
+    from app.models import User
+
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "vip"
+    db.commit()
+
+    client.post("/follows", json={"bettor_address": "0xvip1", "bettor_name": "VIPWhale"},
+                headers=auth_headers)
+
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=[])):
+        resp = client.get("/follows/live", headers=auth_headers)
+
+    assert resp.status_code == 200
+    assert resp.json()["tier"] == "vip"
+
+
+def test_follows_live_stale_cache_returns_current_tier_after_upgrade(
+    client, db, auth_headers, registered_user
+):
+    """If cache was populated when user was 'free', upgrading to 'vip' must cause
+    the next response (still within cache window) to return tier:'vip', not 'free'.
+    Regression test for: _activity_cache stores tier at fill-time — stale after upgrade."""
+    from app.models import User
+
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+
+    # Start as free, populate the cache
+    user.subscription_tier = "free"
+    db.commit()
+    client.post("/follows", json={"bettor_address": "0xcache1"}, headers=auth_headers)
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=[])):
+        resp = client.get("/follows/live", headers=auth_headers)
+    assert resp.json()["tier"] == "free"
+
+    # Upgrade to VIP (simulates Stripe webhook)
+    user.subscription_tier = "vip"
+    db.commit()
+
+    # Next call is within cache window — must return 'vip' (not stale 'free')
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=[])):
+        resp2 = client.get("/follows/live", headers=auth_headers)
+    assert resp2.json()["tier"] == "vip", (
+        "Cache returned stale tier:'free' after upgrade to 'vip' — "
+        "padlock would show for VIP users who just upgraded"
+    )

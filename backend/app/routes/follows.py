@@ -120,7 +120,8 @@ async def follows_activity(
     now = time.time()
     cached = _activity_cache.get(current_user.id)
     if cached and (now - cached["ts"]) < ACTIVITY_TTL:
-        return cached["data"]
+        # Always inject current tier — cached tier may be stale if user upgraded since last fill
+        return {**cached["data"], "tier": current_user.subscription_tier}
 
     follows = (
         db.query(BettorFollow)
