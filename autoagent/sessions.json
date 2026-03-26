@@ -4042,5 +4042,27 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 181,
+    "date": "2026-03-26",
+    "time": "12:00",
+    "type": "work",
+    "summary": "Added 2 tests: copy_value_pct passthrough in /follows/live active positions and side field presence in /bettors/{address} recent_bets; removed stale accuracy=0.0 backlog item already covered; added 3 new coverage-gap tasks from automated coverage analysis",
+    "files": [
+      "backend/tests/test_follows_live.py",
+      "backend/tests/test_bettors.py"
+    ],
+    "tests": {
+      "before": 488,
+      "after": 490,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

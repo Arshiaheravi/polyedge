@@ -2,11 +2,11 @@
 
 ## HIGH PRIORITY — Testing
 
-- [ ] **GET /follows/live active positions include copy_value_pct field** — `test_follows_live_copy_signal_is_valid_enum` asserts copy_signal enum but no test checks that `copy_value_pct` is present in the route response positions (only in the mock data). Add test: mock positions with known copy_value_pct values, assert each active position in the response includes the key with correct numeric value. Grep: `grep -n "assert.*copy_value_pct" backend/tests/test_follows_live.py` returns nothing.
+- [ ] **PUT /alerts/settings: push_subscription as Python dict gets json.dumps'd** — alerts.py line 104 is uncovered: `alert.push_subscription = json.dumps(payload.push_subscription)`. Existing test sends a JSON string; no test sends a Python dict. Add test: PUT with `push_subscription` as a dict value (FastAPI will deserialize it), verify the response is 200 and GET retrieves it correctly. Grep: `grep -n "push_subscription.*{.*endpoint\|dict.*push_sub" backend/tests/test_alerts.py` returns only the GET-parses-to-dict test (not a PUT-with-dict test).
 
-- [ ] **_normalise_leaderboard_entry accuracy=0.0 when percentProfitable=0** — zero is a falsy boundary case; code correctly uses `is not None` check but no test validates this. If someone changes to `if pct_profitable:` the bug would silently make all 0%-profitable bettors show accuracy=None instead of 0.0. Add test: `percentProfitable=0` → `result["accuracy"] == 0.0` (not None). Grep: `grep -n "percentProfitable.*\b0\b" backend/tests/test_polymarket_service.py` returns nothing.
+- [ ] **Telegram webhook: message present but empty text returns {"ok": True}** — alerts.py line 159 uncovered: `return {"ok": True}` when `not chat_id or not text`. Existing tests cover no-message key (line 153 return) and non-verify text (line 159 not hit). Add test: POST webhook with message having text="" or no text key, assert {"ok": True} returned, no DB change. Grep: `grep -n "def test_telegram_webhook.*empty\|not.*chat_id\|empty.*text" backend/tests/test_alerts.py` returns nothing.
 
-- [ ] **GET /bettors/{address} recent_bets have side field populated** — checklist item: "Recent bets all have outcome and side fields populated". Test for `outcome` exists but no test asserts `side` is present and non-empty on each bet. Add test: mock bets with known side values, assert `side` in each bet in the response. Grep: `grep -rn "assert.*\bside\b.*bet\|recent_bets.*side" backend/tests/` returns nothing.
+- [ ] **compute_copy_simulator: SELL-side trades excluded from bets_analysed** — polymarket.py line 359 uncovered: `if side not in ("BUY", ""): continue`. Add unit test: mock activity API with a SELL trade (side="SELL"), assert result bets_analysed=0. Confirms simulator skips exit trades. Grep: `grep -rn "def test.*simulator.*sell\|SELL.*bets_analysed\|simulator.*SELL" backend/tests/` returns nothing.
 
 ---
 

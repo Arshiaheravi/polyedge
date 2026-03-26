@@ -45,6 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
+- Test count: **490 passed, 2 skipped** (as of 2026-03-26, session 181) — 2 new tests: copy_value_pct passthrough in /follows/live + side field in /bettors recent_bets
 - Test count: **488 passed, 2 skipped** (as of 2026-03-26, session 180) — 5 new tests: leaderboard accuracy normalise (3) + GET /bettors accuracy passthrough + POST /follows 409 detail message
 - Test count: **480 passed, 2 skipped** (as of 2026-03-26, session 176) — 5 new tests: accuracy field regression + follows order + mocked consensus + profile accuracy
 - Test count: **475 passed, 1 skipped** (as of 2026-03-26, session 175)
@@ -76,6 +77,11 @@ ACCOMPLISHED: (1) Confirmed BRAIN_PROMPT.md background-agent prohibition is NOW 
 FAILED: Background agents launched at session start produced output (agents were running) but pattern is established — added explicit prohibition to BRAIN_PROMPT.md immediately.
 RULE: [2026-03-26] When a rule about brain session failure mode (e.g., "don't use background agents") lives only in knowledge.md, it is NOT effective — brain sessions don't read knowledge.md before launching agents. The rule must be in BRAIN_PROMPT.md itself, near the search step, to fire at the right moment.
 OPTIMIZATION: [2026-03-26] Brain session research pattern: run 2-4 direct WebSearch calls in parallel (not background agents), read results immediately, pick the top 1-2 actionable findings, implement them. Total research phase: ~5 tool calls. This is faster and more reliable than background agents.
+
+### Session #181 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added 2 field-presence tests covering checklist items: test_follows_live_positions_include_copy_value_pct (3 positions, 3 known values, asserts each passes through the route) and test_bettor_detail_recent_bets_have_side_field (2 bets, side=BUY, asserts key present and non-empty). Removed stale backlog item (accuracy=0.0 boundary case already covered at test_polymarket_service.py:572 — embedded grep confirmed). Added 3 coverage-gap tasks from --cov analysis (alerts.py lines 104/159, polymarket.py line 359). 488→490 tests.
+FAILED: Nothing — all tests passed on first run.
+RULE: [2026-03-26] When a checklist item says "field X must be populated", write a test that asserts that specific key is in the response and has the expected value — not just that the endpoint returns 200. The field may pass through the mock into the route but be stripped by a future refactor without any existing test catching it. Field-presence assertions are the minimum contract test for checklist items.
 
 ### Session #180 Reflexion — 2026-03-26 (TESTING)
 ACCOMPLISHED: Added 5 tests across 3 backlog items. (1) 3 tests for `_normalise_leaderboard_entry` accuracy conversion: percentProfitable=68.5→0.685, missing key→None, explicit null→None. (2) 1 test for GET /bettors accuracy passthrough (bettors_mod._leaderboard_cache.pop("profit_month_50", None) required to prevent stale cache hit). (3) 1 test for POST /follows 409 detail message asserting "Already following" in body. 483→488 tests.
