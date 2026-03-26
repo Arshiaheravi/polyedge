@@ -257,6 +257,48 @@ def test_tier_access(case, client, auth_headers_for_tier):
 def test_auth(token): ...
 ```
 
+## MUTATION TESTING — find test gaps that code coverage misses
+
+Code coverage tells you which lines ran; mutation testing tells you whether your tests would catch a real bug.
+A "surviving mutant" = a code change that didn't break any test = a test gap.
+
+**When to run**: After a burst of new test-writing sessions (e.g. sessions 164-172), when you want to verify the test suite actually enforces the business logic, not just executes the code.
+
+**Install**:
+```bash
+cd backend && py -m pip install mutmut
+```
+
+**Run**:
+```bash
+cd backend && py -m mutmut run --paths-to-mutate "app/" --tests-dir "tests/"
+```
+
+**View surviving mutants** (test gaps):
+```bash
+py -m mutmut results                 # shows killed/survived counts
+py -m mutmut show <mutant_id>        # shows the specific code change that survived
+py -m mutmut show --all-survived     # shows ALL surviving mutants = your test gap list
+```
+
+**What to do with survivors**:
+Each surviving mutant points to a code branch or comparison that no test asserts on.
+Write a test that would kill it, then re-run mutmut to confirm mutation score increased.
+
+**Target mutation score**: > 70% killed = strong test suite. < 50% = significant gaps.
+
+**PolyEdge scope** (narrows runtime from hours to minutes):
+```bash
+# Focus on business-critical files only
+py -m mutmut run --paths-to-mutate "app/services/polymarket.py" --tests-dir "tests/"
+py -m mutmut run --paths-to-mutate "app/routes/bettors.py" --tests-dir "tests/"
+```
+
+**Caveat**: Mutation testing is slow on large codebases (~5-20 min for PolyEdge's app/).
+Use it as a periodic audit tool (every 20 sessions or when a file has 0 surviving mutants as a milestone), not in every session's test gate.
+
+(Source: mutmut v2.5+ Python mutation testing — 25% more logical bugs caught vs coverage-only testing; pytest-gremlins alternative uses coverage-guided selection for 10-100x fewer test runs)
+
 ### Advanced: `itertools.product` for tier × endpoint matrix (PolyEdge use case)
 ```python
 import itertools

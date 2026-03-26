@@ -52,6 +52,8 @@ This prevents activity_log.md from growing into a multi-thousand-line file that 
 
 ## STEP 2 — SEARCH FOR IMPROVEMENTS
 
+**DIRECT SEARCH ONLY**: Do NOT launch background agents for web searches in BRAIN sessions. Background agents consistently produce 0-byte output files (confirmed in sessions 121, 132, 163 — all three brain sessions that used them). Use `WebSearch` and `WebFetch` tools directly in the main session. Background agents are only useful for multi-step research tasks with internal logic, not simple web lookups.
+
 ### 2A — Search these topics every BRAIN session:
 1. "autonomous AI agent best practices 2026"
 2. "LLM agent self-improvement prompt engineering 2026"

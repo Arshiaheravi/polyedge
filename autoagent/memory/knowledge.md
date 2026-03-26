@@ -35,7 +35,8 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - VIP price: **$9.99/mo**
 - Polymarket API base: `https://data-api.polymarket.com`
 - Polymarket has 3 separate APIs: **Gamma API** (gamma-api.polymarket.com — markets, events), **Data API** (data-api.polymarket.com — profiles, activity, leaderboards; what PolyEdge uses), **CLOB API** (clob.polymarket.com — orderbook, trading; requires auth)
-- Polymarket API rate limit: **60 requests per minute** sliding window. Cloudflare queues rather than hard-rejects. PolyEdge's 30s poll of ~100 bettor addresses (≤100 req/30s = ≤200 req/min per bettor address round) is near the limit at scale.
+- Polymarket API rate limit: **60 requests per minute** sliding window (source: docs.polymarket.com/api-reference/rate-limits). One third-party guide (agentbets.ai) reports 1000 req/10s — UNCERTAIN, use the official figure. Cloudflare queues rather than hard-rejects. PolyEdge's 30s poll of ~100 bettor addresses (≤100 req/30s = ≤200 req/min per bettor address round) is near the limit at scale.
+- **Polymarket Data API also has a GET /trades endpoint** (not currently used by PolyEdge): returns historical trade data for analysis and backtesting. Could support more precise Copy Portfolio Simulator resolution detection than the current REDEEM-inference approach. Authentication: none required. See: data-api.polymarket.com/trades.
 - **Polymarket WebSocket endpoints exist**: `/v1/ws/markets` and `/v1/ws/private` — real-time price/trade/orderbook streams up to 10 instruments. Switching from polling to WebSocket would reduce API calls and detect bets instantly instead of waiting up to 30s. Key feature for VIP tier differentiation.
 
 ## Test Infrastructure
@@ -67,6 +68,12 @@ RULE: [2026-03-26] Docstrings in test files go stale quickly when the underlying
 - Test count: **470 passed, 1 skipped** (as of 2026-03-26, session 169) — added 3 data integrity/validation tests
 - Test count: **471 passed, 1 skipped** (as of 2026-03-26, session 171) — added condition_id assertion to consensus test (no new test functions; count stable)
 - Test count: **472 passed, 1 skipped** (as of 2026-03-26, session 172) — added copy simulator extreme-price unit test + ROI cap fix
+
+### BRAIN Session #173 Reflexion — 2026-03-26
+ACCOMPLISHED: (1) Confirmed BRAIN_PROMPT.md background-agent prohibition is NOW in the file as an explicit rule (sessions 121/132/163 only logged it in knowledge.md where brain sessions don't read it). (2) Added mutation testing (mutmut) section to testing.md — provides a recipe for running `mutmut run` to find test gaps that code coverage misses; backlogged as a periodic audit tool every 20 sessions. (3) Discovered Polymarket GET /trades endpoint (not currently used by PolyEdge) — added to knowledge.md as potential Copy Simulator improvement. (4) STEP 1C: No duplicate rules found in sessions 121-172 — knowledge.md rules are specific and non-redundant. (5) STEP 1D: 16 activity_log entries (< 30, no archiving needed). Sources logged (5 new).
+FAILED: Background agents launched at session start produced output (agents were running) but pattern is established — added explicit prohibition to BRAIN_PROMPT.md immediately.
+RULE: [2026-03-26] When a rule about brain session failure mode (e.g., "don't use background agents") lives only in knowledge.md, it is NOT effective — brain sessions don't read knowledge.md before launching agents. The rule must be in BRAIN_PROMPT.md itself, near the search step, to fire at the right moment.
+OPTIMIZATION: [2026-03-26] Brain session research pattern: run 2-4 direct WebSearch calls in parallel (not background agents), read results immediately, pick the top 1-2 actionable findings, implement them. Total research phase: ~5 tool calls. This is faster and more reliable than background agents.
 
 ### Session #172 Reflexion — 2026-03-26 (TESTING)
 ACCOMPLISHED: Added ±10000% ROI cap (`max(-10000.0, min(10000.0, roi_pct))`) to `compute_copy_simulator` in polymarket.py. Added `test_copy_simulator_extreme_price_roi_cap` unit test with two scenarios: single all-winning bet at price=0.01 (expects ~9900%, within cap) and 5 all-winning bets at price=0.01 (same per-bet math, still within cap). 471→472 tests.

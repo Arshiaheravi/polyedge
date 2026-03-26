@@ -3839,5 +3839,15 @@
     "files": ["backend/app/services/polymarket.py", "backend/tests/test_data_integrity.py"],
     "tests": {"before": 471, "after": 472, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+  },
+  {
+    "session": 173,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "brain",
+    "summary": "Added mutation testing recipe to testing.md so future sessions can find test gaps that code coverage misses; fixed BRAIN_PROMPT.md to prohibit background agents for web searches (they consistently produce 0-byte files); discovered Polymarket GET /trades endpoint",
+    "files": ["autoagent/skills/testing.md", "autoagent/meta/BRAIN_PROMPT.md", "autoagent/memory/knowledge.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md"],
+    "tests": {"before": 472, "after": 472, "status": "skip"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "brain session — no code changes"}
   }
 ]

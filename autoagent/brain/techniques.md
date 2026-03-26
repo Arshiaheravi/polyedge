@@ -473,3 +473,15 @@ What: Fixed three stale issues in coding.md: (1) port 8002 → 8003 in backend/f
 Where: autoagent/skills/coding.md
 Source: PROJECT.md Known Facts (port 8003), FastAPI release notes v0.134-0.135, session 91 partial fix that left stale paths
 Expected impact: Prevents a coding session from writing to services/analysis.py (StockCards file that doesn't exist in PolyEdge) and from using wrong port 8002 in test assertions
+
+## Mutation testing recipe (mutmut) — implemented 2026-03-26
+What: Run `py -m mutmut run --paths-to-mutate "app/" --tests-dir "tests/"` from backend/ to find surviving mutants = code paths that no test asserts on. `mutmut show --all-survived` lists the specific test gaps. Mutation score >70% = strong suite.
+Where: autoagent/skills/testing.md (MUTATION TESTING section, after PARAMETRIZE section)
+Source: mutmut v2.5+ (github.com/boxed/mutmut); johal.in/mutation-testing-with-mutmut-python-for-code-reliability-2026/
+Expected impact: Periodic audit (every 20 sessions) catches test gaps that 100% line coverage misses — especially operator changes (> vs >=), removed conditions, and negated booleans
+
+## Background agent prohibition in BRAIN sessions — implemented 2026-03-26
+What: Added explicit rule at top of STEP 2 in BRAIN_PROMPT.md: never launch background agents for web searches; use WebSearch/WebFetch directly. Background agents produce 0-byte output files consistently (confirmed sessions 121, 132, 163).
+Where: autoagent/meta/BRAIN_PROMPT.md (STEP 2 header, before 2A)
+Source: Sessions 121/132/163 — three independent BRAIN sessions all experienced the same failure; rule was in knowledge.md but not in BRAIN_PROMPT.md (wrong location)
+Expected impact: Eliminates the recurring wait-then-fallback pattern in every BRAIN session; WebSearch runs in ~1 tool call vs background agent overhead

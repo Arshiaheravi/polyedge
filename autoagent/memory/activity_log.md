@@ -1,6 +1,13 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — BRAIN (Session 173)
+RESEARCHED: autonomous AI agent best practices 2026, mutation testing for Python/pytest, Polymarket Data API endpoints, LLM agent memory deduplication techniques.
+DOWNLOADED: Nothing — mutmut already on PyPI, no new skill files needed.
+IMPLEMENTED: (1) testing.md — added MUTATION TESTING section with mutmut recipe, commands, mutation score targets, and PolyEdge-specific scoped run commands. (2) BRAIN_PROMPT.md — added explicit prohibition on background agents for STEP 2 searches (rule was in knowledge.md but not in the prompt itself — wrong location). (3) knowledge.md — added Polymarket GET /trades endpoint discovery + rate limit UNCERTAIN note.
+BACKLOGGED: Nothing new — mutmut is a periodic audit tool added to testing.md for use every 20 sessions.
+SOURCES: 5 new sources logged.
+
 ## 2026-03-26 — TESTING (Session 172)
 DONE: Added ±10000% ROI cap to compute_copy_simulator in polymarket.py and a unit test (test_copy_simulator_extreme_price_roi_cap) with all-winning bets at price=0.01 to document and verify the cap behaviour. 471→472 tests.
 IMPACT: Without the cap, a bettor who won many bets at very low entry prices (e.g. price=0.01) would show absurd ROI values on their profile simulator card — misleading users into thinking copying them is a guaranteed windfall. The cap prevents display bugs and protects user decisions.
