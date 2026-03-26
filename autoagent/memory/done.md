@@ -179,3 +179,5 @@
 - **[SESSION #154] Playwright FAB + mobile nav tests** — 7 tests verify back-to-top FAB scroll behaviour and mobile nav layout at 375px
 - **[SESSION #155] Fix Bug #12 + data-testid attributes** — replaced _consensusLoaded boolean with 60s TTL timestamp; added data-testid to 9 key HTML elements; 5 new Playwright tests (41 total)
 - **[SESSION #159] VIP 5s poll interval + /readiness endpoint** — VIP users get bet alerts up to 6x faster via dedicated 5s APScheduler job; /readiness checks DB connectivity for production deployments; 450 tests passing
+
+- **[SESSION #170] Recent bets timestamp freshness test** — verifies all recent_bets from GET /bettors/{address} have timestamps within past 90 days; handles both Unix float and ISO-8601 string formats; 470→471 tests

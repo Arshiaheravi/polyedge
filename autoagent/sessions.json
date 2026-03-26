@@ -3798,5 +3798,26 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 170,
+    "date": "2026-03-26",
+    "time": "08:10",
+    "type": "work",
+    "summary": "Added recent bets timestamp freshness test \u2014 verifies all recent_bets timestamps are within 90 days to catch Polymarket stale data; also cleaned 2 stale backlog items and added 3 new testing tasks",
+    "files": [
+      "backend/tests/test_data_integrity.py"
+    ],
+    "tests": {
+      "before": 470,
+      "after": 471,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

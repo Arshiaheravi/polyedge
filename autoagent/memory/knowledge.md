@@ -65,6 +65,13 @@ RULE: [2026-03-26] Docstrings in test files go stale quickly when the underlying
 
 - Test count: **467 passed, 1 skipped** (as of 2026-03-26, session 167) *(unchanged — dead code removal, no new tests)*
 - Test count: **470 passed, 1 skipped** (as of 2026-03-26, session 169) — added 3 data integrity/validation tests
+- Test count: **471 passed, 1 skipped** (as of 2026-03-26, session 170) — added timestamp freshness test
+
+### Session #170 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added `test_recent_bets_timestamps_within_90_days` to test_data_integrity.py. Test hits real Polymarket API via test client, parses both Unix float and ISO-8601 timestamp formats, and asserts age ≤ 90 days. Also discovered `CONDITION_ID_RE` defined at line 21 of test_data_integrity.py but never used in any assertion — added to backlog as a quick coverage gap. Removed 2 stale backlog items (copy_value_pct formula test and exit-alerts-VIP) that had existing coverage the backlog descriptions didn't know about. 470→471 tests.
+FAILED: Nothing — test passed first run against live Polymarket data.
+RULE: [2026-03-26] Before adding any new testing task to the backlog, grep the test directory for the key function/feature name to confirm coverage doesn't already exist. The copy_value_pct and exit-alert-VIP tasks were stale because the backlog was written before those tests were added. A 10-second grep before adding to the backlog prevents carrying dead items for multiple sessions.
+RULE: [2026-03-26] When a test file defines a compiled regex (e.g., `CONDITION_ID_RE = re.compile(...)`) but that regex appears zero times in any `assert` statement, it is dead code in the test file — a defined but unused validator. Grep `grep -n "CONDITION_ID_RE\|condition_id" tests/test_data_integrity.py` to find it. Add it to backlog immediately as a trivial coverage gap.
 
 ### Session #169 Reflexion — 2026-03-26 (TESTING)
 ACCOMPLISHED: (1) Added price-range filter to `get_active_positions` — skip positions with cur_price < 0.001 or > 0.999 (resolved markets were leaking into the copyable positions list). (2) Added 3 regression tests: price range filter, copy_signal enum validation, consensus whale_count and avg_entry_price constraints. (3) Fixed 2 existing tests that omitted `curPrice` in mock data (they tested URL building only, so curPrice wasn't needed before — now required to pass the new filter). 467→470 tests.

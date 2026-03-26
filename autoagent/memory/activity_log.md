@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 170)
+DONE: Added `test_recent_bets_timestamps_within_90_days` to test_data_integrity.py — verifies that all recent bets from GET /bettors/{address} have timestamps within the past 90 days; handles both Unix float string and ISO-8601 string formats; skips gracefully when no bets available or Polymarket is unreachable. Also removed 2 stale backlog tasks (copy_value_pct and exit-alerts-VIP) whose tests already existed, and added 3 new HIGH PRIORITY testing tasks. 470→471 tests.
+IMPACT: Stale Polymarket data (>90-day-old bets served as "recent") would give copy-traders wrong context — the timestamp check is a data freshness guard that catches Polymarket API caching failures.
+FILES: backend/tests/test_data_integrity.py
+
 ## 2026-03-26 14:00 — TESTING (Session 169)
 DONE: Fixed get_active_positions to filter positions with cur_price < 0.001 or > 0.999 (resolved/expired markets leaking as "copyable"), and added 3 regression tests: (1) price range filter verified with mock data including price=0 and price=1 positions, (2) copy_signal enum always in {good, fair, late}, (3) consensus signals have whale_count>=3 and avg_entry_price in 0.01-0.99. Fixed 2 existing tests that had no curPrice in fixtures (now filtered out by the new guard). 467→470 tests.
 IMPACT: Users no longer see resolved markets in their copy-trading dashboard. The price range filter catches both "data missing" (price=0) and "YES settled" (price=1) cases. Tests prove the filter and document the contract.

@@ -2,11 +2,11 @@
 
 ## HIGH PRIORITY — Testing
 
-- [ ] **Recent bets timestamp validation** — `GET /bettors/{address}` recent_bets each have a timestamp field; add a test to `test_data_integrity.py` verifying all timestamps are within the past 90 days (stale data = Polymarket served wrong/cached bets). Grep confirms: no test for timestamp freshness exists yet.
+- [ ] **Consensus condition_id format validation** — `CONDITION_ID_RE = re.compile(r"^0x[a-fA-F0-9]{64}$")` is defined at test_data_integrity.py:21 but never used in any assertion. The PROJECT.md checklist explicitly requires "condition_id is valid 64-char hex" for consensus signals. Add assertion inside `test_consensus_whale_count_and_price_range` (or separate test) that each signal's `condition_id` field matches the regex. Grep: zero uses of `CONDITION_ID_RE` in any test assertion confirmed.
 
-- [ ] **copy_value_pct formula correctness** — `GET /follows/live` positions include `copy_value_pct`; add a unit test to `test_follows_live.py` or `test_polymarket_service.py` asserting `round((cur_price - avg_price) / avg_price * 100, 1)` matches the returned value for a known fixture (avg=0.40, cur=0.50 → 25.0%). Grep confirms: no test explicitly validates the formula output as a number, only the threshold bucketing (copy_signal='fair'). Tests should verify the number, not just the bucket.
+- [ ] **Leaderboard accuracy vs profile accuracy cross-check** — `test_leaderboard_vs_profile_pnl_consistent` in test_data_integrity.py verifies pnl_usd is consistent between leaderboard and profile endpoints, but does NOT check the `accuracy` field. Add a companion test that for the top bettor, if `accuracy` is non-null in the leaderboard response, the profile endpoint returns the same value (within ±0.02 tolerance). Grep: no test for accuracy cross-validation exists.
 
-- [ ] **Exit alerts only fire for VIP in scheduler** — `_poll_vip_bets` fires exit notifications; add a test verifying that when a whale exits a position, a non-VIP follower (free/basic) does NOT receive an exit alert notification. Grep: `test_poll_vip_bets` tests the exit detection but doesn't verify non-VIP users are excluded from the dispatch call.
+- [ ] **Copy simulator extreme price unit test** — `compute_copy_simulator` has no cap on `simulated_roi_pct`; at price=0.001 (valid, passes the `<= 0` filter), a bet win yields 99,900% simulated ROI. The real-data test at line 390 only checks live Polymarket data. Add a unit test with all-winning bets at price=0.01 to document the upper bound behavior, and add a ±10000% cap to the function. Grep: no test covers extreme-price scenarios in compute_copy_simulator.
 
 ---
 
