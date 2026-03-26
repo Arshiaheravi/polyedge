@@ -3406,7 +3406,7 @@
     "date": "2026-03-26",
     "time": "15:00",
     "type": "brain",
-    "summary": "Brain session: archived activity_log (sessions 120-140 moved to archive), added Playwright data-attr selector rule + CSS display wait condition rule to playwright.md, added FastAPI v0.132 strict Content-Type and v0.135 native SSE rules to coding.md, backlogged time-period leaderboard filter from Polymarket research, evaluated 5 new sources.",
+    "summary": "Brain session: archived activity_log sessions 120-140; added Playwright data-attr selector rules to playwright.md; added FastAPI v0.132 strict Content-Type + v0.135 SSE rules to coding.md; backlogged 6 items: VIP poll 30s->5s, health/readiness endpoints, data-testid selector stability, time-period leaderboard filter, hedging position filter, SQLAlchemy pool settings; 12 sources evaluated",
     "files": [
       "autoagent/skills/playwright.md",
       "autoagent/skills/coding.md",
@@ -3414,7 +3414,9 @@
       "autoagent/memory/activity_log.md",
       "autoagent/memory/activity_log_archive.md",
       "autoagent/brain/sources.md",
-      "autoagent/brain/techniques.md"
+      "autoagent/brain/techniques.md",
+      "autoagent/memory/knowledge.md",
+      "autoagent/sessions.json"
     ],
     "tests": {
       "before": 443,

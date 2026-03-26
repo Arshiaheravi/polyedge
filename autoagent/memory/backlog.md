@@ -21,6 +21,16 @@
 
 ---
 
+## HIGH PRIORITY — Quick Wins (VIP differentiators + production readiness)
+
+- [ ] **VIP tier: reduce scheduler poll from 30s to 5s** — CLAUDE.md already promises "Priority speed" for VIP tier but scheduler polls at the same 30s interval for all tiers. Fix: add `VIP_POLL_INTERVAL_SECONDS = 5` config; scheduler runs two APScheduler jobs (5s VIP, 30s basic/free) or dynamically adjusts. Closes the competitive gap vs. PolyCop/PolyGun who claim sub-second alerts. One-line config change + minor scheduler split. (Source: Medium polybots 2026 + CLAUDE.md VIP tier description, session 153)
+
+- [ ] **GET /health + GET /readiness endpoints** — Add `routes/health.py` with two endpoints: `/health` returns 200 immediately (liveness probe), `/readiness` checks DB connectivity (`db.execute("SELECT 1")`) and returns 200 or 503. Required before any production deployment or Docker/k8s setup. (Source: render.com FastAPI best practices 2026, session 153)
+
+- [ ] **Add data-testid attributes to frontend/index.html** — Add `data-testid="pricing-basic-card"`, `data-testid="register-email"`, `data-testid="login-submit"`, `data-testid="bettor-card"`, `data-testid="follow-btn"` etc. to all key interactive elements. Prevents brittle Playwright selector failures when CSS classes or HTML structure changes. Selectors tied to data-testid survive designer refactors. (Source: BrowserStack Playwright selector best practices 2026, session 153)
+
+---
+
 ## MEDIUM PRIORITY — Edge Cases & Reliability
 
 - [ ] **Rate limiting on auth routes** — add slowapi/starlette middleware to limit POST /auth/register and POST /auth/login to 10 req/min per IP; rapid brute-force attacks currently not blocked. Competitors + 2026 FastAPI best practices both flag this as production-critical. (Source: fastlaunchapi.dev 2026)
@@ -60,6 +70,10 @@ These tasks are a structural code review — not testing functionality, but read
 - [ ] Copy Ratio Setting — let users set a per-bettor copy ratio multiplier (0.1x, 0.25x, 0.5x, 1x) stored in BettorFollow table; show on follow cards as "Copy at 0.5x"; include copy_ratio in notification messages. TIER GATE: Basic/VIP only.
 
 - [ ] Insider Score — 0-100 confidence score per bettor (win_rate × profit_usd × avg_conviction × bet_count / 50). Badge on leaderboard cards (green >70, yellow 40-70, gray <40). TIER GATE: badge visible to all; numeric score for Basic/VIP only.
+
+- [ ] **Hedging position filter** — Before firing a notification, check if the bettor holds an offsetting position in the same market (YES + NO). Skip notification if offsetting positions cancel out — this is a liquidity farming position, not a directional bet. Reduces notification fatigue. Add `is_directional` flag to BetEvent. Stand.trade competitor already ships this. (Source: Polymarket copytrade-wars article, session 153)
+
+- [ ] **SQLAlchemy production pool settings** — Set `pool_size=10, max_overflow=20, pool_pre_ping=True, pool_recycle=3600` in `database.py` before any PostgreSQL migration. `pool_pre_ping` tests connections before use and discards stale ones. Currently using SQLite defaults (single-file, no pool). (Source: zestminds.com FastAPI deployment guide, session 153)
 
 ---
 

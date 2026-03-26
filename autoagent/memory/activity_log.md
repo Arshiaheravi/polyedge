@@ -2,11 +2,11 @@
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
 ## 2026-03-26 — BRAIN (Session 153)
-RESEARCHED: autonomous AI agent best practices 2026, FastAPI 2025-2026 release notes, Polymarket leaderboard features, arxiv 2603.22367 (RES) and 2603.24414 (ClawKeeper), ECC v1.9.0 re-check.
-DOWNLOADED: Nothing new — ECC still at v1.9.0; no new applicable skills.
-IMPLEMENTED: (1) playwright.md — DATA ATTRIBUTE SELECTORS section: use data-addr not onclick attribute; CSS display wait condition must use getComputedStyle value not inline style !== '' (from sessions 149+151 failure patterns). (2) coding.md — FastAPI v0.132 strict Content-Type rule + v0.135 native SSE pattern. (3) activity_log.md — archived sessions 120-140 to activity_log_archive.md (32→12 entries).
-BACKLOGGED: Time-period leaderboard filter (Today/Week/Month/All) — Polymarket's own leaderboard has this; PolyEdge users coming from Polymarket will expect it.
-SOURCES: 5 new sources logged in brain/sources.md.
+RESEARCHED: autonomous AI agent best practices 2026, FastAPI 2025-2026 release notes, Polymarket leaderboard + copytrade-wars competitor research, arxiv 2603.22367/2603.24414/2601.11653, Playwright best practices 2026, ECC v1.9.0 re-check, prediction market bot competitive landscape.
+DOWNLOADED: Nothing new — ECC still at v1.9.0; no new applicable Python/FastAPI skills.
+IMPLEMENTED: (1) playwright.md — DATA ATTRIBUTE SELECTORS section: use data-addr not onclick; CSS display wait condition must use getComputedStyle().display === 'flex' not style.display !== ''. (2) coding.md — FastAPI v0.132 strict Content-Type rule + v0.135 native SSE pattern. (3) activity_log.md — archived sessions 120-140 (32→12 entries).
+BACKLOGGED: (1) VIP poll 30s→5s — closes gap vs PolyCop/PolyGun; fulfills CLAUDE.md "Priority speed" VIP promise. (2) /health + /readiness endpoints — production readiness. (3) data-testid on index.html — selector stability. (4) Time-period leaderboard filter. (5) Hedging position filter (stand.trade competitor feature). (6) SQLAlchemy production pool settings.
+SOURCES: 12 new sources logged in brain/sources.md.
 
 ## 2026-03-26 — TESTING (Session 152)
 DONE: Added 14 Playwright UI flow tests across 4 suites: landing page pricing (all 5 features per tier card), full register→logout→login journey, leaderboard renders (≥10 bettor cards with names+stats), and bettor profile (name/stats/recent bets/simulator locked for free/unlocked for basic). Fixed logout step to call page.evaluate('logout()') instead of clicking the hidden #tab-account button at desktop viewport.
