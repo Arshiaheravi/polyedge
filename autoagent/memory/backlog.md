@@ -2,11 +2,6 @@
 
 ---
 
-## CODE QUALITY AUDIT
-
-- [ ] **Code quality audit (Session 105)** — scan changed files from last 5 work sessions (sessions 136-140) for cross-file coupling, test specificity degradation, and smells introduced by agent edits. Check: are tests too tightly coupled to implementation details? Any circular imports? Any dead code left from bug fixes?
-
----
 
 ## CRITICAL BUGS — Fix First (Code Review 2026-03-26)
 

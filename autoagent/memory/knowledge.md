@@ -44,7 +44,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **413 passed** (as of 2026-03-26, session 142)
+- Test count: **414 passed** (as of 2026-03-26, session 144)
 - Playwright checks: **132 total, 0 failures** (as of 2026-03-26, session 134 — no changes since)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -857,3 +857,11 @@ RULE: [2026-03-26] PROMPT.md write-time gates (STEP 0 Q6/Q7) are MORE effective 
 OPTIMIZATION: [2026-03-26] Background search agents consistently return 0-byte output files for web searches. Skip the agent-based search for standard web queries — use WebSearch/WebFetch directly. Only spawn background agents for multi-step research tasks that need tool access beyond web search.
 
 - Test count: **413 passed** (stable — no code changes this session), **132 Playwright checks** (stable)
+
+### Session #144 Reflexion — 2026-03-26 (CODE QUALITY AUDIT)
+ACCOMPLISHED: Code quality audit of sessions 136-142 changed files. Found 1 real bug + 2 smells: (1) alerts.py telegram_verify set telegram_verified=True even when telegram_chat_id=None — misleading "Telegram linked" response when notifications still can't fire; fixed by adding idempotent guard (already verified → return success) + chat_id required guard (code matches but bot not connected → 400). (2) scheduler.py had inline `from app.config import get_settings` inside loop body × 2 — moved to module-level import. (3) scheduler.py had redundant conviction variable aliasing — removed. Also updated 4 happy-path telegram_verify tests to simulate webhook firing first, and fixed misleading test comment. 414 tests passing (+1 new regression test).
+FAILED: First test run showed test_telegram_start_then_verify_full_round_trip still failed — because after the webhook fires, verify_code is cleared to None, hitting the "no pending verification" guard before the chat_id guard. Fix: added idempotent path at top of telegram_verify (if already verified AND has chat_id → return success immediately).
+RULE: [2026-03-26] When a webhook endpoint CLEARS a field (e.g., telegram_verify_code = None) as part of its authoritative action, any secondary endpoint that checks for that field's presence will break after the webhook fires. Add an idempotent early-return path for the "already completed" state before checking the now-cleared field.
+RULE: [2026-03-26] Code quality audit pattern: read changed files through the lens of (Alex: architecture, Marcus: security, Leo: dead code/consistency). The most valuable finding comes from tracing the INTERACTION between related endpoints (webhook sets fields, verify checks fields) — not just reading each endpoint in isolation.
+
+- Test count: **414 passed** (was 413), **132 Playwright checks** (stable)

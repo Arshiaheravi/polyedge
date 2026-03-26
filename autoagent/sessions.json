@@ -3193,5 +3193,29 @@
       "failures": 0,
       "notes": "brain session \u2014 no code changes"
     }
+  },
+  {
+    "session": 144,
+    "date": "2026-03-26",
+    "time": "03:00",
+    "type": "work",
+    "summary": "Fixed telegram_verify bug that showed Telegram linked even when notifications could never fire \u2014 now requires bot to have connected first; cleaned up scheduler imports",
+    "files": [
+      "backend/app/routes/alerts.py",
+      "backend/app/services/scheduler.py",
+      "backend/tests/test_alerts.py",
+      "backend/tests/test_follows_live.py"
+    ],
+    "tests": {
+      "before": 413,
+      "after": 414,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "No frontend files changed"
+    }
   }
 ]

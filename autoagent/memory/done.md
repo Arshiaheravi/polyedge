@@ -149,3 +149,6 @@
 - **[SESSION #137] Fix CRITICAL bugs #1 #2 #3** — Paywall bypass (profile cache now keyed by (address,tier)), CORS wildcard blocked (explicit origin list), telegram_chat_id removed from all auth responses; 3 regression tests added, 393 passing.
 - **[SESSION #139] Fix 5 medium bugs** — accuracy field in leaderboard normaliser, get_settings() lru_cache (was re-reading .env on every notification), free users blocked from web push (tier gate added), _last_positions memory leak fixed (stale keys purged each poll); 394 tests passing.
 - **[SESSION #140] Fix VIP padlock bug** — activity cache now always injects current tier so VIP users see copy-signal badges immediately after upgrading, not the free-tier padlock
+
+### 2026-03-26
+- **[SESSION #144] Code quality audit + telegram_verify half-verified bug fix** — Found and fixed alert where telegram_verify could return "Telegram linked successfully" even when notifications would still never fire; also fixed scheduler inline import smell and misleading test comment; 414 tests passing
