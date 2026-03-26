@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — META (Session 168)
+IMPROVED: (1) knowledge.md — added reflexion entries for sessions 156-167 (12 missing reflexions) and updated test suite history table (was stale at session 142/413 tests, now current through session 167/467 tests). (2) backlog.md — removed empty section clutter at top (14 lines of orphaned `---` separators), reordered to put HIGH PRIORITY Testing before MEDIUM PRIORITY Edge Cases. (3) meta/PROMPT.md — added reflexion gap check to STEP 1: grep for last reflexion session number and flag if 3+ sessions are missing, with instructions to write them from activity_log data.
+PATTERNS FOUND: (a) Reflexion entries for sessions 156-167 were completely absent from knowledge.md — 12 sessions of accumulated rules were missing. Most sessions had no failures so the reflexion was likely skipped as "nothing to document" — but the RULE line is always required even for clean sessions. (b) Backlog ordering had MEDIUM PRIORITY section before HIGH PRIORITY sections — work sessions pick the top item and would reach medium tasks before high ones. (c) Test suite history table was 25 sessions stale.
+PREDICTED IMPACT: Future META sessions will catch reflexion gaps early via the gap check. Work sessions will pick HIGH PRIORITY testing tasks before medium ones. Knowledge.md now has the full learning chain including timer leak, VIP poll, rate limiting, and dead code audit patterns.
+
 ## 2026-03-26 — CODE REVIEW (Session 167)
 DONE: Dead code audit — scanned all JS function definitions in frontend/index.html and all imports in backend/app/. Found and removed 1 dead function: `tierBadge(tier)` (3 lines, generated a tier badge HTML string but was never called from any code path or HTML attribute). All other suspects confirmed live (enterDemoMode, toggleSms, daysUntil, etc. all called from onclick attributes). All backend imports verified in use. 467 tests stable.
 IMPACT: Codebase is slightly cleaner; tierBadge was producing a string that was never rendered anywhere — a silent dead weight. Audit confirmed the codebase has very little true dead code after 166 sessions of iterative agent editing.

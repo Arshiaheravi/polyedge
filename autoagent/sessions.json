@@ -3735,7 +3735,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Dead code audit: scanned all JS function definitions in the frontend and all imports in the backend — found and removed 1 dead function (tierBadge, 3 lines) that was defined but never called anywhere; 467 tests still passing",
+    "summary": "Dead code audit: scanned all JS function definitions in the frontend and all imports in the backend \u00e2\u20ac\u201d found and removed 1 dead function (tierBadge, 3 lines) that was defined but never called anywhere; 467 tests still passing",
     "files": [
       "frontend/index.html"
     ],
@@ -3748,7 +3748,31 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "removed dead code only — no new HTML or JS patterns added"
+      "notes": "removed dead code only \u00e2\u20ac\u201d no new HTML or JS patterns added"
+    }
+  },
+  {
+    "session": 168,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "meta",
+    "summary": "Added 12 missing reflexion entries to knowledge.md (sessions 156-167), updated stale test history table, fixed backlog ordering (HIGH before MEDIUM), added reflexion gap check to meta/PROMPT.md",
+    "files": [
+      "autoagent/memory/knowledge.md",
+      "autoagent/memory/backlog.md",
+      "autoagent/meta/PROMPT.md",
+      "autoagent/memory/activity_log.md"
+    ],
+    "tests": {
+      "before": 0,
+      "after": 0,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "meta session \u2014 no code changes"
     }
   }
 ]

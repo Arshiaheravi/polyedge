@@ -922,16 +922,24 @@ FAILED: Nothing — first run passed all 396 tests.
 RULE: [2026-03-26] When caching API responses that include user-state fields (tier, subscription limits, feature flags), NEVER serve those fields from the stale cache. Always override with the live user object on cache hits: `return {**cached["data"], "tier": current_user.subscription_tier}`. The bettors/positions list can be stale; the user's state cannot.
 
 ## Test Suite History (updated)
-| Session | Backend Tests | Frontend Checks |
-|---------|--------------|-----------------|
-| 142     | 413          | 132             |
-| 141     | 401          | 132             |
-| 140     | 396          | 132             |
-| 139     | 394          | 132             |
-| 137     | 393          | 132             |
-| 135     | 390          | 132             |
-| 134     | 384          | 132             |
-| 133     | 373          | 130             |
+| Session | Backend Tests | Frontend (Playwright) |
+|---------|--------------|----------------------|
+| 167     | 467          | 42                   |
+| 166     | 467          | 42                   |
+| 165     | 462          | 42                   |
+| 164     | 459          | 42                   |
+| 162     | 457          | 42                   |
+| 159     | 450          | 42                   |
+| 157     | 446          | 42                   |
+| 156     | 443          | 42                   |
+| 155     | 443          | 41                   |
+| 152     | 443          | 31                   |
+| 150     | 443          | 5                    |
+| 142     | 413          | 132 (old format)     |
+| 141     | 401          | 132                  |
+| 140     | 396          | 132                  |
+| 139     | 394          | 132                  |
+| 137     | 393          | 132                  |
 
 ### Session #141 Reflexion — 2026-03-26 (BUGFIX)
 ACCOMPLISHED: Fixed Telegram notifications permanently broken — added `POST /alerts/telegram/webhook` endpoint that Telegram bot calls when a user sends `/verify CODE`. The webhook extracts the chat_id from the message and sets `telegram_chat_id` + `telegram_verified=True` in the DB. Without this endpoint, `telegram_chat_id` was always null so notifications could never send. Also fixed a secondary sensitive data leak: `GET /alerts/settings` was returning `telegram_chat_id` to clients — removed it (only `telegram_verified` bool needed by frontend). Updated 1 existing test. Added 5 new webhook tests. 401 tests passing.
@@ -1009,3 +1017,64 @@ ACCOMPLISHED: (1) Fixed Bug #12 — replaced `_consensusLoaded` boolean with `_c
 FAILED: `window._consensusLoadedAt` returned None in Playwright because `let` top-level variables are NOT accessible via `window.*` — only `var` declarations are added to the global object. Fixed by using bare `_consensusLoadedAt` in page.evaluate (no `window.` prefix).
 RULE: [2026-03-26] In Playwright `page.evaluate()`, top-level `let`/`const` variables in the page script are NOT accessible as `window.*`. Use bare variable names: `page.evaluate("_myVar")` not `page.evaluate("window._myVar")`. Only `var` declarations are added to the global window object.
 OPTIMIZATION: [2026-03-26] Frontend error-handling audit (checking every fetch for try/catch) can be done in ~10 min by: (1) grep all fetch/apiFetch calls, (2) read ±15 lines around each, (3) confirm try/catch present. No server startup needed.
+
+### Session #156 Reflexion — 2026-03-26 (BUGFIX + TESTING)
+ACCOMPLISHED: Fixed follows refresh timer leak — after logout (or JWT expiry), the 30s setInterval kept firing refreshFollowsActivity(), which called showView('auth','login') and bounced users back to login 30s after logging out. Fix: showView() now clears _followsRefreshTimer when navigating away from dashboard. Added 1 Playwright test using page.clock.fast_forward(31s). Also removed unused BetEvent import from routes/follows.py. 443 backend tests, 42 Playwright tests.
+FAILED: Nothing — all tests passed first run.
+RULE: [2026-03-26] JS setInterval timers set in a view-entry function must be cleared when navigating AWAY from that view. showView() is the central routing function — add `clearInterval(_fooTimer); _fooTimer = null` there for every timer that belongs to a specific view. Without this, timers outlive the view and fire stale callbacks into wrong app states.
+
+### Session #157 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added 3 reliability tests in test_bettors.py — Polymarket HTTP 500 at httpx transport level returns graceful 200 empty list for leaderboard; same for bettor detail endpoint; 10 concurrent GET /bettors threads all return 200 without crashing. 446 backend tests.
+FAILED: Nothing — all 3 passed first run.
+RULE: [2026-03-26] To test HTTP-transport-level resilience (not just mock-at-service-function level), use `httpx.MockTransport` with a custom `handle_request` that raises `httpx.HTTPStatusError`. This verifies that `except Exception: break` patterns in the service actually swallow upstream errors at the httpx layer, not just at the mock-function level.
+
+### META Session #158 Reflexion — 2026-03-26
+ACCOMPLISHED: (1) playwright.md — added TIMER TESTING section: page.clock.fast_forward() pattern from session 156, including install-before-goto rule. (2) backlog.md — removed empty "HIGH PRIORITY — Frontend UI Playwright Tests" section (all tasks completed). (3) Restored "Frontend API error handling" and "Dead code" review items that were explicitly kept in session 148 but dropped in cleanup.
+PATTERNS FOUND: Playwright patterns get used in work sessions but never filed back to playwright.md. Backlog items can silently disappear during section cleanups.
+RULE: [2026-03-26] After a WORK session uses a new Playwright pattern (e.g., page.clock, page.evaluate for JS calls), the META session following it must file the pattern to playwright.md — not just knowledge.md. Skill files are read at session start; knowledge.md is scanned for specific terms only.
+
+### Session #159 Reflexion — 2026-03-26 (FEATURE)
+ACCOMPLISHED: Added VIP 5-second poll interval via a second APScheduler job (_poll_vip_bets every 5s alongside _poll_bets every 30s). Added GET /readiness endpoint (SELECT 1 check, returns 200/503). 450 backend tests (4 added), 42 Playwright tests.
+FAILED: Nothing — all 4 new tests passed first run.
+RULE: [2026-03-26] When adding a second APScheduler job to an existing scheduler, both jobs register on the SAME AsyncIOScheduler instance before `scheduler.start()` is called. The VIP job must filter to addresses followed by VIP users only — fetching all addresses in the fast-path defeats the purpose and doubles load on Polymarket API.
+
+### Session #160 Reflexion — 2026-03-26 (BUGFIX)
+ACCOMPLISHED: Fixed 3 silent error swallowing bugs in the follows tab — users now see "Could not load positions. Try refreshing." instead of stuck skeleton cards when positions API fails; follows-list errors show a toast instead of empty state. 450 backend tests (stable), 42 Playwright tests (stable).
+FAILED: Nothing — straightforward catch block additions.
+RULE: [2026-03-26] Frontend catch blocks that call `resolve([])` or just hide the loader create silent failures — the user sees an empty state and doesn't know if it's real or broken. Always show a visible error message or toast in the catch block. The pattern `catch(e) { showToast("Could not load X. Try refreshing.", "error"); }` is the minimum acceptable error handler.
+
+### Session #161 Reflexion — 2026-03-26 (CODE QUALITY AUDIT)
+ACCOMPLISHED: Audited sessions 155-160 changed files. Found and fixed: (1) readiness endpoint leaking exception details in 503 body (DB file path + SQLAlchemy error string exposed to public callers); (2) stale scheduler docstring. Logged _last_check race condition to tech_debt.md. 450 backend tests (stable).
+FAILED: Nothing — straightforward fixes.
+RULE: [2026-03-26] The `except Exception as e: raise HTTPException(status_code=503, detail=str(e))` pattern exposes internal error strings to clients — SQLAlchemy errors include DB file paths and schema info. Always log the full error server-side and return a generic user-facing message: `logger.error(f"Health check failed: {e}"); raise HTTPException(503, "Database connectivity check failed")`.
+
+### Session #162 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added 7 behavioral tests — VIP fast-path (no-VIP early return, VIP-only address filtering, new bet creates BetEvent+notification), /follows/live conviction score (keys always present, EXTREME label at 10x, empty below 3x), profile cache (reverse-order confirms VIP gets unlocked simulator even after free user cached same address). 457 backend tests, 42 Playwright tests.
+FAILED: Nothing — all 7 passed first run.
+RULE: [2026-03-26] When testing cache tier isolation (e.g., profile cache keyed by (address, tier)), test in REVERSE order: free user first (populates free cache), then VIP user for same address. If the cache key is wrong (address only), the VIP user gets the free response. Testing VIP first masks the bug.
+
+### BRAIN Session #163 Reflexion — 2026-03-26
+ACCOMPLISHED: Fixed stale coding.md (port 8002→8003, StockCards references → PolyEdge); created autoagent/skills/rate-limiting.md with complete SlowAPI recipe including the mandatory `request: Request` parameter; added FastAPI v0.134 streaming JSON Lines + v0.131 ORJSONResponse deprecation entries. 457 tests stable.
+FAILED: Nothing.
+RULE: [2026-03-26] Brain sessions must verify the development port in coding.md matches PROJECT.md at the start of every brain session. Port numbers drift as projects evolve — a stale port in coding.md causes work sessions to attempt server startup on the wrong port, wasting the first 2-3 turns diagnosing connection refused errors.
+
+### Session #164 Reflexion — 2026-03-26 (SECURITY)
+ACCOMPLISHED: Added rate limiting to POST /auth/register and POST /auth/login — 10 req/min per IP via slowapi; shared limiter singleton in app/limiter.py; conftest resets limiter between tests; 2 regression tests. 459 backend tests.
+FAILED: Nothing — rate-limiting.md skill from session 163 had the exact recipe needed. No rediscovery required.
+RULE: [2026-03-26] SlowAPI requires `request: Request` as the FIRST parameter (after self if method) in every rate-limited route function. Missing it raises a 500 "No request object found" error that is completely opaque. Always add it; the rate-limiting.md skill documents this pattern.
+OPTIMIZATION: [2026-03-26] Creating the rate-limiting.md skill in the BRAIN session BEFORE the implementing session saved the full research cost (~5 turns) — the implementation session went straight to coding. Pre-filing skill files for planned work is the single highest-ROI brain session action.
+
+### Session #165 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added 3 regression tests — _poll_bets purges stale _last_positions entries; /health not rate-limited (20 consecutive calls); /readiness not rate-limited (20 consecutive calls). 462 backend tests.
+FAILED: Nothing — all 3 passed first run.
+RULE: [2026-03-26] k8s liveness/readiness probe endpoints (/health, /readiness) MUST be exempt from rate limiting. Without an explicit test, a future refactor adding rate limiting to all routes would silently break deployments. Add a rate-limit exemption test alongside every new rate-limiter installation.
+
+### Session #166 Reflexion — 2026-03-26 (CODE QUALITY AUDIT)
+ACCOMPLISHED: Extracted `_compute_conviction(bet_amount, avg_bet_usd)` helper — eliminated identical 8-line conviction logic duplicated in _poll_bets and _poll_vip_bets. Fixed stale docstring in test_cors_headers_present. Added 5 unit tests for the helper. 467 backend tests.
+FAILED: Nothing — all 5 new tests passed first run.
+RULE: [2026-03-26] Agent-edited code accumulates silent duplicates because each task is implemented independently, often in sibling functions. When a code quality audit finds identical multi-line logic in two sibling functions (e.g., _poll_bets and _poll_vip_bets), extract it immediately — a threshold change in one copy will never be applied to the other, causing inconsistent behavior (e.g., different notification thresholds for VIP vs standard polls).
+
+### Session #167 Reflexion — 2026-03-26 (CODE REVIEW)
+ACCOMPLISHED: Dead code audit of frontend/index.html (all JS function definitions scanned against oncl* attributes and JS call sites) and backend/app/ (all imports verified). Found 1 dead function: `tierBadge(tier)` — generated an HTML string but was never called from any code path or HTML attribute. Removed (3 lines). 467 backend tests stable.
+FAILED: Nothing — straightforward removal.
+RULE: [2026-03-26] For JS dead code detection, grep for the function name in: (1) `onclick="`, `onclick='` attributes; (2) other JS function bodies. A function can look syntactically correct and even return useful output but still be completely dead if nothing calls it. `tierBadge` produced badge HTML that was never rendered — silent dead weight. The grep pattern: `grep -n "tierBadge\|functionName" frontend/index.html` covers both call sites and definition in one pass.

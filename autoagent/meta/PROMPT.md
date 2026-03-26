@@ -31,6 +31,12 @@ Look for:
 - Steps that wasted the most turns
 - Anything that happened more than once (repeated = systemic)
 
+**Reflexion gap check** — run this BEFORE reading the activity log:
+```bash
+grep "^### Session" autoagent/memory/knowledge.md | tail -1
+```
+Note the last session number with a reflexion. Then check the current session number from `autoagent/sessions.json` (`len(d) - 1`). If there are 3+ sessions with no reflexion entries, add writing those reflexions to your STEP 3 fixes — use the activity_log entries as source material (ACCOMPLISHED = DONE line, FAILED = "Nothing" if not mentioned, RULE = derive from what was fixed). Missing reflexions break the accumulated learning chain and cause rules to be re-discovered in future sessions.
+
 ## STEP 2 — DIAGNOSE
 For each failure pattern, ask:
 - Is there a rule missing from `autoagent/PROMPT.md`?
