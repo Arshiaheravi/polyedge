@@ -73,6 +73,20 @@ def test_readiness_endpoint_db_failure(client):
     assert data["detail"] == "Database connectivity check failed"
 
 
+def test_health_not_rate_limited(client):
+    """GET /health must never return 429 — k8s liveness probes call this continuously."""
+    for _ in range(20):
+        resp = client.get("/health")
+        assert resp.status_code == 200, f"Expected 200 but got {resp.status_code}"
+
+
+def test_readiness_not_rate_limited(client):
+    """GET /readiness must never return 429 — k8s readiness probes call this continuously."""
+    for _ in range(20):
+        resp = client.get("/readiness")
+        assert resp.status_code == 200, f"Expected 200 but got {resp.status_code}"
+
+
 def test_unauthenticated_protected_routes(client):
     """All protected routes return 403 without a token, not 500."""
     protected = [

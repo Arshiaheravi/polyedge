@@ -946,6 +946,35 @@ def test_detect_exits_api_error_skips_address(sched_db):
     assert len(events) == 0
 
 
+def test_poll_bets_purges_stale_last_positions(sched_db):
+    """When a bettor is no longer followed, _poll_bets purges its _last_positions entry.
+
+    Scenario:
+    - _last_positions contains "0xstale" (a previously-followed bettor now unfollowed).
+    - DB has a different bettor "0xactive" still followed by a user.
+    - After _poll_bets runs, "0xstale" must be gone from _last_positions.
+    """
+    session, Session = sched_db
+
+    user = User(
+        email="purge@x.com", hashed_password=hash_password("p"),
+        name="U", subscription_tier="basic",
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xactive"))
+    session.commit()
+
+    # Pre-seed stale entry for a bettor that is no longer followed
+    scheduler_module._last_positions["0xstale"] = {"cid_old": 5.0}
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[])):
+        run(_poll_bets())
+
+    assert "0xstale" not in scheduler_module._last_positions
+
+
 def test_vip_poll_interval_config():
     """VIP poll interval is 5s and default poll interval is 30s."""
     cfg = get_settings()
