@@ -24,6 +24,21 @@ _last_check: datetime = datetime.now(tz=timezone.utc)
 _last_positions: dict = {}
 
 
+def _compute_conviction(bet_amount: float, avg_bet_usd: float) -> tuple:
+    """Return (conviction_score, conviction_label) for a given bet amount vs average."""
+    if avg_bet_usd > 0 and bet_amount > 0:
+        score = round(bet_amount / avg_bet_usd, 1)
+    else:
+        score = 1.0
+    if score >= 10.0:
+        label = "EXTREME"
+    elif score >= 3.0:
+        label = "HIGH"
+    else:
+        label = ""
+    return score, label
+
+
 def _parse_timestamp(ts_value) -> Optional[datetime]:
     """Parse various timestamp formats into a timezone-aware datetime."""
     if not ts_value:
@@ -204,16 +219,7 @@ async def _poll_bets() -> None:
 
                 # Compute conviction score here so it can be stored on the event
                 bet_amount = bet.get("amount_usd", 0.0)
-                if avg_bet_usd > 0 and bet_amount > 0:
-                    _conviction_score = round(bet_amount / avg_bet_usd, 1)
-                else:
-                    _conviction_score = 1.0
-                if _conviction_score >= 10.0:
-                    _conviction_label = "EXTREME"
-                elif _conviction_score >= 3.0:
-                    _conviction_label = "HIGH"
-                else:
-                    _conviction_label = ""
+                _conviction_score, _conviction_label = _compute_conviction(bet_amount, avg_bet_usd)
 
                 # Save new bet event
                 event = BetEvent(
@@ -343,13 +349,7 @@ async def _poll_vip_bets() -> None:
                     continue
 
                 bet_amount = bet.get("amount_usd", 0.0)
-                if avg_bet_usd > 0 and bet_amount > 0:
-                    _conviction_score = round(bet_amount / avg_bet_usd, 1)
-                else:
-                    _conviction_score = 1.0
-                _conviction_label = (
-                    "EXTREME" if _conviction_score >= 10.0 else "HIGH" if _conviction_score >= 3.0 else ""
-                )
+                _conviction_score, _conviction_label = _compute_conviction(bet_amount, avg_bet_usd)
 
                 event = BetEvent(
                     bettor_address=address,

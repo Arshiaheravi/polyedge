@@ -40,7 +40,7 @@ def test_openapi_json_available(client):
 
 
 def test_cors_headers_present(client):
-    """CORS allows all origins (needed for frontend on :3000)."""
+    """CORS allows http://localhost:3000 (frontend origin — credentials allowed)."""
     resp = client.options(
         "/health",
         headers={

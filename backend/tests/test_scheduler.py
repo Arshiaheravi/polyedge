@@ -12,7 +12,7 @@ from app.auth import hash_password
 from app.config import get_settings
 from app.database import Base
 from app.models import BetEvent, BettorFollow, User
-from app.services.scheduler import _parse_timestamp, _poll_bets, _poll_vip_bets
+from app.services.scheduler import _compute_conviction, _parse_timestamp, _poll_bets, _poll_vip_bets
 
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -53,6 +53,39 @@ def reset_last_positions():
 # Helper: run an async coroutine synchronously in tests.
 def run(coro):
     return asyncio.run(coro)
+
+
+# ── _compute_conviction ───────────────────────────────────────────────────────
+
+
+def test_compute_conviction_normal():
+    score, label = _compute_conviction(50.0, 50.0)
+    assert score == 1.0
+    assert label == ""
+
+
+def test_compute_conviction_high():
+    score, label = _compute_conviction(150.0, 50.0)
+    assert score == 3.0
+    assert label == "HIGH"
+
+
+def test_compute_conviction_extreme():
+    score, label = _compute_conviction(500.0, 50.0)
+    assert score == 10.0
+    assert label == "EXTREME"
+
+
+def test_compute_conviction_zero_avg_returns_default():
+    score, label = _compute_conviction(100.0, 0.0)
+    assert score == 1.0
+    assert label == ""
+
+
+def test_compute_conviction_zero_bet_returns_default():
+    score, label = _compute_conviction(0.0, 100.0)
+    assert score == 1.0
+    assert label == ""
 
 
 # ── _parse_timestamp ──────────────────────────────────────────────────────────
