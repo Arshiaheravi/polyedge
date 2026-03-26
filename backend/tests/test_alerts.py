@@ -388,13 +388,15 @@ def test_sms_start_invalid_phone_format_returns_400(client, db, auth_headers, re
 
 
 def test_get_alert_settings_includes_phone_and_telegram_fields(client, auth_headers):
-    """GET /alerts/settings response includes telegram_chat_id, phone_number, and phone_verified fields."""
+    """GET /alerts/settings includes telegram_verified, phone_number, phone_verified.
+    telegram_chat_id must NOT appear — it is internal infrastructure, never exposed to clients."""
     resp = client.get("/alerts/settings", headers=auth_headers)
     assert resp.status_code == 200
     data = resp.json()
-    assert "telegram_chat_id" in data
+    assert "telegram_verified" in data
     assert "phone_number" in data
     assert "phone_verified" in data
+    assert "telegram_chat_id" not in data  # sensitive — must never be in any API response
 
 
 def test_sms_start_happy_path(client, db, auth_headers, registered_user):
@@ -653,3 +655,111 @@ def test_put_alerts_settings_valid_push_subscription_stores_and_get_retrieves(cl
     result = get_resp.json()["push_subscription"]
     assert isinstance(result, dict)
     assert result["endpoint"] == "https://push.example.com/sub/xyz"
+
+
+# ── Telegram bot webhook ──────────────────────────────────────────────────────
+
+
+def test_telegram_webhook_valid_verify_sets_chat_id(client, db, registered_user):
+    """Telegram webhook with a valid /verify CODE sets telegram_chat_id and telegram_verified=True in DB."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    user.telegram_verify_code = "AABBCCDD"
+    db.commit()
+
+    update = {
+        "update_id": 1001,
+        "message": {
+            "message_id": 1,
+            "chat": {"id": 987654321, "type": "private"},
+            "text": "/verify AABBCCDD",
+        },
+    }
+    resp = client.post("/alerts/telegram/webhook", json=update)
+    assert resp.status_code == 200
+    assert resp.json()["ok"] is True
+
+    db.refresh(user)
+    assert user.telegram_chat_id == "987654321"
+    assert user.telegram_verified is True
+    assert user.telegram_verify_code is None
+
+
+def test_telegram_webhook_lowercase_code_is_accepted(client, db, registered_user):
+    """Webhook accepts /verify with lowercase code — handler normalises with .upper()."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.telegram_verify_code = "DEADBEEF"
+    db.commit()
+
+    update = {
+        "update_id": 1002,
+        "message": {
+            "message_id": 2,
+            "chat": {"id": 111222333, "type": "private"},
+            "text": "/verify deadbeef",
+        },
+    }
+    resp = client.post("/alerts/telegram/webhook", json=update)
+    assert resp.status_code == 200
+    db.refresh(user)
+    assert user.telegram_chat_id == "111222333"
+
+
+def test_telegram_webhook_unknown_code_returns_ok_no_db_change(client, db, registered_user):
+    """Webhook with an unrecognised verify code returns 200 ok=True but changes nothing."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.telegram_verify_code = "REALCODE"
+    user.telegram_chat_id = None
+    db.commit()
+
+    update = {
+        "update_id": 1003,
+        "message": {
+            "message_id": 3,
+            "chat": {"id": 999, "type": "private"},
+            "text": "/verify WRONGCOD",
+        },
+    }
+    resp = client.post("/alerts/telegram/webhook", json=update)
+    assert resp.status_code == 200
+    assert resp.json()["ok"] is True
+
+    db.refresh(user)
+    assert user.telegram_chat_id is None  # unchanged
+    assert user.telegram_verify_code == "REALCODE"  # unchanged
+
+
+def test_telegram_webhook_no_message_returns_ok(client):
+    """Webhook update with no 'message' key (e.g. channel post) returns 200 ok=True."""
+    resp = client.post("/alerts/telegram/webhook", json={"update_id": 1004, "channel_post": {}})
+    assert resp.status_code == 200
+    assert resp.json()["ok"] is True
+
+
+def test_telegram_webhook_non_verify_text_returns_ok_no_change(client, db, registered_user):
+    """Webhook with non-/verify text (e.g. /start) returns 200 and makes no DB changes."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.telegram_verify_code = "STARTTEST"
+    user.telegram_chat_id = None
+    db.commit()
+
+    update = {
+        "update_id": 1005,
+        "message": {
+            "message_id": 5,
+            "chat": {"id": 555, "type": "private"},
+            "text": "/start",
+        },
+    }
+    resp = client.post("/alerts/telegram/webhook", json=update)
+    assert resp.status_code == 200
+    db.refresh(user)
+    assert user.telegram_chat_id is None  # unchanged

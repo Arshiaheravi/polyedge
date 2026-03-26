@@ -53,7 +53,6 @@ def get_alert_settings(
         "sms_enabled": alert.sms_enabled,
         "push_subscription": json.loads(alert.push_subscription) if alert.push_subscription else None,
         "telegram_verified": current_user.telegram_verified,
-        "telegram_chat_id": current_user.telegram_chat_id,
         "phone_number": current_user.phone_number,
         "phone_verified": current_user.phone_verified,
     }
@@ -126,6 +125,37 @@ def telegram_start(
         "instructions": f"Send this code to @{bot_username} on Telegram: /verify {code}",
         "bot_link": f"https://t.me/{bot_username}",
     }
+
+
+@router.post("/telegram/webhook")
+def telegram_webhook(
+    update: dict,
+    db: Session = Depends(get_db),
+):
+    """Telegram bot webhook — called by Telegram when a user messages the bot.
+    Parses /verify CODE commands and links the user's Telegram chat_id to their account."""
+    message = update.get("message", {})
+    if not message:
+        return {"ok": True}
+
+    chat_id = str(message.get("chat", {}).get("id", ""))
+    text = (message.get("text") or "").strip()
+
+    if not chat_id or not text:
+        return {"ok": True}
+
+    # Handle /verify CODE command (case-insensitive)
+    upper_text = text.upper()
+    if upper_text.startswith("/VERIFY "):
+        code = text.split(" ", 1)[1].strip().upper()
+        user = db.query(User).filter(User.telegram_verify_code == code).first()
+        if user:
+            user.telegram_chat_id = chat_id
+            user.telegram_verified = True
+            user.telegram_verify_code = None
+            db.commit()
+
+    return {"ok": True}
 
 
 @router.post("/telegram/verify")
