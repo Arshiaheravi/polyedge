@@ -1,10 +1,20 @@
 # Backlog
 
+## HIGH PRIORITY — Code Quality
+
+- [ ] **Code quality audit (sessions 167-171)** — scan changed files from sessions 167-171 for cross-file coupling, test specificity degradation, and smells introduced by agent edits. Key files: test_data_integrity.py, polymarket.py, scheduler.py, test_follows_live.py, test_polymarket_service.py.
+
+---
+
 ## HIGH PRIORITY — Testing
 
 - [ ] **Leaderboard accuracy vs profile accuracy cross-check** — `test_leaderboard_vs_profile_pnl_consistent` in test_data_integrity.py verifies pnl_usd is consistent between leaderboard and profile endpoints, but does NOT check the `accuracy` field. Add a companion test that for the top bettor, if `accuracy` is non-null in the leaderboard response, the profile endpoint returns the same value (within ±0.02 tolerance). Grep: no test for accuracy cross-validation exists.
 
-- [ ] **Copy simulator extreme price unit test** — `compute_copy_simulator` has no cap on `simulated_roi_pct`; at price=0.001 (valid, passes the `<= 0` filter), a bet win yields 99,900% simulated ROI. The real-data test at line 390 only checks live Polymarket data. Add a unit test with all-winning bets at price=0.01 to document the upper bound behavior, and add a ±10000% cap to the function. Grep: no test covers extreme-price scenarios in compute_copy_simulator.
+- [ ] **get_settings() lru_cache test** — Bug #9 from PROJECT.md: `get_settings()` creates a new Settings() object on every call instead of being cached with `@lru_cache`. Add `@lru_cache` to `get_settings()` in config.py AND add a unit test verifying that two calls to `get_settings()` return the same object instance (`assert get_settings() is get_settings()`). Grep: no test for settings identity/caching exists. Confirmed no test covers this path.
+
+- [ ] **Copy simulator open-bet skip unit test** — `compute_copy_simulator` skips bets that are <7 days old and NOT in redeemed_ids (still-open bets). Add a unit test with one still-open bet (timestamp = now - 1 day, not in redeemed_ids) to confirm it is excluded from bets_analysed. Currently no unit test covers the "still open → skip" branch. Grep: no test for open-bet exclusion in compute_copy_simulator.
+
+- [ ] **Auth /me response field audit** — verify that GET /auth/me never returns `hashed_password`, `stripe_customer_id`, or `telegram_chat_id` fields. Add an explicit assertion test in test_auth.py that fetches /auth/me and asserts none of these sensitive keys appear in the response JSON. Grep: existing `test_me_endpoint` tests check for correct fields but do not explicitly assert absence of sensitive fields.
 
 ---
 

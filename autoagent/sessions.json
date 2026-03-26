@@ -3829,5 +3829,15 @@
     "files": ["backend/tests/test_data_integrity.py"],
     "tests": {"before": 471, "after": 471, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+  },
+  {
+    "session": 172,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added a safety cap (±10000%) to the copy simulator ROI calculation so bettors who won bets at very low entry prices (e.g. 1 cent) don't show absurd 99,000% returns on their profile — includes unit test proving the cap works",
+    "files": ["backend/app/services/polymarket.py", "backend/tests/test_data_integrity.py"],
+    "tests": {"before": 471, "after": 472, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]

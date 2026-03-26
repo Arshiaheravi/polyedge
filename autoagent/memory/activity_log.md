@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 172)
+DONE: Added ±10000% ROI cap to compute_copy_simulator in polymarket.py and a unit test (test_copy_simulator_extreme_price_roi_cap) with all-winning bets at price=0.01 to document and verify the cap behaviour. 471→472 tests.
+IMPACT: Without the cap, a bettor who won many bets at very low entry prices (e.g. price=0.01) would show absurd ROI values on their profile simulator card — misleading users into thinking copying them is a guaranteed windfall. The cap prevents display bugs and protects user decisions.
+FILES: backend/app/services/polymarket.py, backend/tests/test_data_integrity.py
+
 ## 2026-03-26 — TESTING (Session 171)
 DONE: Activated the CONDITION_ID_RE regex assertion (^0x[a-fA-F0-9]{64}$) inside test_consensus_whale_count_and_price_range — the regex was defined at test_data_integrity.py:21 but never used in any assertion. Now validates that every consensus signal's condition_id is a properly-formatted 64-char hex ID.
 IMPACT: Catches malformed or missing condition_ids from the Polymarket API before they reach users; ensures the condition_id field is a genuine market identifier and not an empty string or garbage value. 471 tests stable.

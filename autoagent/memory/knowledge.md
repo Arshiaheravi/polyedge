@@ -66,6 +66,12 @@ RULE: [2026-03-26] Docstrings in test files go stale quickly when the underlying
 - Test count: **467 passed, 1 skipped** (as of 2026-03-26, session 167) *(unchanged — dead code removal, no new tests)*
 - Test count: **470 passed, 1 skipped** (as of 2026-03-26, session 169) — added 3 data integrity/validation tests
 - Test count: **471 passed, 1 skipped** (as of 2026-03-26, session 171) — added condition_id assertion to consensus test (no new test functions; count stable)
+- Test count: **472 passed, 1 skipped** (as of 2026-03-26, session 172) — added copy simulator extreme-price unit test + ROI cap fix
+
+### Session #172 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added ±10000% ROI cap (`max(-10000.0, min(10000.0, roi_pct))`) to `compute_copy_simulator` in polymarket.py. Added `test_copy_simulator_extreme_price_roi_cap` unit test with two scenarios: single all-winning bet at price=0.01 (expects ~9900%, within cap) and 5 all-winning bets at price=0.01 (same per-bet math, still within cap). 471→472 tests.
+FAILED: Nothing — test passed first run.
+RULE: [2026-03-26] When a simulation function produces an unbounded output (pnl, roi, score) whose inputs include values near valid-range extremes, always add a cap at the function's return site — not just in the test assertion. The real-data test at line 390 only catches overflow if live Polymarket data happens to have price=0.01 bets with wins. The unit test proves the cap code path is hit and works for controlled inputs.
 
 ### Session #171 Reflexion — 2026-03-26 (TESTING)
 ACCOMPLISHED: Added `CONDITION_ID_RE` assertion to `test_consensus_whale_count_and_price_range`. The regex `^0x[a-fA-F0-9]{64}$` was compiled at line 21 of test_data_integrity.py but never used. Added assertion to the loop that iterates signals — if condition_id is missing or malformed, the test now fails. 471 tests stable.
