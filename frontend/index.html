@@ -1490,7 +1490,7 @@
     <div class="pricing-social-proof"><strong>847+ traders</strong> are currently copying top bettors on PolyEdge</div>
     <div class="pricing-grid">
       <!-- Free -->
-      <div class="pricing-card">
+      <div class="pricing-card" data-testid="pricing-free-card">
         <div class="pricing-name">Free</div>
         <div class="pricing-price">
           <span class="pricing-price-monthly">$0<sub>/mo</sub></span>
@@ -1512,7 +1512,7 @@
         <div class="pricing-cta-note">No credit card required</div>
       </div>
       <!-- Basic — featured -->
-      <div class="pricing-card featured">
+      <div class="pricing-card featured" data-testid="pricing-basic-card">
         <div class="pricing-badge">Most Popular</div>
         <div class="pricing-name" style="color:var(--accent2);">Basic</div>
         <div class="pricing-price" style="color:var(--accent2);">
@@ -1539,7 +1539,7 @@
         <div class="pricing-cta-note">Cancel anytime &middot; Billed monthly</div>
       </div>
       <!-- VIP -->
-      <div class="pricing-card pricing-vip">
+      <div class="pricing-card pricing-vip" data-testid="pricing-vip-card">
         <div class="pricing-name" style="color:var(--gold2);">VIP</div>
         <div class="pricing-price" style="color:var(--gold2);">
           <span class="pricing-price-monthly">$9.99<sub>/mo</sub></span>
@@ -1644,13 +1644,13 @@
     <div id="form-login">
       <div class="form-group">
         <label class="form-label">Email</label>
-        <input class="form-input" type="email" id="login-email" placeholder="you@example.com" autocomplete="email" oninput="clearFieldError('login-email')" />
+        <input class="form-input" type="email" id="login-email" data-testid="login-email" placeholder="you@example.com" autocomplete="email" oninput="clearFieldError('login-email')" />
         <div class="form-error" id="err-login-email"></div>
       </div>
       <div class="form-group">
         <label class="form-label">Password</label>
         <div class="pass-wrapper">
-          <input class="form-input" type="password" id="login-password" placeholder="Your password" autocomplete="current-password" oninput="clearFieldError('login-password')" />
+          <input class="form-input" type="password" id="login-password" data-testid="login-password" placeholder="Your password" autocomplete="current-password" oninput="clearFieldError('login-password')" />
           <button type="button" class="pass-toggle" onclick="togglePassword('login-password', this)" aria-label="Toggle password visibility">
             <svg id="eye-login-password" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
@@ -1658,7 +1658,7 @@
         <div class="form-error" id="err-login-password"></div>
       </div>
       <div class="form-error" id="err-login-general" style="margin-bottom:10px;text-align:center;"></div>
-      <button class="btn btn-primary w-full btn-lg" id="login-submit" onclick="submitLogin()">Log In &rarr;</button>
+      <button class="btn btn-primary w-full btn-lg" id="login-submit" data-testid="login-submit" onclick="submitLogin()">Log In &rarr;</button>
       <div class="auth-or-divider">or</div>
       <div class="auth-social-slot">
         <button class="auth-social-btn" disabled aria-label="Google login coming soon">
@@ -1672,18 +1672,18 @@
     <div id="form-register" class="hidden">
       <div class="form-group">
         <label class="form-label">Full Name</label>
-        <input class="form-input" type="text" id="reg-name" placeholder="Your name" autocomplete="name" oninput="clearFieldError('reg-name')" />
+        <input class="form-input" type="text" id="reg-name" data-testid="register-name" placeholder="Your name" autocomplete="name" oninput="clearFieldError('reg-name')" />
         <div class="form-error" id="err-reg-name"></div>
       </div>
       <div class="form-group">
         <label class="form-label">Email</label>
-        <input class="form-input" type="email" id="reg-email" placeholder="you@example.com" autocomplete="email" oninput="clearFieldError('reg-email')" />
+        <input class="form-input" type="email" id="reg-email" data-testid="register-email" placeholder="you@example.com" autocomplete="email" oninput="clearFieldError('reg-email')" />
         <div class="form-error" id="err-reg-email"></div>
       </div>
       <div class="form-group">
         <label class="form-label">Password</label>
         <div class="pass-wrapper">
-          <input class="form-input" type="password" id="reg-password" placeholder="Min 6 characters" autocomplete="new-password" oninput="clearFieldError('reg-password')" />
+          <input class="form-input" type="password" id="reg-password" data-testid="register-password" placeholder="Min 6 characters" autocomplete="new-password" oninput="clearFieldError('reg-password')" />
           <button type="button" class="pass-toggle" onclick="togglePassword('reg-password', this)" aria-label="Toggle password visibility">
             <svg id="eye-reg-password" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
@@ -1691,7 +1691,7 @@
         <div class="form-error" id="err-reg-password"></div>
       </div>
       <div class="form-error" id="err-reg-general" style="margin-bottom:10px;text-align:center;"></div>
-      <button class="btn btn-primary w-full btn-lg" id="register-submit" onclick="submitRegister()">Create Free Account &rarr;</button>
+      <button class="btn btn-primary w-full btn-lg" id="register-submit" data-testid="register-submit" onclick="submitRegister()">Create Free Account &rarr;</button>
       <div class="auth-or-divider">or</div>
       <div class="auth-social-slot">
         <button class="auth-social-btn" disabled aria-label="Google signup coming soon">
@@ -3165,7 +3165,7 @@ function renderBettorCard(b, i) {
     ? `<div class="lb-card-last-active">Active ${escapeHtml(timeAgo(b.last_active_ts))}</div>`
     : '';
   return `<div class="lb-card animate-fade-in-up" style="animation-delay:${delay}ms"
-    role="listitem" tabindex="0"
+    role="listitem" tabindex="0" data-testid="bettor-card"
     data-name="${escapeHtml(name.toLowerCase())}" data-addr="${escapeHtml(addr.toLowerCase())}"
     onclick="toggleLbCardExpand(event, this)"
     onkeydown="if(event.key==='Enter'||event.key===' ')toggleLbCardExpand(event,this)">
@@ -3216,7 +3216,7 @@ function renderBettorCard(b, i) {
     </div>
     <div class="lb-follow-wrap">
       ${!isFollowing ? `<span class="lb-follow-tooltip" aria-hidden="true">You\u2019ll be notified within 30s when ${eName} bets</span>` : ''}
-      <button class="follow-btn w-full ${isFollowing ? 'following' : ''}"
+      <button class="follow-btn w-full ${isFollowing ? 'following' : ''}" data-testid="follow-btn"
               onclick="event.stopPropagation();toggleFollow('${safeAddr}', '${eName}', this)"
               aria-label="${isFollowing ? 'Unfollow' : 'Follow'} ${eName}"
               aria-pressed="${isFollowing}">
@@ -4098,10 +4098,11 @@ async function verifySmsOtp() {
 
 // ── Consensus ─────────────────────────────────────────────────
 
-let _consensusLoaded = false;
+let _consensusLoadedAt = 0; // ms timestamp; 0 = never loaded
+const _CONSENSUS_TTL_MS = 60000; // re-fetch after 60 seconds
 
 async function loadConsensus() {
-  if (_consensusLoaded) return; // already fetched this session
+  if (Date.now() - _consensusLoadedAt < _CONSENSUS_TTL_MS) return; // use cached result
   const loadingEl = document.getElementById('consensus-loading');
   const listEl = document.getElementById('consensus-list');
   const emptyEl = document.getElementById('consensus-empty');
@@ -4178,7 +4179,7 @@ async function loadConsensus() {
     if (bannerEl && totalAvailable > signals.length) {
       bannerEl.classList.remove('hidden');
     }
-    _consensusLoaded = true;
+    _consensusLoadedAt = Date.now();
   } catch (e) {
     if (loadingEl) loadingEl.style.display = 'none';
     if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--text3);font-size:13px;">Could not load consensus signals. Try again later.</div>';

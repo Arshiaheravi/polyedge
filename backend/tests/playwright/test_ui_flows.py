@@ -492,3 +492,51 @@ class TestMobileLayout:
         assert sidebar_display == "none", (
             f"Desktop sidebar is display:'{sidebar_display}' at mobile viewport — should be hidden"
         )
+
+
+# ── 5. Data-testid attribute presence ────────────────────────────────────────
+
+class TestDataTestidAttributes:
+    """Key interactive elements must have data-testid attributes for stable selector access."""
+
+    def test_pricing_cards_have_data_testid(self, page: Page):
+        """All three pricing tier cards must have data-testid attributes."""
+        page.goto(BASE_URL)
+        page.wait_for_load_state("networkidle", timeout=10_000)
+
+        for testid, label in [
+            ("pricing-free-card", "Free"),
+            ("pricing-basic-card", "Basic"),
+            ("pricing-vip-card", "VIP"),
+        ]:
+            el = page.query_selector(f'[data-testid="{testid}"]')
+            assert el is not None, f"Pricing card data-testid='{testid}' ({label}) not found"
+
+    def test_login_form_inputs_have_data_testid(self, page: Page):
+        """Login email, password, and submit button must have data-testid attributes."""
+        page.goto(BASE_URL)
+        page.wait_for_load_state("networkidle", timeout=10_000)
+        # Navigate to login form
+        page.evaluate("showView('auth', 'login')")
+
+        for testid in ["login-email", "login-password", "login-submit"]:
+            el = page.query_selector(f'[data-testid="{testid}"]')
+            assert el is not None, f"Login form element data-testid='{testid}' not found"
+
+    def test_register_form_inputs_have_data_testid(self, page: Page):
+        """Register name, email, password, and submit must have data-testid attributes."""
+        page.goto(BASE_URL)
+        page.wait_for_load_state("networkidle", timeout=10_000)
+        page.evaluate("showView('auth', 'register')")
+
+        for testid in ["register-name", "register-email", "register-password", "register-submit"]:
+            el = page.query_selector(f'[data-testid="{testid}"]')
+            assert el is not None, f"Register form element data-testid='{testid}' not found"
+
+    def test_bettor_cards_have_data_testid_after_leaderboard_loads(self, page: Page):
+        """Rendered bettor cards must have data-testid='bettor-card' for selector stability."""
+        login(page, "free")
+        # Wait for leaderboard cards to render
+        page.wait_for_selector('[data-testid="bettor-card"]', timeout=15_000)
+        cards = page.query_selector_all('[data-testid="bettor-card"]')
+        assert len(cards) >= 1, "No bettor cards with data-testid='bettor-card' found after leaderboard load"

@@ -78,6 +78,37 @@ def test_consensus_free_tier_upgrade_banner_present(page: Page):
     )
 
 
+def test_consensus_ttl_re_fetches_after_reset(page: Page):
+    """
+    Bug #12 regression: _consensusLoadedAt must be a TTL timestamp, not a permanent flag.
+    After resetting _consensusLoadedAt to 0, navigating away and back must re-fetch data.
+    """
+    login(page, "free")
+    _open_consensus(page)
+    _wait_consensus_loaded(page)
+
+    # Confirm initial load recorded a timestamp (let vars are not on window — use direct access)
+    loaded_at = page.evaluate("_consensusLoadedAt")
+    assert loaded_at is not None and loaded_at > 0, (
+        f"_consensusLoadedAt should be > 0 after first load, got: {loaded_at}"
+    )
+
+    # Reset the TTL to force re-fetch on next tab visit
+    page.evaluate("_consensusLoadedAt = 0")
+
+    # Navigate away then back
+    page.evaluate("showTab('leaderboard')")
+    page.evaluate("showTab('consensus')")
+    _wait_consensus_loaded(page)
+
+    # Should have a new timestamp — confirming re-fetch happened
+    new_loaded_at = page.evaluate("_consensusLoadedAt")
+    assert new_loaded_at is not None and new_loaded_at > 0, (
+        f"_consensusLoadedAt should be > 0 after TTL reset + re-visit; "
+        "re-fetch did not happen (Bug #12 regression)"
+    )
+
+
 def test_consensus_vip_no_upgrade_banner(page: Page):
     """VIP user sees all signals — upgrade banner must NOT be shown."""
     login(page, "vip")
