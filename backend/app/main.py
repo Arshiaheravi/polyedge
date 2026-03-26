@@ -4,10 +4,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
 from sqlalchemy import text
 
 from app.config import get_settings
 from app.database import Base, SessionLocal, engine
+from app.limiter import limiter
 from app.routes import admin, alerts, auth, bettors, follows, markets, payments
 from app.services.scheduler import start_scheduler, stop_scheduler
 
@@ -38,6 +41,8 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,

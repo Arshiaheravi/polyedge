@@ -50,6 +50,14 @@ def client(db):
         finally:
             pass
 
+    # Reset rate limiter storage so per-test limits don't bleed across tests.
+    from app.limiter import limiter
+    if hasattr(limiter, "_storage") and limiter._storage is not None:
+        try:
+            limiter._storage.reset()
+        except Exception:
+            pass
+
     app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as c:
         yield c

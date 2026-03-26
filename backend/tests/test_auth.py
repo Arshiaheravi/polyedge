@@ -393,3 +393,33 @@ def test_get_me_inactive_user_returns_401(client, db):
 
     resp = client.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
     assert resp.status_code == 401
+
+
+def test_login_rate_limit_triggers_429_after_10_requests(client):
+    """POST /auth/login is limited to 10 req/min per IP — the 11th request in a burst must return 429."""
+    # Register once to have a valid user (counts as 1 register call, not a login call)
+    client.post("/auth/register", json={
+        "email": "ratelimit@example.com", "password": "pass123", "name": "RateLimit"
+    })
+    # Make 10 login attempts (wrong password — all should be 401, not 429 yet)
+    for _ in range(10):
+        resp = client.post("/auth/login", json={"email": "ratelimit@example.com", "password": "wrong"})
+        assert resp.status_code == 401, f"Expected 401 for failed login, got {resp.status_code}"
+    # 11th attempt must be rate limited
+    resp = client.post("/auth/login", json={"email": "ratelimit@example.com", "password": "wrong"})
+    assert resp.status_code == 429, f"Expected 429 after 10 login attempts, got {resp.status_code}"
+
+
+def test_register_rate_limit_triggers_429_after_10_requests(client):
+    """POST /auth/register is limited to 10 req/min per IP — the 11th request must return 429."""
+    # Make 10 register attempts with unique emails (all should succeed 201)
+    for i in range(10):
+        resp = client.post("/auth/register", json={
+            "email": f"ratelimit{i}@example.com", "password": "pass123", "name": f"RL{i}"
+        })
+        assert resp.status_code == 201, f"Expected 201 for register #{i}, got {resp.status_code}"
+    # 11th attempt must be rate limited
+    resp = client.post("/auth/register", json={
+        "email": "ratelimit10@example.com", "password": "pass123", "name": "RL10"
+    })
+    assert resp.status_code == 429, f"Expected 429 after 10 register attempts, got {resp.status_code}"
