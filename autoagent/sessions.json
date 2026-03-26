@@ -2912,5 +2912,15 @@
     "files": ["autoagent/PROMPT.md", "autoagent/memory/backlog.md", "autoagent/memory/knowledge.md", "autoagent/memory/activity_log.md", "autoagent/memory/activity_log_archive.md", "autoagent/brain/sources.md", "autoagent/brain/techniques.md"],
     "tests": {"before": 368, "after": 368, "status": "skip"},
     "frontend": {"status": "skip", "checks": 130, "failures": 0, "notes": "brain session — no code changes"}
+  },
+  {
+    "session": 133,
+    "date": "2026-03-25",
+    "time": "23:30",
+    "type": "work",
+    "summary": "Position cards now show whether you are copying a whale at a good price — green badge for within 10% of entry, amber for 10-30% above, red for over 30% above; Free users see a padlock with upgrade prompt instead",
+    "files": ["backend/app/services/polymarket.py", "backend/app/routes/follows.py", "backend/tests/test_polymarket_service.py", "backend/tests/test_follows_live.py", "frontend/index.html"],
+    "tests": {"before": 368, "after": 373, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 130, "failures": 0, "notes": "server not running"}
   }
 ]

@@ -763,6 +763,7 @@ RULE: [2026-03-25] Modified tier claim JWT test pattern: use `create_access_toke
 ## Test Suite History
 | Session | Backend Tests | Frontend Checks |
 |---------|--------------|-----------------|
+| 133     | 373          | 130             |
 | 123     | 359          | 104             |
 | 122     | 359          | 101             |
 | 118     | 359          | 88              |
@@ -780,3 +781,8 @@ RULE: [2026-03-25] When testing JS modal visibility toggle in Playwright, use pa
 ACCOMPLISHED: Added 3 Playwright checks (102-104) covering the profile page DOM: (102) #profile-back-btn exists with onclick calling showTab('leaderboard'), (103) all 4 pstat-* stat elements present, (104) #profile-bets-list exists and renderProfileSkeletons(5) produces skeleton rows. CHECK 104 initially tested by calling full async showProfile() but the API call quickly replaced skeletons with error state before the assertion ran. Fixed by directly testing renderProfileSkeletons() in isolation. 104 total checks, 0 failures. 359 backend tests stable.
 FAILED: CHECK 104 first attempt failed — called async showProfile(), waited 0.1s, but the fetch to /bettors/0x000... returned error state synchronously before the check, replacing the skeletons. Root cause: async function replaces skeleton with error state in <0.1s.
 RULE: [2026-03-25] When Playwright-testing that a function sets skeleton HTML (loading state), test the skeleton-generation function directly (e.g. `renderProfileSkeletons(5)`) rather than calling the full async function that shows skeletons then immediately replaces them. Direct function testing avoids all race conditions and gives a deterministic result.
+
+### Session #133 Reflexion — 2026-03-25 (FEATURE)
+ACCOMPLISHED: Built Smart Entry Timing on position cards. get_active_positions already had avg_price and cur_price — added copy_signal (good/fair/late) and copy_value_pct computed inline. Added tier to /follows/live both paths (empty and populated). Frontend renderPositionItem now accepts tier param and renders color-coded badge for Basic/VIP, padlock for Free. 5 copy_signal unit tests + 2 tier field tests added. 373 total, +5.
+FAILED: Two existing tests asserted `resp.json() == {"bettors": []}` (exact match). Adding tier broke them. Fixed by changing to `resp.json()["bettors"] == []` (key-level assertion). Lesson: exact-dict response assertions are fragile — prefer key-level checks.
+RULE: [2026-03-25] Exact response dict assertions (`assert resp.json() == {"key": val}`) break whenever a new field is added. Always assert at key level (`assert resp.json()["key"] == val`) unless testing that NO extra fields exist.

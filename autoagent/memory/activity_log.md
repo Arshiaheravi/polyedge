@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-25 — FEATURE (Session 133)
+DONE: Added Smart Entry Timing to position cards — each copyable bet now shows a copy signal badge: ✅ Good copy (<10% above entry), ⚠️ Price moved (10-30%), 🔴 Late entry (>30%); Free users see 🔒 padlock with upgrade CTA instead.
+IMPACT: Users can now instantly see whether a whale's bet is still worth copying at the current price — the single most important context for a copy decision.
+FILES: backend/app/services/polymarket.py, backend/app/routes/follows.py, backend/tests/test_polymarket_service.py, backend/tests/test_follows_live.py, frontend/index.html
+
 ## 2026-03-25 — BRAIN (Session 132)
 RESEARCHED: autonomous AI agent best practices 2026, LLM self-improvement techniques, Confucius Code Agent hierarchical working memory (arxiv 2512.10398), PolyGun competitor acquisition (Polymarket Analytics), prediction market copy trading features 2026, FastAPI async SQLAlchemy patterns.
 DOWNLOADED: Nothing new — ECC still at v1.9.0; no new applicable skills.
