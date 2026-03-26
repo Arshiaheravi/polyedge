@@ -3473,5 +3473,28 @@
       "failures": 0,
       "notes": "5 new Playwright tests; 41 total pass"
     }
+  },
+  {
+    "session": 156,
+    "date": "2026-03-26",
+    "time": "14:00",
+    "type": "work",
+    "summary": "Fixed follows refresh timer leak \u2014 after logout the 30s interval kept calling the follows API and redirecting users back to the login page; now showView() clears the timer when leaving dashboard. Also removed unused BetEvent import from follows.py.",
+    "files": [
+      "frontend/index.html",
+      "backend/app/routes/follows.py",
+      "backend/tests/playwright/test_ui_flows.py"
+    ],
+    "tests": {
+      "before": 443,
+      "after": 443,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 42,
+      "failures": 0,
+      "notes": "+1 new timer cleanup Playwright test"
+    }
   }
 ]

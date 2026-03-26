@@ -44,8 +44,8 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **443 passed, 1 skipped** (as of 2026-03-26, session 150)
-- Playwright E2E: **36 passed, 2 skipped** (as of 2026-03-26, session 154)
+- Test count: **443 passed, 1 skipped** (as of 2026-03-26, session 156 — no change)
+- Playwright E2E: **42 passed, 2 skipped** (as of 2026-03-26, session 156)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
 
@@ -56,6 +56,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #156 Reflexion — 2026-03-26
+ACCOMPLISHED: Found and fixed a timer leak bug: `_followsRefreshTimer` was never cleared on logout or 401 redirect. After logout, the 30s interval kept calling `refreshFollowsActivity()` → 401 → `showView('auth','login')`, bouncing users back to login 30s after logging out. Fix: `showView()` now clears the timer when `view !== 'dashboard'`. Also removed unused `BetEvent` import from `routes/follows.py`. Added 1 Playwright test using `page.clock.fast_forward(31_000)` to verify behavior.
+FAILED: Nothing — clean first pass.
+RULE: [2026-03-26] Frontend timer leak pattern: any `setInterval` that calls `apiFetch()` must be cleared in ALL navigation paths (logout, 401 redirect, view switch). The `showView()` function is the single best place to add cleanup — it handles all cases including 401 redirects from `apiFetch()`.
+RULE: [2026-03-26] Use `page.clock.install()` + `page.clock.fast_forward(31_000)` to test timer-based behavior without a 30-second wait. Install AFTER login (so login flow isn't affected by fake clock), then fast-forward to trigger any still-running intervals. Requires Playwright ≥ 1.45 (project has 1.49.1). Note: `page.clock.install()` must be called before the interval fires — install it before the action that should clear the timer.
 
 ### Session #150 Reflexion — 2026-03-26
 ACCOMPLISHED: (1) Fixed Playwright event loop contamination — session-scoped sync_playwright() fixture was leaving a running loop that broke all subsequent async tests. Fix: pytest.ini with asyncio_mode=auto + addopts=--ignore=tests/playwright. Also converted 3 asyncio.get_event_loop().run_until_complete() calls in test_alerts.py to async def. (2) Added 18 real-world data integrity tests covering leaderboard sanity, profile consistency, recent bets validity, copy simulator tier gating, admin stats math, and Polymarket cross-validation. 443 passed, 1 skipped.

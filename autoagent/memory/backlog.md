@@ -48,9 +48,6 @@ These tasks are a structural code review — not testing functionality, but read
 
 *(Auth review, SQL injection, CORS, tier gate completeness, scheduler correctness, Polymarket service review — all confirmed clean in code review 2026-03-26 and sessions 137–147. Removed to prevent re-auditing already-verified areas.)*
 
-- [ ] **Frontend API error handling** — read `frontend/index.html`: for every `fetch()` call, verify there is a `.catch()` or `try/catch`; uncaught promise rejections cause silent failures; also check that expired JWT (401 response) triggers redirect to login — not a blank screen
-
-- [ ] **Dead code and unused routes** — scan for any imported but unused modules, any route registered in main.py but not documented, any model column that is defined but never written or read; flag for removal (dead code = confusion)
 
 ---
 

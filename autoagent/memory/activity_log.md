@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — BUGFIX + TESTING (Session 156)
+DONE: Fixed follows refresh timer leak — after logout (or JWT expiry), the 30s setInterval kept firing refreshFollowsActivity(), which got 401 and called showView('auth','login'), redirecting users back to the login page 30 seconds after logging out. Fix: showView() now clears _followsRefreshTimer when navigating away from dashboard. Also removed unused BetEvent import from routes/follows.py. Added 1 Playwright test using page.clock.fast_forward(31s) to verify the timer is cleared on logout.
+IMPACT: Users no longer get silently bounced back to the login page 30 seconds after logging out. The dead import cleanup prevents future confusion about what follows.py uses.
+FILES: frontend/index.html, backend/app/routes/follows.py, backend/tests/playwright/test_ui_flows.py
+
 ## 2026-03-26 — TESTING (Session 154)
 DONE: Added 7 Playwright E2E tests: back-to-top FAB (appears after scrolling >300px on leaderboard, hidden on load, resets scroll on click) and mobile layout (bottom nav visible at 375px, all 5 nav buttons present, leaderboard tab navigates, desktop sidebar hidden at mobile viewport). Also removed stale Consensus-VIP backlog item already covered by test_tier_gates.py.
 IMPACT: FAB and mobile nav are now regression-tested — a broken scroll-to-top or hidden mobile nav would be caught automatically instead of discovered by a user on a phone.

@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #156] Follows timer leak fix + dead import cleanup** — showView() now clears _followsRefreshTimer when leaving dashboard, preventing users from being bounced back to login 30s after logout; removed unused BetEvent import from follows.py; added Playwright test using page.clock.fast_forward to verify fix; 42 Playwright + 443 unit tests passing
 - **[SESSION #154] Playwright FAB + mobile nav tests** — 7 new E2E tests: back-to-top FAB appears/hides/resets correctly; mobile 375px viewport shows bottom nav, all 5 buttons work, leaderboard tab navigates, desktop sidebar hidden; 36 Playwright tests now passing
 - **[SESSION #150] Playwright event loop fix + 18 real-world data integrity tests** — fixed 105 async test failures caused by Playwright session-scoped fixture contaminating asyncio loop; added pytest.ini with asyncio_mode=auto + --ignore=tests/playwright; added test_data_integrity.py with 18 tests verifying Polymarket data quality (ETH addresses, profit ranges, MRR formula, cross-validation); 443 total tests passing
 - **[SESSION #149] Playwright consensus tab tests + conftest login fix** — 5 new Playwright E2E tests confirm port-8003 fix works (no "Could not load" error), tier gate ≤3 signals for free users, upgrade banner logic, VIP no-banner; fixed conftest login() selectors (wrong text/IDs never tested before); 426 backend + 5 Playwright tests all passing
