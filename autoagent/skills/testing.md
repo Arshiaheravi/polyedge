@@ -154,6 +154,28 @@ finally:
     alerts_mod.settings.twilio_account_sid = original
 ```
 
+### Admin endpoint tests — always use get_settings().admin_password
+NEVER hardcode `"admin"` as the admin password in tests. The `.env` file overrides the config default, and the test environment loads `.env`.
+```python
+# WRONG — hardcodes the default, breaks when .env sets a different value
+headers={"x-admin-password": "admin"}
+
+# CORRECT
+from app.config import get_settings
+headers={"x-admin-password": get_settings().admin_password}
+```
+(Session 146: test_admin_stats_response_has_no_sensitive_fields failed first run because of this exact mistake.)
+
+### Stale mocks when replacing HTTP implementation
+When you replace one HTTP library with another (e.g., raw `httpx.AsyncClient` → `pywebpush`), tests that mock the OLD library path break immediately — they mock something that is no longer called.
+
+**Before** replacing any service function's HTTP transport, run:
+```bash
+grep -n "patch.*httpx\|mock.*httpx\|AsyncMock.*client" backend/tests/
+```
+Every match that previously asserted `True` (success path) must be updated to mock the NEW library. Tests that assert `False` (early-exit guards) usually survive because the guard fires before the replaced code.
+(Session 145: 2 tests broke because they mocked `httpx.AsyncClient` after pywebpush replaced it.)
+
 ### PolyEdge test command
 ```
 cd backend && py -m pytest tests/ -v

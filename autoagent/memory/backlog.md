@@ -90,16 +90,7 @@ These tests verify the data coming from Polymarket is real, consistent, and make
 
 These tasks are a structural code review — not testing functionality, but reading the code to find bugs, security holes, and logic errors that tests might miss. Write findings as comments in a `tests/test_code_review.py` file or fix directly if small.
 
-- [ ] **Auth security review** — read `backend/app/auth.py`: verify JWT algorithm is HS256 or RS256 (not "none"); password hashing uses bcrypt or argon2 (not MD5/SHA1); `get_current_user` returns 401 (not 403) on bad token; no raw passwords logged anywhere
-
-- [ ] **SQL injection surface** — read all route files in `backend/app/routes/`: identify every place user input is used in a DB query; confirm all go through SQLAlchemy ORM (not raw string interpolation); flag any `f"SELECT ... {user_input}"` patterns
-
-- [ ] **Tier gate completeness** — read `follows.py`, `bettors.py`, `markets.py`: for each premium feature, verify the tier check exists on the BACKEND (not just frontend); frontend-only tier gates are security theater — the API must enforce them
-
-- [ ] **Scheduler correctness** — read `scheduler.py`: verify `_last_check` is updated AFTER `db.commit()` (not before, or a DB failure could cause missed notifications); verify `_last_positions` is not unbounded (could grow forever as bettors are added/removed); verify exit detection handles first-run correctly (no false exits on startup)
-
-- [ ] **Polymarket service review** — read `services/polymarket.py`: check all HTTP calls have timeouts (a hanging Polymarket call would freeze the scheduler); verify error handling won't leak raw API errors to users; check price normalization — are prices always 0-1, or can they come back as percentages (0-100)?
-
+*(Auth review, SQL injection, CORS, tier gate completeness, scheduler correctness, Polymarket service review — all confirmed clean in code review 2026-03-26 and sessions 137–147. Removed to prevent re-auditing already-verified areas.)*
 
 - [ ] **Frontend API error handling** — read `frontend/index.html`: for every `fetch()` call, verify there is a `.catch()` or `try/catch`; uncaught promise rejections cause silent failures; also check that expired JWT (401 response) triggers redirect to login — not a blank screen
 
