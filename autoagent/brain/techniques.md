@@ -168,6 +168,12 @@ Where: PROMPT.md (step 6 — current_task.md format section, Phase grouping rule
 Source: arxiv 2512.10398 (Confucius Code Agent) — hierarchical working memory for long-context reasoning; persistent note-taking for cross-session task continuity
 Expected impact: Multi-domain tasks that span sessions resume faster — agent immediately knows it's in Phase 2 (Frontend) without re-reading the entire plan; reduces re-exploration at session resumption
 
+## Rules-first arbitration over episodic memory — implemented 2026-03-25
+What: When knowledge.md (memory) and PROMPT.md/PROJECT.md (explicit rules) conflict, explicit rules always win. A past observation cannot override a system-level directive. Agent must follow PROMPT.md and update knowledge.md to match, not the reverse.
+Where: PROMPT.md (RULES-FIRST ARBITRATION section, before WHEN BUILDING A FEATURE)
+Source: arxiv 2603.17831 RPMS — rule-augmented memory synergy; rules-first arbitration +23.9pp task success on Llama 3.1 8B
+Expected impact: Prevents knowledge.md stale rules from overriding updated PROMPT.md directives — the most common cause of prompt drift across sessions
+
 ## FastAPI production safety rules (CORS wildcard prohibition + async discipline) — implemented 2026-03-25
 What: (1) Never use `allow_origins=["*"]` in CORS config — use explicit origin list only. (2) `async def` route handlers must never contain blocking I/O (no time.sleep, no sync DB calls) — these stall the uvicorn event loop.
 Where: autoagent/skills/coding.md (FASTAPI PRODUCTION SAFETY RULES section)

@@ -4,9 +4,9 @@
 ## 2026-03-25 — BRAIN (Session 132)
 RESEARCHED: autonomous AI agent best practices 2026, LLM self-improvement techniques, Confucius Code Agent hierarchical working memory (arxiv 2512.10398), PolyGun competitor acquisition (Polymarket Analytics), prediction market copy trading features 2026, FastAPI async SQLAlchemy patterns.
 DOWNLOADED: Nothing new — ECC still at v1.9.0; no new applicable skills.
-IMPLEMENTED: (1) PROMPT.md — added phase-grouped task structure for multi-domain tasks (Phase 1/2/3 labeled sections instead of flat list, from CCA hierarchical working memory). (2) backlog.md — added copy-ratio sizing (0.1x-1x per bettor, PolyGun competitor feature) to HIGH PRIORITY. (3) coding.md — added FASTAPI PRODUCTION SAFETY RULES section (CORS wildcard prohibition + async route discipline). (4) knowledge.md curation — removed duplicate RULE block in Session #131 reflexion. (5) activity_log.md archived sessions 100-119 to activity_log_archive.md (32→12 entries). (6) techniques.md + sources.md updated with 13 new sources.
-BACKLOGGED: Copy ratio setting (0.1x-1x per bettor) — PolyGun's key differentiator, now in HIGH PRIORITY.
-SOURCES: 7 new sources logged in brain/sources.md.
+IMPLEMENTED: (1) PROMPT.md — phase-grouped task structure for multi-domain tasks (from CCA hierarchical working memory). (2) PROMPT.md — RULES-FIRST ARBITRATION section (explicit rules override memory; from RPMS arxiv 2603.17831). (3) coding.md — FASTAPI PRODUCTION SAFETY RULES (CORS wildcard prohibition + async discipline). (4) backlog.md — copy-ratio sizing (PolyGun) + Insider Score (Polywhaler) added to HIGH PRIORITY. (5) knowledge.md curation — removed duplicate RULE block in Session #131. (6) activity_log.md archived sessions 100-119 (32→12 entries). (7) techniques.md + sources.md updated with 15 new sources.
+BACKLOGGED: Copy ratio setting (0.1x-1x per bettor, PolyGun differentiator); Insider Score 0-100 (Polywhaler differentiator — no competitor has both this AND conviction score).
+SOURCES: 15 new sources logged in brain/sources.md.
 
 ## 2026-03-25 — FEATURE (Session 131)
 DONE: Added Conviction Score to notifications — when a whale places a bet, the scheduler computes conviction = bet_size / avg_bet_size from that bettor's recent bets; >=10x = EXTREME (🔥), >=3x = HIGH (⚡); Telegram messages and web push titles now include the conviction label; 9 new tests cover all conviction label paths.

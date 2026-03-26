@@ -70,6 +70,10 @@ Read `autoagent/PROJECT.md` first for project rules, codebase conventions, git p
 7. Build each step. Check it off `- [x]` when done. Update the remaining count.
 8. When all steps done: commit, push, update activity_log.md, clear current_task.md
 
+## RULES-FIRST ARBITRATION
+**When knowledge.md (memory) and PROMPT.md/PROJECT.md (explicit rules) conflict: explicit rules always win.** Memory records what worked in the past; explicit rules encode what SHOULD be done. A past observation cannot override a system-level directive. If knowledge.md says "do X" but PROMPT.md says "do Y", follow PROMPT.md and update knowledge.md to match.
+(Source: arxiv 2603.17831 RPMS — rule-augmented memory synergy: rules-first arbitration lifted Llama 3.1 8B from 35.8% to 59.7% task success +23.9pp with no fine-tuning)
+
 ## WHEN BUILDING A FEATURE
 - Check `autoagent/memory/knowledge.md` for existing patterns before reading source files
 - Read only the files you need — don't explore the whole codebase
