@@ -2,45 +2,30 @@
 
 ---
 
-## HIGH PRIORITY — Security & Vulnerability Tests
+## HIGH PRIORITY — Tier 1 Money-Making Features
+
+### Tier Access Rules
+- **Free** (1 follow): See Whale Consensus (top 3 markets, read-only, no whale names), Copy Simulator on profile (teaser: shows result but blurred/locked with "Upgrade to Basic")
+- **Basic** ($4.99, 5 follows): Conviction Score in notifications, Smart Entry Timing on position cards, Copy Simulator fully unlocked
+- **VIP** ($9.99, unlimited): Everything in Basic + Exit Alerts + full Whale Consensus (all markets, whale names visible) + priority notification speed
 
 ---
 
-## HIGH PRIORITY — Frontend Playwright Tests
+- [ ] Conviction Score on Notifications — in scheduler.py when firing dispatch_bet_notification(), compute conviction = bet.amount_usd / bettor.avg_bet_usd; add conviction_score and conviction_label ("HIGH" if >3x, "EXTREME" if >10x) to the notification payload; update Telegram message and web push body to include "🔥 3.2x conviction bet". TIER GATE: only fire conviction-enhanced notifications for Basic and VIP users (tier in ["basic", "vip"]); Free users get no notifications at all (existing behaviour).
 
-- [ ] Playwright checks 126-128 — follows + alerts JS API: (126) typeof window.loadFollowedAddresses === 'function', (127) typeof window.loadAlertSettings === 'function', (128) typeof window.followBettor === 'function'
+- [ ] Smart Entry Timing on Position Cards — on GET /follows/live each position already has avg_price; add current_price field by fetching live Polymarket price for that conditionId; compute copy_value_pct = ((current_price - avg_price) / avg_price) * 100; return copy_signal: "good" (<10% above entry), "fair" (10-30%), "late" (>30%); render on frontend position cards: "Entry 32¢ → Now 34¢ ✅ Good copy" in green or "Entry 30¢ → Now 75¢ ⚠️ Price moved" in amber. TIER GATE: backend returns copy_signal for all tiers; but frontend only renders the copy_signal badge for Basic and VIP users — Free users see a locked padlock icon with tooltip "Upgrade to Basic to see copy timing".
 
-- [ ] Playwright checks 129-131 — search + follows activity: (129) typeof window.clearSearch === 'function', (130) typeof window.loadMyFollows === 'function', (131) typeof window.refreshFollowsActivity === 'function'
+- [ ] Copy Portfolio Simulator — on GET /bettors/{address} add simulated_copy_pnl field: take recent_bets (TRADE type only), for each bet compute simulated_return = amount_usd * (1/price - 1) if outcome matches bettor's side and market resolved correctly (use price as proxy — if price > 0.9 at time of our check it likely resolved YES); sum returns for $100-per-bet simulation; return {simulated_pnl_usd, simulated_roi_pct, bets_analysed}. TIER GATE: return full data for Basic/VIP users. For Free users return {simulated_pnl_usd: null, simulated_roi_pct: null, bets_analysed: 0, locked: true}. Frontend renders on profile page: Basic/VIP → "Copy simulator: $100/bet on last 10 → +$347 (+34.7%)"; Free → blurred card "?? profit" with "Upgrade to Basic to unlock" CTA.
 
-- [ ] Playwright checks 132-134 — unfollow + profile wiring: (132) typeof window.unfollowBettor === 'function', (133) typeof window.unfollowFromFollowsTab === 'function', (134) typeof window.updateFollowCountBadge === 'function'
-
-
----
-
-## HIGH PRIORITY — Backend Coverage Gaps
+- [ ] Exit Alerts — in scheduler.py maintain _last_positions dict per bettor address; each poll compare current positions to previous; if a conditionId that existed last poll is now gone or size reduced by >50%, it is an exit; call dispatch_bet_notification() with type="EXIT" and message "⚡ [BettorName] EXITING [Market] — consider taking profit". TIER GATE: only send EXIT notifications to VIP users (tier == "vip"). Store exit events as BetEvent with type="EXIT" for all tiers (for future analytics).
 
 ---
 
-## MEDIUM PRIORITY — Business Logic Tests
+## MEDIUM PRIORITY — Tier 2 Money-Making Features
 
----
+- [ ] Bettor Category Specialization — analyse recent_bets market_question text for each top bettor; classify into categories using keyword matching (Politics: election/president/congress, Sports: win/match/championship/game, Crypto: bitcoin/eth/price, Finance: fed/rate/inflation); compute category_win_rate from bets where we can infer outcome (price > 0.85 at detection = likely correct prediction); add top_category and category_win_rate to bettor profile and leaderboard card display
 
-## FEATURE MODE ONLY — Agent Infrastructure Improvements
-
-- [ ] Plankton write-time code quality enforcement — install ruff+biome+plankton hooks via settings.json; auto-formats Python (ruff) and HTML/JS (biome) on every file edit; blocks config tampering; delegates unfixable violations to subprocesses by tier. Requires: `pip install plankton-code-quality`, hooks in settings.json. See ECC skills/plankton-code-quality/SKILL.md.
-
-## FEATURE MODE ONLY — Competitive Intelligence (from ericaai.tech.blog + coincodecap, 2026-03-25)
-
-- [ ] Copy-ratio per bettor follow — add `copy_ratio` column (0.1x–1x float) to `BettorFollow` model; notifications include suggested position size = whale_size × copy_ratio; lets users size bets relative to whale's stake (PolyAlertHub, ericaai 2026 production pattern)
-- [ ] Min-odds + max-exposure filters — add `min_odds_threshold` and `max_exposure_usd` columns to `AlertSetting`; notification dispatch skips bets below min odds or above max exposure (prevents pings on near-certain bets or whales going all-in)
-- [ ] Market-launch alerts — separate notification category for NEW markets (not just new bets); bettors who follow a whale get alerted when a new market opens that whale has bet in; competitors advertise this as a distinct feature
-
-## FEATURE MODE ONLY — Competitive Intelligence (from awesome-prediction-market-tools, 2026-03-25)
-
-- [ ] Discord notification channel — add Discord webhook support to alert settings (competitors: Nevua Markets, PolyAlertHub all offer Discord; VIP differentiator alongside Telegram)
-- [ ] Trade size minimum filter — let users set a minimum USD trade size threshold for alerts (e.g. only notify for bets >$500); reduces notification fatigue from frequent small bets (PolyTrack, Polycool both offer this)
-- [ ] "Edge Score" composite bettor metric — add a 1-10 conviction/edge score to leaderboard cards combining win rate + profit + volume; replaces Win Rate placeholder with actionable composite (future.fun Edge Score, PolyVision Copy Score both have this)
-- [ ] Delayed free tier alerts — offer 15-min delayed alerts to free users as "upgrade preview" (Whale Tracker Livid model: $0 = 1-hour delay, $29/mo = real-time); shows users what they're missing
+- [ ] Market Momentum Score — scheduler tracks how many unique top-100 bettors entered each market in rolling 7-day window; add momentum_score = unique_whales_7d * avg_conviction to market data; expose on GET /markets/consensus and bettor position cards; show "🚀 5 whales entered this week" badge on high-momentum markets
 
 ---
 

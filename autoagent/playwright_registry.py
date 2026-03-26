@@ -1840,6 +1840,69 @@ async def check():
         except Exception as e:
             failures.append(f"renderBettorCard aria-label check error: {e}")
 
+        # ── Session 130: Whale Consensus Signal — Checks 126-130 ──────────
+
+        # CHECK 126 — #tab-consensus element exists in DOM
+        try:
+            el = await page.evaluate("document.getElementById('tab-consensus') !== null")
+            if el:
+                checks += 1
+                print("  [CHECK 126] #tab-consensus element present in DOM")
+            else:
+                failures.append("#tab-consensus element missing from DOM")
+        except Exception as e:
+            failures.append(f"CHECK 126 error: {e}")
+
+        # CHECK 127 — #nav-consensus element exists in DOM
+        try:
+            el = await page.evaluate("document.getElementById('nav-consensus') !== null")
+            if el:
+                checks += 1
+                print("  [CHECK 127] #nav-consensus element present in DOM")
+            else:
+                failures.append("#nav-consensus element missing from DOM")
+        except Exception as e:
+            failures.append(f"CHECK 127 error: {e}")
+
+        # CHECK 128 — #mob-nav-consensus element exists in DOM
+        try:
+            el = await page.evaluate("document.getElementById('mob-nav-consensus') !== null")
+            if el:
+                checks += 1
+                print("  [CHECK 128] #mob-nav-consensus element present in DOM")
+            else:
+                failures.append("#mob-nav-consensus element missing from DOM")
+        except Exception as e:
+            failures.append(f"CHECK 128 error: {e}")
+
+        # CHECK 129 — showTab('consensus') shows #tab-consensus and hides others
+        try:
+            await page.evaluate("showTab('consensus')")
+            await asyncio.sleep(0.3)
+            visible = await page.evaluate("""() => {
+                const tab = document.getElementById('tab-consensus');
+                const lb = document.getElementById('tab-leaderboard');
+                return tab && !tab.classList.contains('hidden') && lb && lb.classList.contains('hidden');
+            }""")
+            if visible:
+                checks += 1
+                print("  [CHECK 129] showTab('consensus') shows consensus tab, hides leaderboard")
+            else:
+                failures.append("showTab('consensus') did not correctly toggle tabs")
+        except Exception as e:
+            failures.append(f"CHECK 129 error: {e}")
+
+        # CHECK 130 — typeof window.loadConsensus === 'function'
+        try:
+            is_fn = await page.evaluate("typeof window.loadConsensus === 'function'")
+            if is_fn:
+                checks += 1
+                print("  [CHECK 130] typeof window.loadConsensus === 'function'")
+            else:
+                failures.append("loadConsensus function not defined in window scope")
+        except Exception as e:
+            failures.append(f"CHECK 130 error: {e}")
+
         await browser.close()
     return checks, failures
 
