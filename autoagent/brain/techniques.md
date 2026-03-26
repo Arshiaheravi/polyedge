@@ -437,3 +437,15 @@ What: Merged duplicate XSS streak rules (line 67 session 107 vs line 156 session
 Where: autoagent/memory/knowledge.md (Session #107 Reflexion section)
 Source: BRAIN_PROMPT.md Step 1C curation + A-MAC 5-factor admission control
 Expected impact: Removes one duplicate rule that could confuse agents seeing two different streak counts for the same invariant
+
+## API response field removal gate + tier gate test breakage check — implemented 2026-03-26 (session 143 BRAIN)
+What: Added Q6 (API response field removal gate) and Q7 (tier gate addition check) to PROMPT.md STEP 0 self-critique. Q6: when removing any field from an API response, grep ALL tests for that field before committing — recurring sessions 137+141 both hit this. Q7: when adding a tier restriction to an endpoint, grep tests for free-tier usage on that endpoint — session 139 had 4 failures from this. Also added brittle test pattern to testing.md.
+Where: autoagent/PROMPT.md (STEP 0, Q6 and Q7), autoagent/skills/testing.md (new section "Tier gate additions break free-tier tests")
+Source: PolyEdge session 137+141 dual failure (field removal), session 139 failure (tier gate)
+Expected impact: Both failure patterns now have write-time gates in STEP 0 instead of only in knowledge.md (read at session start, forgotten at write time)
+
+## Three-category trajectory tip extraction — implemented 2026-03-26 (session 143 BRAIN)
+What: Added OPTIMIZATION tag to PROMPT.md reflexion format (knowledge.md session logging step 8). Added three-category classification guide (strategy/recovery/optimization) to BRAIN_PROMPT.md STEP 1B. Updated BRAIN_PROMPT.md STEP 1C to also scan OPTIMIZATION entries. Captures "worked but slow" patterns that the single RULE format missed.
+Where: autoagent/PROMPT.md (step 8 reflexion format), autoagent/meta/BRAIN_PROMPT.md (STEP 1B and STEP 1C)
+Source: arxiv 2603.10600 (Trajectory-Informed Memory Generation) — strategy/recovery/optimization 3-category classification; 14.3pp improvement on AppWorld
+Expected impact: Sessions that retried something 2-3 times before succeeding now capture an OPTIMIZATION tip; future sessions can skip the slow path immediately

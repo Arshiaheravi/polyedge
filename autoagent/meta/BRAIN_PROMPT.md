@@ -15,12 +15,17 @@ Read `autoagent/brain/techniques.md` — don't re-implement what's already done.
 Before searching the web, skim the last 10 entries in `autoagent/memory/activity_log.md`.
 Look for: repeated failures, formats broken, steps skipped, retries needed.
 Ask: "Is there a pattern? What rule would have prevented it?"
+**Three-category tip extraction** (Source: arxiv 2603.10600 TIMGS): For each session's FAILED/RULE entries, classify the insight type:
+- **Recovery tip** — "when X fails, do Y instead" → these belong in PROMPT.md WHEN A TOOL CALL FAILS
+- **Strategy tip** — "always do X when Y" → these belong as RULE: in knowledge.md
+- **Optimization tip** — "X worked but was slow; do Z to skip the slow step" → these become OPTIMIZATION: entries
+If recent sessions have NO optimization tips, scan for multi-retry patterns (worked on 2nd/3rd attempt) — those are optimization tip candidates.
 **Meta-prompt analysis**: For each failure pattern found, ask: "Which specific rule in PROMPT.md or which skill file should have prevented this?" If the rule doesn't exist or is too vague — that is your highest-priority implementation target. If the rule exists but was ignored — the rule needs to be more prominent (move it earlier, add a concrete example). (Source: Meta-prompting research — LLM critiques its own prompt to produce improvements)
 This anchors your research to REAL failure modes instead of hypothetical improvements.
 Only then proceed to web searches.
 
 ## STEP 1C — CURATE knowledge.md (every BRAIN session)
-Read `autoagent/memory/knowledge.md`. Scan all `RULE:` entries across sessions.
+Read `autoagent/memory/knowledge.md`. Scan all `RULE:` and `OPTIMIZATION:` entries across sessions.
 Ask: "Are any two rules saying essentially the same thing?"
 If yes → merge them into one canonical rule (keep the most recent date, merge the best wording from both). Delete the redundant entry.
 Ask: "Is any rule superseded or contradicted by a newer rule?"

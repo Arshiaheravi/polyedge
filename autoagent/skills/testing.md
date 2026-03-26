@@ -79,6 +79,13 @@ Unit tests passing ≠ feature working. Always verify the full flow at least onc
 - CORRECT: `assert mock_fetch.call_count == 3` (update when adding a pass) OR better: `assert mock_fetch.called` (count-agnostic)
 - Before adding a new loop pass: `grep -r "call_count ==" tests/` to find all assertions that hard-code the old count. Update BOTH the assertion value AND the test name to reflect the new expectation.
 
+### Tier gate additions break free-tier tests
+- `auth_headers` fixture creates a free-tier user by default
+- Adding a tier restriction (403 for free) to any endpoint breaks ALL existing tests for that endpoint that use `auth_headers`
+- **Before adding any tier gate**: `grep -rn "def test_.*<endpoint_keyword>" backend/tests/` — check which tests use `auth_headers` (free tier) on that endpoint
+- Fix by upgrading the test user: `db_user.subscription_tier = "basic"; db.commit()` before the endpoint call
+- (Session 139: 4 tests failed on first run because of this pattern)
+
 ### Fake/stub signal objects missing new fields
 - When adding a new field to `StockSignal`, `PatternSnapshot`, or any model, ALSO add it to ALL fake/stub objects in test files
 - Pattern: `grep -r "FakeSignal\|StubSignal\|_FakeSignal\|MockSignal" tests/` to find all stubs

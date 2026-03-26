@@ -142,7 +142,13 @@ Re-read the 3 most-changed functions/sections you just wrote. Ask:
 3. Did I wire all return values through? (model field → route → frontend)
 4. **Global consistency check**: Does what I just built invalidate any remaining steps in current_task.md? If yes, update the plan before continuing — a mid-task discovery can make a future step wrong. (Source: PARC arxiv 2512.03549)
 5. **Irreversibility check**: Does this session touch any irreversible actions — DB deletes, Stripe charges, Telegram sends, email sends, git pushes? If yes, confirm these were explicitly requested and tested with a mock/guard before going live. Agents consistently underweight the cost of irreversible actions — name them explicitly. (Source: arxiv 2601.02749 — "The Path Ahead for Agentic AI")
-6. **Frontend XSS gate** (if `frontend/index.html` was changed): Run BOTH greps NOW — do not defer to an audit session:
+6. **API response field removal gate** (if any route file was changed): If you removed a field from any API response dict — for security, cleanup, or refactor — run NOW:
+   ```
+   grep -rn "field_name" backend/tests/
+   ```
+   Any test asserting the field IS present will fail. Update those tests in the same commit. **This pattern recurred in sessions 137 AND 141 despite the rule being in knowledge.md — it must fire at write-time, here.** (Source: PolyEdge sessions 137+141 dual failure)
+7. **Tier gate addition check** (if you added a tier restriction to any endpoint): grep ALL tests for calls to that endpoint and check if any use the `auth_headers` fixture (free-tier by default) — free-tier tests for that endpoint will now fail with 403. Fix them by upgrading the test user to basic/vip tier. **Session 139: 4 tests failed on first run because of this pattern.** (Source: PolyEdge session 139)
+8. **Frontend XSS gate** (if `frontend/index.html` was changed): Run BOTH greps NOW — do not defer to an audit session:
    ```
    grep -n 'innerHTML.*\${' frontend/index.html
    grep -n 'innerHTML\s*=\s*[a-zA-Z_]' frontend/index.html
@@ -246,10 +252,12 @@ Use git commands as configured. For two-repo projects, check `autoagent/PROJECT.
    Never write "Output tail:" or raw CLI output — that format is unreadable.
 8. Write a session reflexion in `autoagent/memory/knowledge.md` under `### Session #N Reflexion — [DATE]`:
    - ACCOMPLISHED: what you built
-   - FAILED: what broke or required retry, and why
+   - FAILED: what broke or required retry, and why (include WHICH specific decision in the chain caused the failure — not just what failed; this anchors the RULE to the root cause)
    - RULE: one concrete rule learned (even if nothing failed — confirm what worked)
+   - OPTIMIZATION: *(optional)* if something worked but was slow/required multiple tries, write one sentence on how to do it faster next time. Use tag `OPTIMIZATION: [2026-MM-DD] [how to skip the slow step]`
    **CRITICAL: APPEND rules, never overwrite existing ones. Each new rule gets a date. Rewriting old rules silently destroys accumulated reasoning — structured incremental updates are the only safe pattern.**
    This is mandatory, not optional. Skipping it loses the learning from every session.
+   (Source: arxiv 2603.10600 — Trajectory-Informed Memory Generation: strategy tips from successes + recovery tips from failures + optimization tips from slow-but-successful executions; 14.3pp gain on AppWorld benchmark)
 9. Update `autoagent/memory/knowledge.md` test suite history table with new test count
 10. Update PROJECT.md Known Facts line `Existing tests: ... — N passing as of session X` to reflect the new count and session number. This line going stale (303 persisted through sessions 112–115) causes confusion at next session's baseline health check.
 

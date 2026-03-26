@@ -1,6 +1,13 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — DEEP BRAIN (Session 143)
+RESEARCHED: autonomous AI agent best practices 2026, LLM self-improvement (Trajectory-Informed Memory Generation arxiv 2603.10600), Claude Code March 2026 updates, ECC v1.9.0 re-check, Polymarket Analytics competitor (category leaderboards), AgentDevel release engineering, FastAPI async patterns.
+DOWNLOADED: Nothing new — ECC still at v1.9.0; no new skills applicable.
+IMPLEMENTED: (1) PROMPT.md STEP 0 — Q6 API response field removal gate (recurring sessions 137+141 failure); Q7 tier gate addition test breakage check (session 139 failure). Both fire at write-time before commit. (2) testing.md — tier gate breakage brittle test pattern. (3) PROMPT.md reflexion format — added OPTIMIZATION tag (three-category tip extraction from TIMGS arxiv 2603.10600). (4) BRAIN_PROMPT STEP 1B — three-category tip classification guide. (5) knowledge.md — merged duplicate rule sessions 137+141. (6) META: all patterns addressed.
+BACKLOGGED: Category-specific bettor leaderboard (crypto/politics/sports/mentions) — competitor Polymarket Analytics offers this free.
+SOURCES: 6 new sources logged in brain/sources.md.
+
 ## 2026-03-26 — TESTING (Session 142)
 DONE: Added API tier gate test suite (tests/test_tier_gates.py) — 12 new tests covering /markets/consensus (free/basic/VIP signal count caps + whale name visibility) and /follows/live (tier field correctness for all 3 tiers + Bug #140 regression). 413 tests now passing.
 IMPACT: Previously zero tests existed for the consensus endpoint tier gates — the most important paywall correctness check. A regression in whale name visibility or signal count capping would have been undetectable. Now any such regression fails immediately.
