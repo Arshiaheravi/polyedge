@@ -780,6 +780,58 @@ def test_telegram_webhook_non_verify_text_returns_ok_no_change(client, db, regis
     assert user.telegram_chat_id is None  # unchanged
 
 
+def test_put_alert_settings_push_subscription_as_dict(client, db, auth_headers, registered_user):
+    """PUT /alerts/settings with push_subscription as a JSON object (dict) must json.dumps it and
+    store it; subsequent GET must return it as a parsed dict with the 'endpoint' key.
+    Guards the isinstance(payload.push_subscription, dict) branch in alerts.py:103-104."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
+    sub_dict = {"endpoint": "https://push.example.com/sub/abc", "keys": {"auth": "xxx", "p256dh": "yyy"}}
+    put_resp = client.put(
+        "/alerts/settings",
+        json={"push_subscription": sub_dict},
+        headers=auth_headers,
+    )
+    assert put_resp.status_code == 200
+
+    get_resp = client.get("/alerts/settings", headers=auth_headers)
+    assert get_resp.status_code == 200
+    result = get_resp.json()["push_subscription"]
+    assert isinstance(result, dict)
+    assert result["endpoint"] == "https://push.example.com/sub/abc"
+    assert result["keys"]["auth"] == "xxx"
+
+
+def test_telegram_webhook_message_with_empty_text_returns_ok(client, db, registered_user):
+    """Webhook with a message present but text='' (or missing) returns ok=True and makes no DB change.
+    Covers the `if not chat_id or not text: return {"ok": True}` branch (alerts.py:158-159)."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.telegram_verify_code = "EMPTYTEST"
+    user.telegram_chat_id = None
+    db.commit()
+
+    # Message present but text is empty string
+    update = {
+        "update_id": 2001,
+        "message": {
+            "message_id": 10,
+            "chat": {"id": 9999, "type": "private"},
+            "text": "",
+        },
+    }
+    resp = client.post("/alerts/telegram/webhook", json=update)
+    assert resp.status_code == 200
+    assert resp.json()["ok"] is True
+    db.refresh(user)
+    assert user.telegram_chat_id is None  # no change
+
+
 def test_telegram_verify_fails_without_prior_bot_connection(client, db, auth_headers, registered_user):
     """POST /alerts/telegram/verify with correct code but no telegram_chat_id returns 400.
 

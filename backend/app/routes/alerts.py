@@ -4,7 +4,7 @@ import secrets
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Any, Optional
 
 from app.auth import get_current_user
 from app.config import get_settings
@@ -20,7 +20,7 @@ class AlertSettingsUpdate(BaseModel):
     web_push_enabled: Optional[bool] = None
     telegram_enabled: Optional[bool] = None
     sms_enabled: Optional[bool] = None
-    push_subscription: Optional[str] = None  # JSON string from browser
+    push_subscription: Optional[Any] = None  # JSON string OR dict from browser
 
 
 class TelegramVerifyRequest(BaseModel):

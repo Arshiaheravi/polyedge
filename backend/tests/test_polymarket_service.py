@@ -884,6 +884,26 @@ async def test_copy_simulator_limit_enforced():
     assert result["bets_analysed"] == 5
 
 
+@pytest.mark.asyncio
+async def test_copy_simulator_sell_side_excluded():
+    """SELL-side trades are exit trades — they must be skipped and not counted in bets_analysed.
+    Covers the `if side not in ("BUY", ""): continue` branch (polymarket.py:358-359)."""
+    from unittest.mock import patch
+    old_ts = str(int(time.time()) - 10 * 24 * 3600)
+    # Only SELL trades — none should be analysed
+    activity = [
+        {"type": "TRADE", "side": "SELL", "price": "0.80", "conditionId": "cid_sell_1", "timestamp": old_ts},
+        {"type": "TRADE", "side": "SELL", "price": "0.60", "conditionId": "cid_sell_2", "timestamp": old_ts},
+    ]
+    mock_client = _make_simulator_mock_client(activity)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import compute_copy_simulator
+        result = await compute_copy_simulator("0xtest", limit=10)
+    assert result["bets_analysed"] == 0
+    assert result["simulated_pnl_usd"] == 0.0
+    assert result["simulated_roi_pct"] == 0.0
+
+
 # ── get_consensus_signals (mocked Polymarket API) ─────────────────────────────
 
 MOCK_CONDITION_ID = "0x" + "a" * 64  # valid 64-char hex
