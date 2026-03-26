@@ -45,6 +45,8 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
+- Test count: **483 passed, 2 skipped** (as of 2026-03-26, session 177) — 3 new tests: resolved-market consensus filter + bettor profile accuracy passthrough + auth/me accuracy absence
+- Test count: **480 passed, 2 skipped** (as of 2026-03-26, session 176) — 5 new tests: accuracy field regression + follows order + mocked consensus + profile accuracy
 - Test count: **475 passed, 1 skipped** (as of 2026-03-26, session 175)
 - Playwright E2E: **42 passed, 2 skipped** (as of 2026-03-26, session 156)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
@@ -74,6 +76,11 @@ ACCOMPLISHED: (1) Confirmed BRAIN_PROMPT.md background-agent prohibition is NOW 
 FAILED: Background agents launched at session start produced output (agents were running) but pattern is established — added explicit prohibition to BRAIN_PROMPT.md immediately.
 RULE: [2026-03-26] When a rule about brain session failure mode (e.g., "don't use background agents") lives only in knowledge.md, it is NOT effective — brain sessions don't read knowledge.md before launching agents. The rule must be in BRAIN_PROMPT.md itself, near the search step, to fire at the right moment.
 OPTIMIZATION: [2026-03-26] Brain session research pattern: run 2-4 direct WebSearch calls in parallel (not background agents), read results immediately, pick the top 1-2 actionable findings, implement them. Total research phase: ~5 tool calls. This is faster and more reliable than background agents.
+
+### Session #177 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: (1) `test_get_consensus_signals_filters_resolved_markets` — mocks 5 whales with curPrice=0.98, asserts 0 signals (the > 0.95 guard). (2) `test_bettor_detail_profile_includes_accuracy` — mocked profile with accuracy=0.72 passes through GET /bettors/{address} route. (3) `test_auth_me_does_not_contain_accuracy` — asserts accuracy not in GET /auth/me response. Also removed stale backlog task (normalise_profile accuracy tests already existed from session 176). Added 3 new HIGH PRIORITY testing tasks. 480 → 483 tests.
+FAILED: Backlog task 1 was stale — `test_normalise_profile_accuracy_from_pct` and siblings were added in session 176 but the backlog was written as if they still needed to be done.
+RULE: [2026-03-26] When a backlog task says "grep returns nothing", that grep was run when the task was WRITTEN, not when the task is picked. Always re-run the grep at pick time — the session that wrote the task may have already implemented the feature (or the next session may have). Stale backlog tasks waste a full session discovering the work is done.
 
 ### Session #176 Reflexion — 2026-03-26 (TESTING)
 ACCOMPLISHED: (1) Added `accuracy` field to `_normalise_profile` + `get_bettor_profile` — profile endpoint was missing the field that leaderboard already returned. (2) `test_leaderboard_vs_profile_accuracy_consistent` — live API cross-check (skips on timeout). (3) `test_follows_list_order_is_newest_first` — uses DB fixture to set explicit created_at offsets (2h/1h/now), then asserts DESC order. (4) `test_get_consensus_signals_with_mocked_api` — mocks get_leaderboard + httpx.AsyncClient; 5 whales YES on same market → whale_count=5 assertion. (5) 3 unit tests for _normalise_profile accuracy field. 475 → 480 tests.

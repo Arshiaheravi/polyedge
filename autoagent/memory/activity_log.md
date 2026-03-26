@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 177)
+DONE: Added 3 tests: (1) get_consensus_signals filters resolved markets — mocked 5 whales with curPrice=0.98 asserts 0 signals (the > 0.95 guard works); (2) GET /bettors/{address} profile dict includes accuracy key — confirms the field passes through the route, not just _normalise_profile; (3) GET /auth/me does NOT include accuracy — user account data must not leak bettor metrics. Removed stale backlog task 1 (accuracy regression tests already existed from session 176). Added 3 new HIGH PRIORITY testing tasks. 480 → 483 tests.
+IMPACT: Test (1) locks in the resolved-market filter contract in a deterministic mocked test (no live API). Test (2) is a contract test that would catch the accuracy field being accidentally stripped in the route layer. Test (3) confirms the auth/me response boundary — bettor metrics should never appear in user account responses.
+FILES: backend/tests/test_polymarket_service.py, backend/tests/test_bettors.py
+
 ## 2026-03-26 — TESTING (Session 176)
 DONE: Added accuracy field to bettor profile endpoint (_normalise_profile was missing it; leaderboard already had it). Added 5 new tests: leaderboard vs profile accuracy cross-check, follows list order (newest-first, deterministic via DB timestamp offsets), mocked get_consensus_signals (5 whales, whale_count=5 assertion), and 3 unit tests locking in _normalise_profile accuracy field conversion. 475 → 480 tests.
 IMPACT: Free users and premium users now get consistent accuracy data across leaderboard and profile pages. Follows list order test prevents silent regression of the DESC sort. Mocked consensus test provides CI-safe deterministic coverage of the signal grouping logic (all live API tests skip on timeout).

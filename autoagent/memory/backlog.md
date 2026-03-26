@@ -2,12 +2,11 @@
 
 ## HIGH PRIORITY — Testing
 
-- [ ] **_normalise_profile accuracy field regression** — `test_normalise_profile_includes_rank_and_pnl_usd` in test_polymarket_service.py does NOT check the `accuracy` field (added session 176). Add a test: call `_normalise_profile(raw, accuracy_pct=75.5)` and assert `result["accuracy"] == pytest.approx(0.7550)`. Also test `accuracy_pct=None` → `result["accuracy"] is None`. This locks in the new field. Grep: `grep -n "accuracy.*normalise\|normalise.*accuracy" backend/tests/test_polymarket_service.py` returns nothing.
+- [ ] **_normalise_leaderboard_entry accuracy field** — `test_normalise_leaderboard_full_entry` in test_polymarket_service.py does NOT check `accuracy`. Add a test: raw dict with `"percentProfitable": 68.5` → `result["accuracy"] == pytest.approx(0.685)`. Also test `percentProfitable=None` → `result["accuracy"] is None`. Grep: `grep -n "accuracy.*normalise_leaderboard\|normalise_leaderboard.*accuracy\|percentProfitable" backend/tests/test_polymarket_service.py` returns nothing.
 
-- [ ] **get_consensus_signals filters resolved markets (mocked)** — add a unit test that mocks 5 whales each holding a position with `curPrice=0.98` (near-settled YES) and asserts `get_consensus_signals()` returns 0 signals (the `cur_price < 0.05 or cur_price > 0.95` guard). Companion to the existing mock test added in session 176. Grep: `grep -n "resolved.*consensus\|consensus.*0.95\|0.98.*signal" backend/tests/test_polymarket_service.py` returns nothing.
+- [ ] **GET /bettors leaderboard response accuracy passthrough** — mock `get_leaderboard` to return bettors with `accuracy=0.72`, assert GET /bettors response bettors list items include `accuracy` key with correct value. Current MOCK_LEADERBOARD in test_bettors.py has no accuracy field — no test asserts accuracy passes through the route. Grep: `grep -n "accuracy.*MOCK_LEADERBOARD\|bettors.*accuracy.*resp" backend/tests/test_bettors.py` returns nothing.
 
-- [ ] **GET /auth/me returns accuracy field for profile** — After session 176 added accuracy to the profile endpoint, add a test that: creates a user, calls GET /auth/me, and asserts the response does NOT contain `accuracy` (auth/me only returns user data, not bettor profile). Separately, verify GET /bettors/{address} response for a bettor has an `accuracy` key in the `profile` dict. Grep: `grep -n "accuracy.*bettors.*address\|bettors.*profile.*accuracy" backend/tests/` returns nothing.
-
+- [ ] **POST /follows 409 detail message** — `test_duplicate_follow_rejected` only asserts status 409, not the error message. Add test: second follow of same address returns 409 with `detail` containing "already following". Confirms the user sees an actionable message, not just a raw error code. Grep: `grep -n "already.*follow\|follow.*already\|detail.*409\|test_duplicate_follow.*detail" backend/tests/test_follows.py` returns nothing.
 
 ---
 

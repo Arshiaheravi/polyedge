@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-26
+- **[SESSION #177] Resolved-market consensus filter + 2 accuracy contract tests** — resolved-market mocked test (curPrice=0.98 → 0 signals), bettor profile accuracy passthrough, auth/me accuracy absence; 480→483 tests
 - **[SESSION #176] Profile endpoint accuracy field + 5 regression tests** — added accuracy to _normalise_profile; leaderboard vs profile accuracy cross-check; follows order test; mocked consensus test; 3 _normalise_profile accuracy unit tests; 475→480 tests
 - **[SESSION #174] Code quality audit sessions 167-171** — moved inline asyncio/time/datetime imports to module level in polymarket.py, removed 2 unused imports; 472 tests stable
 - **[SESSION #172] Copy simulator ROI cap + extreme-price unit test** — added ±10000% clamp to compute_copy_simulator and unit test covering all-winning bets at price=0.01; 471→472 tests
