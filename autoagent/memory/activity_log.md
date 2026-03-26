@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-140 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — TESTING (Session 162)
+DONE: Added 7 behavioral tests across 3 files — (1) _poll_vip_bets: no-VIP-users early return, VIP-only-addresses filtering, and new-bet creates BetEvent+notification; (2) /follows/live conviction score: keys always present, EXTREME label at 10x avg_bet, empty label below 3x; (3) profile cache: reverse-order test confirms VIP gets unlocked simulator even after free user cached same address.
+IMPACT: Three previously untested code paths now have regression coverage — a broken VIP fast-path, a missing conviction field, or a cache key regression would now be caught automatically instead of shipping silently broken to users.
+FILES: backend/tests/test_scheduler.py, backend/tests/test_follows_live.py, backend/tests/test_bettors.py
+
 ## 2026-03-26 — CODE QUALITY AUDIT (Session 161)
 DONE: Audited last 5 sessions' changed files; found and fixed readiness endpoint leaking exception details in 503 body and stale scheduler docstring. Logged _last_check race condition to tech_debt.md.
 IMPACT: Readiness endpoint no longer exposes DB file paths or SQLAlchemy error strings to public callers — internal error is logged server-side while users see a generic "Database connectivity check failed" message.

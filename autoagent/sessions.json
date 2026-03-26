@@ -3608,5 +3608,28 @@
       "failures": 0,
       "notes": "no server running; code-only audit session"
     }
+  },
+  {
+    "session": 162,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 7 behavioral tests covering _poll_vip_bets fast-path (3 scenarios), /follows/live conviction score fields (3 scenarios), and profile cache reverse-order tier gate — 450→457 tests passing",
+    "files": [
+      "backend/tests/test_scheduler.py",
+      "backend/tests/test_follows_live.py",
+      "backend/tests/test_bettors.py"
+    ],
+    "tests": {
+      "before": 450,
+      "after": 457,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

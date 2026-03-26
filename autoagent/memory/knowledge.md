@@ -57,6 +57,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 
 ## Session Reflexions
 
+### Session #162 Reflexion — 2026-03-26 (TESTING)
+ACCOMPLISHED: Added 7 behavioral tests to cover three previously untested code paths: (1) `_poll_vip_bets` — no-VIP-users early-return, VIP-only-address filtering, new-bet creates BetEvent and notification; (2) `/follows/live` conviction score — `conviction_score`/`conviction_label` keys always present, EXTREME label at 10x avg_bet, empty label below 3x; (3) profile cache reverse-order — free-first then VIP gets unlocked (complements existing VIP-first then free test). All 7 passed on first run. Baseline 450→457.
+FAILED: Nothing — all tests passed on first attempt.
+RULE: [2026-03-26] When writing tests for a function that calls both `get_active_positions` AND `get_recent_bets` (like `_fetch_one`), mock BOTH services even when the test only cares about one. Patching only `get_active_positions` and leaving `get_recent_bets` to make a real network call will cause flaky tests or errors if Polymarket is unreachable.
+RULE: [2026-03-26] When backlog says "verify it covers both orderings" for a cache test, check the existing test function name closely — if it's named `test_X_not_bypassed`, it almost certainly covers only one ordering. The reverse order (which hits the cached entry from the other tier) is always worth adding as a separate named test.
+
 ### Session #161 Reflexion — 2026-03-26 (CODE QUALITY AUDIT)
 ACCOMPLISHED: Virtual team audit of sessions 156-160 changed files (scheduler.py, main.py, config.py, follows.py, test_health.py, test_scheduler.py, frontend/index.html). Found and fixed 2 issues: (1) Marcus BLOCKING — readiness endpoint `/readiness` returned `str(exc)` in 503 body, which could expose DB file paths or SQLAlchemy error internals to public callers. Fixed to return generic "Database connectivity check failed" and log the real error server-side. (2) Leo MINOR — stale docstring in scheduler.py said "polls every 30 seconds" but VIP poll now runs every 5s. Updated docstring. Marcus XSS audit (two greps): clean. Logged _last_check shared-state race condition to tech_debt.md. 450 tests pass (no change in count).
 FAILED: Nothing failed.
