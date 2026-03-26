@@ -228,12 +228,13 @@ def test_telegram_verify_wrong_code_returns_400(client, db, auth_headers, regist
 
 
 def test_telegram_verify_correct_code_links_account(client, db, auth_headers, registered_user):
-    """Correct code sets telegram_verified=True and clears the code."""
+    """Correct code + bot already connected (chat_id set) sets telegram_verified=True."""
     from app.models import User
     _, user_data = registered_user
     user = db.query(User).filter(User.id == user_data["id"]).first()
     user.subscription_tier = "basic"
     user.telegram_verify_code = "ABCDEF12"
+    user.telegram_chat_id = "123456789"  # simulates bot webhook having already fired
     db.commit()
 
     resp = client.post("/alerts/telegram/verify", json={"code": "ABCDEF12"}, headers=auth_headers)
@@ -282,7 +283,7 @@ def test_telegram_start_called_twice_overwrites_code(client, db, auth_headers, r
 
 
 def test_telegram_start_then_verify_full_round_trip(client, db, auth_headers, registered_user):
-    """Full round-trip: start → get code → verify → account linked."""
+    """Full round-trip: start → bot webhook sets chat_id → verify confirms → account linked."""
     from app.models import User
     _, user_data = registered_user
     user = db.query(User).filter(User.id == user_data["id"]).first()
@@ -295,7 +296,19 @@ def test_telegram_start_then_verify_full_round_trip(client, db, auth_headers, re
     code = start_resp.json()["code"]
     assert len(code) == 8
 
-    # Step 2: verify with the returned code
+    # Step 2: simulate bot webhook firing (user sent /verify CODE to @PolyEdgeBot)
+    webhook_update = {
+        "update_id": 9001,
+        "message": {
+            "message_id": 1,
+            "chat": {"id": 555000555, "type": "private"},
+            "text": f"/verify {code}",
+        },
+    }
+    wh_resp = client.post("/alerts/telegram/webhook", json=webhook_update)
+    assert wh_resp.status_code == 200
+
+    # Step 3: confirm via /verify — now that chat_id is set, this should succeed
     verify_resp = client.post("/alerts/telegram/verify", json={"code": code}, headers=auth_headers)
     assert verify_resp.status_code == 200
     assert verify_resp.json()["verified"] is True
@@ -457,6 +470,7 @@ def test_telegram_verify_response_includes_verified_and_message(client, db, auth
     user = db.query(User).filter(User.id == user_data["id"]).first()
     user.subscription_tier = "basic"
     user.telegram_verify_code = "DEADBEEF"
+    user.telegram_chat_id = "999888777"  # simulates bot webhook having already fired
     db.commit()
 
     resp = client.post("/alerts/telegram/verify", json={"code": "DEADBEEF"}, headers=auth_headers)
@@ -595,6 +609,7 @@ def test_telegram_verify_lowercase_code_is_accepted(client, db, auth_headers, re
     user = db.query(User).filter(User.id == user_data["id"]).first()
     user.subscription_tier = "basic"
     user.telegram_verify_code = "ABCD1234"
+    user.telegram_chat_id = "111222333"  # simulates bot webhook having already fired
     db.commit()
 
     resp = client.post(
@@ -763,3 +778,24 @@ def test_telegram_webhook_non_verify_text_returns_ok_no_change(client, db, regis
     assert resp.status_code == 200
     db.refresh(user)
     assert user.telegram_chat_id is None  # unchanged
+
+
+def test_telegram_verify_fails_without_prior_bot_connection(client, db, auth_headers, registered_user):
+    """POST /alerts/telegram/verify with correct code but no telegram_chat_id returns 400.
+
+    The user submitted the correct code via the web UI before messaging the bot —
+    without chat_id set the webhook hasn't fired, so notifications would never send.
+    Guard prevents misleading 'Telegram linked' when the connection is incomplete.
+    Regression test for audit session 144 finding.
+    """
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    user.telegram_verify_code = "NOCHATID"
+    user.telegram_chat_id = None  # bot webhook has NOT fired
+    db.commit()
+
+    resp = client.post("/alerts/telegram/verify", json={"code": "NOCHATID"}, headers=auth_headers)
+    assert resp.status_code == 400
+    assert "PolyEdgeBot" in resp.json()["detail"]

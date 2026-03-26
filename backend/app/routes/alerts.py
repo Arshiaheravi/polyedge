@@ -164,13 +164,26 @@ def telegram_verify(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    # Idempotent: if the bot webhook already completed the full verification, return success.
+    # (Webhook sets chat_id + verified=True + clears the verify code.)
+    if current_user.telegram_verified and current_user.telegram_chat_id:
+        return {"verified": True, "message": "Telegram linked successfully"}
+
     if not current_user.telegram_verify_code:
         raise HTTPException(status_code=400, detail="No pending verification. Start the process first.")
 
     if payload.code.upper().strip() != current_user.telegram_verify_code.upper().strip():
         raise HTTPException(status_code=400, detail="Invalid verification code")
 
-    # Code matches — mark as verified (chat_id would be set by the bot webhook)
+    # Code matches — but chat_id must already be set by the bot webhook.
+    # If not set, the user submitted the correct code before messaging the bot;
+    # notifications would never fire even if we mark them verified.
+    if not current_user.telegram_chat_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Your Telegram is not connected yet. Send /verify " + payload.code.upper().strip() + " to @PolyEdgeBot first.",
+        )
+
     current_user.telegram_verified = True
     current_user.telegram_verify_code = None
     db.commit()

@@ -235,11 +235,10 @@ def test_follows_live_returns_tier_in_response(client, auth_headers):
     assert resp.json()["tier"] == "free"  # default tier for new users
 
 
-def test_follows_live_empty_response_has_no_tier(client, auth_headers):
-    """GET /follows/live with no follows also returns 'tier' (early-return path)."""
+def test_follows_live_empty_response_has_bettors_key(client, auth_headers):
+    """GET /follows/live with no follows returns {bettors: [], tier: ...} via early-return path."""
     resp = client.get("/follows/live", headers=auth_headers)
     assert resp.status_code == 200
-    # Empty follows path returns {"bettors": []} without tier — acceptable since no positions
     data = resp.json()
     assert "bettors" in data
     assert data["bettors"] == []

@@ -9,6 +9,7 @@ from typing import Optional
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy.orm import Session
 
+from app.config import get_settings
 from app.database import SessionLocal
 from app.models import AlertSetting, BetEvent, BettorFollow, User
 from app.services.notifications import dispatch_bet_notification, format_exit_message, send_telegram, send_web_push
@@ -52,7 +53,6 @@ async def _detect_exits(db: Session, addresses: list) -> None:
     """
     global _last_positions
 
-    from app.config import get_settings
     cfg = get_settings()
 
     for address in addresses:
@@ -236,7 +236,6 @@ async def _poll_bets() -> None:
                     .all()
                 )
 
-                from app.config import get_settings
                 cfg = get_settings()
 
                 for follow in followers:
@@ -249,10 +248,6 @@ async def _poll_bets() -> None:
                         .filter(AlertSetting.user_id == user.id)
                         .first()
                     )
-
-                    # Reuse conviction already computed above
-                    conviction_score = _conviction_score
-                    conviction_label = _conviction_label
 
                     try:
                         await dispatch_bet_notification(
@@ -269,8 +264,8 @@ async def _poll_bets() -> None:
                             twilio_auth_token=cfg.twilio_auth_token,
                             twilio_from_number=cfg.twilio_from_number,
                             user_tier=user.subscription_tier,
-                            conviction_score=conviction_score,
-                            conviction_label=conviction_label,
+                            conviction_score=_conviction_score,
+                            conviction_label=_conviction_label,
                         )
                     except Exception as exc:
                         logger.warning("Notification failed for user %s: %s", user.id, exc)
