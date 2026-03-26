@@ -238,3 +238,105 @@ def test_rapid_login_attempts_never_500(client):
             f"Server returned 500 on a login attempt — auth must never crash: {resp.text}"
         )
         assert resp.status_code == 401
+
+
+# ---------------------------------------------------------------------------
+# Mass Assignment — register body must not accept subscription_tier
+# ---------------------------------------------------------------------------
+
+class TestMassAssignment:
+    """Verify that clients cannot set privileged fields during registration."""
+
+    def test_register_with_vip_tier_in_body_creates_free_user(self, client):
+        """Posting subscription_tier:'vip' in register body must be ignored — user gets 'free'."""
+        resp = client.post("/auth/register", json={
+            "email": "massassign@example.com",
+            "password": "securepass123",
+            "name": "MassAssignUser",
+            "subscription_tier": "vip",  # attacker-supplied privilege escalation attempt
+        })
+        # Pydantic ignores unknown fields by default — request succeeds
+        assert resp.status_code == 201, f"Expected 201 got {resp.status_code}: {resp.json()}"
+        data = resp.json()
+        assert data["user"]["subscription_tier"] == "free", (
+            f"Mass assignment succeeded — user got tier '{data['user']['subscription_tier']}' "
+            "instead of 'free'. The register route must hardcode tier='free'."
+        )
+
+    def test_register_with_basic_tier_in_body_creates_free_user(self, client):
+        """subscription_tier:'basic' in body must also be ignored."""
+        resp = client.post("/auth/register", json={
+            "email": "massassign2@example.com",
+            "password": "securepass123",
+            "name": "MassAssignUser2",
+            "subscription_tier": "basic",
+        })
+        assert resp.status_code == 201
+        data = resp.json()
+        assert data["user"]["subscription_tier"] == "free"
+
+    def test_register_with_admin_flag_in_body_creates_free_user(self, client):
+        """Extra privilege fields must be silently dropped — no 500 or unexpected tier."""
+        resp = client.post("/auth/register", json={
+            "email": "massassign3@example.com",
+            "password": "securepass123",
+            "name": "MassAssignUser3",
+            "is_admin": True,
+            "subscription_tier": "vip",
+            "stripe_customer_id": "cus_attacker",
+        })
+        assert resp.status_code == 201
+        data = resp.json()
+        assert data["user"]["subscription_tier"] == "free"
+
+
+# ---------------------------------------------------------------------------
+# Sensitive Data Leakage — no internal fields in API responses
+# ---------------------------------------------------------------------------
+
+_SENSITIVE_FIELDS = ("hashed_password", "stripe_customer_id")
+
+
+class TestSensitiveDataLeakage:
+    """Verify that internal DB fields never appear in any API response body."""
+
+    def _assert_no_sensitive_fields(self, body: str, endpoint: str):
+        for field in _SENSITIVE_FIELDS:
+            assert field not in body, (
+                f"Sensitive field '{field}' found in {endpoint} response. "
+                "This data must never be returned to API consumers."
+            )
+
+    def test_register_response_has_no_sensitive_fields(self, client):
+        resp = client.post("/auth/register", json={
+            "email": "sensitivecheck@example.com",
+            "password": "testpass123",
+            "name": "SensCheck",
+        })
+        assert resp.status_code == 201
+        self._assert_no_sensitive_fields(resp.text, "POST /auth/register")
+
+    def test_login_response_has_no_sensitive_fields(self, client):
+        client.post("/auth/register", json={
+            "email": "sensitivelogin@example.com",
+            "password": "testpass123",
+            "name": "SensLogin",
+        })
+        resp = client.post("/auth/login", json={
+            "email": "sensitivelogin@example.com",
+            "password": "testpass123",
+        })
+        assert resp.status_code == 200
+        self._assert_no_sensitive_fields(resp.text, "POST /auth/login")
+
+    def test_get_me_response_has_no_sensitive_fields(self, client, auth_headers):
+        resp = client.get("/auth/me", headers=auth_headers)
+        assert resp.status_code == 200
+        self._assert_no_sensitive_fields(resp.text, "GET /auth/me")
+
+    def test_admin_stats_response_has_no_sensitive_fields(self, client):
+        from app.config import get_settings
+        pw = get_settings().admin_password
+        resp = client.get("/admin/stats", headers={"x-admin-password": pw})
+        assert resp.status_code == 200
+        self._assert_no_sensitive_fields(resp.text, "GET /admin/stats")
