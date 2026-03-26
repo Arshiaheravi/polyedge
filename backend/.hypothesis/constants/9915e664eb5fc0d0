@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\playwright\_impl\_browser_type.py
+# hypothesis_version: 6.151.9
+
+[30000, 'Connection timed out', 'Playwright', 'browser', 'close', 'connect', 'connectOverCDP', 'defaultContext', 'downloadsPath', 'env', 'executablePath', 'exposeNetwork', 'headers', 'ignoreAllDefaultArgs', 'ignoreDefaultArgs', 'launch', 'name', 'pipe', 'preLaunchedBrowser', 'slowMo', 'timeout', 'tracesDir', 'value', 'wsEndpoint', 'x-playwright-browser']

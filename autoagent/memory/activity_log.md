@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-119 archived — see activity_log_archive.md)*
 
+## 2026-03-26 — BUGFIX (Session 140)
+DONE: Fixed VIP copy timing padlock bug — `_activity_cache` in routes/follows.py stored `tier` at fill-time; after free→VIP upgrade the cached response had `tier:'free'` for up to 30s, causing the frontend to show the 🔒 padlock instead of copy-signal badges for VIP users. Fix injects `current_user.subscription_tier` on every cache hit. Added 2 regression tests. 396 tests passing.
+IMPACT: Paying VIP users who just upgraded saw the same locked UI as free users for up to 30 seconds — eroding trust at the most sensitive moment (right after payment). Now the tier is always live from the DB on every response.
+FILES: backend/app/routes/follows.py, backend/tests/test_follows_live.py
+
 ## 2026-03-26 — BUGFIX (Session 139)
 DONE: Fixed 5 medium-priority bugs: (1) accuracy field added to leaderboard normaliser from percentProfitable API field; (2) @lru_cache added to get_settings() so .env is read once not per notification; (3) get_settings() moved outside per-follower loop in scheduler; (4) free users now blocked from enabling web push (403); (5) _last_positions dict now purged each poll for unfollowed bettors. Added regression test for free-tier web push 403.
 IMPACT: Scheduler was re-reading .env file on every single notification for every follower — with 100 followers getting 10 notifications each, that's 1000 file reads per poll cycle. Free users could "enable" web push but never receive anything, creating false confidence. Unfollowed bettor positions were accumulating in memory indefinitely.

@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\OneDrive\Desktop\PolyEdge\backend\app\routes\markets.py
+# hypothesis_version: 6.151.9
+
+[300, '/consensus', '/markets', 'avg_entry_price', 'basic', 'condition_id', 'current_price', 'data', 'event_slug', 'free', 'market_title', 'markets', 'names_visible', 'outcome', 'signals', 'tier', 'total_available', 'ts', 'vip', 'whale_count', 'whale_names']

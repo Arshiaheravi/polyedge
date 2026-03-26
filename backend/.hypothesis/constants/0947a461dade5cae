@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\playwright\sync_api\__init__.py
+# hypothesis_version: 6.151.9
+
+['APIRequest', 'APIRequestContext', 'APIResponse', 'Accessibility', 'Browser', 'BrowserContext', 'BrowserType', 'CDPSession', 'ConsoleMessage', 'Cookie', 'Dialog', 'Download', 'ElementHandle', 'Error', 'FileChooser', 'FilePayload', 'FloatRect', 'Frame', 'FrameLocator', 'Geolocation', 'HttpCredentials', 'JSHandle', 'Keyboard', 'Locator', 'Mouse', 'Page', 'PdfMargins', 'Playwright', 'Position', 'ProxySettings', 'Request', 'ResourceTiming', 'Response', 'Route', 'Selectors', 'SourceLocation', 'StorageState', 'TimeoutError', 'Touchscreen', 'Video', 'ViewportSize', 'WebSocket', 'WebSocketRoute', 'Worker', 'expect', 'sync_playwright']

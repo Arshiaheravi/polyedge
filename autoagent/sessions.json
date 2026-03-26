@@ -3101,5 +3101,27 @@
       "failures": 0,
       "notes": "no running server"
     }
+  },
+  {
+    "session": 140,
+    "date": "2026-03-26",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Fixed VIP copy timing padlock bug \u2014 activity cache was serving stale tier after free to VIP upgrade so paying users saw the locked padlock UI instead of copy-signal badges for up to 30 seconds after payment",
+    "files": [
+      "backend/app/routes/follows.py",
+      "backend/tests/test_follows_live.py"
+    ],
+    "tests": {
+      "before": 394,
+      "after": 396,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes this session"
+    }
   }
 ]

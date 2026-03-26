@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\playwright\_impl\_playwright.py
+# hypothesis_version: 6.151.9
+
+['BrowserType', 'Invalid browser ', 'chromium', 'close', 'firefox', 'selectors', 'webkit']

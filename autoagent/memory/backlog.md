@@ -9,8 +9,6 @@
 - [ ] **Web push is a non-functional stub** — `services/notifications.py:68-97` POSTs directly to the browser push endpoint without VAPID signing or payload encryption. Chrome/Firefox/Safari all reject unsigned pushes with 401/403. The function returns False silently — users "enable" push and never receive anything. Fix requires pywebpush library + VAPID keys. Until fixed, disable web push option in UI rather than silently failing.
 
 
-- [ ] **VIP copy timing shows padlock** — VIP user sees "🔒 Copy timing — Upgrade to Basic" on position cards. Confirmed API returns tier:"vip" and copy_signal:"good" correctly. Bug is in frontend rendering. Check `renderPositionItem(p, followsTier)` — verify `followsTier` is read from `data.tier` correctly and not overridden by a stale cached value.
-
 - [ ] **Consensus "Could not load"** — was caused by port mismatch. Verify it now loads correctly on 8003 by running Playwright test that opens the Consensus tab and asserts market cards are visible.
 
 ---

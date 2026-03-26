@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\OneDrive\Desktop\PolyEdge\backend\app\routes\follows.py
+# hypothesis_version: 6.151.9
+
+[0.0, 3.0, 10.0, 403, 404, 409, 999999, '...', '/follows', '/live', '/{bettor_address}', 'EXTREME', 'Follow not found', 'HIGH', 'active_positions', 'address', 'amount_usd', 'basic', 'bettor_address', 'bettor_name', 'bettors', 'conviction_label', 'conviction_score', 'created_at', 'data', 'followed_at', 'follows', 'free', 'id', 'initial_value_usd', 'limit', 'name', 'tier', 'ts', 'vip']

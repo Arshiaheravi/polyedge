@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\OneDrive\Desktop\PolyEdge\backend\app\routes\bettors.py
+# hypothesis_version: 6.151.9
+
+[100, 502, 600, '/bettors', '/trades/recent', '/{address}', 'all', 'basic', 'bettors', 'cached', 'copy_simulator', 'data', 'day', 'free', 'locked', 'month', 'profile', 'profit', 'recent_bets', 'sort', 'subscription_tier', 'trades', 'ts', 'vip', 'volume', 'week']

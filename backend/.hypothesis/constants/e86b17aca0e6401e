@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\OneDrive\Desktop\PolyEdge\backend\app\routes\alerts.py
+# hypothesis_version: 6.151.9
+
+[400, 403, 422, 502, 503, 100000, 900000, '+', '/alerts', '/settings', '/sms/start', '/sms/verify', '/telegram/start', '/telegram/verify', 'PolyEdgeBot', 'alerts', 'bot_link', 'code', 'free', 'instructions', 'message', 'phone_number', 'phone_verified', 'push_subscription', 'sent', 'sms_enabled', 'telegram_chat_id', 'telegram_enabled', 'telegram_verified', 'verified', 'vip', 'web_push_enabled']

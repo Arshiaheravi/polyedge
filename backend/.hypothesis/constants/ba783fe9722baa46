@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\playwright\_impl\_locator.py
+# hypothesis_version: 6.151.9
+
+[' >> ', ' >> internal:and=', ' >> internal:has=', ' >> internal:or=', 'ElementHandle', 'Frame', 'FrameLocator', 'JSHandle', 'Locator', 'Page', 'T', 'allow', 'alt', 'ariaSnapshot', 'attached', 'blur', 'checked', 'css', 'data-testid', 'detached', 'device', 'disabled', 'expanded', 'expect', 'expectedValue', 'expression', 'false', 'hidden', 'hide', 'include-hidden', 'initial', 'internal:label=', 'internal:text=', 'jpeg', 'level', 'name', 'placeholder', 'png', 'pressed', 'received', 'selected', 'selector', 'strict', 'target', 'timeout', 'title', 'true', 'visible']

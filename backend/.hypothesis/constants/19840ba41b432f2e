@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\playwright\_impl\_assertions.py
+# hypothesis_version: 6.151.9
+
+[5000, ':root', 'LocatorAssertions', 'PageAssertions', 'attached', 'baseURL', 'checked', 'content-type', 'detached', 'disabled', 'editable', 'enabled', 'expected not to', 'expected to', 'hidden', 'ignoreCase', 'isNot', 'matches', 'readonly', 'received', 'timeout', 'to.be.attached', 'to.be.checked', 'to.be.detached', 'to.be.disabled', 'to.be.editable', 'to.be.empty', 'to.be.enabled', 'to.be.focused', 'to.be.hidden', 'to.be.in.viewport', 'to.be.readonly', 'to.be.unchecked', 'to.be.visible', 'to.have.class', 'to.have.class.array', 'to.have.count', 'to.have.css', 'to.have.id', 'to.have.property', 'to.have.role', 'to.have.text', 'to.have.text.array', 'to.have.title', 'to.have.url', 'to.have.value', 'to.have.values', 'to.match.aria', 'unchecked', 'useInnerText', 'visible']

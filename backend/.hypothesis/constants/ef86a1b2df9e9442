@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\AppData\Roaming\Python\Python311\site-packages\playwright\_impl\_browser.py
+# hypothesis_version: 6.151.9
+
+['BrowserType', 'accept', 'acceptDownloads', 'clientCertificates', 'close', 'colorScheme', 'defaultBrowserType', 'deny', 'dir', 'disconnected', 'extraHTTPHeaders', 'forcedColors', 'newBrowserCDPSession', 'newContext', 'no-override', 'noDefaultViewport', 'noViewport', 'null', 'page', 'path', 'reason', 'recordHar', 'recordHarPath', 'recordVideo', 'recordVideoDir', 'recordVideoSize', 'reducedMotion', 'size', 'startTracing', 'stopTracing', 'storageState', 'version', 'wb']

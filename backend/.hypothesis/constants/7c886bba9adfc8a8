@@ -1,0 +1,4 @@
+# file: C:\Users\arshi\OneDrive\Desktop\PolyEdge\backend\app\models.py
+# hypothesis_version: 6.151.9
+
+['AlertSetting', 'BET', 'BettorFollow', 'User', 'alert_setting', 'alert_settings', 'all, delete-orphan', 'bet_events', 'bettor_follows', 'follows', 'free', 'user', 'users', 'users.id']

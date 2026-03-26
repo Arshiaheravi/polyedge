@@ -822,9 +822,15 @@ FAILED: 4 test failures on first run — existing tests for web_push_enabled use
 RULE: [2026-03-26] When adding a tier gate to an existing endpoint, grep ALL tests for calls to that endpoint and check if they use a free-tier user. Tier checks break free-tier tests that previously worked.
 RULE: [2026-03-26] @lru_cache(maxsize=1) on get_settings() is critical for settings called in hot loops (per-bet, per-follower). Without it, each call re-reads .env file from disk — 1000+ file reads per scheduler poll cycle.
 
+### Session #140 Reflexion — 2026-03-26 (BUGFIX)
+ACCOMPLISHED: Fixed VIP copy timing padlock bug — `_activity_cache` in routes/follows.py stored `tier` at fill-time; after a free→VIP upgrade, the cached response had `tier:'free'` for up to 30s, causing frontend to render the padlock for VIP users. Fix: inject `current_user.subscription_tier` on every cache hit so tier is always fresh from DB. Added 2 regression tests (stale-cache override after upgrade, VIP tier assertion). 396 tests passing.
+FAILED: Nothing — first run passed all 396 tests.
+RULE: [2026-03-26] When caching API responses that include user-state fields (tier, subscription limits, feature flags), NEVER serve those fields from the stale cache. Always override with the live user object on cache hits: `return {**cached["data"], "tier": current_user.subscription_tier}`. The bettors/positions list can be stale; the user's state cannot.
+
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend Checks |
 |---------|--------------|-----------------|
+| 140     | 396          | 132             |
 | 139     | 394          | 132             |
 | 137     | 393          | 132             |
 | 135     | 390          | 132             |
