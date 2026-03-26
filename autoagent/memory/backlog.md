@@ -100,6 +100,12 @@ These tests verify the data coming from Polymarket is real, consistent, and make
 
 ## MEDIUM PRIORITY — Edge Cases & Reliability
 
+- [ ] **Rate limiting on auth routes** — add slowapi/starlette middleware to limit POST /auth/register and POST /auth/login to 10 req/min per IP; rapid brute-force attacks currently not blocked. Competitors + 2026 FastAPI best practices both flag this as production-critical. (Source: fastlaunchapi.dev 2026)
+
+- [ ] **Bot filtering on leaderboard** — flag or exclude Polymarket accounts with suspiciously uniform bet timing (e.g. always placing identical size bets at consistent intervals = algorithmic trader). Reduces noise in the followed-bettor list for copy-traders. Add `is_bot_suspected` flag to leaderboard normaliser. (Source: competitor research, session 143)
+
+- [ ] **Configurable scheduler poll interval** — add `POLL_INTERVAL_SECONDS` to config.py (default 30); read in scheduler.py instead of hardcoded `30`. Allows tightening to 10s during high-traffic events without code changes. (Source: FastAPI SaaS best practices 2026, session 143)
+
 - [ ] **Empty follows state** — Playwright: log in as new user with no follows, open Follows tab, assert empty state message shown (not crash)
 
 - [ ] **Polymarket timeout handling** — pytest: mock Polymarket API to return 500, assert /bettors endpoint returns graceful error not 500
