@@ -33,9 +33,9 @@ Look for:
 
 **Reflexion gap check** — run this BEFORE reading the activity log:
 ```bash
-grep "^### Session" autoagent/memory/knowledge.md | tail -1
+grep -oE "^### Session #[0-9]+" autoagent/memory/knowledge.md | grep -oE "[0-9]+" | sort -n | tail -1
 ```
-Note the last session number with a reflexion. Then check the current session number from `autoagent/sessions.json` (`len(d) - 1`). If there are 3+ sessions with no reflexion entries, add writing those reflexions to your STEP 3 fixes — use the activity_log entries as source material (ACCOMPLISHED = DONE line, FAILED = "Nothing" if not mentioned, RULE = derive from what was fixed). Missing reflexions break the accumulated learning chain and cause rules to be re-discovered in future sessions.
+This extracts all session numbers numerically and returns the highest — do NOT use `grep ... | tail -1` without numeric sort, because knowledge.md is NOT in session-number order (meta sessions append older reflexions at the end, which makes the physically-last line an old session number). Then check the current session number from `autoagent/sessions.json` (`len(d) - 1`). If there are 3+ work sessions with no reflexion entries, add writing those reflexions to your STEP 3 fixes — use the activity_log entries as source material (ACCOMPLISHED = DONE line, FAILED = "Nothing" if not mentioned, RULE = derive from what was fixed). META sessions and BRAIN sessions do not require reflexion entries (those use their own session prefix). Missing reflexions break the accumulated learning chain and cause rules to be re-discovered in future sessions.
 
 ## STEP 2 — DIAGNOSE
 For each failure pattern, ask:
