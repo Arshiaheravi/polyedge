@@ -290,30 +290,15 @@ class TestBasicUserFullJourney:
         # (If only 1-3 signals exist globally, that's still valid for basic)
         consensus_html = page.inner_html("#consensus-list")
 
-        # Whale names must NOT be visible for basic users
-        # VIP-only names are rendered in spans inside the list; the lock icon shows instead
-        has_whale_names_shown = (
-            "Upgrade to VIP to see whale names" not in consensus_html
-            and "🔒" not in consensus_html
-            and signal_count > 0
-            # Heuristic: if the list shows 'whale' text that isn't the upgrade prompt
-            and any(
-                kw in consensus_html.lower()
-                for kw in ["whale names", "names_visible"]
-                if kw in consensus_html.lower()
-            )
+        # Basic users must see the VIP upgrade prompt for whale names (names_visible=False)
+        # The frontend renders "Upgrade to VIP to see whale names" or a 🔒 icon when
+        # the backend returns names_visible=False (which it always does for basic tier).
+        assert "Upgrade to VIP to see whale names" in consensus_html or "🔒" in consensus_html, (
+            "Basic user consensus tab: VIP whale-names upgrade prompt not found. "
+            "Backend should return names_visible=False for basic tier, and the frontend "
+            "should render the 'Upgrade to VIP to see whale names' lock. "
+            f"Consensus list HTML (first 600 chars): {consensus_html[:600]}"
         )
-        # Only fail if we can positively identify whale names are exposed
-        # (consensus_html has no explicit whale name — absence is expected)
-        assert "Upgrade to VIP to see whale names" in consensus_html or \
-               ("🔒" in consensus_html) or \
-               True, (  # conservative: don't fail on absence, only on presence of wrong data
-            "Basic user consensus tab: unexpected content structure"
-        )
-        # The upgrade-to-VIP banner should appear on the consensus tab for basic users
-        # (locks whale name section — but doesn't block viewing signals)
-        # This is an optional assertion since the banner may not appear if there are no signals
-        _ = has_whale_names_shown  # referenced to avoid unused-variable lint
 
 
 # ── Journey 3: VIP user ───────────────────────────────────────────────────────

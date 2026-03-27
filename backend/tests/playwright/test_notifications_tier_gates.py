@@ -151,7 +151,7 @@ class TestVipTierAlertsAccess:
         page.evaluate("toggleTelegram()")
 
         # Give it a moment to settle — upgrade modal should NOT appear
-        import time; time.sleep(0.5)
+        page.wait_for_timeout(500)
 
         assert not _is_upgrade_modal_visible(page), \
             "Upgrade modal must NOT appear when VIP user clicks Telegram toggle"
