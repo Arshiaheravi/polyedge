@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-27
+- **[SESSION #189] 3 Playwright E2E full-journey tests — free/basic/VIP chained user journeys** — register→leaderboard→profile→follow→follows tab→tier UI assertions per tier; 46→49 Playwright tests
 - **[SESSION #187] 4 Playwright E2E tests — auth persistence, bad-token redirect, follow-limit upgrade modal, XSS safety** — proves core browser auth/paywall flows work; 42→46 Playwright tests
 
 ## 2026-03-26

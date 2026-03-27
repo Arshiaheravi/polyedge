@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-160 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 189)
+DONE: Added 3 Playwright E2E full-journey tests (test_full_journeys.py) — free/basic/VIP users each get a chained multi-step journey: register/login → leaderboard → bettor profile (blurred vs unlocked simulator) → follows tab (padlock vs signal badge) → consensus tab (capped vs all signals, no names vs whale names) → follow limit (upgrade modal for free, no 403 for VIP). 46 → 49 Playwright tests.
+IMPACT: Proves the full tier-gated feature chain works end-to-end as a real user would experience it. Catches regressions in state transitions that individual unit tests miss (e.g., "user follows bettor → UI correctly shows padlock in follows tab").
+FILES: backend/tests/playwright/test_full_journeys.py
+
 ## 2026-03-27 — META (Session 188)
 IMPROVED: playwright.md — added FLAKY TEST HANDLING section (re-run failing tests in isolation before investigating; 3-6 Polymarket API rate-limit flakes expected in full-suite runs) and FRESH USER PATTERN section (always register timestamp-email user for follow-limit/quota tests; never reuse shared fixture accounts for state-accumulating tests).
 PATTERNS FOUND: Session 187 RULE entries in knowledge.md about flaky tests and fresh user pattern had no matching guidance in playwright.md — work sessions read skill files first, not knowledge.md reflexions, so these patterns would be rediscovered each time rather than applied proactively.

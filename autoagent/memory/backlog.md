@@ -5,16 +5,6 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
-## PRIORITY 1 — Full User Journey Playwright Tests
-
-- [ ] **E2E: Free user full journey** — Playwright: register new user → browse leaderboard → click bettor → profile modal opens with Copy Simulator BLURRED (locked=true) → follow bettor → open dashboard follows tab → position card shows padlock (not copy signal badge) → try to follow 2nd bettor → upgrade modal appears. Assert each step explicitly.
-
-- [ ] **E2E: Basic user full journey** — Playwright: log in as `basic@polyedge.com` / `BasicTest123!` → leaderboard loads → click bettor → Copy Simulator shows P&L numbers (not blurred) → follow bettor → dashboard position card shows copy signal badge (good/fair/late, NOT padlock) → open Consensus tab → all markets visible, whale_names = [] (no names shown). Assert each step.
-
-- [ ] **E2E: VIP user full journey** — Playwright: log in as `vip@polyedge.com` / `VipTest123!` → profile page shows full Copy Simulator → dashboard position cards show copy signal badge → Consensus tab shows all markets WITH whale names visible → follow limit: can follow more than 5 bettors without 403 error. Assert each step.
-
----
-
 ## PRIORITY 2 — Tier Gate Visual Verification (Playwright)
 
 - [ ] **Playwright: Notifications settings page — tier gates** — log in as free user → navigate to Alerts tab → assert Telegram enable button is disabled or shows upgrade prompt → assert SMS option not shown. Log in as VIP → assert Telegram + web push enabled, SMS option visible.

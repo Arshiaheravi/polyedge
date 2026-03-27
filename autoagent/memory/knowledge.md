@@ -45,7 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **500 passed, 2 skipped** (as of 2026-03-27, session 187) — baseline unchanged; 4 new Playwright E2E tests added
+- Test count: **500 passed, 2 skipped** (as of 2026-03-27, session 189) — baseline unchanged; 3 new Playwright full-journey tests added
 - Test count: **499 passed, 2 skipped** (as of 2026-03-26, session 185)
 - Test count: **496 passed, 2 skipped** (as of 2026-03-26, session 184) — 3 new tests: consensus cache hit + no-sub JWT optional auth + send_telegram ConnectError
 - Test count: **493 passed, 2 skipped** (as of 2026-03-26, session 182) — 3 new tests: push_subscription dict path + telegram empty text + simulator SELL-side exclusion
@@ -53,6 +53,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Test count: **488 passed, 2 skipped** (as of 2026-03-26, session 180) — 5 new tests: leaderboard accuracy normalise (3) + GET /bettors accuracy passthrough + POST /follows 409 detail message
 - Test count: **480 passed, 2 skipped** (as of 2026-03-26, session 176) — 5 new tests: accuracy field regression + follows order + mocked consensus + profile accuracy
 - Test count: **475 passed, 1 skipped** (as of 2026-03-26, session 175)
+- Playwright E2E: **49 passed, 2 skipped** (as of 2026-03-27, session 189) — 3 new: free/basic/VIP full-journey tests
 - Playwright E2E: **46 passed, 2 skipped** (as of 2026-03-27, session 187) — 4 new: auth persist, bad-token, follow-limit modal, XSS safety
 - Playwright E2E: **42 passed, 2 skipped** (as of 2026-03-26, session 156)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
@@ -65,6 +66,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #189 Reflexion — 2026-03-27
+ACCOMPLISHED: Added 3 Playwright E2E full-journey tests (test_full_journeys.py): (1) free user — register fresh → leaderboard → profile blurred simulator → follow → follows tab padlock assertion → 2nd follow → upgrade modal; (2) basic user — login → profile non-blurred → consensus all signals no whale names; (3) VIP user — login → profile unlocked → consensus no upgrade banner → follow API call returns non-403. 46→49 Playwright tests. All passed on first run after one fix.
+FAILED: First run of free user test failed at padlock check — asserted `has_positions = "Copyable Bets" in activity_html or "open" in activity_html` but "No open bets right now" contains "open", making has_positions True even when no positions exist, causing the padlock assertion to fire on an empty-state message.
+RULE: [2026-03-27] When checking whether the follows activity container has real position cards (vs empty state), detect "Copyable Bets" text specifically — NOT "open" (also appears in "No open bets right now"). The "Copyable Bets" header is rendered only when allPositions.length > 0 in refreshFollowsActivity().
+RULE: [2026-03-27] Position cards with tier badges (padlock/copy-signal) are in #follows-activity-container (populated by /follows/live), NOT in #follows-container (populated by /follows which shows followed-bettor list). Never assert copy timing badges against #follows-container.
 
 ### Session #187 Reflexion — 2026-03-27
 ACCOMPLISHED: Added 4 Playwright E2E tests in test_auth_and_security.py covering auth persistence, bad-token redirect, follow-limit upgrade modal, and XSS safety. All 4 passed on first run. 500 backend tests unchanged; 42→46 Playwright tests.
