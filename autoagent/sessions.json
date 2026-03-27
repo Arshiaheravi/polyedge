@@ -4243,5 +4243,26 @@
       "notes": "3 new Playwright full-journey tests pass; 46->49 Playwright tests total"
     },
     "notes": "Push skipped \u2014 remote uses squash-snapshot model and requires force-push; committed locally at aa8d984"
+  },
+  {
+    "session": 190,
+    "date": "2026-03-27",
+    "time": "12:00",
+    "type": "work",
+    "summary": "Added 4 Playwright E2E tests verifying Alerts tab tier gates: free user Telegram toggle opens upgrade modal, free user SMS shows VIP required label and toggle blocks with upgrade modal, VIP user SMS label shows Not verified (no gate), VIP Telegram toggle not blocked",
+    "files": [
+      "backend/tests/playwright/test_notifications_tier_gates.py"
+    ],
+    "tests": {
+      "before": 500,
+      "after": 500,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 4,
+      "failures": 0,
+      "notes": "7 pre-existing rate-limit flakes in full-suite run; all passed in isolation"
+    }
   }
 ]

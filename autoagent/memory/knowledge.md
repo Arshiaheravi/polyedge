@@ -45,6 +45,8 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
+- Test count: **500 passed, 2 skipped** (as of 2026-03-27, session 190) — baseline unchanged; 4 new Playwright alerts tier gate tests added
+- Playwright E2E: **53 passed, 2 skipped** (as of 2026-03-27, session 190) — 4 new: free Telegram/SMS gate + VIP SMS/Telegram access
 - Test count: **500 passed, 2 skipped** (as of 2026-03-27, session 189) — baseline unchanged; 3 new Playwright full-journey tests added
 - Test count: **499 passed, 2 skipped** (as of 2026-03-26, session 185)
 - Test count: **496 passed, 2 skipped** (as of 2026-03-26, session 184) — 3 new tests: consensus cache hit + no-sub JWT optional auth + send_telegram ConnectError
@@ -66,6 +68,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #190 Reflexion — 2026-03-27
+ACCOMPLISHED: Added 4 Playwright E2E tests for Alerts tab tier gates (test_notifications_tier_gates.py): (1) free user Telegram toggle → upgrade modal fires; (2) free user SMS label shows "VIP required" + SMS toggle → upgrade modal fires; (3) VIP user SMS label shows "Not verified" (not "VIP required"); (4) VIP Telegram toggle does not trigger upgrade modal. 49 → 53 Playwright tests. All 4 passed on first full run after one stale-DB fix.
+FAILED: First test run showed ERROR on test 1 due to stale test_polyedge.db from an interrupted previous run. Root cause: `create_all` is called with checkfirst=True but the DB file had partially created tables from an interrupted session, causing OperationalError on the first `CREATE TABLE` call. Fix: kill background test processes holding the file lock, then re-run.
+RULE: [2026-03-27] When calling `tests/playwright/` in isolation (not as part of a full suite run), kill all background test processes first — they may hold a lock on test_polyedge.db, causing `create_all` to fail with "table already exists" on the first test. Run `cd backend && py -m pytest tests/ --ignore=tests/playwright` first to get a clean DB state, then run playwright tests.
+RULE: [2026-03-27] When testing JS-triggered tier gates in Playwright, call the JS function directly via `page.evaluate("toggleTelegram()")` rather than clicking the toggle element — calling the function directly is reliable and avoids potential click-interception issues from overlapping elements or delayed rendering.
 
 ### Session #189 Reflexion — 2026-03-27
 ACCOMPLISHED: Added 3 Playwright E2E full-journey tests (test_full_journeys.py): (1) free user — register fresh → leaderboard → profile blurred simulator → follow → follows tab padlock assertion → 2nd follow → upgrade modal; (2) basic user — login → profile non-blurred → consensus all signals no whale names; (3) VIP user — login → profile unlocked → consensus no upgrade banner → follow API call returns non-403. 46→49 Playwright tests. All passed on first run after one fix.

@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-160 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 190)
+DONE: Added 4 Playwright E2E tests for Alerts tab tier gates — free user Telegram toggle fires upgrade modal, free user SMS label shows "VIP required" and SMS toggle fires upgrade modal, VIP user SMS label shows "Not verified" (no gate), VIP Telegram toggle is not blocked. 49 → 53 Playwright tests.
+IMPACT: Proves the notification channel tier restrictions work correctly in the browser — any regression that accidentally lets free users enable Telegram or blocks VIP users from SMS will now be caught automatically.
+FILES: backend/tests/playwright/test_notifications_tier_gates.py
+
 ## 2026-03-27 — TESTING (Session 189)
 DONE: Added 3 Playwright E2E full-journey tests (test_full_journeys.py) — free/basic/VIP users each get a chained multi-step journey: register/login → leaderboard → bettor profile (blurred vs unlocked simulator) → follows tab (padlock vs signal badge) → consensus tab (capped vs all signals, no names vs whale names) → follow limit (upgrade modal for free, no 403 for VIP). 46 → 49 Playwright tests.
 IMPACT: Proves the full tier-gated feature chain works end-to-end as a real user would experience it. Catches regressions in state transitions that individual unit tests miss (e.g., "user follows bettor → UI correctly shows padlock in follows tab").

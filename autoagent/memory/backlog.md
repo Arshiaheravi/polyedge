@@ -5,12 +5,6 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
-## PRIORITY 2 — Tier Gate Visual Verification (Playwright)
-
-- [ ] **Playwright: Notifications settings page — tier gates** — log in as free user → navigate to Alerts tab → assert Telegram enable button is disabled or shows upgrade prompt → assert SMS option not shown. Log in as VIP → assert Telegram + web push enabled, SMS option visible.
-
----
-
 ## PRIORITY 3 — Security E2E
 
 - [ ] **E2E: CORS headers in browser** — Playwright: intercept network response for any API call → assert `Access-Control-Allow-Origin` header is NOT `*` (wildcard). Assert it is either `http://localhost:3000` or absent on non-CORS requests.
