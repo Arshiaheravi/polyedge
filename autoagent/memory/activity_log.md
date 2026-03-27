@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-160 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — AUDIT (Session 192)
+DONE: Code quality audit of last 5 work sessions' changed test files — fixed dead assertion (assert ... or True, always passes) in test_full_journeys.py with real assertion, and replaced blocking time.sleep(0.5) with page.wait_for_timeout(500) in test_notifications_tier_gates.py.
+IMPACT: Dead assertion was masking a potentially broken tier gate (basic user seeing whale names without VIP lock). Sleep fix removes a blocking Python call inside Playwright tests.
+FILES: backend/tests/playwright/test_full_journeys.py, backend/tests/playwright/test_notifications_tier_gates.py
+
 ## 2026-03-27 — TESTING (Session 191)
 DONE: Added 4 Playwright E2E CORS header tests — browser-level verification that API responses never return wildcard CORS origin, correct localhost:3000 origin is reflected, preflight OPTIONS succeeds, and untrusted origins are rejected. 53 → 57 Playwright tests.
 IMPACT: Proves the CORS security fix (Bug #2) works from a real browser's perspective — any regression that accidentally re-introduces wildcard CORS will now be caught in the Playwright suite before reaching users.

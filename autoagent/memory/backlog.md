@@ -5,12 +5,6 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
-## PRIORITY 2 — Code Quality
-
-- [ ] **Code quality audit** — scan last 5 work sessions' changed files for cross-file coupling, test specificity degradation, and smells introduced by agent edits. Changed files (sessions 186–190): test_polymarket_service.py, test_alerts.py, test_tier_gates.py, test_security.py, test_notifications.py, test_full_journeys.py, test_auth_and_security.py, test_notifications_tier_gates.py.
-
----
-
 ## PRIORITY 3 — Security E2E
 
 ## PRIORITY 4 — Error State E2E
