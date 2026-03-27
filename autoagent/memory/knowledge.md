@@ -45,6 +45,8 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
+- Test count: **500 passed, 2 skipped** (as of 2026-03-27, session 191) — baseline unchanged; 4 new Playwright CORS header tests added
+- Playwright E2E: **57 passed, 2 skipped** (as of 2026-03-27, session 191) — 4 new: CORS no-wildcard, correct origin, preflight, untrusted origin
 - Test count: **500 passed, 2 skipped** (as of 2026-03-27, session 190) — baseline unchanged; 4 new Playwright alerts tier gate tests added
 - Playwright E2E: **53 passed, 2 skipped** (as of 2026-03-27, session 190) — 4 new: free Telegram/SMS gate + VIP SMS/Telegram access
 - Test count: **500 passed, 2 skipped** (as of 2026-03-27, session 189) — baseline unchanged; 3 new Playwright full-journey tests added
@@ -1215,3 +1217,9 @@ RULE: [2026-03-26] Agent-edited code accumulates silent duplicates because each 
 ACCOMPLISHED: Dead code audit of frontend/index.html (all JS function definitions scanned against oncl* attributes and JS call sites) and backend/app/ (all imports verified). Found 1 dead function: `tierBadge(tier)` — generated an HTML string but was never called from any code path or HTML attribute. Removed (3 lines). 467 backend tests stable.
 FAILED: Nothing — straightforward removal.
 RULE: [2026-03-26] For JS dead code detection, grep for the function name in: (1) `onclick="`, `onclick='` attributes; (2) other JS function bodies. A function can look syntactically correct and even return useful output but still be completely dead if nothing calls it. `tierBadge` produced badge HTML that was never rendered — silent dead weight. The grep pattern: `grep -n "tierBadge\|functionName" frontend/index.html` covers both call sites and definition in one pass.
+
+### Session #191 Reflexion — 2026-03-27 (TESTING)
+ACCOMPLISHED: Added 4 Playwright E2E CORS header tests (test_cors_headers.py). Browser-level verification that API responses from the live backend never return wildcard CORS origin, the correct localhost:3000 origin is reflected, preflight OPTIONS succeeds, and untrusted origins are not reflected. 53 → 57 Playwright tests.
+FAILED: Nothing — all 4 tests passed first run. Earlier test run showed 7 failures due to concurrent pytest processes locking the SQLite test DB — not related to CORS tests.
+RULE: [2026-03-27] `page.on("response", handler)` + `page.wait_for_load_state("networkidle")` is the correct Playwright pattern for capturing CORS headers from real browser requests. The handler fires for all cross-origin requests made during page load, giving actual browser-level header verification. Use `page.request.fetch()` for direct server-level checks (bypasses browser CORS) — these two approaches are complementary, not interchangeable.
+RULE: [2026-03-27] When multiple background pytest processes run simultaneously against the same SQLite DB, expect transient failures: "7 failed, 490 passed" is a concurrency artifact, not a real regression. Always run the final verification as a single foreground process before committing.

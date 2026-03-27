@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-27
+- **[SESSION #191] 4 Playwright E2E CORS header tests** — browser-level verification: no wildcard origin, correct localhost:3000 echoed, preflight succeeds, untrusted origin rejected; 53→57 Playwright tests
 - **[SESSION #190] 4 Playwright E2E tests — Alerts tab tier gates** — free user Telegram/SMS toggle fires upgrade modal; VIP sees "Not verified" SMS label (not "VIP required"); 49→53 Playwright tests
 - **[SESSION #189] 3 Playwright E2E full-journey tests — free/basic/VIP chained user journeys** — register→leaderboard→profile→follow→follows tab→tier UI assertions per tier; 46→49 Playwright tests
 - **[SESSION #187] 4 Playwright E2E tests — auth persistence, bad-token redirect, follow-limit upgrade modal, XSS safety** — proves core browser auth/paywall flows work; 42→46 Playwright tests

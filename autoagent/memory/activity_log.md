@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-160 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 191)
+DONE: Added 4 Playwright E2E CORS header tests — browser-level verification that API responses never return wildcard CORS origin, correct localhost:3000 origin is reflected, preflight OPTIONS succeeds, and untrusted origins are rejected. 53 → 57 Playwright tests.
+IMPACT: Proves the CORS security fix (Bug #2) works from a real browser's perspective — any regression that accidentally re-introduces wildcard CORS will now be caught in the Playwright suite before reaching users.
+FILES: backend/tests/playwright/test_cors_headers.py
+
 ## 2026-03-27 — TESTING (Session 190)
 DONE: Added 4 Playwright E2E tests for Alerts tab tier gates — free user Telegram toggle fires upgrade modal, free user SMS label shows "VIP required" and SMS toggle fires upgrade modal, VIP user SMS label shows "Not verified" (no gate), VIP Telegram toggle is not blocked. 49 → 53 Playwright tests.
 IMPACT: Proves the notification channel tier restrictions work correctly in the browser — any regression that accidentally lets free users enable Telegram or blocks VIP users from SMS will now be caught automatically.

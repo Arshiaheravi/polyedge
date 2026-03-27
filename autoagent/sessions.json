@@ -4264,5 +4264,26 @@
       "failures": 0,
       "notes": "7 pre-existing rate-limit flakes in full-suite run; all passed in isolation"
     }
+  },
+  {
+    "session": 191,
+    "date": "2026-03-27",
+    "time": "12:30",
+    "type": "work",
+    "summary": "Added 4 Playwright E2E tests verifying CORS headers from a real browser: no wildcard in API responses, correct localhost:3000 origin reflected, preflight OPTIONS succeeds, untrusted origin not reflected",
+    "files": [
+      "backend/tests/playwright/test_cors_headers.py"
+    ],
+    "tests": {
+      "before": 500,
+      "after": 500,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend code changed this session"
+    }
   }
 ]
