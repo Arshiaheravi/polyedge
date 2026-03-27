@@ -1,56 +1,81 @@
-# Backlog
+# Backlog — E2E Testing Sprint
 
-## HIGH PRIORITY — Testing
-
-- [ ] **Code quality audit — scan last 5 work sessions' changed files for cross-file coupling, test specificity degradation, and smells introduced by agent edits** (triggered: work session count = 140, multiple of 5)
-
----
-
-## MEDIUM PRIORITY — Edge Cases & Reliability
-
-- [ ] **Bot filtering on leaderboard** — flag or exclude Polymarket accounts with suspiciously uniform bet timing (e.g. always placing identical size bets at consistent intervals = algorithmic trader). Reduces noise in the followed-bettor list for copy-traders. Add `is_bot_suspected` flag to leaderboard normaliser. (Source: competitor research, session 143)
-
-- [ ] **Configurable scheduler poll interval** — add `POLL_INTERVAL_SECONDS` to config.py (default 30); read in scheduler.py instead of hardcoded `30`. Allows tightening to 10s during high-traffic events without code changes. (Source: FastAPI SaaS best practices 2026, session 143)
-
-- [ ] **Empty follows state** — Playwright: log in as new user with no follows, open Follows tab, assert empty state message shown (not crash)
+All tasks are NEW. None of these appear in done.md (sessions 135–186).
+Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
-## HIGH PRIORITY — Code Review
+## PRIORITY 1 — Full User Journey Playwright Tests
 
-These tasks are a structural code review — not testing functionality, but reading the code to find bugs, security holes, and logic errors that tests might miss. Write findings as comments in a `tests/test_code_review.py` file or fix directly if small.
+- [ ] **E2E: Free user full journey** — Playwright: register new user → browse leaderboard → click bettor → profile modal opens with Copy Simulator BLURRED (locked=true) → follow bettor → open dashboard follows tab → position card shows padlock (not copy signal badge) → try to follow 2nd bettor → upgrade modal appears. Assert each step explicitly.
 
-*(Auth review, SQL injection, CORS, tier gate completeness, scheduler correctness, Polymarket service review — all confirmed clean in code review 2026-03-26 and sessions 137–147. Removed to prevent re-auditing already-verified areas.)*
+- [ ] **E2E: Basic user full journey** — Playwright: log in as `basic@polyedge.com` / `BasicTest123!` → leaderboard loads → click bettor → Copy Simulator shows P&L numbers (not blurred) → follow bettor → dashboard position card shows copy signal badge (good/fair/late, NOT padlock) → open Consensus tab → all markets visible, whale_names = [] (no names shown). Assert each step.
 
-*(Dead code audit: completed session 167 — only 1 dead function found (tierBadge, 3 lines) and removed. All backend imports verified in use.)*
+- [ ] **E2E: VIP user full journey** — Playwright: log in as `vip@polyedge.com` / `VipTest123!` → profile page shows full Copy Simulator → dashboard position cards show copy signal badge → Consensus tab shows all markets WITH whale names visible → follow limit: can follow more than 5 bettors without 403 error. Assert each step.
+
+- [ ] **E2E: Auth persistence** — Playwright: log in → refresh page (F5) → user is still logged in (pe_token in localStorage, username shown in UI, not redirected to landing). Assert both localStorage and visible UI state.
+
+- [ ] **E2E: Auth expiry / bad token** — Playwright: manually set `localStorage.setItem('pe_token', 'invalid.jwt.token')` → navigate to dashboard → assert redirected to landing page (401 handled gracefully, no blank screen, no JS crash).
 
 ---
 
-## NEW FEATURES (build AFTER all tests pass)
+## PRIORITY 2 — Tier Gate Visual Verification (Playwright)
 
-- [ ] **WebSocket scheduler (replace 30s REST poll)** — Replace `_poll_bets` and `_poll_vip_bets` REST polling with a Polymarket WebSocket subscription to `wss://ws-subscriptions-clob.polymarket.com/ws/markets`. As of January 2026, the 100-instrument cap on the Markets channel was removed (now supports 500 per socket), making this fully viable for PolyEdge's bettor pool. Impact: notification latency drops from ~30s to near-real-time for ALL tiers, eliminating the need for the separate VIP 5s poll job. Closes the latency gap vs PolyCop/PolyGun without any additional polling cost. (Source: docs.polymarket.com/market-data/websocket/overview, session 173)
+- [ ] **Playwright: Free tier — Copy Simulator blurred** — log in as free user → click bettor in leaderboard → assert profile modal contains `.simulator-locked` class OR blurred overlay element. Assert `locked: true` also in the raw API response `GET /bettors/{address}`.
 
-- [ ] **Basket consensus alert** — when 3+ followed bettors all take the same side on the same market within a short window, fire a "basket consensus" notification (stronger signal than single-whale alert). Implementable in `scheduler.py` by aggregating positions across followed bettors per conditionId before dispatching. No new external APIs needed. (Source: phemex.com Wallet Baskets Strategy, session 163)
+- [ ] **Playwright: Free tier — Follow limit in UI** — log in as fresh free user (register new) → follow 1 bettor (succeeds) → attempt to follow 2nd bettor → assert upgrade modal/toast appears with "upgrade" text visible. Assert second follow returns 403 from API.
 
-- [ ] **Time-period leaderboard filter** — add time selector buttons (Today / Week / Month / All) above the leaderboard grid, pass selected period to `/bettors` endpoint which passes it to the Polymarket API (`?sortBy=profit&timeframe=weekly` etc.). Polymarket's own leaderboard has this filter — users who come from Polymarket will immediately expect it. Show who's been profitable THIS WEEK, not just all-time. TIER GATE: none (competitive baseline feature). (Source: Polymarket leaderboard research session 153)
+- [ ] **Playwright: Basic tier — Consensus whale names hidden** — log in as basic user → open Consensus tab → assert market cards render → assert NO whale name text visible (names_visible=false means the names array is empty, no bettor name links rendered).
 
-- [ ] **Category-specific leaderboard filter** — let users filter the leaderboard by market category (crypto/politics/sports/mentions) matching Polymarket's native categories; show per-category win rate badge on bettor cards (e.g. "95% in politics"). Competitor Polymarket Analytics (Primo Data) offers this as differentiating free feature. Add category filter chips above the leaderboard grid. TIER GATE: Free/Basic/VIP (no gate — competitive baseline).
+- [ ] **Playwright: VIP tier — Consensus whale names visible** — log in as VIP → open Consensus tab → assert at least one market card renders with whale name text (non-empty names array rendered in DOM).
 
-- [ ] **Personalized notification body** — embed the bettor's leaderboard rank + the user's first name in every notification message (e.g. "Hey Alex — #7 ranked whale just bet $5,000 on [market]"). Requires one DB query per alert for the bettor's rank. Industry benchmarks show named notifications get 2x CTR vs generic. TIER GATE: Basic/VIP. (Source: pushwoosh.com fintech push benchmarks, session 183)
+- [ ] **Playwright: Notifications settings page — tier gates** — log in as free user → navigate to Alerts tab → assert Telegram enable button is disabled or shows upgrade prompt → assert SMS option not shown. Log in as VIP → assert Telegram + web push enabled, SMS option visible.
 
-- [ ] **Outbound webhook notification channel** — add `webhook_url` field to `AlertSetting`; in `dispatch_bet_notification()` fire an HTTP POST with the bet payload to the user's webhook URL (Zapier/Slack/custom scripts). No competitor at the free/basic tier offers this. Implementable: `httpx.post(webhook_url, json=payload)` in notifications.py. TIER GATE: VIP only (power user feature). (Source: defiprime.com Polymarket ecosystem guide, session 183)
+---
 
-- [ ] **Delayed alerts for Free tier** — store notification in a queue when created; dispatch to Free-tier users after 10 minutes, Basic after 1 minute, VIP immediately (already polling at 5s). Creates concrete upgrade incentive — users experience the 10-minute lag before seeing the opportunity close. APScheduler supports delayed job scheduling natively. (Source: signals.coincodecap.com top Polymarket alert bots 2026, session 183)
+## PRIORITY 3 — Security E2E
 
-- [ ] **Minimum bet size filter in AlertSetting** — add `min_bet_usd` field (default 0) to `AlertSetting`; in scheduler, skip `dispatch_bet_notification()` if `bet.amount_usd < user.alert_settings.min_bet_usd`. UI: slider or input on alerts settings page. Reduces noise for users who only want to know about large conviction bets. TIER GATE: Basic/VIP. (Source: pushwoosh.com behavioral segmentation research, session 183)
+- [ ] **E2E: XSS — script tag in username** — register with name `<script>alert(1)</script>Test` → log in → navigate to account tab → assert the name is displayed as escaped text (not executed) — no alert() fires, `textContent` contains the literal `<script>` characters. Write as both Playwright test and backend test asserting response body escapes HTML.
 
-- [ ] Copy Ratio Setting — let users set a per-bettor copy ratio multiplier (0.1x, 0.25x, 0.5x, 1x) stored in BettorFollow table; show on follow cards as "Copy at 0.5x"; include copy_ratio in notification messages. TIER GATE: Basic/VIP only.
+- [ ] **E2E: JWT tamper — fetch with modified token** — backend test: create valid JWT, modify the payload (change tier to "vip"), re-sign with wrong key → send to `GET /auth/me` → assert 401 response. Then assert `GET /follows` with same token also returns 401.
 
-- [ ] Insider Score — 0-100 confidence score per bettor (win_rate × profit_usd × avg_conviction × bet_count / 50). Badge on leaderboard cards (green >70, yellow 40-70, gray <40). TIER GATE: badge visible to all; numeric score for Basic/VIP only.
+- [ ] **E2E: Mass assignment — subscription_tier in register body** — backend test: POST /auth/register with body `{"email":..., "password":..., "subscription_tier": "vip"}` → assert user created with tier="free" (mass assignment blocked). Verify via GET /auth/me.
 
-- [ ] **Hedging position filter** — Before firing a notification, check if the bettor holds an offsetting position in the same market (YES + NO). Skip notification if offsetting positions cancel out — this is a liquidity farming position, not a directional bet. Reduces notification fatigue. Add `is_directional` flag to BetEvent. Stand.trade competitor already ships this. (Source: Polymarket copytrade-wars article, session 153)
+- [ ] **E2E: CORS headers in browser** — Playwright: intercept network response for any API call → assert `Access-Control-Allow-Origin` header is NOT `*` (wildcard). Assert it is either `http://localhost:3000` or absent on non-CORS requests.
 
-- [ ] **SQLAlchemy production pool settings** — Set `pool_size=10, max_overflow=20, pool_pre_ping=True, pool_recycle=3600` in `database.py` before any PostgreSQL migration. `pool_pre_ping` tests connections before use and discards stale ones. Currently using SQLite defaults (single-file, no pool). (Source: zestminds.com FastAPI deployment guide, session 153)
+- [ ] **E2E: SQL injection via login** — backend test: POST /auth/login with `{"email": "' OR '1'='1", "password": "x"}` → assert 401 (not 200, not 500). Also try `{"email": "admin@test.com'; DROP TABLE users; --", "password": "x"}` → assert 401 and users table still exists after request.
+
+---
+
+## PRIORITY 4 — Error State E2E
+
+- [ ] **E2E: Polymarket API timeout → graceful frontend** — Playwright: mock `fetch` on `/bettors` to return a network error → assert leaderboard shows an error message (not blank white screen, not JS crash). The error text should be user-friendly.
+
+- [ ] **E2E: Empty follows state** — Playwright: log in as fresh user with zero follows → open Follows tab → assert empty-state message is shown (not a blank div, not a spinner stuck forever). The empty state message must be visible and contain meaningful text.
+
+- [ ] **E2E: Backend 503 → frontend shows error** — Playwright: intercept API response and return 503 → assert dashboard shows an error toast or message (not silent blank). Test both leaderboard and consensus tab endpoints.
+
+- [ ] **E2E: Expired Polymarket data** — backend test: if `/bettors` returns empty list from Polymarket, assert GET /bettors returns `{"bettors": []}` with 200 (not 500). Assert frontend renders empty leaderboard gracefully.
+
+---
+
+## PRIORITY 5 — Cross-Endpoint Data Consistency
+
+- [ ] **E2E: Leaderboard profit matches profile profit** — backend integration test: GET /bettors → pick top bettor address → GET /bettors/{address} → assert `pnl_usd` in leaderboard entry is within 10% of `pnl_usd` in profile response (same bettor, same data source, must be consistent).
+
+- [ ] **E2E: Follow count matches admin stats** — backend integration test: register 2 users → each follows 1 bettor → GET /admin/stats with correct header → assert `total_follows >= 2`. Create and delete a follow → assert count updates correctly.
+
+- [ ] **E2E: Leaderboard rank is unique and sequential** — backend test: GET /bettors?limit=20 → assert all rank values are unique integers with no gaps (1,2,3...20). No duplicate ranks, no rank=0, no missing ranks.
+
+- [ ] **E2E: Recent bets are TRADE type only** — backend integration test: GET /bettors/{address} → assert every item in `recent_bets` has `type == "TRADE"` (no REDEEM, no MERGE transactions leaked through). Assert all bets have `side` field populated.
+
+---
+
+## PRIORITY 6 — Admin E2E
+
+- [ ] **E2E: Admin stats MRR formula** — backend test: create known number of basic and VIP users → GET /admin/stats → assert `mrr_estimate == basic_count * 4.99 + vip_count * 9.99` (exact match to 2 decimal places). Currently 186 sessions in but this math was never directly asserted with real DB state.
+
+- [ ] **E2E: Admin endpoint rejects wrong password** — backend test: GET /admin/stats with wrong x-admin-password header → 403. GET /admin/stats with no header → 403. GET /admin/stats with correct password → 200 with stats object containing `total_users`, `basic_users`, `vip_users`, `mrr_estimate` keys.
 
 ---
 
