@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-27
+- **[SESSION #194] 4 Playwright E2E error state tests** — network abort + 503 on leaderboard show "Could not load leaderboard"; consensus abort shows "Could not load consensus signals"; fresh user follows tab shows "No traders followed yet"; 57→61 Playwright tests
 - **[SESSION #192] Code quality audit — fixed dead assertion and blocking sleep** — replaced always-pass `assert ... or True` in test_full_journeys.py with real assertion; replaced `time.sleep(0.5)` with `page.wait_for_timeout(500)` in test_notifications_tier_gates.py; 500 tests still passing
 - **[SESSION #191] 4 Playwright E2E CORS header tests** — browser-level verification: no wildcard origin, correct localhost:3000 echoed, preflight succeeds, untrusted origin rejected; 53→57 Playwright tests
 - **[SESSION #190] 4 Playwright E2E tests — Alerts tab tier gates** — free user Telegram/SMS toggle fires upgrade modal; VIP sees "Not verified" SMS label (not "VIP required"); 49→53 Playwright tests

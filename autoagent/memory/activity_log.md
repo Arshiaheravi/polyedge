@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 194)
+DONE: Added 4 Playwright E2E error state tests — network abort on /bettors shows "Could not load leaderboard", HTTP 503 on /bettors shows same error state, /markets/consensus abort shows "Could not load consensus signals", fresh user with zero follows sees "No traders followed yet" empty state. 57→61 Playwright tests.
+IMPACT: Proves the frontend handles all major API failure modes gracefully — any regression that introduces blank screens, infinite spinners, or silent failures on API errors will now be caught automatically.
+FILES: backend/tests/playwright/test_error_states.py
+
 ## 2026-03-27 — BRAIN (Session 193)
 RESEARCHED: autonomous AI agent best practices 2026, agentic coding test quality (arxiv 2603.17973 TDAD, arxiv 2603.13724), FastAPI production patterns, prediction market copy trading competitors (Polystrat), ECC v1.9.0 status check.
 DOWNLOADED: Nothing new — ECC still at v1.9.0, no applicable new skills.

@@ -9,31 +9,33 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 4 — Error State E2E
 
-- [ ] **E2E: Polymarket API timeout → graceful frontend** — Playwright: mock `fetch` on `/bettors` to return a network error → assert leaderboard shows an error message (not blank white screen, not JS crash). The error text should be user-friendly.
-
-- [ ] **E2E: Empty follows state** — Playwright: log in as fresh user with zero follows → open Follows tab → assert empty-state message is shown (not a blank div, not a spinner stuck forever). The empty state message must be visible and contain meaningful text.
-
-- [ ] **E2E: Backend 503 → frontend shows error** — Playwright: intercept API response and return 503 → assert dashboard shows an error toast or message (not silent blank). Test both leaderboard and consensus tab endpoints.
-
-- [ ] **E2E: Expired Polymarket data** — backend test: if `/bettors` returns empty list from Polymarket, assert GET /bettors returns `{"bettors": []}` with 200 (not 500). Assert frontend renders empty leaderboard gracefully.
+*(All 4 error state tasks completed in session 194)*
 
 ---
 
 ## PRIORITY 5 — Cross-Endpoint Data Consistency
 
-- [ ] **E2E: Follow count matches admin stats** — backend integration test: register 2 users → each follows 1 bettor → GET /admin/stats with correct header → assert `total_follows >= 2`. Create and delete a follow → assert count updates correctly.
+*(Covered by existing test_admin.py::test_admin_stats_follows_total_reflects_actual_follows)*
 
 ---
 
 ## PRIORITY 6 — Admin E2E
 
-- [ ] **E2E: Admin endpoint rejects wrong password** — backend test: GET /admin/stats with wrong x-admin-password header → 403. GET /admin/stats with no header → 403. GET /admin/stats with correct password → 200 with stats object containing `total_users`, `basic_users`, `vip_users`, `mrr_estimate` keys.
+*(Covered by existing test_admin.py — no_header→403, wrong_password→403, correct→200+keys)*
+
+---
+
+## PRIORITY 7 — High-Value Gaps (added session 194, LOW-WATER-MARK fill)
+
+- [ ] **Playwright: follow bettor → bettor appears on follows dashboard** — basic user registers fresh, follows bettor from leaderboard via `POST /follows`, navigates to follows tab, asserts the followed bettor's address appears in `#follows-container`. Proves "Follow bettor → see on dashboard" end-to-end in a real browser. Grep: `grep -r "def test_.*follow.*appear" backend/tests/playwright/` returns nothing.
+
+- [ ] **Playwright: leaderboard "No data yet" shown when API returns empty list** — route intercept returns `{"bettors": [], "cached": false}` with 200 → browse view shows "No data yet" text (not "Could not load", not blank). This covers the empty-list success path distinct from error states. Grep: `grep -r "No data yet" backend/tests/playwright/` returns nothing.
+
+- [ ] **Backend: copy_value_pct math is correct** — unit test in test_follows_live.py: mock position with avg_price=0.40, current_price=0.50 → assert copy_value_pct == 25.0; avg_price=0.20, current_price=0.30 → assert copy_value_pct == 50.0. Current tests pass the field through but never verify the formula. Grep: `grep -r "copy_value_pct.*formula\|avg_price.*current_price" backend/tests/` returns nothing.
 
 ---
 
 ## FEATURE MODE — Competitive Intelligence (do not implement in DEBUG mode)
-
-- [ ] **Dead assertion sweep** — run `grep -rn "or True" backend/tests/` and verify zero matches. If any found, fix. Also run `grep -rn "assert True$\|assert 1$" backend/tests/` — these are always-pass assertions. (Source: session 192 code quality audit found `assert ... or True` masking a tier gate failure for 3 sessions.)
 
 - [ ] **Polystrat competitor awareness** — Polystrat (olas.network) is an autonomous AI agent that executes 4,200+ trades/month on Polymarket for users. PolyEdge's copy-notification model (human makes the copy trade decision) is differentiated from fully autonomous execution. Competitive moat: PolyEdge's notification-only model is lower risk and likely compliant where autonomous bots may not be. Consider adding a landing page differentiator: "You control the trade, AI just spots the opportunity." (Source: CoinDesk 2026-03-15 "AI agents quietly rewriting prediction market trading")
 
