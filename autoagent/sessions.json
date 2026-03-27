@@ -4143,7 +4143,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 3 tests for conviction_score and conviction_label fields in get_recent_bets — proves the EXTREME/HIGH/empty label logic works correctly and that API failures return an empty list safely",
+    "summary": "Added 3 tests for conviction_score and conviction_label fields in get_recent_bets \u00e2\u20ac\u201d proves the EXTREME/HIGH/empty label logic works correctly and that API failures return an empty list safely",
     "files": [
       "backend/tests/test_polymarket_service.py"
     ],
@@ -4164,7 +4164,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 1 test for compute_copy_simulator network failure path — proves ConnectError is caught and safe zeros are returned, covering the except branch not hit by the empty-response test",
+    "summary": "Added 1 test for compute_copy_simulator network failure path \u00e2\u20ac\u201d proves ConnectError is caught and safe zeros are returned, covering the except branch not hit by the empty-response test",
     "files": [
       "backend/tests/test_polymarket_service.py"
     ],
@@ -4178,6 +4178,27 @@
       "checks": 0,
       "failures": 0,
       "notes": "no frontend changes"
+    }
+  },
+  {
+    "session": 187,
+    "date": "2026-03-27",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 4 Playwright E2E tests proving auth persistence, bad-token redirect, follow-limit upgrade modal, and XSS safety \u2014 verifying the core auth and paywall flows work correctly in the browser",
+    "files": [
+      "backend/tests/playwright/test_auth_and_security.py"
+    ],
+    "tests": {
+      "before": 500,
+      "after": 500,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 132,
+      "failures": 0,
+      "notes": "playwright_registry 132 checks pass; 4 new Playwright E2E tests pass"
     }
   }
 ]

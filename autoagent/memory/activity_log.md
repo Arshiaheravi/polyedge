@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-160 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 187)
+DONE: Added 4 Playwright E2E tests in test_auth_and_security.py: (1) auth persists after page refresh — dashboard still shown, pe_token intact; (2) bad token redirect — invalid JWT cleared, landing page shown; (3) follow limit upgrade modal — fresh free user hits 403 on 2nd follow, upgrade modal fires; (4) XSS safety — script-tag username rendered via textContent, no alert fires. 42→46 Playwright tests.
+IMPACT: Proves the 3 most critical user-facing security/auth flows work correctly in a real browser. Any regression in token handling, paywall follow gate, or XSS rendering will now be caught automatically.
+FILES: backend/tests/playwright/test_auth_and_security.py
+
 ## 2026-03-26 — TESTING (Session 186)
 DONE: Added 1 test for compute_copy_simulator API exception path — mocks httpx.ConnectError on client.get, asserts function returns {simulated_pnl_usd: 0.0, simulated_roi_pct: 0.0, bets_analysed: 0}. 499→500 tests.
 IMPACT: Closes the except Exception branch (polymarket.py:333-334) that was unreachable by existing tests — a network failure during simulator fetch previously had zero test coverage.

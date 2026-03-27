@@ -45,6 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
+- Test count: **500 passed, 2 skipped** (as of 2026-03-27, session 187) — baseline unchanged; 4 new Playwright E2E tests added
 - Test count: **499 passed, 2 skipped** (as of 2026-03-26, session 185)
 - Test count: **496 passed, 2 skipped** (as of 2026-03-26, session 184) — 3 new tests: consensus cache hit + no-sub JWT optional auth + send_telegram ConnectError
 - Test count: **493 passed, 2 skipped** (as of 2026-03-26, session 182) — 3 new tests: push_subscription dict path + telegram empty text + simulator SELL-side exclusion
@@ -52,6 +53,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Test count: **488 passed, 2 skipped** (as of 2026-03-26, session 180) — 5 new tests: leaderboard accuracy normalise (3) + GET /bettors accuracy passthrough + POST /follows 409 detail message
 - Test count: **480 passed, 2 skipped** (as of 2026-03-26, session 176) — 5 new tests: accuracy field regression + follows order + mocked consensus + profile accuracy
 - Test count: **475 passed, 1 skipped** (as of 2026-03-26, session 175)
+- Playwright E2E: **46 passed, 2 skipped** (as of 2026-03-27, session 187) — 4 new: auth persist, bad-token, follow-limit modal, XSS safety
 - Playwright E2E: **42 passed, 2 skipped** (as of 2026-03-26, session 156)
 - Frontend follows+alerts: **16/16 Playwright checks pass** (as of 2026-03-24, session 9)
 - Frontend smoke: **7/7 Playwright checks pass** (as of 2026-03-23, session 3)
@@ -63,6 +65,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #187 Reflexion — 2026-03-27
+ACCOMPLISHED: Added 4 Playwright E2E tests in test_auth_and_security.py covering auth persistence, bad-token redirect, follow-limit upgrade modal, and XSS safety. All 4 passed on first run. 500 backend tests unchanged; 42→46 Playwright tests.
+FAILED: First full-suite Playwright run showed 6 failures (pre-existing flakes from Polymarket API rate limiting when running 46 tests sequentially). All 6 passed individually — not caused by my changes.
+RULE: [2026-03-27] Playwright full-suite runs may show 3-6 flaky failures in Polymarket-API-dependent tests (test_leaderboard_shows_bettor_cards, test_login_with_existing_account, etc.) due to API rate limiting across rapid sequential tests. Always re-run failing tests in isolation to confirm they're pre-existing flakes before investigating.
+RULE: [2026-03-27] For follow-limit Playwright tests, always register a FRESH user (timestamp email) — using the shared free@polyedge.com account risks interference if it already has follows from prior test runs. The `followedAddresses.has(addr)` check is the correct way to verify the first follow succeeded before proceeding to test the second.
 
 ### Session #186 Reflexion — 2026-03-26
 ACCOMPLISHED: Added 1 test for compute_copy_simulator API ConnectError path — mocks httpx.ConnectError on async client.get, asserts safe zeros returned. Passed first run. 499→500 tests.

@@ -1,5 +1,8 @@
 # Done
 
+## 2026-03-27
+- **[SESSION #187] 4 Playwright E2E tests — auth persistence, bad-token redirect, follow-limit upgrade modal, XSS safety** — proves core browser auth/paywall flows work; 42→46 Playwright tests
+
 ## 2026-03-26
 - **[SESSION #186] 1 test — compute_copy_simulator ConnectError returns safe zeros** — covers except Exception branch (polymarket.py:333-334) unreachable by empty-response test; 499→500 tests
 - **[SESSION #185] 3 tests — conviction_score/label fields in get_recent_bets** — single-bet score=1.0, EXTREME label for 19.6x outlier, API exception → empty list; 496→499 tests
