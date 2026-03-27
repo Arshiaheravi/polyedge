@@ -818,3 +818,101 @@ FILES: backend/app/config.py, backend/app/services/scheduler.py, backend/app/mai
 DONE: Fixed 3 silent error swallowing bugs in the follows tab — users now see a clear error message instead of stuck skeleton cards when the positions API fails on first load.
 IMPACT: Users no longer see infinite loading skeletons when the API is slow or returns an error on the follows tab.
 FILES: frontend/index.html
+
+## 2026-03-26 — CODE QUALITY AUDIT (Session 161)
+DONE: Audited last 5 sessions changed files; found and fixed readiness endpoint leaking exception details in 503 body and stale scheduler docstring. Logged _last_check race condition to tech_debt.md.
+IMPACT: Readiness endpoint no longer exposes DB file paths or SQLAlchemy error strings to public callers.
+FILES: backend/app/main.py, backend/app/services/scheduler.py, backend/tests/test_health.py
+
+## 2026-03-26 — TESTING (Session 162)
+DONE: Added 7 behavioral tests across 3 files — (1) _poll_vip_bets: no-VIP-users early return, VIP-only-addresses filtering, new-bet creates BetEvent+notification; (2) /follows/live conviction score: keys always present, EXTREME label at 10x avg_bet, empty label below 3x; (3) profile cache: reverse-order test confirms VIP gets unlocked simulator even after free user cached same address.
+IMPACT: Three previously untested code paths now have regression coverage.
+FILES: backend/tests/test_scheduler.py, backend/tests/test_follows_live.py, backend/tests/test_bettors.py
+
+## 2026-03-26 — BRAIN (Session 163)
+DONE: Fixed stale coding.md (port 8002->8003, StockCards wiring chain -> PolyEdge FEATURE WIRING CHAIN); created autoagent/skills/rate-limiting.md with complete SlowAPI recipe; added FastAPI streaming patterns to coding.md; added rate-limiting row to INDEX.md; logged 6 new sources.
+IMPACT: Coding sessions no longer misled by wrong port or non-existent file paths. Rate limiting now has a ready-to-use recipe.
+FILES: autoagent/skills/coding.md, autoagent/skills/rate-limiting.md, autoagent/skills/INDEX.md
+
+## 2026-03-26 — SECURITY (Session 164)
+DONE: Added rate limiting to POST /auth/register and POST /auth/login — 10 req/min per IP via slowapi; shared limiter singleton in app/limiter.py; conftest resets limiter storage between tests; 2 regression tests added (459 total).
+IMPACT: Brute-force password attacks and mass account creation are now blocked at the server layer.
+FILES: backend/requirements.txt, backend/app/limiter.py, backend/app/main.py, backend/app/routes/auth.py, backend/tests/conftest.py, backend/tests/test_auth.py
+
+## 2026-03-26 — TESTING (Session 165)
+DONE: Added 3 regression tests — _last_positions purge on unfollow, health not rate-limited (20-call loop), readiness not rate-limited (20-call loop). 459->462 tests passing.
+IMPACT: Memory leak from unfollowed bettors is now regression-tested. Health/readiness probes confirmed never 429-blocked.
+FILES: backend/tests/test_scheduler.py, backend/tests/test_health.py
+
+## 2026-03-26 — CODE QUALITY AUDIT (Session 166)
+DONE: Extracted _compute_conviction(bet_amount, avg_bet_usd) helper into scheduler.py, eliminating duplicate 8-line conviction score logic. Fixed stale docstring in test_cors_headers_present. Added 5 unit tests. 462->467 tests.
+IMPACT: Conviction score thresholds now live in one place.
+FILES: backend/app/services/scheduler.py, backend/tests/test_scheduler.py, backend/tests/test_health.py
+
+## 2026-03-26 — CODE REVIEW (Session 167)
+DONE: Dead code audit — found and removed 1 dead JS function: tierBadge(tier). All backend imports verified in use. 467 tests stable.
+IMPACT: Codebase cleaner; tierBadge was producing a string that was never rendered anywhere.
+FILES: frontend/index.html
+
+## 2026-03-26 — META (Session 168)
+IMPROVED: (1) knowledge.md — added reflexion entries for sessions 156-167 (12 missing) and updated test suite history table. (2) backlog.md — reordered HIGH PRIORITY before MEDIUM. (3) meta/PROMPT.md — added reflexion gap check to STEP 1.
+PATTERNS FOUND: 12 session reflexions were completely absent from knowledge.md.
+
+## 2026-03-26 14:00 — TESTING (Session 169)
+DONE: Fixed get_active_positions to filter positions with cur_price < 0.001 or > 0.999 (resolved/expired markets leaking as copyable). Added 3 regression tests. Fixed 2 existing tests missing curPrice. 467->470 tests.
+IMPACT: Users no longer see resolved markets in their copy-trading dashboard.
+FILES: backend/app/services/polymarket.py, backend/tests/test_data_integrity.py, backend/tests/test_follows_live.py, backend/tests/test_polymarket_service.py
+
+## 2026-03-26 — TESTING (Session 170)
+DONE: Added test_recent_bets_timestamps_within_90_days to test_data_integrity.py. Removed 2 stale backlog tasks, added 3 new HIGH PRIORITY testing tasks. 470->471 tests.
+IMPACT: Stale Polymarket data (>90 days) would give copy-traders wrong context — this test is a data freshness guard.
+FILES: backend/tests/test_data_integrity.py
+
+## 2026-03-26 — TESTING (Session 171)
+DONE: Activated CONDITION_ID_RE regex assertion inside test_consensus_whale_count_and_price_range — regex was defined but never used. 471 tests stable.
+IMPACT: Catches malformed or missing condition_ids from the Polymarket API.
+FILES: backend/tests/test_data_integrity.py
+
+## 2026-03-26 — TESTING (Session 172)
+DONE: Added +-10000% ROI cap to compute_copy_simulator and unit test. 471->472 tests.
+IMPACT: Prevents absurd ROI values on profile simulator cards for low-price bets.
+FILES: backend/app/services/polymarket.py, backend/tests/test_data_integrity.py
+
+## 2026-03-26 — BRAIN (Session 173)
+RESEARCHED: autonomous AI agent best practices 2026, mutation testing for Python/pytest, Polymarket Data API endpoints, LLM agent memory deduplication techniques.
+IMPLEMENTED: (1) testing.md — added MUTATION TESTING section with mutmut recipe. (2) BRAIN_PROMPT.md — added explicit prohibition on background agents for STEP 2 searches. (3) knowledge.md — added Polymarket GET /trades endpoint + rate limit facts.
+SOURCES: 5 new sources logged.
+
+## 2026-03-26 — CODE QUALITY AUDIT (Session 174)
+DONE: Audited sessions 167-171. Marcus XSS check passed. Found asyncio/time/datetime imported inside function bodies in polymarket.py — moved to module level, removed 2 unused imports. 472 tests pass unchanged.
+IMPACT: Standard Python import conventions followed. Unused imports removed.
+FILES: backend/app/services/polymarket.py
+
+## 2026-03-26 — TESTING (Session 175)
+DONE: Added 3 regression tests covering Bug #9 (lru_cache identity), copy_simulator open-bet skip branch, and GET /auth/me sensitive field absence. 472->475 tests.
+IMPACT: Guards against accidental lru_cache removal, wrong open-bet handling, and sensitive field exposure.
+FILES: backend/tests/test_health.py, backend/tests/test_data_integrity.py, backend/tests/test_auth.py
+
+## 2026-03-26 — TESTING (Session 176)
+DONE: Added accuracy field to bettor profile endpoint (_normalise_profile was missing it). Added 5 new tests: leaderboard vs profile accuracy cross-check, follows list order, mocked consensus, 3 accuracy normaliser unit tests. 475->480 tests.
+IMPACT: Consistent accuracy data across leaderboard and profile pages.
+FILES: backend/app/services/polymarket.py, backend/tests/test_data_integrity.py, backend/tests/test_follows.py, backend/tests/test_polymarket_service.py
+
+## 2026-03-26 — TESTING (Session 177)
+DONE: Added 3 tests: consensus filters resolved markets, bettor profile includes accuracy key, auth/me does NOT include accuracy. Removed stale backlog task. Added 3 new HIGH PRIORITY tasks. 480->483 tests.
+IMPACT: Locks in resolved-market filter contract, accuracy passthrough contract, and auth/me response boundary.
+FILES: backend/tests/test_polymarket_service.py, backend/tests/test_bettors.py
+
+## 2026-03-26 — META (Session 178)
+IMPROVED: (1) meta/PROMPT.md — fixed reflexion gap check to use numerically highest session number. (2) PROMPT.md — added EMBEDDED-GREP RULE. (3) backlog.md — added code quality audit task.
+PATTERNS FOUND: Reflexion gap check gave false alarm; testing backlog items with Grep: lines were picked without re-running those greps across sessions 170, 175, 177.
+
+## 2026-03-26 — CODE QUALITY AUDIT (Session 179)
+DONE: Audited sessions 169-177. Marcus XSS, Leo dead-code, Alex cross-layer checks all passed. No code changes needed.
+IMPACT: Confirmed all code changes from sessions 169-177 are clean.
+FILES: none (read-only audit)
+
+## 2026-03-26 — TESTING (Session 180)
+DONE: Added 5 tests across 3 backlog items: 3 leaderboard accuracy normaliser tests, 1 GET /bettors accuracy passthrough (cache-cleared), 1 POST /follows 409 detail message. 483->488 tests.
+IMPACT: Locks in percentProfitable conversion contract. Cache-clear pattern prevents false passes from stale cached data.
+FILES: backend/tests/test_polymarket_service.py, backend/tests/test_bettors.py, backend/tests/test_follows.py

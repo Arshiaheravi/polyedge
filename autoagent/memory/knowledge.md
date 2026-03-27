@@ -45,11 +45,8 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **500 passed, 2 skipped** (as of 2026-03-27, session 191) — baseline unchanged; 4 new Playwright CORS header tests added
+- Test count: **500 passed, 2 skipped** (as of 2026-03-27, session 192 — current)
 - Playwright E2E: **57 passed, 2 skipped** (as of 2026-03-27, session 191) — 4 new: CORS no-wildcard, correct origin, preflight, untrusted origin
-- Test count: **500 passed, 2 skipped** (as of 2026-03-27, session 190) — baseline unchanged; 4 new Playwright alerts tier gate tests added
-- Playwright E2E: **53 passed, 2 skipped** (as of 2026-03-27, session 190) — 4 new: free Telegram/SMS gate + VIP SMS/Telegram access
-- Test count: **500 passed, 2 skipped** (as of 2026-03-27, session 189) — baseline unchanged; 3 new Playwright full-journey tests added
 - Test count: **499 passed, 2 skipped** (as of 2026-03-26, session 185)
 - Test count: **496 passed, 2 skipped** (as of 2026-03-26, session 184) — 3 new tests: consensus cache hit + no-sub JWT optional auth + send_telegram ConnectError
 - Test count: **493 passed, 2 skipped** (as of 2026-03-26, session 182) — 3 new tests: push_subscription dict path + telegram empty text + simulator SELL-side exclusion
@@ -1229,3 +1226,9 @@ ACCOMPLISHED: Code quality audit of 9 changed test files (sessions 186–191). F
 FAILED: Nothing — both fixes were minimal and tests confirmed clean.
 RULE: [2026-03-27] `assert X or True` is a dead assertion — always passes regardless of X. This pattern appears when a developer weakens an assertion "conservatively" but forgets the `or True` makes it meaningless. During audits, grep test files for `or True,` to catch these instantly.
 RULE: [2026-03-27] In Playwright tests, NEVER use `time.sleep(N)` — use `page.wait_for_timeout(N_ms)` instead. `time.sleep()` blocks the Python event loop; `wait_for_timeout()` is Playwright's non-blocking wait. The smell is especially obvious when accompanied by an inline `import time;` on the same line (means it was added as an afterthought).
+
+### BRAIN Session #193 Reflexion — 2026-03-27
+ACCOMPLISHED: (1) STEP 1D: archived sessions 161-180 (32->12 entries in activity_log.md). (2) STEP 1C: curated test count history — removed 3 duplicate "500 backend" entries for sessions 189-191. (3) STEP 1B: no new failure patterns in sessions 183-192; session 192 dead assertion catch was the only notable finding. (4) testing.md: added TARGETED PRE-COMMIT VERIFICATION (TDAD, arxiv 2603.17973) + DEAD ASSERTION GUARD sections. (5) backlog.md: added 3 items (dead assertion sweep, Polystrat context, mobile-first UX). (6) 5 new sources logged.
+FAILED: Nothing — heredoc bash syntax failed for archive append (single quotes in content, same as session 183). Recovered immediately by writing temp Python file.
+RULE: [2026-03-27] When appending multi-line content with single quotes to files via bash, always use a temp Python file (write content with triple-quoted string, append with open(..., "a")). The bash heredoc failure with single quotes is a KNOWN recurring pattern — skip bash directly.
+OPTIMIZATION: [2026-03-27] TDAD targeted pre-commit verification: run `grep -rl "<module_keyword>" backend/tests/` first to find the 2-3 test files that cover a changed module, then run only those files. The full 500-test suite takes ~45s; targeted tests for one module take ~5s. 9x faster feedback when debugging a specific failure.

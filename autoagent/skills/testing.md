@@ -324,6 +324,39 @@ Generates 9 cases automatically (3 tiers × 3 endpoints). Add a new endpoint →
 
 (Source: fiddler.ai Advanced Pytest Patterns 2026; mergify.com pytest.param guide 2026)
 
+## TARGETED PRE-COMMIT VERIFICATION (TDAD pattern)
+Before running the full suite after a change, identify which test files cover the changed module and run those FIRST. This gives 10x faster feedback and surfaces regressions before the slow full-suite run.
+
+**Step 1 — Find which tests cover the changed file**:
+```bash
+# If you changed polymarket.py:
+grep -rl "polymarket\|get_leaderboard\|get_bettor" backend/tests/
+# If you changed scheduler.py:
+grep -rl "scheduler\|_poll_bets\|_poll_vip" backend/tests/
+# If you changed routes/auth.py:
+grep -rl "auth\|login\|register\|me" backend/tests/
+```
+
+**Step 2 — Run only those test files first**:
+```bash
+cd backend && py -m pytest tests/test_polymarket_service.py tests/test_data_integrity.py -q
+```
+
+**Step 3 — Run full suite only after targeted tests pass**.
+
+**Why this matters** (Source: arxiv 2603.17973 TDAD — 70% regression reduction): Agents that run the full suite immediately after a change often miss which specific test is regressing and why. Targeted tests localize the failure immediately. CRITICAL FINDING: providing contextual information (which tests cover which files) outperforms prescriptive "always run all tests" instructions alone.
+
+## DEAD ASSERTION GUARD
+Never write `assert condition or True` — `or True` makes the assertion always pass regardless of `condition`. This is the most common AI-generated test anti-pattern: it looks like a real assertion but catches nothing.
+
+**Detection**:
+```bash
+grep -n "or True" backend/tests/  # any match is a dead assertion
+```
+
+**Fix**: Remove the `or True`. If the condition is uncertain, write a comment explaining why, or use `pytest.skip()` instead of a dead assertion.
+(Source: PolyEdge session 192 code quality audit — found `assert len(cards) > 0 or True` in test_full_journeys.py; the dead assertion was masking a potentially-broken tier gate test for 3 sessions.)
+
 ## IMPORT CHECK BEFORE TESTS
 ```bash
 cd backend && py -c "from app.main import app; print('OK')"

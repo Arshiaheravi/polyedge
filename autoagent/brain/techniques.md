@@ -503,3 +503,15 @@ What: Added 4 competitive feature items to backlog: personalized notification bo
 Where: autoagent/memory/backlog.md (NEW FEATURES section)
 Source: pushwoosh.com fintech CTR benchmarks, defiprime.com Polymarket ecosystem guide, signals.coincodecap.com alert bots review (session 183 research)
 Expected impact: 4 implementable competitive features now documented and ready to be picked in FEATURE MODE sessions
+
+## TDAD targeted pre-commit verification — implemented 2026-03-27
+What: Before running full test suite, identify which test files cover the changed module using grep, run only those first, then run full suite after targeted tests pass.
+Where: skills/testing.md (TARGETED PRE-COMMIT VERIFICATION section)
+Source: arxiv 2603.17973 (TDAD — Test-Driven Agentic Development)
+Expected impact: 70% regression reduction (per paper); faster feedback cycle when fixing test failures
+
+## Dead assertion guard — implemented 2026-03-27
+What: Grep for "or True" in test assertions before committing; any match is a dead assertion that never catches failures.
+Where: skills/testing.md (DEAD ASSERTION GUARD section)
+Source: PolyEdge session 192 code quality audit (found assert ... or True masking tier gate for 3 sessions)
+Expected impact: Prevents test theater — tests that look correct but never catch regressions

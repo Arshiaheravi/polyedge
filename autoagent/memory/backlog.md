@@ -31,6 +31,14 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
+## FEATURE MODE — Competitive Intelligence (do not implement in DEBUG mode)
+
+- [ ] **Dead assertion sweep** — run `grep -rn "or True" backend/tests/` and verify zero matches. If any found, fix. Also run `grep -rn "assert True$\|assert 1$" backend/tests/` — these are always-pass assertions. (Source: session 192 code quality audit found `assert ... or True` masking a tier gate failure for 3 sessions.)
+
+- [ ] **Polystrat competitor awareness** — Polystrat (olas.network) is an autonomous AI agent that executes 4,200+ trades/month on Polymarket for users. PolyEdge's copy-notification model (human makes the copy trade decision) is differentiated from fully autonomous execution. Competitive moat: PolyEdge's notification-only model is lower risk and likely compliant where autonomous bots may not be. Consider adding a landing page differentiator: "You control the trade, AI just spots the opportunity." (Source: CoinDesk 2026-03-15 "AI agents quietly rewriting prediction market trading")
+
+- [ ] **Mobile-first UX pass** — modern prediction market platforms (Pariflow) compete on "consumer-first" UX with one-tap execution and highly responsive mobile apps. PolyEdge currently has a mobile nav bar (session 119 confirmed working at 375px) but bettor cards and consensus signals could be more mobile-optimized. Add to FEATURE MODE sprint when mission switches.
+
 ## BLOCKED — Needs User Action
 
 - [ ] Configure real Stripe price IDs (STRIPE_BASIC_PRICE_ID, STRIPE_VIP_PRICE_ID) — requires user to update backend/.env
