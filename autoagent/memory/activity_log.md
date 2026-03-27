@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-160 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — META (Session 188)
+IMPROVED: playwright.md — added FLAKY TEST HANDLING section (re-run failing tests in isolation before investigating; 3-6 Polymarket API rate-limit flakes expected in full-suite runs) and FRESH USER PATTERN section (always register timestamp-email user for follow-limit/quota tests; never reuse shared fixture accounts for state-accumulating tests).
+PATTERNS FOUND: Session 187 RULE entries in knowledge.md about flaky tests and fresh user pattern had no matching guidance in playwright.md — work sessions read skill files first, not knowledge.md reflexions, so these patterns would be rediscovered each time rather than applied proactively.
+PREDICTED IMPACT: Next full-journey E2E session will correctly expect and handle rate-limit flakes without wasting turns investigating pre-existing failures; follow-limit tests will use fresh users by default.
+
 ## 2026-03-27 — TESTING (Session 187)
 DONE: Added 4 Playwright E2E tests in test_auth_and_security.py: (1) auth persists after page refresh — dashboard still shown, pe_token intact; (2) bad token redirect — invalid JWT cleared, landing page shown; (3) follow limit upgrade modal — fresh free user hits 403 on 2nd follow, upgrade modal fires; (4) XSS safety — script-tag username rendered via textContent, no alert fires. 42→46 Playwright tests.
 IMPACT: Proves the 3 most critical user-facing security/auth flows work correctly in a real browser. Any regression in token handling, paywall follow gate, or XSS rendering will now be caught automatically.

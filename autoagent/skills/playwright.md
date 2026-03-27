@@ -480,3 +480,50 @@ await page.wait_for_function(
 ```
 
 (Source: Session #151 — _open_first_profile used getAttribute('onclick') returning null instead of data-addr; also wait_for_function used display !== '' instead of display === 'flex', causing immediate false pass.)
+
+---
+
+## FLAKY TEST HANDLING (API rate limiting)
+
+When running the **full Playwright suite** (46+ tests) sequentially, expect 3-6 flaky failures in Polymarket-API-dependent tests (`test_leaderboard_shows_bettor_cards`, `test_login_with_existing_account`, etc.) caused by the live Polymarket API rate-limiting rapid back-to-back requests.
+
+**Rule**: Before investigating any Playwright failure, re-run the failing test in isolation:
+```bash
+py -m pytest backend/tests/playwright/test_<file>.py::TestClass::test_name -v --headed
+```
+If the isolated run passes, it's a pre-existing rate-limit flake — do NOT investigate further. Document as `"notes": "N pre-existing rate-limit flakes in full-suite run; all passed in isolation"` in sessions.json.
+
+If the isolated run also fails, the failure is real and caused by this session's changes — debug it.
+
+(Source: Session #187 — first full-suite run showed 6 failures; all 6 passed individually. Wasted time investigating before discovering they were rate-limit flakes.)
+
+---
+
+## FRESH USER PATTERN (state-dependent tests)
+
+Tests that verify **follow limits** or **quota-hitting behaviour** must use a FRESH user (timestamp email), not the shared `free@polyedge.com` account. The shared account may already have follows from prior test runs, making "hit the follow limit" unreachable.
+
+```python
+import time
+
+# CORRECT — fresh user guaranteed to have 0 follows:
+email = f"test_{int(time.time())}@example.com"
+page.evaluate(f"registerAndLogin('{email}', 'TestPass123!')")
+
+# WRONG — shared account may already have 1 follow, so 2nd follow won't hit limit:
+login(page, "free")  # free@polyedge.com
+```
+
+**Verification pattern** — before asserting the 2nd follow triggers the gate, confirm the 1st follow succeeded:
+```python
+# After attempting 1st follow, verify it actually landed:
+followed_count = page.evaluate("""() => {
+    // Check localStorage or page state for followed addresses
+    return window.followedAddresses ? window.followedAddresses.size : 0;
+}""")
+assert followed_count == 1, f"Expected 1 follow before testing limit, got {followed_count}"
+```
+
+**Rule**: For follow-limit, quota, or paywall-trigger tests: always register a fresh timestamp-email user. Never reuse a shared fixture account for state that could accumulate across runs.
+
+(Source: Session #187 — follow-limit test was written with fresh user registration; using free@polyedge.com would have risked interference from prior runs.)

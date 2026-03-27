@@ -4200,5 +4200,26 @@
       "failures": 0,
       "notes": "playwright_registry 132 checks pass; 4 new Playwright E2E tests pass"
     }
+  },
+  {
+    "session": 188,
+    "date": "2026-03-27",
+    "time": "00:00",
+    "type": "meta",
+    "summary": "Added FLAKY TEST HANDLING and FRESH USER PATTERN sections to playwright.md \u2014 prevents work sessions from investigating pre-existing Polymarket rate-limit flakes and ensures follow-limit tests always use fresh users",
+    "files": [
+      "autoagent/skills/playwright.md"
+    ],
+    "tests": {
+      "before": 0,
+      "after": 0,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "meta session \u2014 no code changes"
+    }
   }
 ]
