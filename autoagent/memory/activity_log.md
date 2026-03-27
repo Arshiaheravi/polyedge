@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 195)
+DONE: Added Playwright E2E test — fresh user follows first leaderboard bettor, navigates to Follows tab, asserts the bettor's address appears in #follows-container.
+IMPACT: Proves the core "follow → see on dashboard" user flow works end-to-end in a real browser. Any regression breaking POST /follows, GET /follows, or the follow card renderer will now be caught automatically.
+FILES: backend/tests/playwright/test_follow_appears_on_dashboard.py
+
 ## 2026-03-27 — TESTING (Session 194)
 DONE: Added 4 Playwright E2E error state tests — network abort on /bettors shows "Could not load leaderboard", HTTP 503 on /bettors shows same error state, /markets/consensus abort shows "Could not load consensus signals", fresh user with zero follows sees "No traders followed yet" empty state. 57→61 Playwright tests.
 IMPACT: Proves the frontend handles all major API failure modes gracefully — any regression that introduces blank screens, infinite spinners, or silent failures on API errors will now be caught automatically.

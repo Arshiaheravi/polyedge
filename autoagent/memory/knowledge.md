@@ -1053,6 +1053,7 @@ RULE: [2026-03-26] When caching API responses that include user-state fields (ti
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend (Playwright) |
 |---------|--------------|----------------------|
+| 195     | 500          | 62                   |
 | 194     | 500          | 61                   |
 | 192     | 500          | 57                   |
 | 191     | 500          | 57                   |
@@ -1233,6 +1234,11 @@ ACCOMPLISHED: Code quality audit of 9 changed test files (sessions 186–191). F
 FAILED: Nothing — both fixes were minimal and tests confirmed clean.
 RULE: [2026-03-27] `assert X or True` is a dead assertion — always passes regardless of X. This pattern appears when a developer weakens an assertion "conservatively" but forgets the `or True` makes it meaningless. During audits, grep test files for `or True,` to catch these instantly.
 RULE: [2026-03-27] In Playwright tests, NEVER use `time.sleep(N)` — use `page.wait_for_timeout(N_ms)` instead. `time.sleep()` blocks the Python event loop; `wait_for_timeout()` is Playwright's non-blocking wait. The smell is especially obvious when accompanied by an inline `import time;` on the same line (means it was added as an afterthought).
+
+### Session #195 Reflexion — 2026-03-27
+ACCOMPLISHED: Added test_follow_appears_on_dashboard.py — Playwright E2E test that registers a fresh free-tier user, follows the first bettor from the leaderboard, navigates to the Follows tab, and asserts the bettor's address appears in #follows-container. Test passed on first run (9s). 61→62 Playwright tests.
+FAILED: Nothing.
+RULE: [2026-03-27] The follow cards in #follows-container embed the full bettor address in `onclick` attributes (showProfile('addr') and unfollowFromFollowsTab('addr', this)). `addr.lower() in container_html.lower()` is the reliable assertion for "followed bettor appears in follows tab" — no need to look for data attributes or text content.
 
 ### Session #194 Reflexion — 2026-03-27
 ACCOMPLISHED: Added 4 Playwright E2E error state tests in test_error_states.py. Tests cover: (1) network abort on /bettors → browse leaderboard shows "Could not load leaderboard"; (2) HTTP 503 on /bettors → same error state; (3) network abort on /markets/consensus → consensus tab shows "Could not load consensus signals"; (4) fresh user zero-follows → follows tab shows "No traders followed yet" empty state. All 4 passed on first run. 57→61 Playwright tests. Also cleaned up 3 already-done items from backlog (dead assertion sweep done, admin password task covered, follow count admin task covered). Added 3 new HIGH PRIORITY tasks to prevent empty backlog.

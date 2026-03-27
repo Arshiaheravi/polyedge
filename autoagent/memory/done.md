@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-27
+- **[SESSION #195] Playwright E2E — follow bettor appears on follows dashboard** — fresh user follows first leaderboard bettor, navigates to Follows tab, asserts bettor address in #follows-container; proves core "follow → see on dashboard" browser flow; 61→62 Playwright tests
 - **[SESSION #194] 4 Playwright E2E error state tests** — network abort + 503 on leaderboard show "Could not load leaderboard"; consensus abort shows "Could not load consensus signals"; fresh user follows tab shows "No traders followed yet"; 57→61 Playwright tests
 - **[SESSION #192] Code quality audit — fixed dead assertion and blocking sleep** — replaced always-pass `assert ... or True` in test_full_journeys.py with real assertion; replaced `time.sleep(0.5)` with `page.wait_for_timeout(500)` in test_notifications_tier_gates.py; 500 tests still passing
 - **[SESSION #191] 4 Playwright E2E CORS header tests** — browser-level verification: no wildcard origin, correct localhost:3000 echoed, preflight succeeds, untrusted origin rejected; 53→57 Playwright tests

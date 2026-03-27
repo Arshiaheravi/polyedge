@@ -27,8 +27,6 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 7 — High-Value Gaps (added session 194, LOW-WATER-MARK fill)
 
-- [ ] **Playwright: follow bettor → bettor appears on follows dashboard** — basic user registers fresh, follows bettor from leaderboard via `POST /follows`, navigates to follows tab, asserts the followed bettor's address appears in `#follows-container`. Proves "Follow bettor → see on dashboard" end-to-end in a real browser. Grep: `grep -r "def test_.*follow.*appear" backend/tests/playwright/` returns nothing.
-
 - [ ] **Playwright: leaderboard "No data yet" shown when API returns empty list** — route intercept returns `{"bettors": [], "cached": false}` with 200 → browse view shows "No data yet" text (not "Could not load", not blank). This covers the empty-list success path distinct from error states. Grep: `grep -r "No data yet" backend/tests/playwright/` returns nothing.
 
 - [ ] **Backend: copy_value_pct math is correct** — unit test in test_follows_live.py: mock position with avg_price=0.40, current_price=0.50 → assert copy_value_pct == 25.0; avg_price=0.20, current_price=0.30 → assert copy_value_pct == 50.0. Current tests pass the field through but never verify the formula. Grep: `grep -r "copy_value_pct.*formula\|avg_price.*current_price" backend/tests/` returns nothing.
