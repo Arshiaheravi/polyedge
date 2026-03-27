@@ -4,9 +4,9 @@ set -e
 echo "Starting PolyEdge..."
 
 # Start backend in background
-echo "Starting backend on :8002..."
+echo "Starting backend on :8003..."
 cd backend
-uvicorn app.main:app --reload --port 8002 &
+uvicorn app.main:app --reload --port 8003 &
 BACKEND_PID=$!
 cd ..
 
@@ -18,8 +18,8 @@ FRONTEND_PID=$!
 echo ""
 echo "PolyEdge is running!"
 echo "  Frontend: http://localhost:3000"
-echo "  Backend:  http://localhost:8002"
-echo "  API docs: http://localhost:8002/docs"
+echo "  Backend:  http://localhost:8003"
+echo "  API docs: http://localhost:8003/docs"
 echo ""
 echo "Press Ctrl+C to stop both servers."
 

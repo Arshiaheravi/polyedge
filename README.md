@@ -63,9 +63,9 @@ bash run.sh
 Or manually:
 
 ```bash
-# Terminal 1 — Backend (port 8001)
+# Terminal 1 — Backend (port 8003)
 cd backend
-uvicorn app.main:app --reload --port 8001
+uvicorn app.main:app --reload --port 8003
 
 # Terminal 2 — Frontend (port 3000)
 python3 -m http.server 3000 --directory frontend
@@ -73,7 +73,7 @@ python3 -m http.server 3000 --directory frontend
 
 Open `http://localhost:3000` in your browser.
 
-API docs available at `http://localhost:8001/docs`.
+API docs available at `http://localhost:8003/docs`.
 
 ## Configuring Stripe
 
@@ -84,7 +84,7 @@ API docs available at `http://localhost:8001/docs`.
 3. Copy the Price IDs (`price_...`) into your `.env`
 4. For webhooks (local testing), install the Stripe CLI:
    ```bash
-   stripe listen --forward-to localhost:8001/payments/webhook
+   stripe listen --forward-to localhost:8003/payments/webhook
    ```
 5. Copy the webhook signing secret (`whsec_...`) into `.env`
 
@@ -107,7 +107,7 @@ Note: For the `/verify` command to work, your bot needs a webhook or polling loo
 Check platform stats:
 
 ```bash
-curl -H "x-admin-password: your-admin-password" http://localhost:8001/admin/stats
+curl -H "x-admin-password: your-admin-password" http://localhost:8003/admin/stats
 ```
 
 Returns: total users by tier, follows count, bet events, and estimated MRR.
@@ -116,7 +116,7 @@ Returns: total users by tier, follows count, bet events, and estimated MRR.
 
 | Tier | Price | Follow Limit | Alerts |
 |------|-------|-------------|--------|
-| Free | $0 | 0 | None |
+| Free | $0 | 1 bettor | None |
 | Basic | $4.99/mo | 5 bettors | Web push + Telegram |
 | VIP | $14.99/mo | Unlimited | Web push + Telegram + SMS + Priority |
 
