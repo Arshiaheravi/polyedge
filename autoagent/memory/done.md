@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-28
+- **[SESSION #220] Backend tests — PRIORITY 14 coverage gaps closed** — added test_format_exit_message_basic_format and test_format_exit_message_long_market_truncated (notifications.py lines 57-65), test_send_web_push_vapid_set_no_endpoint_returns_false (notifications.py lines 91-92 reached with VAPID keys set), test_detect_exits_web_push_called_for_vip_with_push_enabled (scheduler.py lines 161-167: asserts send_web_push call_count=1 and payload title); 514→518 backend tests.
 - **[SESSION #218] Backend tests — PRIORITY 13 coverage gaps closed** — added test_poll_vip_bets_no_follows_returns_early (scheduler.py line 319: empty addresses early return) and test_poll_vip_bets_duplicate_bet_skipped (lines 348-349: duplicate BetEvent not re-inserted, no second notification); task 3 (send_web_push exception) confirmed already covered; 512→514 backend tests.
 - **[SESSION #217] Code quality audit — fixed 2 test smells in test_alerts.py** — test_disable_web_push_returns_false upgraded to basic tier so it actually tests enable→disable flow (was silently 403ing on the first PUT as a free user); `import json as _json` alias removed (needless alias). 512 backend tests.
 

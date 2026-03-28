@@ -1153,6 +1153,7 @@ RULE: [2026-03-26] When caching API responses that include user-state fields (ti
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend (Playwright) |
 |---------|--------------|----------------------|
+| 220     | 518          | 99                   |
 | 218     | 514          | 99                   |
 | 217     | 512          | 99                   |
 | 216     | 512          | 99                   |
@@ -1404,3 +1405,9 @@ OPTIMIZATION: [2026-03-27] Parallel foreground research agents (4 launched simul
 ACCOMPLISHED: Added 2 backend tests for PRIORITY 13 coverage gaps — test_poll_vip_bets_no_follows_returns_early (scheduler.py line 319: `if not addresses: return` branch) and test_poll_vip_bets_duplicate_bet_skipped (scheduler.py lines 348-349: `if exists: continue` branch). Task 3 (send_web_push exception) confirmed already covered by test_send_web_push_http_exception_returns_false (line 340). 512→514 tests.
 FAILED: Nothing — both tests passed first run.
 RULE: [2026-03-28] Before adding a PRIORITY task from backlog, run the embedded grep even if it says "returns nothing" — task 3 had a grep that would have found the existing test immediately. The EMBEDDED-GREP RULE must be run for EVERY backlog item, not just ones without a grep line. The backlog grep description may be stale.
+
+### Session #220 Reflexion — 2026-03-28 (TESTING)
+ACCOMPLISHED: Added 4 backend tests for PRIORITY 14 coverage gaps — 2 for format_exit_message (lines 57-65), 1 for send_web_push VAPID+no-endpoint branch (lines 91-92), 1 for detect_exits web push path (lines 161-167). All 4 passed on first run. 514→518 tests.
+FAILED: Nothing.
+RULE: [2026-03-28] When a function has multiple early-return guards in sequence (e.g. `if not vapid_keys: return False` at line 82, `if not endpoint: return False` at line 92), each guard needs its own test that satisfies all PRIOR guards to reach that branch. A test for the second guard must NOT trigger the first guard — pass valid values for the first guard's condition to ensure the code reaches the second.
+OPTIMIZATION: [2026-03-28] For detect_exits web push test, the pattern is: create VIP user + BettorFollow + AlertSetting(web_push_enabled=True, push_subscription='{"endpoint":"..."}'), pre-seed _last_positions with a position, mock get_active_positions to return [] (empty → exit detected), mock send_web_push as AsyncMock, assert call_count=1 and payload title contains bettor_name.

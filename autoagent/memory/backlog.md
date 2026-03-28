@@ -73,14 +73,20 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 14 — Coverage Gaps (generated session 218 via low-water-mark check)
 
-- [ ] **`format_exit_message` basic format + long-market truncation** — `format_exit_message` in notifications.py lines 57-65 has zero tests. Two branches: market ≤ 80 chars (no truncation) and market > 80 chars (truncated with "..."). Assert HTML structure and truncation logic.
-  Grep: `grep -n "format_exit_message" backend/tests/test_notifications.py` returns nothing
+*(All 3 tasks completed in session 220)*
 
-- [ ] **`send_web_push` with VAPID keys set but no endpoint in subscription JSON returns False** — lines 91-92 in notifications.py: `if not endpoint: return False`. The existing `test_send_web_push_no_endpoint_returns_false` doesn't reach this branch (it omits VAPID keys so line 82 fires first). Test with `vapid_private_key="fake"`, `vapid_public_key="fake"`, and subscription JSON that has no "endpoint" key — assert returns False.
-  Grep: `grep -n "vapid.*no_endpoint\|no_endpoint.*vapid\|vapid.*fake.*endpoint" backend/tests/test_notifications.py` returns nothing
+---
 
-- [ ] **`detect_exits` sends web push to VIP follower when `web_push_enabled=True` and `push_subscription` is set** — scheduler.py lines 161-167: web push branch for exit notification. Existing tests only assert Telegram calls; web push call count is never asserted. Create VIP user with `AlertSetting(web_push_enabled=True, push_subscription='{"endpoint":"..."}')`, trigger a position exit, assert `send_web_push` was called once with the correct payload title.
-  Grep: `grep -n "detect_exits.*web_push_called\|exit.*push.*call_count" backend/tests/test_scheduler.py` returns nothing
+## PRIORITY 15 — Coverage Gaps (generated session 220 via low-water-mark check + coverage report)
+
+- [ ] **`send_web_push` generic exception handler returns False** — notifications.py lines 106-108: `except Exception as exc: logger.warning(...); return False`. The existing `test_send_web_push_http_exception_returns_false` mocks httpx and calls WITHOUT VAPID keys (returns False at line 82, never reaches 106-108). Test with VAPID keys set + valid endpoint + `pywebpush.webpush` raises generic Exception → assert returns False and webpush was called.
+  Grep: `grep -n "webpush.*side_effect\|send_web_push.*generic.*exception\|vapid.*exception.*false" backend/tests/test_notifications.py` returns nothing
+
+- [ ] **`_poll_vip_bets` skips address when `get_recent_bets` raises** — scheduler.py lines 328-329: `except Exception: logger.warning(...); continue`. Create a basic/VIP user+follow, mock `get_recent_bets` to raise Exception for that address, assert no BetEvent is created (address gracefully skipped).
+  Grep: `grep -n "poll_vip.*bets.*fetch.*fail\|get_recent_bets.*raises.*vip\|vip.*poll.*exception.*skip" backend/tests/test_scheduler.py` returns nothing
+
+- [ ] **`_poll_vip_bets` skips free-tier user in notification loop** — scheduler.py line 379: `if not user or not user.is_active or user.subscription_tier == "free": continue`. Create a follow where the user is `subscription_tier="free"`, trigger a new bet, assert `send_telegram` and `send_web_push` are NOT called for that user.
+  Grep: `grep -n "poll_vip.*free.*skip\|vip_poll.*free.*tier\|free.*tier.*vip_bets" backend/tests/test_scheduler.py` returns nothing
 
 ---
 

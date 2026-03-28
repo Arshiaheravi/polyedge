@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — TESTING (Session 220)
+DONE: Added 4 backend tests closing PRIORITY 14 coverage gaps — test_format_exit_message_basic_format, test_format_exit_message_long_market_truncated (notifications.py lines 57-65 both branches covered), test_send_web_push_vapid_set_no_endpoint_returns_false (lines 91-92 — the VAPID branch of the no-endpoint guard, previously unreachable because existing test omits VAPID keys), test_detect_exits_web_push_called_for_vip_with_push_enabled (scheduler.py lines 161-167 — first test to assert send_web_push call_count in detect_exits). 514→518 backend tests.
+IMPACT: The format_exit_message function was completely untested; the VAPID no-endpoint branch was shadowed by a guard two lines earlier; the detect_exits web push path could silently break on any refactor and no test would catch it.
+FILES: backend/tests/test_notifications.py, backend/tests/test_scheduler.py
+
 ## 2026-03-28 — META (Session 219)
 IMPROVED: PROMPT.md EMBEDDED-GREP rule (added explicit "RUN THE GREP NOW" + session 218 failure example); PROMPT.md LOW-WATER-MARK CHECK (added fast coverage command `--cov --cov-report=term-missing` as primary gap-finding method); audit.md Nina's checklist (added test-specificity tier gate — free-tier auth_headers against gated endpoint silently 403s and tests nothing useful).
 PATTERNS FOUND: (1) EMBEDDED-GREP rule violated again in session 218 despite existing rule saying "do NOT assume returns nothing is still true" — rule needed stronger "RUN NOW" directive with concrete failure example. (2) Session 217 test-specificity rule written to knowledge.md only, not audit.md where it fires at review-time. (3) LOW-WATER-MARK CHECK described "branch audit approach" (slow) when coverage command (fast, sessions 215-218 confirmed) was proven method.

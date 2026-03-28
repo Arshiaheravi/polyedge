@@ -4917,5 +4917,15 @@
       "failures": 0,
       "notes": "meta session \u2014 no code changes"
     }
+  },
+  {
+    "session": 220,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 4 tests covering format_exit_message output format and truncation, the VAPID-keys-set but no-endpoint branch of send_web_push, and detect_exits web push delivery to VIP users — proving all 3 previously uncovered code paths work correctly",
+    "files": ["backend/tests/test_notifications.py", "backend/tests/test_scheduler.py"],
+    "tests": {"before": 514, "after": 518, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]
