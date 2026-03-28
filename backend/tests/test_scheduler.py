@@ -1270,3 +1270,46 @@ def test_start_scheduler_registers_two_jobs():
 
     # Reset module-level _scheduler so other tests aren't affected
     sched_mod._scheduler = None
+
+
+def test_detect_exits_web_push_called_for_vip_with_push_enabled(sched_db):
+    """detect_exits calls send_web_push once for a VIP follower who has web_push_enabled=True.
+
+    Covers scheduler.py lines 161-167: existing detect_exits tests mock send_web_push but never
+    assert its call count. This test sets up a VIP user with web_push_enabled=True and a
+    push_subscription endpoint, then verifies send_web_push is called with the correct payload.
+    """
+    from app.models import AlertSetting
+
+    session, Session = sched_db
+
+    vip_user = User(
+        email="vip_push@x.com", hashed_password=hash_password("p"), name="PushVIP",
+        subscription_tier="vip",
+    )
+    session.add(vip_user)
+    session.flush()
+
+    session.add(BettorFollow(
+        user_id=vip_user.id, bettor_address="0xwpush", bettor_name="PushWhale",
+    ))
+    session.add(AlertSetting(
+        user_id=vip_user.id,
+        web_push_enabled=True,
+        push_subscription='{"endpoint": "https://push.example.com/vip"}',
+        telegram_enabled=False,
+    ))
+    session.commit()
+
+    # Pre-seed: bettor had position cid_wp; current poll returns empty → exit detected
+    scheduler_module._last_positions["0xwpush"] = {"cid_wp": 20.0}
+
+    mock_push = AsyncMock()
+    with patch("app.services.scheduler.get_active_positions", new=AsyncMock(return_value=[])), \
+         patch("app.services.scheduler.send_telegram", new=AsyncMock()), \
+         patch("app.services.scheduler.send_web_push", new=mock_push):
+        run(_detect_exits(session, ["0xwpush"]))
+
+    assert mock_push.call_count == 1
+    push_payload = mock_push.call_args[0][1]
+    assert "PushWhale" in push_payload["title"]

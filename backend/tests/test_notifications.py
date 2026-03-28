@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import app.services.notifications as notif_mod
 from app.services.notifications import (
     format_bet_message,
+    format_exit_message,
     format_sms_message,
     dispatch_bet_notification,
     send_telegram,
@@ -547,3 +548,45 @@ async def test_dispatch_no_conviction_push_title():
     assert "Carol" in push_payload["title"]
     assert "🔥" not in push_payload["title"]
     assert "⚡" not in push_payload["title"]
+
+
+# ---------------------------------------------------------------------------
+# format_exit_message
+# ---------------------------------------------------------------------------
+
+def test_format_exit_message_basic_format():
+    """format_exit_message includes bettor name, market, and outcome in output."""
+    msg = format_exit_message("Whale", "Will BTC hit 100k?", "Yes")
+    assert "Whale" in msg
+    assert "Will BTC hit 100k?" in msg
+    assert "Yes" in msg
+    assert "EXITING" in msg
+
+
+def test_format_exit_message_long_market_truncated():
+    """format_exit_message truncates market names longer than 80 chars with '...'."""
+    long_market = "A" * 100
+    msg = format_exit_message("Whale", long_market, "No")
+    assert long_market not in msg          # full 100-char title must NOT appear
+    assert "A" * 80 + "..." in msg         # first 80 chars + ellipsis must appear
+
+
+# ---------------------------------------------------------------------------
+# send_web_push — VAPID keys set but no endpoint in subscription JSON
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_send_web_push_vapid_set_no_endpoint_returns_false():
+    """send_web_push returns False when VAPID keys are provided but subscription has no endpoint key.
+
+    Covers notifications.py lines 91-92: the existing no-endpoint test omits VAPID keys so
+    line 82 fires first. This test passes real VAPID keys to reach the endpoint check branch.
+    """
+    sub_json = '{"keys": {"p256dh": "x", "auth": "y"}}'  # endpoint key absent
+    with patch("pywebpush.webpush") as mock_webpush:
+        result = await send_web_push(
+            sub_json, {"title": "test"},
+            vapid_private_key="fake-private", vapid_public_key="fake-public",
+        )
+    assert result is False
+    mock_webpush.assert_not_called()
