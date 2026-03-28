@@ -1,6 +1,12 @@
 # Activity Log
 *(Sessions 1-220 archived â€” see activity_log_archive.md)*
 
+
+## 2026-03-28 — TESTING (Session 236)
+DONE: Added 6 Playwright tests for Basic/VIP account tab tier badge and upgrade button behaviour — Basic badge shows "tier-basic" class and "Basic" text; VIP badge shows "tier-vip" class and "VIP" text; VIP upgrade button is hidden; Basic upgrade button shows "Upgrade to VIP →" text (not generic free-tier text). 101→107 Playwright E2E tests.
+IMPACT: Tier-specific rendering in the account tab is now regression-protected — a future renderAccount() change that accidentally shows the wrong badge or wrong button state will be caught immediately.
+FILES: backend/tests/playwright/test_account_tab_tier_badge.py
+
 ## 2026-03-28 â€” TESTING (Session 233)
 DONE: Added 6 mutation-kill tests across 2 commits â€” (1) copy_signal exact 10.0% boundary ("good" not "fair"); (2) copy_signal exact 30.0% boundary ("fair" not "late"); (3) /follows/live conviction_score null when no recent bets; (4) _poll_bets skips bet at exact ts==_last_check; (5) /follows/live conviction_label "HIGH" at exactly score=3.0; (6) get_consensus_signals with exactly 3 whales produces signal.
 IMPACT: Six real logic bugs that could ship undetected are now caught â€” off-by-one mutations at boundary values in copy_signal thresholds, conviction labels, and consensus min-whale filter are all blocked. 544â†’550 tests.
@@ -67,13 +73,20 @@ FILES: backend/tests/test_scheduler.py
 DONE: Added 3 PRIORITY 15 coverage-gap tests â€” send_web_push generic exception returns False, poll_vip_bets get_recent_bets raises skips address, poll_vip_bets free-tier user skips notification. 518â†’521 backend tests.
 IMPACT: Every error branch in VIP poll notification path and web push exception path is regression-protected.
 FILES: backend/tests/test_notifications.py, backend/tests/test_scheduler.py
-
-## 2026-03-28 — BRAIN (Session 234)
-RESEARCHED: autonomous AI agent best practices 2026, FastAPI production 2026, arxiv papers on agent reliability/controllability, ECC v1.9.0 re-check, Polymarket copy trading competitive intelligence (wallet baskets, multi-wallet evasion, Betmoar).
-DOWNLOADED: No new skill files (ECC still at v1.9.0; no new applicable Anthropic skills).
-IMPLEMENTED: (1) PROMPT.md — OBSERVER LOOP GUARD enhanced with graduated-response model: soft redirect on 3rd repeat (pivot approach), hard stop only on 4th; (2) backlog.md — wallet basket/topic-based follow groups + account-cluster tracking added to FEATURE MODE Competitive Intelligence; (3) activity_log.md — archived sessions 201-220 (33->13 entries; header updated to 1-220 archived).
-BACKLOGGED: Betmoar competitor noted; wallet basket + account-cluster in backlog.
-SOURCES: 7 new sources logged.
+
+
+## 2026-03-28 — BRAIN (Session 234)
+
+RESEARCHED: autonomous AI agent best practices 2026, FastAPI production 2026, arxiv papers on agent reliability/controllability, ECC v1.9.0 re-check, Polymarket copy trading competitive intelligence (wallet baskets, multi-wallet evasion, Betmoar).
+
+DOWNLOADED: No new skill files (ECC still at v1.9.0; no new applicable Anthropic skills).
+
+IMPLEMENTED: (1) PROMPT.md — OBSERVER LOOP GUARD enhanced with graduated-response model: soft redirect on 3rd repeat (pivot approach), hard stop only on 4th; (2) backlog.md — wallet basket/topic-based follow groups + account-cluster tracking added to FEATURE MODE Competitive Intelligence; (3) activity_log.md — archived sessions 201-220 (33->13 entries; header updated to 1-220 archived).
+
+BACKLOGGED: Betmoar competitor noted; wallet basket + account-cluster in backlog.
+
+SOURCES: 7 new sources logged.
+
 ## 2026-03-28 — TESTING (Session 235)
 DONE: Code quality audit (clean — no issues found, 100% coverage maintained); added 2 Playwright tests verifying basic tier users can toggle Telegram and web push notifications without triggering an upgrade modal.
 IMPACT: Fills the NORTH_STAR "Notifications: Basic = enabled" cell — previously only free (blocked) and VIP (enabled) were Playwright-verified; basic tier was untested and could have silently broken.

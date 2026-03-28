@@ -1503,3 +1503,8 @@ ACCOMPLISHED: (1) STEP 1D: archived sessions 201-220 from activity_log.md (33→
 FAILED: Nothing — all steps completed, encoding issue in activity_log.md append resolved by using binary read/write with cp1252 detection.
 RULE: [2026-03-28] When appending to markdown files with Python, always open with explicit encoding: `open(file, 'a', encoding='utf-8')`. Windows default cp1252 encoding silently corrupts em-dashes and special characters when writing UTF-8 content.
 OPTIMIZATION: [2026-03-28] Brain session web research returns highest value from directly actionable competitive intelligence (Polymarket competitors, FastAPI patterns) over arxiv papers — most March 2026 arxiv papers are either already covered or require infrastructure (multi-run, RL, ChromaDB) not available in prompt-only agent. Spend 60% of search time on competitors + project-specific improvements.
+
+### Session #236 Reflexion — 2026-03-28 (TESTING)
+- ACCOMPLISHED: Added 6 Playwright tests for Basic/VIP account tab: badge class, badge text, VIP upgrade button hidden, Basic upgrade button shows VIP upsell. All 9 tests in the file pass. Backend still 100% covered at 550 tests.
+- FAILED: Nothing failed this session.
+- RULE: [2026-03-28] When adding tier-specific Playwright tests for an existing test class, read renderAccount() in index.html first to understand the exact CSS classes (tier-basic/tier-vip), text values ("Basic"/"VIP"), and button visibility logic (VIP hides upgrade btn; Basic shows "Upgrade to VIP →"). This avoids asserting wrong values that match free-tier behavior.

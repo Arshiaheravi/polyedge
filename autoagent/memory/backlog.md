@@ -171,11 +171,17 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 28 — Playwright Tier Gate Gaps (generated session 235 via low-water-mark check)
 
-*(Task 1 completed in session 235 — basic tier notifications not gated: 2 tests added, both pass)*
+*(All 3 tasks completed in session 235+236 — basic tier notifications not gated (session 235), Basic/VIP badge + upgrade button tests (session 236); 101→107 Playwright tests)*
 
-- [ ] **Playwright: Account tab shows Basic/VIP tier badge** — add tests to `tests/playwright/test_account_tab_tier_badge.py` verifying a Basic user sees "Basic" badge and a VIP user sees "VIP" badge in the account tab. Current tests only cover free tier. Grep confirmed: `grep -n "basic\|vip" tests/playwright/test_account_tab_tier_badge.py` returns nothing.
+---
 
-- [ ] **Playwright: Basic/VIP account tab has no upgrade button** — add tests verifying that paid users (Basic, VIP) do NOT see the upgrade button visible to free users in the account tab. Currently only `test_account_tab_upgrade_button_visible_for_free_user` exists. Grep confirmed: `grep -n "basic\|vip\|upgrade.*button" tests/playwright/test_account_tab_tier_badge.py` returns only the free test.
+## PRIORITY 29 — Playwright Account Tab Label + Billing Button (generated session 236 via low-water-mark check)
+
+- [ ] **Playwright: Account tab tier-label text for Basic and VIP** — add tests verifying `#acct-tier-label` shows "Basic — $4.99/mo" for basic users and "VIP — $9.99/mo" for VIP users. `renderAccount()` sets this via the `labels` dict. Grep confirmed: `grep -rn "acct-tier-label" tests/playwright/` returns nothing.
+
+- [ ] **Playwright: Billing button visible for paid tiers (Basic and VIP)** — add tests verifying `#acct-billing-btn` is NOT hidden for basic and VIP users. For free users the billing button is hidden; for paid it is shown. Grep confirmed: `grep -rn "acct-billing-btn" tests/playwright/` returns nothing.
+
+- [ ] **Playwright: Account tab upgrade-nudge hidden for paid tiers** — add tests verifying `#acct-upgrade-nudge` has class 'hidden' for both basic and VIP users (it is only shown for free tier). Grep confirmed: `grep -rn "acct-upgrade-nudge" tests/playwright/` returns nothing.
 
 ---
 
