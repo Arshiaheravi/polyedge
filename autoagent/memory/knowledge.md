@@ -88,6 +88,13 @@ OPTIMIZATION: [2026-03-27] Brain sessions return more value from fetching specif
 
 - Test count: **507 passed, 2 skipped** (unchanged — no code changes this brain session)
 
+### Session #215 Reflexion — 2026-03-27 (TESTING)
+ACCOMPLISHED: Closed all 3 PRIORITY 11 coverage gaps. Added `test_web_push_config_returns_available_true_when_vapid_key_is_set` (patches `app.routes.alerts.get_settings` at callsite — route calls get_settings() inline, not module-level settings) and `test_webhook_checkout_unknown_plan_falls_back_to_basic` (sends plan="enterprise" through checkout.session.completed, asserts tier="basic" via PLAN_TIER_MAP.get(plan,"basic") fallback). Removed already-covered task 3. Generated PRIORITY 12 with 3 new gaps from coverage report.
+FAILED: Nothing — both tests passed on first run.
+RULE: [2026-03-27] To find real coverage gaps fast: run `py -m pytest tests/ --cov=app --cov-report=term-missing --ignore=tests/playwright` and read the MISS column directly. Produces specific line numbers in under 3 minutes vs manual branch counting. Then grep-confirm each gap before adding to backlog.
+
+- Test count: **509 passed, 2 skipped** as of session 215
+
 ### Session #213 Reflexion — 2026-03-27 (TESTING)
 ACCOMPLISHED: Fixed bug in markets.py consensus route — no try/except around `get_consensus_signals` meant API failures returned 500 instead of 502 and the cache was left corrupted. Added 4 regression tests: `test_consensus_api_error_returns_502`, `test_consensus_each_signal_has_required_fields`, `test_detect_exits_inactive_vip_not_notified`, `test_detect_exits_exit_event_stored_regardless_of_follower_tier`. All 507 tests green first run.
 FAILED: Nothing — all 4 tests passed on first attempt.

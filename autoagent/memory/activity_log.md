@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 215)
+DONE: Added 2 backend tests for PRIORITY 11 coverage gaps — test_web_push_config_returns_available_true_when_vapid_key_is_set (patches get_settings to return non-empty VAPID key, asserts available=True and key returned) and test_webhook_checkout_unknown_plan_falls_back_to_basic (sends checkout.session.completed with plan="enterprise", asserts subscription_tier set to "basic" via PLAN_TIER_MAP fallback). Removed task 3 (already covered). Added PRIORITY 12 with 3 new coverage gaps from coverage report.
+IMPACT: The available=True branch of GET /alerts/web-push-config was the only uncovered branch in the VAPID config response path. The Stripe fallback test guards against anyone removing the default "basic" fallback from PLAN_TIER_MAP.get() without a test failure.
+FILES: backend/tests/test_alerts.py, backend/tests/test_stripe_service.py
+
 ## 2026-03-27 — BRAIN (Session 214)
 RESEARCHED: autonomous AI agent self-improvement 2026 (arxiv 2603.24639 ERL, 2603.25697 Kitchen Loop, 2603.00680 MemPO, 2603.15421 CLAG), pytest 9.0 release notes, Playwright Python expect() assertions, FastAPI v0.135.2 (no new versions since last brain session), ECC v1.9.0 status check, anthropics/anthropic-cookbook claude_agent_sdk.
 DOWNLOADED: No new skill files — ECC still at v1.9.0, no new applicable Anthropic skills.

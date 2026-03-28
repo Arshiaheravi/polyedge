@@ -51,11 +51,17 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 11 — Coverage Gaps (generated session 213 via low-water-mark check)
 
-- [ ] **web-push-config `available=True` branch** — `GET /alerts/web-push-config` with VAPID key configured should return `available=True` and the key string. The existing test only covers `available=False`. Grep: `grep -n "available.*true\|vapid.*available.*true" backend/tests/test_alerts.py` should return nothing for this specific branch assertion.
+*(All 3 tasks completed or confirmed already covered in session 215)*
 
-- [ ] **Stripe webhook unknown plan falls back to "basic"** — `_handle_checkout_completed` uses `PLAN_TIER_MAP.get(plan, "basic")`, so a webhook with `plan="enterprise"` sets `subscription_tier="basic"`. No test covers this fallback. Add to `test_stripe_service.py`. Grep: `grep -n "enterprise\|unknown.*tier\|fallback.*basic" backend/tests/test_stripe_service.py` returns nothing.
+## PRIORITY 12 — Coverage Gaps (generated session 215 via low-water-mark check)
 
-- [ ] **`GET /bettors/{address}` unauthenticated returns `tier:"free"` locked simulator** — already tested by `test_bettor_detail_unauthenticated_copy_simulator_locked`. If grep confirms covered, remove this task. Grep: `grep -n "unauthenticated.*copy.*simulator\|copy_simulator.*unauthenticated" backend/tests/test_bettors.py`
+- [ ] **`get_current_user` HTTPException branch uncovered** — `auth.py` lines 76-77: `except HTTPException: return None` is never hit by any test. Trigger: mock `db.query` to raise `HTTPException` inside `get_current_user`, assert the protected endpoint returns 401 (not 500). Grep: `grep -r "def test_.*httpexception.*current_user\|def test_.*get_current_user.*except" backend/tests/` returns nothing.
+
+- [ ] **`POST /payments/webhook` generic Exception → 502** — `payments.py` lines 53-54: the `except Exception` branch raises `HTTPException(status_code=502)`. Existing tests only cover the `ValueError → 400` path and success path. Add a test that patches `handle_webhook_event` to raise a generic `RuntimeError` and asserts the endpoint returns 502. Grep: `grep -r "def test_.*webhook.*502\|def test_.*webhook.*generic.*exc" backend/tests/` returns nothing.
+
+- [ ] **Stripe webhook signature verification failure → ValueError** — `stripe_service.py` lines 75-78: when `stripe_webhook_secret` is non-empty and `Webhook.construct_event` raises `SignatureVerificationError`, `handle_webhook_event` raises `ValueError`. No test covers this. Patch `settings.stripe_webhook_secret = "real_secret"`, mock `Webhook.construct_event` to raise `SignatureVerificationError`, assert `ValueError` is raised. Grep: `grep -r "def test_.*signature.*fail\|SignatureVerification" backend/tests/` returns nothing.
+
+---
 
 ## FEATURE MODE — Competitive Intelligence (do not implement in DEBUG mode)
 
