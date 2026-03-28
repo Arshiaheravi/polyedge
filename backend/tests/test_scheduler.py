@@ -1451,3 +1451,86 @@ def test_stop_scheduler_when_running_calls_shutdown(monkeypatch):
     stop_scheduler()
 
     mock_sched.shutdown.assert_called_once_with(wait=False)
+
+
+def test_poll_vip_bets_skips_old_bets(sched_db):
+    """Bets with timestamp <= _last_check are skipped in the VIP fast-path poll.
+
+    Covers scheduler.py line 337: `if ts and ts <= _last_check: continue`
+    Mirrors test_poll_bets_skips_old_bets for the _poll_vip_bets path.
+    """
+    session, Session = sched_db
+
+    vip_user = User(
+        email="vip_old@x.com", hashed_password=hash_password("p"),
+        name="VipOld", subscription_tier="vip",
+    )
+    session.add(vip_user)
+    session.flush()
+    session.add(BettorFollow(user_id=vip_user.id, bettor_address="0xvipold", bettor_name="whale"))
+    session.commit()
+
+    # Set _last_check to AFTER FUTURE_TS so the bet is considered "old"
+    scheduler_module._last_check = datetime(2099, 6, 1, tzinfo=timezone.utc)
+
+    old_bet = dict(SAMPLE_BET, timestamp=FUTURE_TS)  # FUTURE_TS = 2099-01-01 < _last_check 2099-06-01
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[old_bet])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()) as mock_notify:
+        run(_poll_vip_bets())
+
+    verify = Session()
+    count = verify.query(BetEvent).count()
+    verify.close()
+
+    assert count == 0, "old bet must not be inserted as BetEvent in VIP poll"
+    mock_notify.assert_not_called()
+
+
+def test_poll_vip_bets_outer_exception_handler_fires_on_commit_failure(sched_db):
+    """When db.commit() raises inside _poll_vip_bets, the outer except handler
+    (scheduler.py lines 417-418) fires: error is logged and db.rollback() is called.
+    The function must not crash and _last_check must NOT be updated.
+
+    Mirrors test_poll_bets_outer_exception_leaves_last_check_unchanged for the VIP path.
+    """
+    session, Session = sched_db
+
+    vip_user = User(
+        email="vip_outerexc@x.com", hashed_password=hash_password("p"),
+        name="VipOE", subscription_tier="vip",
+    )
+    session.add(vip_user)
+    session.flush()
+    session.add(BettorFollow(user_id=vip_user.id, bettor_address="0xvipoe", bettor_name="whale"))
+    session.commit()
+
+    # Wrap a real session with a commit() that raises
+    inner = Session()
+    rollback_called = []
+
+    def _fail_commit():
+        raise RuntimeError("forced VIP commit failure")
+
+    def _record_rollback():
+        rollback_called.append(True)
+        inner.__class__.rollback(inner)
+
+    inner.commit = _fail_commit
+    inner.rollback = _record_rollback
+
+    def failing_factory():
+        return inner
+
+    before = scheduler_module._last_check  # from autouse fixture: datetime(2000,1,1,utc)
+
+    with patch("app.services.scheduler.SessionLocal", failing_factory), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[])):
+        run(_poll_vip_bets())  # must not raise
+
+    assert scheduler_module._last_check == before, (
+        f"_last_check must not advance after outer VIP exception; "
+        f"got {scheduler_module._last_check!r}, expected {before!r}"
+    )
+    assert rollback_called, "db.rollback() must be called in the VIP outer except handler"

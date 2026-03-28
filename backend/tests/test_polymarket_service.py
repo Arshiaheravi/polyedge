@@ -1158,3 +1158,22 @@ async def test_get_recent_bets_api_exception_returns_empty_list():
         result = await get_recent_bets("0xdeadbeef", limit=20)
 
     assert result == []
+
+
+@pytest.mark.asyncio
+async def test_get_live_trades_api_exception_returns_empty_list():
+    """ConnectError on client.get() → except Exception branch (polymarket.py lines 104-105)
+    → trades = [] → get_live_trades returns [] without raising."""
+    from unittest.mock import AsyncMock, patch
+    import httpx
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(side_effect=httpx.ConnectError("simulated connection error"))
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_live_trades
+        result = await get_live_trades(limit=20)
+
+    assert result == []
