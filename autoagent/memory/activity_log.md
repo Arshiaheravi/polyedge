@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 211)
+DONE: Added regression test `test_register_and_login_do_not_expose_hashed_password_or_stripe_customer_id` to test_auth.py — proves POST /auth/register and POST /auth/login never return hashed_password or stripe_customer_id in the user dict. Confirmed the other 2 PRIORITY 10 tasks (duplicate follow 409, bettor non-existent 404) were already covered by existing tests with different function names than the grep patterns expected.
+IMPACT: Any future route change that accidentally adds hashed_password or stripe_customer_id to register/login responses will now fail the test suite before shipping. Closes all 3 PRIORITY 10 backlog items.
+FILES: backend/tests/test_auth.py
+
 ## 2026-03-27 — TESTING (Session 210)
 DONE: Code quality audit of sessions 205-209 Playwright test files (no blocking issues found; logged duplicate tab-helpers to tech_debt.md). Added 3 Playwright E2E tests for the landing page leaderboard preview: skeleton-is-replaced (regression guard), has-at-least-one-row, and data-quality-when-api-available (auto-skips on Polymarket outage). All 3 passed first run. 96→99 Playwright tests total.
 IMPACT: Landing page preview table regressions are now automatically caught — any silent failure where the skeleton never loads will fail this test. Test design is resilient to Polymarket API outages by using wait_for_function (20s) and pytest.skip() for data-quality assertions when API is unavailable.

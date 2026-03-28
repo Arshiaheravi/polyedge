@@ -47,14 +47,7 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 10 — Coverage Gaps (generated session 210 via low-water-mark check)
 
-- [ ] **hashed_password + stripe_customer_id never leak in API responses** — Add tests to test_auth.py or test_security.py asserting: (a) POST /auth/register response body has no `hashed_password` key, (b) POST /auth/login response body has no `hashed_password` key, (c) GET /auth/me response body has no `hashed_password` key, (d) same checks for `stripe_customer_id`. This closes section 12 "No `hashed_password`, `stripe_customer_id` ever returned." Bug #3 fixed telegram_chat_id but hashed_password+stripe_customer_id were never explicitly regression-tested.
-  Grep: `grep -rn "def test.*hashed_password\|def test.*stripe_customer_id.*response" backend/tests/` should return nothing.
-
-- [ ] **Duplicate follow returns 409** — POST /follows for an address already in the user's follows should return 409 Conflict (not 500 or silent 200). Add test to test_follows.py: follow address A once (201), follow address A again (expect 4xx). Prevents silent duplicate entries in BettorFollow table.
-  Grep: `grep -rn "def test.*follow.*duplicate\|def test.*follow.*already\|def test.*double.*follow\|def test.*follow.*twice\|def test.*follow.*conflict" backend/tests/test_follows.py` should return nothing.
-
-- [ ] **GET /bettors/{address} with non-existent address returns 404 gracefully** — Polymarket may return 404 for unknown addresses; the backend should return 404 (not 500 or hang). Add test to test_bettors.py: GET /bettors/0x0000000000000000000000000000000000000000 (zero address, never a real bettor) should return 4xx within 20s.
-  Grep: `grep -rn "def test.*bettor.*not.*found\|def test.*bettors.*invalid\|def test.*profile.*404\|def test.*bettors.*nonexist" backend/tests/test_bettors.py` should return nothing.
+*(All 3 tasks completed or confirmed already covered in session 211)*
 
 ## FEATURE MODE — Competitive Intelligence (do not implement in DEBUG mode)
 

@@ -4714,5 +4714,26 @@
       "failures": 0,
       "notes": "3 new leaderboard preview tests pass; used wait_for_function (20s) instead of networkidle to handle Polymarket API timeout"
     }
+  },
+  {
+    "session": 211,
+    "date": "2026-03-27",
+    "time": "05:00",
+    "type": "work",
+    "summary": "Added regression test proving POST /auth/register and POST /auth/login never return hashed_password or stripe_customer_id in the user dict; also confirmed the other 2 PRIORITY 10 tasks were already covered by existing tests with different function names than the grep patterns expected",
+    "files": [
+      "backend/tests/test_auth.py"
+    ],
+    "tests": {
+      "before": 502,
+      "after": 503,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "test-only change, no frontend files modified"
+    }
   }
 ]

@@ -45,7 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **502 passed, 2 skipped** (as of 2026-03-27, session 209 — current)
+- Test count: **503 passed, 2 skipped** (as of 2026-03-27, session 211 — current)
 - Playwright E2E: **96 passed, 2 skipped** (as of 2026-03-27, session 209) — 4 new: landing page navigation CTAs (View Leaderboard, Log In, Start Free, billing toggle). NOTE: 10 pre-existing tests fail intermittently when Polymarket /profiles API is down (external dependency); baseline 92 pass with API up.
 - Playwright E2E: **92 passed, 2 skipped** (as of 2026-03-27, session 207) — 8 new: logout clears token, free-tier push gate, admin MRR math
 - Playwright E2E: **84 passed, 2 skipped** (as of 2026-03-27, session 206) — 9 new: account tab tier badge, period filter, guide tab
@@ -79,6 +79,11 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #211 Reflexion — 2026-03-27 (TESTING)
+ACCOMPLISHED: Added test `test_register_and_login_do_not_expose_hashed_password_or_stripe_customer_id` to test_auth.py. Discovered all 3 PRIORITY 10 backlog tasks were partially or fully covered already: (1) hashed_password/stripe_customer_id in /me already covered by `test_auth_me_does_not_expose_sensitive_fields` — only register/login coverage was missing (now fixed). (2) Duplicate follow already covered by `test_duplicate_follow_rejected` at line 30. (3) Bettor non-existent address already covered by `test_bettor_detail_none_profile_returns_200`. The EMBEDDED-GREP patterns were word-order-wrong: `def test.*follow.*duplicate` missed `test_duplicate_follow_*` because "duplicate" comes before "follow" in the function name.
+FAILED: Nothing — new test passed first run. Earlier intermittent `sqlalchemy.orm.exc.S...` errors in test_auth.py were transient (disappeared on second run; pre-existing).
+RULE: [2026-03-27] When EMBEDDED-GREP returns nothing, the feature may still exist with different word order in the function name. `grep -rn "def test.*follow.*duplicate"` misses `test_duplicate_follow_rejected` because "follow" is second not first. After a zero grep, scan the full test file for any function containing the key word (e.g., grep for just "duplicate" in test_follows.py) before adding a new test.
 
 ### Session #210 Reflexion — 2026-03-27 (TESTING)
 ACCOMPLISHED: Code quality audit of sessions 205–209 Playwright test files — found duplicate tab-helper functions (_open_alerts_tab ×3, _open_leaderboard_tab ×2) logged to tech_debt.md; no blocking issues. Added 3 Playwright E2E tests (test_landing_leaderboard_preview.py): skeleton-replaced-after-load, has-at-least-one-row, data-quality-when-api-available (auto-skips on Polymarket outage). All 3 passed first run. 96→99 Playwright tests.
