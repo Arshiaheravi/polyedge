@@ -109,11 +109,20 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 20 — Coverage Gaps (generated session 226 via coverage report — 99% total, 4 missed lines in polymarket.py)
 
-- [ ] **`compute_copy_simulator` ISO timestamp path** — polymarket.py lines 374-375: `else: dt = datetime.fromisoformat(...); bet_age_secs = now_ts - dt.timestamp()`. Call `compute_copy_simulator` with a bet that has an ISO timestamp (e.g. `"2026-03-01T10:00:00Z"`) and a valid price/conditionId so the ISO branch is reached. Verify function returns a result dict without raising.
-  Grep: `grep -n "fromisoformat\|ISO.*timestamp\|copy_sim.*date\|iso.*bet" backend/tests/test_polymarket_service.py` returns nothing
+*(All 2 tasks completed in session 227 — polymarket.py now 100% covered)*
 
-- [ ] **`compute_copy_simulator` invalid timestamp exception pass** — polymarket.py lines 376-377: `except Exception: pass`. Call with a bet where `timestamp` is `"not-a-date"` (causes fromisoformat to raise) → exception caught → `pass` executes → `bet_age_secs` stays at default `seven_days + 1` → bet counted as old → function returns a result.
-  Grep: `grep -n "invalid.*timestamp\|bad.*timestamp\|fromisoformat.*raise\|timestamp.*pass" backend/tests/test_polymarket_service.py` returns nothing
+---
+
+## PRIORITY 21 — Coverage Gaps (generated session 227 via low-water-mark check — 99% total, 4 missed lines in database.py only)
+
+- [ ] **`get_db` generator coverage** — database.py lines 20-24: `db = SessionLocal(); try: yield db; finally: db.close()`. Write a direct unit test that calls `get_db()` as a generator: `gen = get_db(); db = next(gen)`, assert it's a sqlalchemy Session, then send StopIteration to trigger the `finally: db.close()`. This is the only uncovered module — all services/routes/scheduler are at 100%.
+  Grep: `grep -n "def test_get_db\|def test_database" backend/tests/*.py` returns nothing
+
+- [ ] **`get_db` close-on-exception path** — database.py finally block fires even when the generator consumer raises. Write a test that calls `next(get_db())` to get the db session, then calls `gen.throw(RuntimeError("boom"))` — the `finally: db.close()` should fire and not re-raise. Verify the session is closed afterward via `db.is_active == False` or no exception propagates from the finally.
+  Grep: `grep -n "gen.throw\|throw.*RuntimeError\|get_db.*exception" backend/tests/*.py` returns nothing
+
+- [ ] **Stripe webhook unhandled event type** — stripe_service.py already 100% covered, but verify there is a test for an unknown/unhandled Stripe event type (e.g. `payment_intent.created`) hitting the webhook endpoint — should return 200 with no side effects. Cross-check: verify the `if event_type not in handled_types` branch exists and returns 200.
+  Grep: `grep -n "unhandled\|unknown.*event\|payment_intent.created" backend/tests/test_payments.py` returns nothing
 
 ---
 

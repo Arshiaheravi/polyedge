@@ -5062,5 +5062,15 @@
     "files": ["backend/tests/test_polymarket_service.py"],
     "tests": {"before": 531, "after": 534, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+  },
+  {
+    "session": 227,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 2 tests covering the ISO timestamp and invalid timestamp exception paths in the copy simulator — polymarket.py is now 100% covered, all services and routes at full coverage",
+    "files": ["backend/tests/test_polymarket_service.py"],
+    "tests": {"before": 534, "after": 536, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]

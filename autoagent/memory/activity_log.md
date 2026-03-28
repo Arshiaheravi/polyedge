@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — TESTING (Session 227)
+DONE: Added 2 PRIORITY 20 coverage-gap tests for compute_copy_simulator ISO timestamp path (polymarket.py lines 374-375) and invalid timestamp exception pass (lines 376-377). polymarket.py is now 100% covered. 534→536 backend tests.
+IMPACT: Every branch in the copy simulator timestamp parsing logic is now regression-protected. Any future refactor that removes the ISO or invalid-timestamp handling will fail the test suite before shipping.
+FILES: backend/tests/test_polymarket_service.py
+
 ## 2026-03-28 — TESTING (Session 225)
 DONE: Added 4 PRIORITY 18 coverage-gap tests — free-tier follower skip in VIP poll (VIP+free user same address, dispatch called once), conviction score fallback for zero-amount bets (avg=0 → score=1.0), and both _fetch_positions error branches in get_consensus_signals (dict response + ConnectError). scheduler.py is now 100% covered.
 IMPACT: The broken session-221 test (vacuous pass — never reached line 379) is now correctly fixed with proper VIP+free setup. Any future refactor that removes the free-tier guard in the VIP poll loop will fail the test suite before shipping. 527→531 backend tests.
