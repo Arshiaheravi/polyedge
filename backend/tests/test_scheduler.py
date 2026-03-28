@@ -229,6 +229,46 @@ def test_poll_bets_skips_old_bets(sched_db):
     mock_notify.assert_not_called()
 
 
+def test_poll_bets_skips_bet_at_exact_last_check_boundary(sched_db):
+    """A bet with timestamp == _last_check is skipped (already seen).
+
+    Kills mutation: `ts <= _last_check` → `ts < _last_check`.
+    With the original `<=`, a bet at exactly _last_check is treated as already-seen.
+    With mutation `<`, the same bet would be treated as new and re-notified (duplicate).
+
+    reset_last_check fixture sets _last_check = datetime(2000, 1, 1, UTC).
+    This test uses timestamp = exactly that value.
+    """
+    session, Session = sched_db
+
+    user = User(
+        email="boundary@x.com", hashed_password=hash_password("p"),
+        name="BoundaryUser", subscription_tier="basic",
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xboundary"))
+    session.commit()
+
+    # Bet at exactly _last_check (2000-01-01T00:00:00Z per reset_last_check fixture)
+    boundary_bet = dict(SAMPLE_BET, timestamp=datetime(2000, 1, 1, tzinfo=timezone.utc))
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[boundary_bet])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()) as mock_notify:
+        run(_poll_bets())
+
+    verify = Session()
+    count = verify.query(BetEvent).count()
+    verify.close()
+
+    assert count == 0, (
+        "Bet at exactly _last_check must be skipped (rule: ts <= _last_check means already-seen). "
+        "Mutation `ts < _last_check` would process this bet as new, causing a duplicate notification."
+    )
+    mock_notify.assert_not_called()
+
+
 def test_poll_bets_skips_duplicate_bet(sched_db):
     """A bet already in BetEvent table is not re-inserted and triggers no notification."""
     session, Session = sched_db

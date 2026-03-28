@@ -1474,6 +1474,61 @@ async def test_copy_simulator_invalid_timestamp_exception_pass():
 
 
 @pytest.mark.asyncio
+async def test_get_consensus_signals_exactly_3_whales_included():
+    """Exactly 3 whales holding the same market must produce a signal (whale_count == 3).
+
+    Kills mutation: `count < min_whales` → `count <= min_whales` at polymarket.py line 516.
+    With the original `<`, count=3 and min_whales=3 → 3 < 3 is False → signal included.
+    With mutation `<=`, count=3 and min_whales=3 → 3 <= 3 is True → signal excluded (wrongly).
+    """
+    from unittest.mock import AsyncMock, MagicMock, patch
+    from app.services.polymarket import get_consensus_signals
+
+    EXACT_3_CONDITION_ID = "0x" + "b" * 64  # distinct condition id
+
+    # Exactly 3 whale leaderboard entries — one per the minimum threshold
+    mock_leaderboard = [
+        {"address": f"0x{i:040x}", "name": f"whale{i}", "pnl_usd": 1000.0, "rank": i}
+        for i in range(1, 4)
+    ]
+
+    # All 3 whales hold YES on the same market
+    mock_position = {
+        "conditionId": EXACT_3_CONDITION_ID,
+        "outcome": "Yes",
+        "title": "Will exactly-3 happen?",
+        "avgPrice": "0.50",
+        "curPrice": "0.55",
+        "redeemable": False,
+        "eventSlug": "exact-3-event",
+    }
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = [mock_position]
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with (
+        patch("app.services.polymarket.get_leaderboard", new=AsyncMock(return_value=mock_leaderboard)),
+        patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client),
+    ):
+        signals = await get_consensus_signals(min_whales=3)
+
+    target = next((s for s in signals if s["condition_id"] == EXACT_3_CONDITION_ID), None)
+    assert target is not None, (
+        f"A market with exactly 3 whales must appear in consensus signals "
+        f"(rule: count < min_whales filters; count == min_whales must PASS). "
+        f"Mutation `count <= min_whales` would exclude it. Got signals: {signals}"
+    )
+    assert target["whale_count"] == 3, (
+        f"whale_count must be 3 for exactly-3-whale consensus, got {target['whale_count']}"
+    )
+
+
+@pytest.mark.asyncio
 async def test_copy_signal_good_at_exact_10_pct_boundary():
     """copy_value_pct == 10.0 must produce copy_signal='good', NOT 'fair'.
 

@@ -450,6 +450,38 @@ def test_follows_live_copy_signal_is_valid_enum(client, auth_headers):
         )
 
 
+def test_follows_live_conviction_high_at_exact_3x_avg_bet(client, auth_headers):
+    """conviction_label must be 'HIGH' when score is exactly 3.0 (initial=300, avg_bet=100).
+
+    Kills mutation: `score >= 3.0` → `score > 3.0` in follows.py _conviction inner function.
+    With >= 3.0, score of exactly 3.0 gives 'HIGH'.
+    With mutation > 3.0, score of exactly 3.0 falls to '' (empty).
+    Note: this tests follows.py's inner _conviction, not scheduler's _compute_conviction.
+    """
+    from unittest.mock import AsyncMock, patch
+
+    # initial_value_usd=300, 3 recent bets of $100 each → avg_bet=100 → score=3.0 → HIGH
+    position = [dict(MOCK_POSITIONS[0], initial_value_usd=300.0)]
+    recent_bets = [{"amount_usd": 100.0, "timestamp": "2026-01-01T00:00:00Z"} for _ in range(3)]
+
+    client.post("/follows", json={"bettor_address": "0xhigh3x", "bettor_name": "High3xWhale"},
+                headers=auth_headers)
+
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=position)), \
+         patch("app.routes.follows.get_recent_bets", new=AsyncMock(return_value=recent_bets)):
+        resp = client.get("/follows/live", headers=auth_headers)
+
+    assert resp.status_code == 200
+    pos = resp.json()["bettors"][0]["active_positions"][0]
+    assert pos["conviction_score"] == 3.0, (
+        f"Score must be 3.0 for initial=300, avg=100, got {pos['conviction_score']}"
+    )
+    assert pos["conviction_label"] == "HIGH", (
+        f"conviction_label must be 'HIGH' at exactly score=3.0 (rule: >= 3.0 is HIGH). "
+        f"Got {pos['conviction_label']!r} — mutation `> 3.0` would cause this."
+    )
+
+
 def test_follows_live_conviction_score_null_when_no_recent_bets(client, auth_headers):
     """conviction_score is null (not 1.0) when there are no recent bets (avg_bet=0).
 
