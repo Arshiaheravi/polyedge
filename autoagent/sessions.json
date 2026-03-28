@@ -5181,5 +5181,27 @@
       "failures": 0,
       "notes": "test-only session"
     }
+  },
+  {
+    "session": 232,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Mutation testing of payments + auth files — killed 3 surviving mutants: unpaid subscriptions could silently retain VIP access, JWT sub-claim could be wrong identifier without detection, and Stripe checkout could silently assign subscriptions to the wrong user",
+    "files": [
+      "backend/tests/test_stripe_service.py",
+      "backend/tests/test_auth.py"
+    ],
+    "tests": {
+      "before": 541,
+      "after": 544,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "test-only session"
+    }
   }
 ]

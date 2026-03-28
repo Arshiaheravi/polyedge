@@ -127,16 +127,22 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 23 — Mutation Tests: Payments + Auth (generated session 231 — low-water-mark, all PRIORITY 22 done)
 
-**Context**: Manual mutation analysis approach (mutmut incompatible with Windows py env). For each file: read the critical branching logic, identify mutations that change behavior, check whether existing tests assert the specific boundary, write tests for gaps.
+*(All 3 tasks completed in session 232 — unpaid downgrade mutation, JWT sub-claim identity mutation, Stripe checkout metadata user_id mutation; 541→544 tests)*
 
-- [ ] **Mutation test — routes/payments.py Stripe tier assignment** — Read the Stripe webhook handler in routes/payments.py. Key mutations: `subscription_tier = "basic"` → `"vip"` (or vice versa), `customer_id` comparison logic. Check if existing tests assert the EXACT tier assigned after each webhook event type (checkout.completed, subscription.deleted). A mutant swapping "basic"/"vip" would give wrong access.
-  Grep: `grep -n "def test.*webhook\|subscription_tier.*basic\|subscription_tier.*vip" backend/tests/test_payments.py` — check if exact tier values are asserted post-webhook.
+---
 
-- [ ] **Mutation test — routes/auth.py JWT claims and password verify** — Key mutations: `str(user.id)` → `str(user.email)` in JWT sub claim (users get wrong identity), `verify_password` return value inversion (auth bypass), `expire` delta changed. Check if existing tests assert the token's sub claim decodes to the correct user ID. A sub-claim mutation would let any user impersonate any other.
-  Grep: `grep -n "def test.*jwt\|def test.*token\|sub.*user.id\|decode" backend/tests/test_auth.py` — check if JWT sub is asserted.
+## PRIORITY 24 — Mutation Tests: Alerts + Bettors + Notifications (generated session 232 — low-water-mark, 100% coverage, no gaps remaining)
 
-- [ ] **Mutation test — services/stripe_service.py customer/tier mapping** — Read the Stripe service. Key mutations: `stripe_customer_id` assignment (customer mapped to wrong user), tier string literals in upgrade paths. Check if tests assert `user.stripe_customer_id == expected_id` after customer creation, and that tier upgrades use the exact expected string.
-  Grep: `grep -n "stripe_customer_id\|subscription_tier" backend/tests/test_stripe_service.py` — check exact assertion values.
+**Context**: Manual mutation analysis approach. For each file: read the critical branching logic, identify mutations that change behavior, check whether existing tests assert the specific boundary, write tests for gaps.
+
+- [ ] **Mutation test — routes/alerts.py tier gate for enabling web push** — Read the web push enable logic in routes/alerts.py. Key mutation: tier check condition inversion (`subscription_tier == "free"` → `subscription_tier != "free"`) would deny VIP users while allowing free users to "enable" push. Check if existing tests assert: (a) free user trying to enable gets a specific error (not just ignored), (b) basic/VIP user enabling actually sets `web_push_enabled=True`.
+  Grep: `grep -n "def test.*web_push\|web_push_enabled.*True\|subscription_tier.*free.*push" backend/tests/test_alerts.py`
+
+- [ ] **Mutation test — routes/bettors.py profile cache key tier inclusion** — The cache key bug (#1) was fixed by including tier in the cache key. Key mutation: removing `user_tier` from cache key would serve VIP response to free users. Check if existing tests assert that calling the profile endpoint twice (once as free, once as VIP) returns DIFFERENT responses (locked vs unlocked simulator).
+  Grep: `grep -n "def test.*profile.*tier\|def test.*cache.*tier\|locked.*false\|locked.*true" backend/tests/test_bettors.py`
+
+- [ ] **Mutation test — services/notifications.py VIP exit alert dispatch** — The exit alert fires only for VIP users. Key mutation: `subscription_tier == "vip"` → `subscription_tier != "vip"` (or removing the guard entirely). Check if existing tests assert that a basic-tier follower does NOT receive an exit alert notification when a bettor exits.
+  Grep: `grep -n "def test.*exit.*alert\|exit.*vip\|exit.*basic\|dispatch.*exit" backend/tests/test_scheduler.py`
 
 ---
 

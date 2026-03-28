@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — TESTING (Session 232)
+DONE: Added 3 mutation-kill tests for payments + auth — (1) status="unpaid" downgrade path in stripe_service._handle_subscription_change (mutation: remove "unpaid" from tuple survives when not tested); (2) JWT sub claim is user.id not email (direct token decode: payload["sub"] == str(user.id)); (3) Stripe checkout metadata contains correct user_id (Session.create called with metadata["user_id"] == str(user.id)).
+IMPACT: Three real identity/access-control logic bugs that could ship undetected are now caught. An unpaid user can no longer retain VIP access. JWT sub-claim identity mutation is explicitly blocked. Stripe checkout cannot silently assign subscriptions to the wrong user.
+FILES: backend/tests/test_stripe_service.py, backend/tests/test_auth.py
+
 ## 2026-03-28 — TESTING (Session 231)
 DONE: Ran manual mutation analysis on routes/follows.py, routes/markets.py, and services/scheduler.py. Found and killed 3 surviving mutants: (1) signals[:2] instead of [:3] would pass the weak `<= 3` assertion — new test asserts `== 3`; (2) tier==free branch mutation survives old "Upgrade" check — new test asserts "Basic" in message; (3) `<= 0.5` instead of `< 0.5` at 50% exit threshold — new test at exact boundary value.
 IMPACT: Three real logic bugs that could ship undetected are now caught. The consensus gate is hardened (free users always get exactly 3 signals, not fewer). The exit alert threshold is enforced at the precise >50% rule.
