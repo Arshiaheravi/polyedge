@@ -231,6 +231,23 @@ def test_checkout_no_price_id_configured_returns_502(client, auth_headers):
     assert "No Stripe price ID" in resp.json()["detail"]
 
 
+def test_webhook_generic_exception_returns_502(client):
+    """payments.py lines 53-54: except Exception → 502.
+    When handle_webhook_event raises a generic RuntimeError (not ValueError),
+    the route must return 502 (not 500 or 400)."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("app.routes.payments.handle_webhook_event",
+               new=AsyncMock(side_effect=RuntimeError("unexpected internal error"))):
+        resp = client.post(
+            "/payments/webhook",
+            content=b"{}",
+            headers={"Content-Type": "application/json"},
+        )
+    assert resp.status_code == 502
+    assert "unexpected internal error" in resp.json()["detail"]
+
+
 def test_webhook_unknown_event_returns_200(client):
     """POST /payments/webhook with an unknown event type must return 200 {'status': 'ok'}.
     The webhook handler ignores unknown event types without raising — route must not 502."""

@@ -1,4 +1,20 @@
 """Tests for /auth endpoints: register, login, /me."""
+from unittest.mock import patch
+
+
+def test_get_current_user_optional_catches_http_exception_returns_none(db):
+    """auth.py lines 76-77: except HTTPException: return None — triggered when
+    decode_token raises HTTPException (e.g. malformed JWT). get_current_user_optional
+    must catch it and return None (unauthenticated fallback) rather than propagating 401."""
+    from fastapi import HTTPException
+    from fastapi.security import HTTPAuthorizationCredentials
+    from app.auth import get_current_user_optional
+
+    creds = HTTPAuthorizationCredentials(scheme="Bearer", credentials="invalid.token.here")
+    with patch("app.auth.decode_token", side_effect=HTTPException(status_code=401, detail="bad token")):
+        result = get_current_user_optional(credentials=creds, db=db)
+
+    assert result is None
 
 
 def test_register_success(client):

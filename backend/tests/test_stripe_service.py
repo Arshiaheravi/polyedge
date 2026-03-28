@@ -1,7 +1,32 @@
 """Unit tests for stripe_service — checkout, portal, webhook handling."""
 import json
 import pytest
+import stripe
 from unittest.mock import MagicMock, patch
+
+
+@pytest.mark.asyncio
+async def test_webhook_signature_verification_failure_raises_value_error(db):
+    """stripe_service.py lines 75-78: when stripe_webhook_secret is set and
+    Webhook.construct_event raises SignatureVerificationError, handle_webhook_event
+    must raise ValueError (not propagate the Stripe-specific exception)."""
+    from app.services.stripe_service import handle_webhook_event
+
+    mock_stripe_client = MagicMock()
+    mock_stripe_client.Webhook.construct_event.side_effect = (
+        stripe.error.SignatureVerificationError("invalid signature", "sig_header_value")
+    )
+
+    with patch("app.services.stripe_service._get_stripe_client", return_value=mock_stripe_client), \
+         patch("app.services.stripe_service.settings") as mock_settings:
+        mock_settings.stripe_webhook_secret = "whsec_real_secret_not_empty"
+
+        with pytest.raises(ValueError, match="signature verification failed"):
+            await handle_webhook_event(
+                payload=b'{"type":"checkout.session.completed"}',
+                sig_header="t=1234,v1=fakesig",
+                db=db,
+            )
 
 
 # ── create_checkout_session ────────────────────────────────────────────────────
