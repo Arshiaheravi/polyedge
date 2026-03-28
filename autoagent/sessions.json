@@ -5295,5 +5295,47 @@
       "failures": 0,
       "notes": "All 9 account tab tier tests pass including 6 new Basic/VIP tests"
     }
+  },
+  {
+    "session": 238,
+    "date": "2026-03-28",
+    "time": "15:30",
+    "type": "work",
+    "summary": "Added 5 Playwright tests for account tab free-tier complement elements and tier description text — free user billing button hidden, upgrade nudge visible, and tier-desc content for all 3 tiers are now regression-protected",
+    "files": [
+      "backend/tests/playwright/test_account_tab_free_tier.py"
+    ],
+    "tests": {
+      "before": 550,
+      "after": 550,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 5,
+      "failures": 0,
+      "notes": "5/5 new Playwright tests pass; 113→118 when API is up"
+    }
+  },
+  {
+    "session": 237,
+    "date": "2026-03-28",
+    "time": "15:00",
+    "type": "work",
+    "summary": "Added 6 Playwright tests verifying account tab tier-label text, billing button visibility, and upgrade-nudge hidden state for Basic and VIP users — renderAccount() DOM mutations are now regression-protected",
+    "files": [
+      "backend/tests/playwright/test_account_tab_label_billing.py"
+    ],
+    "tests": {
+      "before": 550,
+      "after": 550,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 6,
+      "failures": 0,
+      "notes": "6/6 new Playwright tests pass; 18 intermittent failures in full suite are pre-existing Polymarket API-down tests (unrelated to code); 107→113 passing when API is up"
+    }
   }
 ]

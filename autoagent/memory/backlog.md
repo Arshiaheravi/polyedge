@@ -175,13 +175,15 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
-## PRIORITY 29 — Playwright Account Tab Label + Billing Button (generated session 236 via low-water-mark check)
+## PRIORITY 29 — Playwright Account Tab Label + Billing Button
 
-- [ ] **Playwright: Account tab tier-label text for Basic and VIP** — add tests verifying `#acct-tier-label` shows "Basic — $4.99/mo" for basic users and "VIP — $9.99/mo" for VIP users. `renderAccount()` sets this via the `labels` dict. Grep confirmed: `grep -rn "acct-tier-label" tests/playwright/` returns nothing.
+*(All 3 tasks completed in session 237 — tier-label text, billing button visibility, upgrade-nudge hidden state for Basic and VIP; 107→113 Playwright tests)*
 
-- [ ] **Playwright: Billing button visible for paid tiers (Basic and VIP)** — add tests verifying `#acct-billing-btn` is NOT hidden for basic and VIP users. For free users the billing button is hidden; for paid it is shown. Grep confirmed: `grep -rn "acct-billing-btn" tests/playwright/` returns nothing.
+---
 
-- [ ] **Playwright: Account tab upgrade-nudge hidden for paid tiers** — add tests verifying `#acct-upgrade-nudge` has class 'hidden' for both basic and VIP users (it is only shown for free tier). Grep confirmed: `grep -rn "acct-upgrade-nudge" tests/playwright/` returns nothing.
+## PRIORITY 30 — Playwright Account Tab Free-Tier Complements + Tier Description
+
+*(All 3 tasks completed in session 238 — free billing hidden, free nudge visible, tier-desc text for all 3 tiers; 113→118 Playwright tests)*
 
 ---
 

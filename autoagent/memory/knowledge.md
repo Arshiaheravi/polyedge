@@ -45,6 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
+- Playwright E2E: **118 passed** (as of 2026-03-28, session 238 — current, when Polymarket API up) — 11 new account tab tests: tier-label text, billing btn visibility, upgrade-nudge state (sessions 237+238)
 - Test count: **550 passed, 2 skipped** (as of 2026-03-28, session 233 — current)
 - Test count: **521 passed, 2 skipped** (as of 2026-03-28, session 221)
 - Test count: **518 passed, 2 skipped** (as of 2026-03-28, session 220)
@@ -221,6 +222,11 @@ ACCOMPLISHED: Code quality audit (PRIORITY 16.5) on test_scheduler.py, test_noti
 FAILED: During coverage report analysis, discovered that test_poll_vip_bets_free_tier_user_skips_notification (session 221) is a broken test — it creates ONLY a free user, so vip_user_ids=[] fires the early return at line 309 and the function never reaches line 379. The test passes trivially (mock_notify.assert_not_called() is vacuously true). Scheduler.py line 379 is still uncovered.
 RULE: [2026-03-28] When testing a skip/continue branch inside `_poll_vip_bets`, the early-return guards at lines 309 (`if not vip_user_ids`) and 319 (`if not addresses`) must be bypassed first. This requires: (1) at least one VIP-tier user in DB, AND (2) that VIP user following at least one address. Only THEN does execution reach the inner follow-loop body where the free-tier skip (line 379), the old-bet skip (line 337), and the outer exception handler (lines 417-418) live. `See also: Session #221 (same gap — test_poll_vip_bets_free_tier_user_skips_notification created only a free user)`
 - Test count: **527 passed, 2 skipped** (as of 2026-03-28, session 223)
+
+### Session #237-238 Reflexion — 2026-03-28 (TESTING)
+ACCOMPLISHED: Two task sessions completing PRIORITY 29 + 30 — account tab renderAccount() full Playwright coverage. Session 237: 6 tests for tier-label text (Basic/VIP), billing button visible (Basic/VIP), upgrade-nudge hidden (Basic/VIP). Session 238: 5 tests for billing button hidden (free), upgrade-nudge visible (free), and tier-description text for all 3 tiers. 107→118 Playwright tests. Backend 100% coverage maintained (550/2 skipped). Both sessions had 0 failures.
+FAILED: Nothing — direct pattern reuse from test_account_tab_tier_badge.py (same _open_account_tab helper, same login(), same JS evaluate pattern).
+RULE: [2026-03-28] When generating new Playwright account tab tests, always cover BOTH sides of each boolean guard: if you test "billing visible for basic/VIP", immediately add "billing hidden for free" in the same or next task. Complement tests are cheap (5 min) and prevent the "half-covered" state where the positive case passes but the negative case is never checked. The low-water-mark check will always generate these complement tasks anyway — do them proactively.
 
 ### Session #185 Reflexion — 2026-03-26
 ACCOMPLISHED: Added 3 tests for conviction_score/label in get_recent_bets: single-bet score=1.0 label="", 19-small+1-large (score=19.6) label="EXTREME", API ConnectError → []. All 3 passed first run. 496→499 tests.

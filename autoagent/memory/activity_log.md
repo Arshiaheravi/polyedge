@@ -2,6 +2,16 @@
 *(Sessions 1-220 archived â€” see activity_log_archive.md)*
 
 
+## 2026-03-28 — TESTING (Session 238)
+DONE: Added 5 Playwright tests for account tab free-tier complements and tier-description text — free user billing button hidden, free upgrade nudge visible, and #acct-tier-desc content verified for all 3 tiers. 113→118 Playwright E2E tests.
+IMPACT: Completes full renderAccount() regression coverage across all account tab elements for all 3 tiers — any future change that shows the wrong description or billing state will be caught immediately.
+FILES: backend/tests/playwright/test_account_tab_free_tier.py
+
+## 2026-03-28 — TESTING (Session 237)
+DONE: Added 6 Playwright tests for account tab tier-label text, billing button visibility, and upgrade-nudge hidden state — Basic shows "Basic — $4.99/mo", VIP shows "VIP — $9.99/mo"; billing button visible for both; upgrade nudge hidden for both. 107→113 Playwright E2E tests.
+IMPACT: renderAccount() plan-string and billing UI rendering is now regression-protected — a future change that shows wrong plan text or hides the billing button for paid users will be caught immediately.
+FILES: backend/tests/playwright/test_account_tab_label_billing.py
+
 ## 2026-03-28 — TESTING (Session 236)
 DONE: Added 6 Playwright tests for Basic/VIP account tab tier badge and upgrade button behaviour — Basic badge shows "tier-basic" class and "Basic" text; VIP badge shows "tier-vip" class and "VIP" text; VIP upgrade button is hidden; Basic upgrade button shows "Upgrade to VIP →" text (not generic free-tier text). 101→107 Playwright E2E tests.
 IMPACT: Tier-specific rendering in the account tab is now regression-protected — a future renderAccount() change that accidentally shows the wrong badge or wrong button state will be caught immediately.
