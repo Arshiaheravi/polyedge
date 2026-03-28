@@ -231,3 +231,6 @@
 - **[SESSION #179] Code quality audit — sessions 169-177** — all changed files passed Marcus XSS, Leo smells, and Alex architecture checks; no code changes required; 483 tests unchanged
 
 - **[SESSION #197] Playwright: basic-tier 5-follow-limit upgrade modal** — login as basic tier, clean existing follows, follow 5, attempt 6th → upgrade modal appears; 63→64 Playwright tests
+
+## 2026-03-28
+- **[SESSION #225] PRIORITY 18 coverage-gap tests** — Added 4 tests covering scheduler.py line 379 (free-tier follower skip with VIP+free same address), polymarket.py line 429 (conviction score fallback for zero-amount bets), and polymarket.py lines 467-469 (_fetch_positions dict-response and ConnectError branches via get_consensus_signals); 527→531 tests, scheduler.py now 100% covered.

@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — TESTING (Session 225)
+DONE: Added 4 PRIORITY 18 coverage-gap tests — free-tier follower skip in VIP poll (VIP+free user same address, dispatch called once), conviction score fallback for zero-amount bets (avg=0 → score=1.0), and both _fetch_positions error branches in get_consensus_signals (dict response + ConnectError). scheduler.py is now 100% covered.
+IMPACT: The broken session-221 test (vacuous pass — never reached line 379) is now correctly fixed with proper VIP+free setup. Any future refactor that removes the free-tier guard in the VIP poll loop will fail the test suite before shipping. 527→531 backend tests.
+FILES: backend/tests/test_scheduler.py, backend/tests/test_polymarket_service.py
+
 ## 2026-03-28 — BRAIN DEEP (Session 224)
 RESEARCHED: autonomous AI agent reliability 2026, hard-to-cover branch test generation (TELPA arxiv 2404.04966), TDAD test-driven agentic development (arxiv 2603.17973), Polymarket 2026 rule changes (taker bots, WebSocket latency), ECC v1.9.0 re-check (no updates), AgentAssay regression testing.
 DOWNLOADED: No new skill files — ECC still at v1.9.0, anthropics/skills testing/SKILL.md returned 404.

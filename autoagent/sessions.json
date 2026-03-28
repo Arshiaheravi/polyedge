@@ -5030,5 +5030,27 @@
       "failures": 0,
       "notes": "brain session \u2014 no code changes"
     }
+  },
+  {
+    "session": 225,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 4 coverage-gap tests closing PRIORITY 18 \u2014 free-tier follower skip in VIP poll, conviction score fallback for zero-amount bets, and both error paths in _fetch_positions inside get_consensus_signals; scheduler.py now 100% covered",
+    "files": [
+      "backend/tests/test_scheduler.py",
+      "backend/tests/test_polymarket_service.py"
+    ],
+    "tests": {
+      "before": 527,
+      "after": 531,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

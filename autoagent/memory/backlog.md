@@ -97,14 +97,20 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 18 — Coverage Gaps (generated session 223 via coverage report — 99% total, 16 missed lines)
 
-- [ ] **`_poll_vip_bets` free-tier follower skip** — scheduler.py line 379: `if not user or not user.is_active or user.subscription_tier == "free": continue`. Session 221's test was broken — it created ONLY a free user, so `vip_user_ids=[]` caused early return at line 309, NEVER reaching line 379. Need: VIP user + free follower for SAME address. VIP presence bypasses early return; free follower then hits the skip at line 379.
-  Grep: `grep -n "vip.*free.*same.*addr\|two_users.*vip.*free\|free_follower.*vip_user" backend/tests/test_scheduler.py` returns nothing
+*(All 3 tasks completed in session 225 — NOTE: task 3 was actually _fetch_positions inside get_consensus_signals, not get_active_positions; backlog description had wrong function name but correct line numbers)*
 
-- [ ] **`get_recent_bets` conviction score fallback** — polymarket.py line 429: `score = 1.0` branch fires when `avg <= 0` or `b["amount_usd"] <= 0`. Call `get_recent_bets("0xaddr")` with mocked API returning a bet with `usdcSize=0` (so avg_bet=0) and verify conviction_score=1.0 and conviction_label="" in the result.
-  Grep: `grep -n "conviction.*fallback\|avg.*zero.*conviction\|amount_usd.*zero.*score" backend/tests/test_polymarket_service.py` returns nothing
+---
 
-- [ ] **`get_active_positions` inner exception handler** — polymarket.py lines 467-469: `if not isinstance(raw, list): raw = []` and `except Exception: raw = []`. Two subtests: (a) mock API returns a dict (not list) → raw=[] → result=[]; (b) mock client.get raises ConnectError → raw=[] → result=[]. Mirror of `test_get_recent_bets_api_exception_returns_empty_list` for the positions path.
-  Grep: `grep -n "get_active_positions.*exception\|active_positions.*not.*list\|positions.*raises" backend/tests/test_polymarket_service.py` returns nothing
+## PRIORITY 19 — Coverage Gaps (generated session 225 via coverage report — 99% total, 11 missed lines in polymarket.py)
+
+- [ ] **`get_bettor_profile` paginated non-list break** — polymarket.py line 279: inner paginated loop `if not isinstance(page, list): break`. Mock `httpx.AsyncClient` to return a dict response → `page` is not a list → break is hit. Verify function returns empty dict or fallback without raising.
+  Grep: `grep -n "get_bettor_profile.*dict\|bettor_profile.*not.*list\|page.*not.*list" backend/tests/test_polymarket_service.py` returns nothing
+
+- [ ] **`compute_copy_simulator` non-list activity response** — polymarket.py line 332: `if not isinstance(raw_list, list): raw_list = []`. Call `compute_copy_simulator("0xaddr")` with mock API returning `{"error": "bad"}` (dict) → raw_list reset to [] → return `{"simulated_pnl_usd": 0, "simulated_roi_pct": 0, "bets_analysed": 0}`.
+  Grep: `grep -n "compute_copy_simulator.*dict\|copy_simulator.*raw_list\|compute_copy.*exception" backend/tests/test_polymarket_service.py` returns nothing
+
+- [ ] **`_fetch_positions` empty conditionId skip** — polymarket.py line 477: `if not cid or not outcome: continue`. Mock `_fetch_positions` via `get_consensus_signals` with a position that has `conditionId=""` or missing → skipped → no signal generated.
+  Grep: `grep -n "fetch_positions.*empty.*cid\|conditionId.*empty\|not.*cid.*not.*outcome" backend/tests/test_polymarket_service.py` returns nothing
 
 ---
 
