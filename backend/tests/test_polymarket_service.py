@@ -1093,6 +1093,55 @@ async def test_get_recent_bets_extreme_conviction_label_when_10x_average():
     assert big_bet["conviction_score"] >= 10.0
 
 
+# ── copy_value_pct exact formula verification ─────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_copy_value_pct_exact_math_25_percent():
+    """avg_price=0.40, cur_price=0.50 must produce copy_value_pct == 25.0 exactly.
+
+    Formula: round((cur_price - avg_price) / avg_price * 100, 1)
+    (0.50 - 0.40) / 0.40 * 100 = 25.0  →  signal='fair' (10 < 25 ≤ 30)
+    """
+    from unittest.mock import patch
+    data = [{"redeemable": False, "title": "T", "outcome": "Yes",
+             "avgPrice": 0.40, "curPrice": 0.50, "eventSlug": "slug"}]
+    mock_client = _make_mock_positions_client(data)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest")
+    assert len(result) == 1
+    assert result[0]["copy_value_pct"] == 25.0, (
+        f"Expected copy_value_pct=25.0 for avg=0.40, cur=0.50, got {result[0]['copy_value_pct']}"
+    )
+    assert result[0]["copy_signal"] == "fair", (
+        f"25% gain must produce copy_signal='fair', got {result[0]['copy_signal']!r}"
+    )
+
+
+@pytest.mark.asyncio
+async def test_copy_value_pct_exact_math_50_percent():
+    """avg_price=0.20, cur_price=0.30 must produce copy_value_pct == 50.0 exactly.
+
+    Formula: round((cur_price - avg_price) / avg_price * 100, 1)
+    (0.30 - 0.20) / 0.20 * 100 = 50.0  →  signal='late' (50 > 30)
+    """
+    from unittest.mock import patch
+    data = [{"redeemable": False, "title": "T", "outcome": "Yes",
+             "avgPrice": 0.20, "curPrice": 0.30, "eventSlug": "slug"}]
+    mock_client = _make_mock_positions_client(data)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest")
+    assert len(result) == 1
+    assert result[0]["copy_value_pct"] == 50.0, (
+        f"Expected copy_value_pct=50.0 for avg=0.20, cur=0.30, got {result[0]['copy_value_pct']}"
+    )
+    assert result[0]["copy_signal"] == "late", (
+        f"50% gain must produce copy_signal='late', got {result[0]['copy_signal']!r}"
+    )
+
+
 @pytest.mark.asyncio
 async def test_get_recent_bets_api_exception_returns_empty_list():
     """API exception must return empty list without raising — conviction fields not needed."""
