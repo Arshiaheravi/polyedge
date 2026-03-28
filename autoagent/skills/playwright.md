@@ -599,3 +599,42 @@ curl -s http://localhost:8003/admin/stats -H "x-admin-password: polyedge-admin-2
 **FastAPI Header() required parameter behavior**: A missing required Header in a FastAPI route returns **422** (validation error), NOT 403. Tests asserting "no auth header → 403" will fail on a required FastAPI Header parameter. Use `>= 400` or `status_code in (403, 422)` when the exact code depends on whether the header is optional vs required.
 
 (Source: Session #207 — admin test used `basic_users`/`vip_users` instead of `users.basic`/`users.vip`; expected 403 for missing header but FastAPI Header(...) required → 422.)
+
+---
+
+## PREFER expect() ASSERTIONS FOR NEW TESTS (auto-retrying)
+
+Playwright's `expect()` function auto-retries assertions until the condition is met (default 5s timeout). This is more reliable than `page.evaluate()` point-in-time snapshots, which fail if the DOM hasn't updated yet.
+
+**For new tests, prefer `expect()` over `page.evaluate()` assertions**:
+
+```python
+from playwright.sync_api import expect
+
+# PREFER — auto-retries until visible (handles async rendering):
+expect(page.locator("#tab-profile")).to_be_visible()
+expect(page.locator("#follows-container")).to_contain_text("0x")
+expect(page.locator(".bettor-card")).to_have_count(10)
+expect(page.locator("#upgrade-modal")).to_be_visible(timeout=5000)
+
+# AVOID for state assertions — point-in-time, may catch element mid-transition:
+hidden = page.evaluate("document.querySelector('#tab-profile').classList.contains('hidden')")
+assert not hidden  # can fail if JS animation is still running
+```
+
+**When to still use `page.evaluate()`**:
+- Calling PolyEdge JS functions directly: `page.evaluate("toggleTelegram()")`
+- Batch API cleanup: `page.evaluate("async () => { const r = await apiFetch('/follows'); ... }")`
+- Reading complex computed state that has no DOM equivalent
+
+**Custom timeout** (for API-dependent content):
+```python
+expect(page.locator("#leaderboard-body tr")).to_have_count(10, timeout=15000)
+```
+
+**Custom failure message** (for easier debugging):
+```python
+expect(page.locator("#upgrade-modal"), "upgrade modal should appear after 6th follow").to_be_visible()
+```
+
+(Source: Playwright Python docs, assertions API — auto-retry assertions remove the need for explicit wait_for_timeout in state assertions. Session 214 BRAIN — existing tests use page.evaluate() throughout; new tests should prefer expect() for robustness.)

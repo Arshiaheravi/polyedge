@@ -5,6 +5,7 @@
 *(Sessions 61-80 — archived from activity_log.md on 2026-03-25)*
 *(Sessions 81-100 — archived from activity_log.md on 2026-03-25)*
 *(Sessions 101-119 — archived from activity_log.md on 2026-03-25)*
+*(Sessions 181-200 — archived from activity_log.md on 2026-03-27)*
 
 ## 2026-03-25 — TESTING (Session 119)
 DONE: Added 5 mobile viewport Playwright checks (89-93) at 375px: mobile bottom nav is display:block, .lb-grid is single column, visible .btn-primary buttons are ≥44px tall, no horizontal overflow on leaderboard view, landing page screenshot saved to reports/screenshots/mobile_375_landing.png. 93 total checks, 0 failures. 359 backend tests stable.
@@ -916,3 +917,102 @@ FILES: none (read-only audit)
 DONE: Added 5 tests across 3 backlog items: 3 leaderboard accuracy normaliser tests, 1 GET /bettors accuracy passthrough (cache-cleared), 1 POST /follows 409 detail message. 483->488 tests.
 IMPACT: Locks in percentProfitable conversion contract. Cache-clear pattern prevents false passes from stale cached data.
 FILES: backend/tests/test_polymarket_service.py, backend/tests/test_bettors.py, backend/tests/test_follows.py
+
+## 2026-03-26 — TESTING (Session 181)
+DONE: Added 2 tests covering checklist field-presence items: (1) test_follows_live_positions_include_copy_value_pct — mocks 3 positions with known copy_value_pct values, asserts each arrives in route response unchanged; (2) test_bettor_detail_recent_bets_have_side_field — mocks 2 bets with side="BUY", asserts "side" key is present and non-empty. Removed stale backlog item. Added 3 new coverage-gap tasks from --cov analysis. 488→490 tests.
+IMPACT: Locks in the contract that copy_value_pct and side fields are not silently stripped when passing through route handlers.
+FILES: backend/tests/test_follows_live.py, backend/tests/test_bettors.py
+
+## 2026-03-26 — TESTING (Session 182)
+DONE: Added 3 coverage-gap tests: (1) PUT /alerts/settings with push_subscription as dict object — also fixed AlertSettingsUpdate.push_subscription field from Optional[str]->Optional[Any] so the isinstance(dict) branch at alerts.py:104 is reachable in Pydantic v2; (2) Telegram webhook with message present but empty text — asserts ok=True, no DB change; (3) compute_copy_simulator SELL-side trades excluded — bets_analysed=0 when all trades are SELL. 490→493 tests.
+IMPACT: Closes all 3 coverage gaps identified via --cov in session 181.
+FILES: backend/app/routes/alerts.py, backend/tests/test_alerts.py, backend/tests/test_polymarket_service.py
+
+## 2026-03-26 — BRAIN (Session 183)
+RESEARCHED: autonomous AI agent best practices 2026, LLM agent reliability patterns, FastAPI production patterns 2026, fintech SaaS notification platform benchmarks, Polymarket copy trading competitors and features 2026.
+DOWNLOADED: Nothing new — all relevant patterns already in skill files or not applicable to prompt-only agent.
+IMPLEMENTED: (1) testing.md — added leaderboard cache key format rule. (2) activity_log.md — archived sessions 141-160. (3) backlog.md — added 4 competitive feature items.
+SOURCES: 5 new sources logged.
+
+## 2026-03-26 — TESTING (Session 184)
+DONE: Added 3 coverage-gap tests: (1) consensus route cache hit path; (2) JWT with no sub claim sent to optional-auth endpoint; (3) send_telegram ConnectError. 493→496 tests.
+IMPACT: Closes 3 branches that were never exercised: markets.py:29, auth.py:72-73, notifications.py:27-29.
+FILES: backend/tests/test_tier_gates.py, backend/tests/test_security.py, backend/tests/test_notifications.py
+
+## 2026-03-26 — TESTING (Session 185)
+DONE: Added 3 tests for conviction_score and conviction_label fields in get_recent_bets. 496→499 tests.
+IMPACT: Locks in the conviction label contract (EXTREME/HIGH/empty) at the service layer.
+FILES: backend/tests/test_polymarket_service.py
+
+## 2026-03-26 — TESTING (Session 186)
+DONE: Added 1 test for compute_copy_simulator API exception path. 499→500 tests.
+IMPACT: Closes the except Exception branch (polymarket.py:333-334) that was unreachable by existing tests.
+FILES: backend/tests/test_polymarket_service.py
+
+## 2026-03-27 — TESTING (Session 187)
+DONE: Added 4 Playwright E2E tests in test_auth_and_security.py: auth persists after page refresh, bad token redirect, follow limit upgrade modal, XSS safety. 42→46 Playwright tests.
+IMPACT: Proves the 3 most critical user-facing security/auth flows work correctly in a real browser.
+FILES: backend/tests/playwright/test_auth_and_security.py
+
+## 2026-03-27 — META (Session 188)
+IMPROVED: playwright.md — added FLAKY TEST HANDLING section and FRESH USER PATTERN section.
+PATTERNS FOUND: Session 187 RULE entries in knowledge.md about flaky tests and fresh user pattern had no matching guidance in playwright.md.
+
+## 2026-03-27 — TESTING (Session 189)
+DONE: Added 3 Playwright E2E full-journey tests (test_full_journeys.py) — free/basic/VIP users each get a chained multi-step journey. 46→49 Playwright tests.
+IMPACT: Proves the full tier-gated feature chain works end-to-end as a real user would experience it.
+FILES: backend/tests/playwright/test_full_journeys.py
+
+## 2026-03-27 — TESTING (Session 190)
+DONE: Added 4 Playwright E2E tests for Alerts tab tier gates. 49→53 Playwright tests.
+IMPACT: Proves the notification channel tier restrictions work correctly in the browser.
+FILES: backend/tests/playwright/test_notifications_tier_gates.py
+
+## 2026-03-27 — TESTING (Session 191)
+DONE: Added 4 Playwright E2E CORS header tests. 53→57 Playwright tests.
+IMPACT: Proves the CORS security fix works from a real browser's perspective.
+FILES: backend/tests/playwright/test_cors_headers.py
+
+## 2026-03-27 — AUDIT (Session 192)
+DONE: Code quality audit of last 5 work sessions' changed test files — fixed dead assertion and replaced blocking time.sleep(0.5) with page.wait_for_timeout(500).
+IMPACT: Dead assertion was masking a potentially broken tier gate.
+FILES: backend/tests/playwright/test_full_journeys.py, backend/tests/playwright/test_notifications_tier_gates.py
+
+## 2026-03-27 — BRAIN (Session 193)
+RESEARCHED: autonomous AI agent best practices 2026, agentic coding test quality (arxiv 2603.17973 TDAD), FastAPI production patterns, Polystrat competitor, ECC v1.9.0 check.
+IMPLEMENTED: (1) activity_log.md — archived sessions 161-180. (2) testing.md — added TARGETED PRE-COMMIT VERIFICATION + DEAD ASSERTION GUARD sections. (3) backlog.md — added 3 new tasks.
+SOURCES: 5 new sources logged.
+
+## 2026-03-27 — TESTING (Session 194)
+DONE: Added 4 Playwright E2E error state tests. 57→61 Playwright tests.
+IMPACT: Proves the frontend handles all major API failure modes gracefully.
+FILES: backend/tests/playwright/test_error_states.py
+
+## 2026-03-27 — TESTING (Session 195)
+DONE: Added Playwright E2E test — fresh user follows first leaderboard bettor, navigates to Follows tab, asserts bettor's address appears in #follows-container. 61→62 Playwright tests.
+IMPACT: Proves the core "follow → see on dashboard" user flow works end-to-end in a real browser.
+FILES: backend/tests/playwright/test_follow_appears_on_dashboard.py
+
+## 2026-03-27 — TESTING (Session 196)
+DONE: Added 2 backend tests for exact copy_value_pct formula math and 1 Playwright test for leaderboard "No data yet" empty state. 500→502 backend, 62→63 Playwright.
+IMPACT: Formula tests prove exact arithmetic; Playwright test proves distinct empty-list success path renders correctly.
+FILES: backend/tests/test_polymarket_service.py, backend/tests/playwright/test_leaderboard_empty_state.py
+
+## 2026-03-27 — TESTING (Session 197)
+DONE: Added Playwright E2E test for basic-tier 5-follow-limit gate — 6th follow triggers upgrade modal. 63→64 Playwright tests.
+IMPACT: Proves the basic-tier follow limit enforces correctly at the browser level.
+FILES: backend/tests/playwright/test_basic_follow_limit.py
+
+## 2026-03-27 — META (Session 198)
+IMPROVED: playwright.md — added SHARED ACCOUNT CLEANUP section and Windows DB lock note. backlog.md — added 3 new testing tasks.
+PATTERNS FOUND: Session 197 RULE about shared-account cleanup had no matching section in playwright.md.
+
+## 2026-03-27 — TESTING (Session 199)
+DONE: Code quality audit of last 5 sessions' Playwright test files. Fixed API_BASE duplication — constant moved to conftest.py and imported in 2 test files.
+IMPACT: Eliminates hardcoded backend URL scattered across test files.
+FILES: backend/tests/playwright/conftest.py, backend/tests/playwright/test_error_states.py, backend/tests/playwright/test_leaderboard_empty_state.py
+
+## 2026-03-27 — TESTING (Session 200)
+DONE: Added 3 Playwright E2E tests completing North Star "follow bettor → see on dashboard" coverage for all 3 tiers, plus unfollow cycle. 64→67 Playwright tests.
+IMPACT: The North Star "Follow bettor → see on dashboard" row is now fully proven for Free, Basic, and VIP tiers.
+FILES: backend/tests/playwright/test_basic_follow_appears_on_dashboard.py, backend/tests/playwright/test_vip_follow_appears_on_dashboard.py, backend/tests/playwright/test_unfollow_cycle.py

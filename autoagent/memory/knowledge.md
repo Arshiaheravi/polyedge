@@ -80,6 +80,14 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 
 ## Session Reflexions
 
+### BRAIN Session #214 Reflexion — 2026-03-27
+ACCOMPLISHED: (1) STEP 1D: archived sessions 181-200 from activity_log.md (33→13 entries; header updated to "1-200 archived"). (2) STEP 1C: No duplicate rules found in canonical knowledge.md top-sections — all rules are distinct. Reflexion section rules are session-contextual and not subject to deduplication. (3) STEP 2: Searched 8 sources — arxiv papers (ERL, Kitchen Loop, MemPO, CLAG), Playwright Python docs, pytest 9.0/9.1, ECC re-check, anthropic-cookbook. (4) STEP 5: Added PREFER expect() ASSERTIONS section to playwright.md (Playwright auto-retrying assertions > point-in-time page.evaluate() checks). Added PYTEST 9.0+ FEATURES section to testing.md (subtests pattern + generator deprecation). (5) STEP 6: 8 new sources logged; 2 techniques logged.
+FAILED: Nothing — all 8 sources evaluated, 2 implementations completed, archiving completed.
+RULE: [2026-03-27] Use Playwright expect(locator) auto-retrying assertions for state checks (visibility, text content, element count) instead of page.evaluate() boolean snapshots. expect() waits up to 5s for the condition — page.evaluate() fails instantly if the DOM hasn't updated yet. Only use page.evaluate() for calling JS functions or batch API operations.
+OPTIMIZATION: [2026-03-27] Brain sessions return more value from fetching specific API docs (playwright.dev assertions, pytest changelog) than from arxiv paper abstracts — abstracts rarely reveal actionable implementation details, while official docs give concrete, immediately implementable patterns.
+
+- Test count: **507 passed, 2 skipped** (unchanged — no code changes this brain session)
+
 ### Session #213 Reflexion — 2026-03-27 (TESTING)
 ACCOMPLISHED: Fixed bug in markets.py consensus route — no try/except around `get_consensus_signals` meant API failures returned 500 instead of 502 and the cache was left corrupted. Added 4 regression tests: `test_consensus_api_error_returns_502`, `test_consensus_each_signal_has_required_fields`, `test_detect_exits_inactive_vip_not_notified`, `test_detect_exits_exit_event_stored_regardless_of_follower_tier`. All 507 tests green first run.
 FAILED: Nothing — all 4 tests passed on first attempt.

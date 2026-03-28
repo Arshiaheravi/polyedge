@@ -1,5 +1,12 @@
 # Activity Log
-*(Sessions 1-180 archived — see activity_log_archive.md)*
+*(Sessions 1-200 archived — see activity_log_archive.md)*
+
+## 2026-03-27 — BRAIN (Session 214)
+RESEARCHED: autonomous AI agent self-improvement 2026 (arxiv 2603.24639 ERL, 2603.25697 Kitchen Loop, 2603.00680 MemPO, 2603.15421 CLAG), pytest 9.0 release notes, Playwright Python expect() assertions, FastAPI v0.135.2 (no new versions since last brain session), ECC v1.9.0 status check, anthropics/anthropic-cookbook claude_agent_sdk.
+DOWNLOADED: No new skill files — ECC still at v1.9.0, no new applicable Anthropic skills.
+IMPLEMENTED: (1) playwright.md — added PREFER expect() ASSERTIONS section (auto-retrying assertions vs point-in-time page.evaluate() snapshots; concrete pattern for visibility/content/count assertions with timeout). (2) testing.md — added PYTEST 9.0+ FEATURES section (subtests for runtime-generated test values, parametrize generator deprecation warning). (3) activity_log.md — archived sessions 181-200 (33→13 entries; header updated to "1-200 archived").
+BACKLOGGED: No new items — PRIORITY 11 backlog already has 3 items to verify and implement.
+SOURCES: 8 new sources logged (ERL, Kitchen Loop, MemPO, CLAG, Playwright expect() docs, pytest 9.0 notes, anthropic-cookbook claude_agent_sdk, FastAPI v0.135.2 re-check).
 
 ## 2026-03-27 — TESTING (Session 213)
 DONE: Fixed bug in /markets/consensus — no error handling meant Polymarket API failures returned 500 instead of 502 and left the cache unset. Added try/except matching all other endpoints. Added 4 regression tests: consensus 502 response + cache-not-poisoned, consensus per-signal field contract (event_slug etc.), detect_exits inactive VIP not notified, detect_exits EXIT BetEvent stored for non-VIP followers.
@@ -67,107 +74,3 @@ FILES: backend/tests/playwright/test_profile_back_button.py
 DONE: Added Playwright E2E test proving basic-tier user can open a bettor profile via showProfile(), the #tab-profile becomes visible, #profile-addr-display contains the 0x-prefixed address, and the copy simulator card (if shown) is not blurred/locked.
 IMPACT: Proves the full "click bettor → view profile" flow works end-to-end for authenticated basic users. Any regression breaking showProfile(), the bettors/{address} API, or the tier-gated simulator rendering will be caught automatically.
 FILES: backend/tests/playwright/test_profile_modal.py
-
-## 2026-03-27 — TESTING (Session 200)
-DONE: Added 3 Playwright E2E tests completing the North Star "follow bettor → see on dashboard" coverage for all 3 tiers, plus the unfollow cycle. Basic and VIP login, clean follows, follow a bettor, assert address in #follows-container. Unfollow cycle: follow → assert present → unfollow → assert gone.
-IMPACT: The North Star table row "Follow bettor → see on dashboard" is now fully proven for Free (session 195), Basic, and VIP tiers. The unfollow cycle proves DELETE /follows/{address} wires through to the UI end-to-end. 64→67 Playwright tests.
-FILES: backend/tests/playwright/test_basic_follow_appears_on_dashboard.py, backend/tests/playwright/test_vip_follow_appears_on_dashboard.py, backend/tests/playwright/test_unfollow_cycle.py
-
-## 2026-03-27 — TESTING (Session 199)
-DONE: Code quality audit of last 5 sessions' Playwright test files. Fixed API_BASE duplication — constant moved to conftest.py and imported in 2 test files. Logged duplicate registration helper pattern and brittle wait_for_timeout calls to tech_debt.md.
-IMPACT: Eliminates hardcoded backend URL scattered across test files — future port changes require editing only conftest.py.
-FILES: backend/tests/playwright/conftest.py, backend/tests/playwright/test_error_states.py, backend/tests/playwright/test_leaderboard_empty_state.py
-
-## 2026-03-27 — META (Session 198)
-IMPROVED: playwright.md — added SHARED ACCOUNT CLEANUP section (page.evaluate batch-delete pattern for shared tier accounts) and Windows DB lock note to FLAKY TEST HANDLING. backlog.md — added 3 new testing tasks (unfollow cycle, profile modal, login form validation) to prevent backlog exhaustion after 2-3 more sessions.
-PATTERNS FOUND: (1) Session 197 RULE about cleaning shared-account follows via page.evaluate had no matching section in playwright.md — would be re-discovered. (2) Session 190 RULE about Windows DB lock before isolated playwright runs also absent from playwright.md. (3) Backlog had only 2 priority items + 1 audit item; after 2-3 sessions it would be empty (low-water-mark rule generates 3 items at commit time but that's too late if sessions run fast).
-PREDICTED IMPACT: Next session adding a basic/VIP tier follow-limit test will find the cleanup pattern in playwright.md immediately. The 3 new backlog items (unfollow, profile modal, login validation) extend the testing sprint by 3 sessions.
-
-## 2026-03-27 — TESTING (Session 197)
-DONE: Added Playwright E2E test for basic-tier 5-follow-limit gate — logs in as basic@polyedge.com, cleans all existing follows, follows 5 bettors (all succeed), attempts 6th → server returns 403 → upgrade modal (#upgrade-modal) becomes visible.
-IMPACT: Proves the basic-tier follow limit enforces correctly at the browser level. Any regression that breaks the 403 response or openUpgradeModal() call will be caught automatically.
-FILES: backend/tests/playwright/test_basic_follow_limit.py
-
-## 2026-03-27 — TESTING (Session 196)
-DONE: Added 2 backend tests for exact copy_value_pct formula math and 1 Playwright test for leaderboard "No data yet" empty state on successful empty API response.
-IMPACT: Formula tests prove the exact arithmetic is correct (not just approximate), catching any rounding or operator-precedence bugs in the copy timing signal. Playwright test proves the distinct empty-list success path (distinct from network error) renders correctly.
-FILES: backend/tests/test_polymarket_service.py, backend/tests/playwright/test_leaderboard_empty_state.py
-
-## 2026-03-27 — TESTING (Session 195)
-DONE: Added Playwright E2E test — fresh user follows first leaderboard bettor, navigates to Follows tab, asserts the bettor's address appears in #follows-container.
-IMPACT: Proves the core "follow → see on dashboard" user flow works end-to-end in a real browser. Any regression breaking POST /follows, GET /follows, or the follow card renderer will now be caught automatically.
-FILES: backend/tests/playwright/test_follow_appears_on_dashboard.py
-
-## 2026-03-27 — TESTING (Session 194)
-DONE: Added 4 Playwright E2E error state tests — network abort on /bettors shows "Could not load leaderboard", HTTP 503 on /bettors shows same error state, /markets/consensus abort shows "Could not load consensus signals", fresh user with zero follows sees "No traders followed yet" empty state. 57→61 Playwright tests.
-IMPACT: Proves the frontend handles all major API failure modes gracefully — any regression that introduces blank screens, infinite spinners, or silent failures on API errors will now be caught automatically.
-FILES: backend/tests/playwright/test_error_states.py
-
-## 2026-03-27 — BRAIN (Session 193)
-RESEARCHED: autonomous AI agent best practices 2026, agentic coding test quality (arxiv 2603.17973 TDAD, arxiv 2603.13724), FastAPI production patterns, prediction market copy trading competitors (Polystrat), ECC v1.9.0 status check.
-DOWNLOADED: Nothing new — ECC still at v1.9.0, no applicable new skills.
-IMPLEMENTED: (1) activity_log.md — archived sessions 161-180 (32->12 entries; header updated to "Sessions 1-180 archived"). (2) knowledge.md — curated test suite history table: removed duplicate "500 backend" entries for sessions 189-191 (all same count). (3) testing.md — added TARGETED PRE-COMMIT VERIFICATION section (TDAD pattern: grep for test files covering changed module, run those first) + DEAD ASSERTION GUARD section (grep for "or True" in assertions). (4) backlog.md — added dead assertion sweep task, Polystrat competitor context note, mobile-first UX pass item.
-BACKLOGGED: 3 new items: dead assertion sweep, Polystrat competitor context, mobile-first UX pass.
-SOURCES: 5 new sources logged.
-
-## 2026-03-27 — AUDIT (Session 192)
-DONE: Code quality audit of last 5 work sessions' changed test files — fixed dead assertion (assert ... or True, always passes) in test_full_journeys.py with real assertion, and replaced blocking time.sleep(0.5) with page.wait_for_timeout(500) in test_notifications_tier_gates.py.
-IMPACT: Dead assertion was masking a potentially broken tier gate (basic user seeing whale names without VIP lock). Sleep fix removes a blocking Python call inside Playwright tests.
-FILES: backend/tests/playwright/test_full_journeys.py, backend/tests/playwright/test_notifications_tier_gates.py
-
-## 2026-03-27 — TESTING (Session 191)
-DONE: Added 4 Playwright E2E CORS header tests — browser-level verification that API responses never return wildcard CORS origin, correct localhost:3000 origin is reflected, preflight OPTIONS succeeds, and untrusted origins are rejected. 53 → 57 Playwright tests.
-IMPACT: Proves the CORS security fix (Bug #2) works from a real browser's perspective — any regression that accidentally re-introduces wildcard CORS will now be caught in the Playwright suite before reaching users.
-FILES: backend/tests/playwright/test_cors_headers.py
-
-## 2026-03-27 — TESTING (Session 190)
-DONE: Added 4 Playwright E2E tests for Alerts tab tier gates — free user Telegram toggle fires upgrade modal, free user SMS label shows "VIP required" and SMS toggle fires upgrade modal, VIP user SMS label shows "Not verified" (no gate), VIP Telegram toggle is not blocked. 49 → 53 Playwright tests.
-IMPACT: Proves the notification channel tier restrictions work correctly in the browser — any regression that accidentally lets free users enable Telegram or blocks VIP users from SMS will now be caught automatically.
-FILES: backend/tests/playwright/test_notifications_tier_gates.py
-
-## 2026-03-27 — TESTING (Session 189)
-DONE: Added 3 Playwright E2E full-journey tests (test_full_journeys.py) — free/basic/VIP users each get a chained multi-step journey: register/login → leaderboard → bettor profile (blurred vs unlocked simulator) → follows tab (padlock vs signal badge) → consensus tab (capped vs all signals, no names vs whale names) → follow limit (upgrade modal for free, no 403 for VIP). 46 → 49 Playwright tests.
-IMPACT: Proves the full tier-gated feature chain works end-to-end as a real user would experience it. Catches regressions in state transitions that individual unit tests miss.
-FILES: backend/tests/playwright/test_full_journeys.py
-
-## 2026-03-27 — META (Session 188)
-IMPROVED: playwright.md — added FLAKY TEST HANDLING section (re-run failing tests in isolation before investigating; 3-6 Polymarket API rate-limit flakes expected in full-suite runs) and FRESH USER PATTERN section (always register timestamp-email user for follow-limit/quota tests; never reuse shared fixture accounts for state-accumulating tests).
-PATTERNS FOUND: Session 187 RULE entries in knowledge.md about flaky tests and fresh user pattern had no matching guidance in playwright.md — work sessions read skill files first, not knowledge.md reflexions, so these patterns would be rediscovered each time rather than applied proactively.
-PREDICTED IMPACT: Next full-journey E2E session will correctly expect and handle rate-limit flakes without wasting turns investigating pre-existing failures; follow-limit tests will use fresh users by default.
-
-## 2026-03-27 — TESTING (Session 187)
-DONE: Added 4 Playwright E2E tests in test_auth_and_security.py: (1) auth persists after page refresh — dashboard still shown, pe_token intact; (2) bad token redirect — invalid JWT cleared, landing page shown; (3) follow limit upgrade modal — fresh free user hits 403 on 2nd follow, upgrade modal fires; (4) XSS safety — script-tag username rendered via textContent, no alert fires. 42→46 Playwright tests.
-IMPACT: Proves the 3 most critical user-facing security/auth flows work correctly in a real browser.
-FILES: backend/tests/playwright/test_auth_and_security.py
-
-## 2026-03-26 — TESTING (Session 186)
-DONE: Added 1 test for compute_copy_simulator API exception path — mocks httpx.ConnectError on client.get, asserts function returns {simulated_pnl_usd: 0.0, simulated_roi_pct: 0.0, bets_analysed: 0}. 499→500 tests.
-IMPACT: Closes the except Exception branch (polymarket.py:333-334) that was unreachable by existing tests.
-FILES: backend/tests/test_polymarket_service.py
-
-## 2026-03-26 — TESTING (Session 185)
-DONE: Added 3 tests for conviction_score and conviction_label fields in get_recent_bets: (1) single bet → score=1.0, label=""; (2) 19 small bets + $1000 outlier → score=19.6, label="EXTREME"; (3) API ConnectError → empty list returned safely. 496→499 tests.
-IMPACT: Locks in the conviction label contract (EXTREME/HIGH/empty) at the service layer.
-FILES: backend/tests/test_polymarket_service.py
-
-## 2026-03-26 — TESTING (Session 184)
-DONE: Added 3 coverage-gap tests: (1) consensus route cache hit path — pre-populates cache with fresh data, verifies get_consensus_signals is NOT called on second request; (2) JWT with no `sub` claim sent to optional-auth endpoint (/markets/consensus) — verified returns 200 with tier="free" (anonymous treatment); (3) send_telegram ConnectError — mocks httpx.AsyncClient to raise ConnectError, verifies False returned without crash.
-IMPACT: Closes 3 branches that were never exercised: markets.py:29, auth.py:72-73, notifications.py:27-29.
-FILES: backend/tests/test_tier_gates.py, backend/tests/test_security.py, backend/tests/test_notifications.py
-
-## 2026-03-26 — BRAIN (Session 183)
-RESEARCHED: autonomous AI agent best practices 2026, LLM agent reliability patterns, FastAPI production patterns 2026, fintech SaaS notification platform benchmarks, Polymarket copy trading competitors and features 2026.
-DOWNLOADED: Nothing new — all relevant patterns already in skill files or not applicable to prompt-only agent.
-IMPLEMENTED: (1) testing.md — added leaderboard cache key format rule (profit_month_50 contamination pattern from session 180) to Module-level cache isolation section. (2) activity_log.md — archived sessions 141-160 (42->22 entries; header updated to "Sessions 1-160 archived"). (3) backlog.md — added 4 competitive feature items: personalized notification body, outbound webhook channel, delayed Free-tier alerts, minimum bet size filter.
-BACKLOGGED: 4 new FEATURE MODE items added to backlog.md; structured logging with request_id added to backlog.
-SOURCES: 5 new sources logged.
-
-## 2026-03-26 — TESTING (Session 182)
-DONE: Added 3 coverage-gap tests: (1) PUT /alerts/settings with push_subscription as dict object — also fixed AlertSettingsUpdate.push_subscription field from Optional[str]->Optional[Any] so the isinstance(dict) branch at alerts.py:104 is reachable in Pydantic v2; (2) Telegram webhook with message present but empty text — asserts ok=True, no DB change; (3) compute_copy_simulator SELL-side trades excluded — bets_analysed=0 when all trades are SELL. 490→493 tests.
-IMPACT: Closes all 3 coverage gaps identified via --cov in session 181.
-FILES: backend/app/routes/alerts.py, backend/tests/test_alerts.py, backend/tests/test_polymarket_service.py
-
-## 2026-03-26 — TESTING (Session 181)
-DONE: Added 2 tests covering checklist field-presence items: (1) test_follows_live_positions_include_copy_value_pct — mocks 3 positions with known copy_value_pct values, asserts each arrives in route response unchanged; (2) test_bettor_detail_recent_bets_have_side_field — mocks 2 bets with side="BUY", asserts "side" key is present and non-empty. Removed stale backlog item. Added 3 new coverage-gap tasks from --cov analysis. 488→490 tests.
-IMPACT: Locks in the contract that copy_value_pct and side fields are not silently stripped when passing through route handlers.
-FILES: backend/tests/test_follows_live.py, backend/tests/test_bettors.py

@@ -533,3 +533,15 @@ What: Added 2 competitive feature items to backlog: min-bet-size filter per foll
 Where: autoagent/memory/backlog.md (FEATURE MODE — Competitive Intelligence section)
 Source: polycule.trade, polycopytradbot, medium/@0xmega (session 203 competitor research); pushwoosh.com fintech benchmarks (session 203)
 Expected impact: 2 highest-ROI feature mode tasks pre-researched and ready to pick
+
+## Playwright expect() auto-retrying assertions — implemented 2026-03-27
+What: Use expect(locator).to_be_visible()/to_contain_text()/to_have_count() instead of page.evaluate() boolean checks for state assertions in Playwright tests
+Where: autoagent/skills/playwright.md (PREFER expect() ASSERTIONS section)
+Source: playwright.dev Python assertions API
+Expected impact: Eliminates need for explicit wait_for_timeout in state assertions; handles async rendering automatically; reduces test flakiness from point-in-time DOM snapshots
+
+## pytest 9.0 subtests and generator deprecation — implemented 2026-03-27
+What: Document pytest 9.0 subtests pattern (runtime-generated test values without collection-time parametrize) and generator-as-argvalues deprecation
+Where: autoagent/skills/testing.md (PYTEST 9.0+ FEATURES section)
+Source: pytest 9.0.0 release notes (2025-11-05); pytest 9.1 draft (2026-03-26)
+Expected impact: Prevents silent test suite collection failures from deprecated generator parametrize; provides subtests pattern for iterating over API response items in tests

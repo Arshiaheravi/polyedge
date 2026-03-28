@@ -372,6 +372,32 @@ grep -n "or True" backend/tests/  # any match is a dead assertion
 **Fix**: Remove the `or True`. If the condition is uncertain, write a comment explaining why, or use `pytest.skip()` instead of a dead assertion.
 (Source: PolyEdge session 192 code quality audit — found `assert len(cards) > 0 or True` in test_full_journeys.py; the dead assertion was masking a potentially-broken tier gate test for 3 sessions.)
 
+## PYTEST 9.0+ FEATURES (upgrade notes for PolyEdge test suite)
+
+**Subtests** (pytest 9.0, released 2025-11-05) — alternative to parametrize for runtime-generated values:
+```python
+def test_all_follows_have_address(client, auth_headers):
+    # Use when test values come from a prior API call, not known at collection time
+    resp = client.get("/follows", headers=auth_headers)
+    for follow in resp.json()["follows"]:
+        with pytest.subtests.test(address=follow["address"]):
+            assert follow["address"].startswith("0x")
+```
+Use subtests when: you iterate over API response items, DB rows, or other runtime data. Subtests show which iteration failed without marking the whole test failed.
+
+**parametrize generator/iterator deprecation** (pytest 9.1 draft):
+`@pytest.mark.parametrize` with a generator as `argvalues` is deprecated — use a list or tuple instead.
+```python
+# DEPRECATED — generator as argvalues:
+@pytest.mark.parametrize("tier", (t for t in ["free", "basic", "vip"]))
+
+# CORRECT — list:
+@pytest.mark.parametrize("tier", ["free", "basic", "vip"])
+```
+This affects any parametrize call that uses a generator expression or `map()`/`filter()` output.
+
+(Source: pytest 9.0.0 release notes 2025-11-05; pytest 9.1 draft 2026-03-26)
+
 ## IMPORT CHECK BEFORE TESTS
 ```bash
 cd backend && py -c "from app.main import app; print('OK')"
