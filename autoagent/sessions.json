@@ -4649,5 +4649,28 @@
       "failures": 0,
       "notes": "8 new Playwright tests all green"
     }
+  },
+  {
+    "session": 208,
+    "date": "2026-03-27",
+    "time": "00:00",
+    "type": "meta",
+    "summary": "Added API response shape verification rule (curl before asserting) and FastAPI Header 422 pattern to skill files; added 4 new bug-fix backlog tasks (Bug #9 lru_cache, Bug #10 _last_positions purge, Bug #12 _consensusLoaded, bettor address regex)",
+    "files": [
+      "autoagent/skills/playwright.md",
+      "autoagent/skills/testing.md",
+      "autoagent/memory/backlog.md"
+    ],
+    "tests": {
+      "before": 0,
+      "after": 0,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "meta session \u2014 no code changes"
+    }
   }
 ]

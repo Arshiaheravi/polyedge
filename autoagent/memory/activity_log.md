@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — META (Session 208)
+IMPROVED: playwright.md — added VERIFY API RESPONSE SHAPE section (curl endpoint before asserting on field names; FastAPI required Header → 422 not 403). testing.md — added FastAPI Header() 422 pattern under PolyEdge-specific section. backlog.md — added PRIORITY 9 with 4 new bug-fix/data-integrity tasks (Bug #9 lru_cache, Bug #10 _last_positions purge, Bug #12 _consensusLoaded reset, bettor address regex Playwright test).
+PATTERNS FOUND: Session 207 failed on admin Playwright test because it asserted wrong nested key names (flat vs nested) and expected 403 for missing FastAPI required Header (actually 422). Both rules were in knowledge.md reflexion only — not in the skill files where they fire at write-time.
+PREDICTED IMPACT: Next Playwright test writing session will find the "curl first" rule in playwright.md before writing assertions, preventing another test-fix cycle. The 4 new backlog tasks extend the testing sprint by 4+ sessions targeting real outstanding bugs.
+
 ## 2026-03-27 — TESTING (Session 207)
 DONE: Fixed BUG #8 (free-tier web push gate missing in toggleWebPush) and added 8 Playwright E2E tests across 3 new files — logout clears pe_token from localStorage and shows landing view; free user calling toggleWebPush() sees the upgrade modal (toggle stays OFF); admin /admin/stats mrr_estimate math matches basic*4.99+vip*9.99, tier counts sum to total, missing header returns 4xx.
 IMPACT: BUG #8 paywall hole closed — free users can no longer bypass push tier gate. Three auth/security/admin flows now have automated E2E coverage. 84→92 Playwright tests total.
