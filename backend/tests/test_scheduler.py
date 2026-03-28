@@ -1192,6 +1192,65 @@ def test_poll_vip_bets_new_bet_creates_event_and_notifies_vip_follower(sched_db)
     assert mock_notify.call_count == 1, "dispatch_bet_notification must fire for the VIP follower"
 
 
+def test_poll_vip_bets_no_follows_returns_early(sched_db):
+    """VIP user exists but has no BettorFollow rows → addresses list empty → early return.
+
+    Covers scheduler.py line 319: `if not addresses: return`
+    get_recent_bets must never be called since there is nothing to poll.
+    """
+    session, Session = sched_db
+
+    vip_user = User(
+        email="vip_nofollow@x.com", hashed_password=hash_password("p"),
+        name="VipNoFollow", subscription_tier="vip",
+    )
+    session.add(vip_user)
+    session.commit()
+    # Intentionally add NO BettorFollow rows for this VIP user
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock()) as mock_fetch:
+        run(_poll_vip_bets())
+
+    mock_fetch.assert_not_called()
+
+
+def test_poll_vip_bets_duplicate_bet_skipped(sched_db):
+    """When a BetEvent already exists for the same bettor/market/timestamp, the VIP poll
+    skips it without inserting a duplicate and without firing a second notification.
+
+    Covers scheduler.py lines 348-349: `if exists: continue`
+    """
+    session, Session = sched_db
+
+    vip_user = User(
+        email="vip_dup@x.com", hashed_password=hash_password("p"),
+        name="VipDup", subscription_tier="vip",
+    )
+    session.add(vip_user)
+    session.flush()
+    session.add(BettorFollow(user_id=vip_user.id, bettor_address="0xvipdup", bettor_name="dupwhale"))
+    # Pre-insert the exact same bet that the API will return
+    session.add(BetEvent(
+        bettor_address="0xvipdup", market_id="mkt1",
+        market_question="Will X happen?", outcome="Yes",
+        amount_usd=50.0, timestamp=FUTURE_TS, notified=True,
+    ))
+    session.commit()
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()) as mock_notify:
+        run(_poll_vip_bets())
+
+    verify = Session()
+    count = verify.query(BetEvent).count()
+    verify.close()
+
+    assert count == 1, "duplicate BetEvent must not be inserted"
+    mock_notify.assert_not_called()
+
+
 def test_start_scheduler_registers_two_jobs():
     """start_scheduler registers both poll_bets (30s) and poll_vip_bets (5s) jobs."""
     import app.services.scheduler as sched_mod
