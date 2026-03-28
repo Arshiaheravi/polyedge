@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 205)
+DONE: Added 6 Playwright E2E tests — 3 for alerts tab toggle presence (basic-tier user opens Alerts tab, asserts #toggle-push and #toggle-telegram exist and have non-zero size) and 3 for leaderboard sort toggle (initial #sort-profit is active, switching to volume moves active class to #sort-volume, cards still render after sort switch).
+IMPACT: Proves the Alerts settings tab correctly renders both notification toggles for authenticated users, and that the leaderboard sort mechanism does not crash or blank the UI on sort change. 69→75 Playwright tests.
+FILES: backend/tests/playwright/test_alerts_tab_toggles.py, backend/tests/playwright/test_leaderboard_sort_toggle.py
+
 ## 2026-03-27 — TESTING (Session 204)
 DONE: Code quality audit of sessions 195-202 Playwright test files — removed duplicate API_BASE definition from test_cors_headers.py (now imported from conftest), replaced hardcoded localhost:8003 URL in test_full_journeys.py page.evaluate() string with the conftest API_BASE constant, and updated tech_debt.md with 6 brittle wait_for_timeout locations across 5 test files.
 IMPACT: A future backend port change now requires editing only conftest.py instead of hunting across multiple test files. The audit also documented all wait_for_timeout brittle waits as known deferred debt.

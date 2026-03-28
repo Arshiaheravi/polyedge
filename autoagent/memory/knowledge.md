@@ -1090,6 +1090,7 @@ RULE: [2026-03-26] When caching API responses that include user-state fields (ti
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend (Playwright) |
 |---------|--------------|----------------------|
+| 205     | 502          | 75                   |
 | 204     | 502          | 69                   |
 | 202     | 502          | 69                   |
 | 201     | 502          | 68                   |
@@ -1304,6 +1305,11 @@ FAILED: First run timed out with "element is not visible" on page.click("#profil
 RULE: [2026-03-27] showProfile() calls showTab('profile') which ONLY toggles tab elements inside view-dashboard. If you navigate to view-browse first (showView('browse')), view-dashboard is hidden and #profile-back-btn is invisible to Playwright page.click(). For profile+back-button tests, always stay in view-dashboard context: call showTab('leaderboard') (not showView('browse')) after login.
 RULE: [2026-03-27] test_profile_modal.py hid this bug because it only checked classList state (never called page.click()) � DOM class assertions work on display:none elements, but page.click() requires visual visibility. Two tests can both pass while one reveals a real interaction bug the other misses.
 
+
+### Session #205 Reflexion — 2026-03-27 (TESTING)
+ACCOMPLISHED: Added 6 Playwright E2E tests across 2 new files. (1) test_alerts_tab_toggles.py — 3 tests verifying basic-tier user can navigate to Alerts tab and see #toggle-push and #toggle-telegram with non-zero rendered size. (2) test_leaderboard_sort_toggle.py — 3 tests: #sort-profit active on load, switching to volume sort moves active class to #sort-volume, cards still present after sort switch. All 6 passed first run. 69→75 Playwright tests.
+FAILED: Nothing — clean run on first attempt.
+RULE: [2026-03-27] When verifying toggle elements exist AND are visible, combine two checks: (1) query_selector is not None (DOM presence), (2) getBoundingClientRect().width/height > 0 (not hidden via display:none parent). DOM presence alone passes even for toggles inside a hidden tab section.
 
 ### Session #204 Reflexion — 2026-03-27 (TESTING/AUDIT)
 ACCOMPLISHED: Code quality audit of sessions 195-202 Playwright test files. Fixed 2 issues: (1) duplicate API_BASE constant in test_cors_headers.py (defined locally AND in conftest) — removed local definition, import from conftest; (2) hardcoded 'http://localhost:8003' URL in test_full_journeys.py page.evaluate() JS string — replaced with Python f-string {API_BASE} after adding import. Logged 6 brittle wait_for_timeout calls across 5 test files to tech_debt.md. No new test written — audit session only.

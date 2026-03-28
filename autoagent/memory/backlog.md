@@ -27,9 +27,17 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 7 — High-Value Gaps
 
-- [ ] **Playwright: alerts tab renders push and telegram toggles** — login as basic, call showTab('alerts'), wait for #tab-alerts to not be hidden, assert #toggle-push element exists AND #toggle-telegram element exists. Proves the Alerts settings tab renders both notification toggles for authenticated users. Grep: `grep -r "def test.*alert.*tab\|def test.*notification.*tab\|def test.*alert.*page\|def test.*settings.*tab" backend/tests/playwright/` returns nothing.
+*(All 2 tasks completed in session 205)*
 
-- [ ] **Playwright: leaderboard sort toggle changes active button** — login as basic, navigate to leaderboard, assert #sort-profit has class 'active', click #sort-profit button (already exists — loadLeaderboard('profit')), verify cards loaded. Then call loadLeaderboard('accuracy') via page.evaluate, wait for cards to reload, assert #sort-profit no longer active (or that at least 1 .lb-card is present after sort switch). Proves sort switching does not crash the UI. Grep: `grep -r "def test.*sort.*leaderboard\|def test.*leaderboard.*sort\|def test.*sort.*change" backend/tests/playwright/` returns nothing.
+---
+
+## PRIORITY 8 — New Testing Coverage
+
+- [ ] **Playwright: account tab shows tier badge and upgrade button for free user** — login as free, showTab('account'), wait for #tab-account visible, assert tier label shows "Free" (or "free"), assert upgrade button (#upgrade-btn or element containing "Upgrade") is present. Proves the account settings tab renders correct tier status. Grep: `grep -r "def test.*account.*tab\|def test.*tier.*badge\|def test.*account.*tier" backend/tests/playwright/` returns nothing.
+
+- [ ] **Playwright: period filter (Today/Week/Month/All Time) switches correctly** — login as basic, open leaderboard tab, assert #period-month has class 'active' (default), call loadLeaderboard(currentSort, 'week') via page.evaluate, wait for networkidle, assert #period-week has 'active' class and #period-month does not. Proves period toggle does not crash or lose state. Grep: `grep -r "def test.*period\|def test.*time.*filter\|def test.*leaderboard.*period" backend/tests/playwright/` returns nothing.
+
+- [ ] **Playwright: guide tab renders content for authenticated user** — login as basic, showTab('guide'), wait for #tab-guide to lose 'hidden' class, assert at least one element with content is present inside the guide tab (e.g. a heading or paragraph). Proves the Guide tab renders without a blank state for authenticated users. Grep: `grep -r "def test.*guide.*tab\|def test.*guide.*page\|def test.*tab.*guide" backend/tests/playwright/` returns nothing.
 
 ---
 

@@ -4580,5 +4580,27 @@
       "failures": 0,
       "notes": "audit session -- no new tests; Playwright requires running servers"
     }
+  },
+  {
+    "session": 205,
+    "date": "2026-03-27",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 6 Playwright E2E tests covering alerts tab toggle presence (basic-tier user sees #toggle-push and #toggle-telegram in Alerts tab) and leaderboard sort toggle active state (profit\u2192volume sort switch moves active class and keeps cards loaded)",
+    "files": [
+      "backend/tests/playwright/test_alerts_tab_toggles.py",
+      "backend/tests/playwright/test_leaderboard_sort_toggle.py"
+    ],
+    "tests": {
+      "before": 502,
+      "after": 502,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 6,
+      "failures": 0,
+      "notes": "6 new Playwright tests all pass"
+    }
   }
 ]

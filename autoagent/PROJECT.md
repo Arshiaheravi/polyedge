@@ -258,5 +258,5 @@ cd backend && py -m pytest tests/playwright/ -q   # if playwright tests exist
 - Stripe/Telegram not configured — feature-gate gracefully
 - `py` not `python3` on Windows
 - Frontend is ONE file: `frontend/index.html`
-- 502 backend tests passing (2 skipped), 69 Playwright E2E tests passing (6 consensus tab + 12 tier gates + 24 UI flows + 4 auth/security + 3 full journeys + 4 notifications tier gates + 4 CORS headers + 4 error states + 1 follow-appears-on-dashboard + 1 leaderboard-empty-state + 1 basic-follow-limit + 1 basic-follow-dashboard + 1 vip-follow-dashboard + 1 unfollow-cycle + 1 profile-modal + 1 profile-back-button; 2 skipped — no follows for free/basic) as of session 204
+- 502 backend tests passing (2 skipped), 75 Playwright E2E tests passing (6 consensus tab + 12 tier gates + 24 UI flows + 4 auth/security + 3 full journeys + 4 notifications tier gates + 4 CORS headers + 4 error states + 1 follow-appears-on-dashboard + 1 leaderboard-empty-state + 1 basic-follow-limit + 1 basic-follow-dashboard + 1 vip-follow-dashboard + 1 unfollow-cycle + 1 profile-modal + 1 profile-back-button + 3 alerts-tab-toggles + 3 leaderboard-sort-toggle; 2 skipped — no follows for free/basic) as of session 205
 - pytest.ini excludes tests/playwright/ from default run (use `py -m pytest tests/playwright/` separately)
