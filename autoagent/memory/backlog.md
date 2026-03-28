@@ -151,6 +151,12 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
+## PRIORITY 27 — Code Quality Audit (generated session 235 — work session count hit 180)
+
+*(Completed session 235 — audit clean: no TODO/dead code/secrets; minor Leo pattern: two nested _fail_commit helpers in test_scheduler.py are slightly different implementations, not blocking; Nina gate: all tier fixtures correct)*
+
+---
+
 ## PRIORITY 21 — Coverage Gaps (generated session 227 via low-water-mark check — 99% total, 4 missed lines in database.py only)
 
 *(All 3 tasks completed in session 228 — database.py now 100% covered; Stripe webhook unhandled event was already covered)*
@@ -160,6 +166,16 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 ## PRIORITY 16 — Coverage Gaps (generated session 221 via coverage report — 98% total, 24 missed lines)
 
 *(All 3 tasks completed in session 222)*
+
+---
+
+## PRIORITY 28 — Playwright Tier Gate Gaps (generated session 235 via low-water-mark check)
+
+*(Task 1 completed in session 235 — basic tier notifications not gated: 2 tests added, both pass)*
+
+- [ ] **Playwright: Account tab shows Basic/VIP tier badge** — add tests to `tests/playwright/test_account_tab_tier_badge.py` verifying a Basic user sees "Basic" badge and a VIP user sees "VIP" badge in the account tab. Current tests only cover free tier. Grep confirmed: `grep -n "basic\|vip" tests/playwright/test_account_tab_tier_badge.py` returns nothing.
+
+- [ ] **Playwright: Basic/VIP account tab has no upgrade button** — add tests verifying that paid users (Basic, VIP) do NOT see the upgrade button visible to free users in the account tab. Currently only `test_account_tab_upgrade_button_visible_for_free_user` exists. Grep confirmed: `grep -n "basic\|vip\|upgrade.*button" tests/playwright/test_account_tab_tier_badge.py` returns only the free test.
 
 ---
 

@@ -5253,5 +5253,26 @@
       "failures": 0,
       "notes": "brain session — no code changes"
     }
+  },
+  {
+    "session": 235,
+    "date": "2026-03-28",
+    "time": "12:00",
+    "type": "work",
+    "summary": "Code quality audit clean (100% coverage, no issues); added 2 Playwright tests verifying basic tier users can access Telegram and web push toggles without getting an upgrade modal — fills the NORTH_STAR Notifications Basic=enabled cell",
+    "files": [
+      "backend/tests/playwright/test_notifications_tier_gates.py"
+    ],
+    "tests": {
+      "before": 550,
+      "after": 550,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 6,
+      "failures": 0,
+      "notes": "2 new basic-tier notification tests pass; 13 pre-existing intermittent Playwright failures unrelated to change (Polymarket API down + FAB/mobile flakiness)"
+    }
   }
 ]

@@ -74,3 +74,8 @@ DOWNLOADED: No new skill files (ECC still at v1.9.0; no new applicable Anthropic
 IMPLEMENTED: (1) PROMPT.md — OBSERVER LOOP GUARD enhanced with graduated-response model: soft redirect on 3rd repeat (pivot approach), hard stop only on 4th; (2) backlog.md — wallet basket/topic-based follow groups + account-cluster tracking added to FEATURE MODE Competitive Intelligence; (3) activity_log.md — archived sessions 201-220 (33->13 entries; header updated to 1-220 archived).
 BACKLOGGED: Betmoar competitor noted; wallet basket + account-cluster in backlog.
 SOURCES: 7 new sources logged.
+## 2026-03-28 — TESTING (Session 235)
+DONE: Code quality audit (clean — no issues found, 100% coverage maintained); added 2 Playwright tests verifying basic tier users can toggle Telegram and web push notifications without triggering an upgrade modal.
+IMPACT: Fills the NORTH_STAR "Notifications: Basic = enabled" cell — previously only free (blocked) and VIP (enabled) were Playwright-verified; basic tier was untested and could have silently broken.
+FILES: backend/tests/playwright/test_notifications_tier_gates.py
+
