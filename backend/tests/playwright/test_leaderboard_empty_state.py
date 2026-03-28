@@ -16,9 +16,7 @@ Requires servers running:
 import json
 import pytest
 from playwright.sync_api import Page, Route
-from .conftest import BASE_URL
-
-API_BASE = "http://localhost:8003"
+from .conftest import BASE_URL, API_BASE
 
 
 class TestLeaderboardEmptyState:

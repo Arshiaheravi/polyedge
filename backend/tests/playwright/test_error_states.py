@@ -19,9 +19,7 @@ Requires servers running:
 import time
 import pytest
 from playwright.sync_api import Page, Route
-from .conftest import login, BASE_URL
-
-API_BASE = "http://localhost:8003"
+from .conftest import login, BASE_URL, API_BASE
 
 
 class TestApiErrorGracefulHandling:

@@ -7,6 +7,7 @@ import pytest
 from playwright.sync_api import sync_playwright, Browser, Page
 
 BASE_URL = "http://localhost:3000"
+API_BASE = "http://localhost:8003"
 
 ACCOUNTS = {
     "free":  {"email": "free@polyedge.com",  "password": "FreeTest123!"},
