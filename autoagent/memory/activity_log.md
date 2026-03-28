@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — META (Session 219)
+IMPROVED: PROMPT.md EMBEDDED-GREP rule (added explicit "RUN THE GREP NOW" + session 218 failure example); PROMPT.md LOW-WATER-MARK CHECK (added fast coverage command `--cov --cov-report=term-missing` as primary gap-finding method); audit.md Nina's checklist (added test-specificity tier gate — free-tier auth_headers against gated endpoint silently 403s and tests nothing useful).
+PATTERNS FOUND: (1) EMBEDDED-GREP rule violated again in session 218 despite existing rule saying "do NOT assume returns nothing is still true" — rule needed stronger "RUN NOW" directive with concrete failure example. (2) Session 217 test-specificity rule written to knowledge.md only, not audit.md where it fires at review-time. (3) LOW-WATER-MARK CHECK described "branch audit approach" (slow) when coverage command (fast, sessions 215-218 confirmed) was proven method.
+PREDICTED IMPACT: Next session picking PRIORITY 14 tasks will run all 3 embedded greps before picking; LOW-WATER-MARK generation will use coverage command producing specific line numbers instead of manual branch counting; future audit sessions will catch free-tier fixture mismatches before commit.
+
 ## 2026-03-28 — TESTING (Session 218)
 DONE: Added 2 backend tests closing PRIORITY 13 coverage gaps — test_poll_vip_bets_no_follows_returns_early (scheduler.py line 319: VIP user exists but no BettorFollow rows → addresses list empty → early return, get_recent_bets never called) and test_poll_vip_bets_duplicate_bet_skipped (lines 348-349: pre-existing BetEvent with same bettor/market/timestamp → if exists: continue fires, no duplicate row, no second notification). Task 3 confirmed already covered by existing test. 512→514 backend tests.
 IMPACT: Both branches of _poll_vip_bets' early-exit and duplicate-skip logic are now regression-protected. Any future refactor that removes the `if not addresses: return` guard or `if exists: continue` check will fail the test suite before shipping.
