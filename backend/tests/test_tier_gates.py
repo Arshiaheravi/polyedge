@@ -313,3 +313,21 @@ def test_follows_live_tier_not_stale_after_upgrade(client, db):
     assert resp2.json()["tier"] == "vip", (
         "tier must reflect current DB value, not cached tier at fill time (Bug #140 regression)"
     )
+
+
+def test_consensus_free_tier_gets_exactly_3_signals(client):
+    """Free/unauthenticated users must see EXACTLY 3 signals when ≥3 are available.
+
+    Mutation kill: signals[:3] → signals[:2] would survive the weaker `len <= 3` assertion
+    in test_consensus_unauthenticated_free_tier_limit. This test uses `== 3` to close that gap.
+    MOCK_SIGNALS has 5 entries — any slice other than [:3] produces a count != 3.
+    """
+    with patch("app.routes.markets.get_consensus_signals",
+               new=AsyncMock(return_value=MOCK_SIGNALS)):
+        resp = client.get("/markets/consensus")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data["signals"]) == 3, (
+        f"Free tier must see exactly 3 signals when {len(MOCK_SIGNALS)} are available; "
+        f"got {len(data['signals'])}"
+    )

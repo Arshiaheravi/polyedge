@@ -1574,3 +1574,39 @@ def test_poll_vip_bets_free_tier_follower_skipped_when_vip_also_follows(sched_db
     assert mock_notify.call_count == 1, (
         f"dispatch must be called once (VIP only), got {mock_notify.call_count}"
     )
+
+
+def test_detect_exits_exactly_50pct_reduction_does_not_trigger(sched_db):
+    """A position that drops EXACTLY 50% must NOT trigger an exit — the rule is >50%.
+
+    Mutation kill: `cur_size < prev_size * 0.5` → `cur_size <= prev_size * 0.5` would trigger
+    an exit at exactly 50% reduction (e.g. 10.0 → 5.0). No existing test covers the boundary
+    value so this mutation survives all current tests.
+
+    Boundary: prev_size=10.0, cur_size=5.0 → 5.0 < 5.0 is False → no exit expected.
+    """
+    session, Session = sched_db
+
+    user = User(
+        email="ex_50pct@x.com", hashed_password=hash_password("p"),
+        name="Ex50pct", subscription_tier="vip",
+    )
+    session.add(user)
+    session.flush()
+    session.add(BettorFollow(user_id=user.id, bettor_address="0xhalf", bettor_name="whale"))
+    session.commit()
+
+    # prev_size=10.0; cur_size=5.0 is exactly 50% — NOT >50% — no exit
+    scheduler_module._last_positions["0xhalf"] = {"cid_abc": 10.0}
+    half_position = dict(SAMPLE_POSITION, size=5.0)  # exactly 50% of 10.0
+
+    with patch("app.services.scheduler.get_active_positions", new=AsyncMock(return_value=[half_position])):
+        run(_detect_exits(session, ["0xhalf"]))
+    session.commit()
+
+    verify = Session()
+    events = verify.query(BetEvent).filter(BetEvent.event_type == "EXIT").all()
+    verify.close()
+    assert len(events) == 0, (
+        f"Exactly 50% reduction must NOT trigger exit (rule is >50%); got {len(events)} event(s)"
+    )

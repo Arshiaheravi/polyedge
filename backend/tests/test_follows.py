@@ -349,3 +349,20 @@ def test_get_follows_unknown_tier_returns_limit_zero(client, db, auth_headers, r
     assert data["tier"] == "enterprise"
     assert data["limit"] == 0
     assert data["follows"] == []
+
+
+def test_free_tier_error_message_mentions_basic_upgrade(client, auth_headers):
+    """Free-tier error message must specifically mention the Basic upgrade path.
+
+    Mutation kill: `if tier == "free":` → `if tier != "free":` routes free users to the
+    generic message "Upgrade to VIP for unlimited." instead of the specific message
+    "Upgrade to Basic for 5 or VIP for unlimited." Both contain "Upgrade" so the weaker
+    assertion in test_free_tier_follow_limit survives the mutation. Asserting "Basic" kills it.
+    """
+    client.post("/follows", json={"bettor_address": "0xfirst"}, headers=auth_headers)
+    resp = client.post("/follows", json={"bettor_address": "0xsecond"}, headers=auth_headers)
+    assert resp.status_code == 403
+    detail = resp.json()["detail"]
+    assert "Basic" in detail, (
+        f"Free-tier error must mention Basic upgrade path; got: '{detail}'"
+    )
