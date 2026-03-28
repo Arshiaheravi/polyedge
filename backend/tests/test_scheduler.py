@@ -1534,3 +1534,45 @@ def test_poll_vip_bets_outer_exception_handler_fires_on_commit_failure(sched_db)
         f"got {scheduler_module._last_check!r}, expected {before!r}"
     )
     assert rollback_called, "db.rollback() must be called in the VIP outer except handler"
+
+
+def test_poll_vip_bets_free_tier_follower_skipped_when_vip_also_follows(sched_db):
+    """Free-tier follower of an address is skipped at scheduler.py line 379.
+
+    Setup: VIP user + free user both follow "0xvipfree".
+    VIP user's follow causes "0xvipfree" to appear in `addresses`.
+    When iterating followers for that address, free user hits the
+    `subscription_tier == "free"` guard and is skipped.
+    dispatch_bet_notification must be called exactly once (for the VIP user).
+    """
+    session, Session = sched_db
+
+    vip_user = User(
+        email="vip_ff@x.com", hashed_password=hash_password("p"),
+        name="VipFF", subscription_tier="vip",
+    )
+    free_user = User(
+        email="free_ff@x.com", hashed_password=hash_password("p"),
+        name="FreeFF", subscription_tier="free",
+    )
+    session.add_all([vip_user, free_user])
+    session.flush()
+
+    # SAME address — VIP user ensures the address is polled; free user hits line 379
+    session.add(BettorFollow(user_id=vip_user.id, bettor_address="0xvipfree", bettor_name="whale"))
+    session.add(BettorFollow(user_id=free_user.id, bettor_address="0xvipfree", bettor_name="whale"))
+    session.commit()
+
+    scheduler_module._last_check = datetime(2000, 1, 1, tzinfo=timezone.utc)
+
+    fresh_bet = dict(SAMPLE_BET, timestamp=FUTURE_TS)
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[fresh_bet])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()) as mock_notify:
+        run(_poll_vip_bets())
+
+    # Only the VIP user's follow triggers a notification — free user is skipped
+    assert mock_notify.call_count == 1, (
+        f"dispatch must be called once (VIP only), got {mock_notify.call_count}"
+    )

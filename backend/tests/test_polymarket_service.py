@@ -1177,3 +1177,115 @@ async def test_get_live_trades_api_exception_returns_empty_list():
         result = await get_live_trades(limit=20)
 
     assert result == []
+
+
+@pytest.mark.asyncio
+async def test_get_recent_bets_conviction_score_fallback_when_amount_zero():
+    """When all bets have amount_usd == 0 (usdcSize=0), avg <= 0 triggers
+    the fallback branch at polymarket.py line 429: score = 1.0 and label = ''.
+
+    Verify: conviction_score == 1.0, conviction_label == ''
+    """
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    mock_resp = MagicMock()
+    mock_resp.raise_for_status = MagicMock()
+    mock_resp.json.return_value = [
+        {
+            "type": "TRADE",
+            "proxyWallet": "0xtest",
+            "usdcSize": "0",       # amount_usd will be 0.0
+            "price": "0.50",
+            "side": "BUY",
+            "outcome": "Yes",
+            "market": "Will X happen?",
+            "timestamp": 1700000000,
+        }
+    ]
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_recent_bets  # noqa: PLC0415
+        result = await get_recent_bets("0xtest", limit=20)
+
+    assert len(result) == 1
+    assert result[0]["conviction_score"] == 1.0, (
+        f"Expected conviction_score=1.0 for zero-amount bet, got {result[0]['conviction_score']}"
+    )
+    assert result[0]["conviction_label"] == "", (
+        f"Expected empty conviction_label for score=1.0, got {result[0]['conviction_label']!r}"
+    )
+
+
+@pytest.mark.asyncio
+async def test_fetch_positions_dict_response_produces_no_signal():
+    """_fetch_positions inside get_consensus_signals resets raw=[] when the
+    API returns a dict instead of a list (polymarket.py line 467:
+    if not isinstance(raw, list): raw = []).
+
+    With 3 whales but each getting an empty position list, whale_count < min_whales=3
+    → no signals returned.
+    """
+    from unittest.mock import AsyncMock, MagicMock, patch
+    from app.services.polymarket import get_consensus_signals
+
+    mock_leaderboard = [
+        {"address": f"0x{i:040x}", "name": f"whale{i}", "pnl_usd": 1000.0, "rank": i}
+        for i in range(1, 4)
+    ]
+
+    # API returns a dict instead of a list → _fetch_positions sets raw=[]
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {"error": "unexpected dict response"}
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with (
+        patch("app.services.polymarket.get_leaderboard", new=AsyncMock(return_value=mock_leaderboard)),
+        patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client),
+    ):
+        signals = await get_consensus_signals(min_whales=3)
+
+    assert signals == [], (
+        f"Dict API response in _fetch_positions must produce empty positions → no signals, got {signals}"
+    )
+
+
+@pytest.mark.asyncio
+async def test_fetch_positions_connect_error_produces_no_signal():
+    """_fetch_positions inside get_consensus_signals catches ConnectError and sets
+    raw=[] (polymarket.py line 469: except Exception: raw = []).
+
+    With all fetches failing, no positions → no consensus signals returned.
+    """
+    from unittest.mock import AsyncMock, patch
+    import httpx
+    from app.services.polymarket import get_consensus_signals
+
+    mock_leaderboard = [
+        {"address": f"0x{i:040x}", "name": f"whale{i}", "pnl_usd": 1000.0, "rank": i}
+        for i in range(1, 4)
+    ]
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(side_effect=httpx.ConnectError("connection refused"))
+
+    with (
+        patch("app.services.polymarket.get_leaderboard", new=AsyncMock(return_value=mock_leaderboard)),
+        patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client),
+    ):
+        signals = await get_consensus_signals(min_whales=3)
+
+    assert signals == [], (
+        f"ConnectError in _fetch_positions must produce empty positions → no signals, got {signals}"
+    )
