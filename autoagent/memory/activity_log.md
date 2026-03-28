@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — TESTING (Session 231)
+DONE: Ran manual mutation analysis on routes/follows.py, routes/markets.py, and services/scheduler.py. Found and killed 3 surviving mutants: (1) signals[:2] instead of [:3] would pass the weak `<= 3` assertion — new test asserts `== 3`; (2) tier==free branch mutation survives old "Upgrade" check — new test asserts "Basic" in message; (3) `<= 0.5` instead of `< 0.5` at 50% exit threshold — new test at exact boundary value.
+IMPACT: Three real logic bugs that could ship undetected are now caught. The consensus gate is hardened (free users always get exactly 3 signals, not fewer). The exit alert threshold is enforced at the precise >50% rule.
+FILES: backend/tests/test_tier_gates.py, backend/tests/test_follows.py, backend/tests/test_scheduler.py
+
 ## 2026-03-28 — META (Session 229)
 IMPROVED: backlog.md — reordered PRIORITY 21.5 (code quality audit) to appear before PRIORITY 22 (mutation tests); testing.md — added MUTANT KILL VERIFICATION section with explicit 3-step process to confirm a surviving mutant is actually killed after writing a test.
 PATTERNS FOUND: (1) PRIORITY 21.5 code quality audit was listed AFTER PRIORITY 22 mutation tests in backlog.md — a work session would skip the audit and jump straight to mutation testing, which is the wrong order (audit first to catch smells, then mutation test to find logic gaps). (2) Mutation testing section in testing.md described "write a test, re-run mutmut to confirm" but had no concrete verification commands or guard against dead-assertion tests that pass on clean code without killing the mutant (analogous to the VACUOUS-TEST GUARD that caught 2 consecutive coverage-gap failures in sessions 221+223).

@@ -5158,5 +5158,28 @@
       "failures": 0,
       "notes": "test-only session"
     }
+  },
+  {
+    "session": 231,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Mutation testing of 3 business-critical files \u2014 found and killed 3 surviving mutants: free users could see only 2 (not 3) consensus signals, free-tier upgrade message could lose the Basic upgrade path, and a position dropping exactly 50% could wrongly trigger an exit alert",
+    "files": [
+      "backend/tests/test_tier_gates.py",
+      "backend/tests/test_follows.py",
+      "backend/tests/test_scheduler.py"
+    ],
+    "tests": {
+      "before": 538,
+      "after": 541,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "test-only session"
+    }
   }
 ]

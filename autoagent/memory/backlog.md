@@ -119,18 +119,24 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
-## PRIORITY 22 — Mutation Tests (generated session 228 — 100% line coverage achieved; mutation testing is next quality frontier)
+## PRIORITY 22 — Mutation Tests
 
-**Context**: All app/ modules are now at 100% line coverage. Mutation testing finds surviving mutants — code changes that don't break any test, meaning untested business logic. Each surviving mutant = a real bug that could ship undetected. Run `py -m pip install mutmut` first if not installed.
+*(All 3 tasks completed in session 231 — 3 surviving mutants identified via manual analysis and killed: signals[:2] in markets.py, tier==free branch in follows.py, <= vs < at 50% boundary in scheduler.py; 538→541 tests)*
 
-- [ ] **Mutation test — routes/follows.py tier limits** — Run `cd backend && py -m mutmut run --paths-to-mutate "app/routes/follows.py" --tests-dir "tests/"`. View surviving mutants with `py -m mutmut show --all-survived`. Focus: TIER_LIMITS dict values (free=1, basic=5), `>=` vs `>` comparisons in limit checks. For each survivor, write a test that kills it.
-  Grep: `grep -n "def test.*mutmut\|mutmut" backend/tests/test_follows.py` returns nothing — mutation tests not yet run
+---
 
-- [ ] **Mutation test — routes/markets.py consensus gates** — Run mutmut on `app/routes/markets.py`. Focus: `signals[:3]` slice for free tier, `names_visible` flag, whale_count threshold. A surviving mutant on the slice means free users could see all signals if a developer accidentally changes the index.
-  Grep: `grep -n "def test.*mutmut\|mutmut" backend/tests/test_tier_gates.py` returns nothing — mutation tests not yet run
+## PRIORITY 23 — Mutation Tests: Payments + Auth (generated session 231 — low-water-mark, all PRIORITY 22 done)
 
-- [ ] **Mutation test — services/scheduler.py VIP exit gate** — Run mutmut on `app/services/scheduler.py` focused on `_detect_exits`. Focus: VIP-only check (`subscription_tier == "vip"`), exit detection comparison logic. A surviving mutant on the tier check means basic users could receive exit alerts.
-  Grep: `grep -n "def test.*mutmut\|mutmut" backend/tests/test_scheduler.py` returns nothing — mutation tests not yet run
+**Context**: Manual mutation analysis approach (mutmut incompatible with Windows py env). For each file: read the critical branching logic, identify mutations that change behavior, check whether existing tests assert the specific boundary, write tests for gaps.
+
+- [ ] **Mutation test — routes/payments.py Stripe tier assignment** — Read the Stripe webhook handler in routes/payments.py. Key mutations: `subscription_tier = "basic"` → `"vip"` (or vice versa), `customer_id` comparison logic. Check if existing tests assert the EXACT tier assigned after each webhook event type (checkout.completed, subscription.deleted). A mutant swapping "basic"/"vip" would give wrong access.
+  Grep: `grep -n "def test.*webhook\|subscription_tier.*basic\|subscription_tier.*vip" backend/tests/test_payments.py` — check if exact tier values are asserted post-webhook.
+
+- [ ] **Mutation test — routes/auth.py JWT claims and password verify** — Key mutations: `str(user.id)` → `str(user.email)` in JWT sub claim (users get wrong identity), `verify_password` return value inversion (auth bypass), `expire` delta changed. Check if existing tests assert the token's sub claim decodes to the correct user ID. A sub-claim mutation would let any user impersonate any other.
+  Grep: `grep -n "def test.*jwt\|def test.*token\|sub.*user.id\|decode" backend/tests/test_auth.py` — check if JWT sub is asserted.
+
+- [ ] **Mutation test — services/stripe_service.py customer/tier mapping** — Read the Stripe service. Key mutations: `stripe_customer_id` assignment (customer mapped to wrong user), tier string literals in upgrade paths. Check if tests assert `user.stripe_customer_id == expected_id` after customer creation, and that tier upgrades use the exact expected string.
+  Grep: `grep -n "stripe_customer_id\|subscription_tier" backend/tests/test_stripe_service.py` — check exact assertion values.
 
 ---
 
