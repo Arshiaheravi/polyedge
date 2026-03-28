@@ -979,6 +979,90 @@ def test_detect_exits_api_error_skips_address(sched_db):
     assert len(events) == 0
 
 
+def test_detect_exits_inactive_vip_not_notified(sched_db):
+    """VIP user with is_active=False must NOT receive exit notifications.
+
+    Covers scheduler.py line: `if not user or not user.is_active or ... != "vip": continue`
+    The is_active=False branch is not covered by test_detect_exits_only_notifies_vip.
+    An EXIT BetEvent is still stored (analytics), but no telegram/push is sent.
+    """
+    from app.models import AlertSetting
+
+    session, Session = sched_db
+
+    inactive_vip = User(
+        email="inactive_vip@x.com", hashed_password=hash_password("p"), name="InactiveVIP",
+        subscription_tier="vip", is_active=False,
+        telegram_chat_id="chat_inactive_vip", telegram_verified=True,
+    )
+    session.add(inactive_vip)
+    session.flush()
+    session.add(BettorFollow(user_id=inactive_vip.id, bettor_address="0xinactive", bettor_name="whale"))
+    session.add(AlertSetting(user_id=inactive_vip.id, telegram_enabled=True))
+    session.commit()
+
+    scheduler_module._last_positions["0xinactive"] = {"cid_inactive": 5.0}
+
+    mock_telegram = AsyncMock()
+    with patch("app.services.scheduler.get_active_positions", new=AsyncMock(return_value=[])), \
+         patch("app.services.scheduler.send_telegram", new=mock_telegram), \
+         patch("app.services.scheduler.send_web_push", new=AsyncMock()):
+        run(_detect_exits(session, ["0xinactive"]))
+    session.commit()
+
+    # EXIT BetEvent should still be stored (analytics for all tiers)
+    verify = Session()
+    events = verify.query(BetEvent).filter(BetEvent.event_type == "EXIT").all()
+    verify.close()
+    assert len(events) == 1, (
+        "EXIT BetEvent must be stored for analytics even when follower is inactive VIP"
+    )
+    # Notification must NOT be sent to inactive user
+    assert mock_telegram.call_count == 0, (
+        "Inactive VIP user (is_active=False) must not receive exit notification telegram"
+    )
+
+
+def test_detect_exits_exit_event_stored_regardless_of_follower_tier(sched_db):
+    """EXIT BetEvent is stored in DB for analytics even when all followers are non-VIP.
+
+    The EXIT BetEvent is created BEFORE the VIP-only notification loop.
+    Basic-tier followers should still produce a stored EXIT BetEvent (no notification sent).
+    """
+    from app.models import AlertSetting
+
+    session, Session = sched_db
+
+    basic_user = User(
+        email="basic_analytics@x.com", hashed_password=hash_password("p"), name="BasicUser",
+        subscription_tier="basic", telegram_chat_id="chat_basic", telegram_verified=True,
+    )
+    session.add(basic_user)
+    session.flush()
+    session.add(BettorFollow(user_id=basic_user.id, bettor_address="0xbasic_exit", bettor_name="whale"))
+    session.add(AlertSetting(user_id=basic_user.id, telegram_enabled=True))
+    session.commit()
+
+    scheduler_module._last_positions["0xbasic_exit"] = {"cid_basic": 8.0}
+
+    mock_telegram = AsyncMock()
+    with patch("app.services.scheduler.get_active_positions", new=AsyncMock(return_value=[])), \
+         patch("app.services.scheduler.send_telegram", new=mock_telegram), \
+         patch("app.services.scheduler.send_web_push", new=AsyncMock()):
+        run(_detect_exits(session, ["0xbasic_exit"]))
+    session.commit()
+
+    verify = Session()
+    events = verify.query(BetEvent).filter(BetEvent.event_type == "EXIT").all()
+    verify.close()
+    assert len(events) == 1, (
+        "EXIT BetEvent must be stored even when only non-VIP users follow the bettor (analytics)"
+    )
+    assert mock_telegram.call_count == 0, (
+        "Basic-tier follower must NOT receive exit notification telegram"
+    )
+
+
 def test_poll_bets_purges_stale_last_positions(sched_db):
     """When a bettor is no longer followed, _poll_bets purges its _last_positions entry.
 

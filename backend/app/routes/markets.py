@@ -1,7 +1,7 @@
 import time
 from typing import Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth import get_current_user_optional
 from app.models import User
@@ -29,7 +29,10 @@ async def consensus(
     if _consensus_cache["data"] and (now - _consensus_cache["ts"]) < CONSENSUS_TTL:
         signals = _consensus_cache["data"]
     else:
-        signals = await get_consensus_signals(min_whales=3)
+        try:
+            signals = await get_consensus_signals(min_whales=3)
+        except Exception as exc:
+            raise HTTPException(status_code=502, detail=f"Polymarket API error: {str(exc)}")
         _consensus_cache["data"] = signals
         _consensus_cache["ts"] = now
 

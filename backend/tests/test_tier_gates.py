@@ -205,6 +205,58 @@ def test_consensus_total_available_reflects_all_signals(client, db):
     )
 
 
+def test_consensus_api_error_returns_502(client):
+    """If get_consensus_signals raises, /markets/consensus must return 502 (not 500).
+
+    Bug: markets.py had no try/except around get_consensus_signals, so any API
+    failure produced an unhandled 500. Fixed to match other endpoints that return 502.
+    Cache must NOT be updated on error (so next request retries the API).
+    """
+    import app.routes.markets as markets_mod
+
+    with patch("app.routes.markets.get_consensus_signals",
+               new=AsyncMock(side_effect=Exception("connection timeout"))):
+        resp = client.get("/markets/consensus")
+
+    assert resp.status_code == 502, (
+        f"Expected 502 on Polymarket API error, got {resp.status_code}. "
+        "markets.py must wrap get_consensus_signals in try/except."
+    )
+    assert "Polymarket API error" in resp.json().get("detail", ""), (
+        "502 response must include 'Polymarket API error' in detail"
+    )
+    # Cache must NOT be poisoned by the error
+    assert markets_mod._consensus_cache["data"] is None, (
+        "Cache must not be updated when the API call fails — next request must retry"
+    )
+
+
+def test_consensus_each_signal_has_required_fields(client):
+    """Every signal item in the response must include all 7 required fields.
+
+    Regression guard: if the service or route drops a field (e.g. event_slug),
+    this test will fail before the silent frontend breakage reaches users.
+    """
+    REQUIRED_SIGNAL_FIELDS = {
+        "market_title", "condition_id", "outcome",
+        "whale_count", "avg_entry_price", "current_price",
+        "whale_names", "event_slug",
+    }
+    with patch("app.routes.markets.get_consensus_signals",
+               new=AsyncMock(return_value=MOCK_SIGNALS)):
+        resp = client.get("/markets/consensus")
+
+    assert resp.status_code == 200
+    signals = resp.json()["signals"]
+    assert len(signals) > 0, "Must have at least one signal to check fields"
+    for i, sig in enumerate(signals):
+        missing = REQUIRED_SIGNAL_FIELDS - set(sig.keys())
+        assert not missing, (
+            f"Signal[{i}] is missing required fields: {missing}. "
+            f"Got keys: {set(sig.keys())}"
+        )
+
+
 # ---------------------------------------------------------------------------
 # /follows/live — tier field correctness
 # ---------------------------------------------------------------------------
