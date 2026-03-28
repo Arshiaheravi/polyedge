@@ -3979,6 +3979,7 @@ function setToggle(id, on) {
 }
 
 async function toggleWebPush() {
+  if (currentUser?.subscription_tier === 'free') { openUpgradeModal(); return; }
   if (!webPushAvailable) {
     toast('Web push not configured — VAPID keys needed in .env', 'error');
     return;
