@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 207)
+DONE: Fixed BUG #8 (free-tier web push gate missing in toggleWebPush) and added 8 Playwright E2E tests across 3 new files — logout clears pe_token from localStorage and shows landing view; free user calling toggleWebPush() sees the upgrade modal (toggle stays OFF); admin /admin/stats mrr_estimate math matches basic*4.99+vip*9.99, tier counts sum to total, missing header returns 4xx.
+IMPACT: BUG #8 paywall hole closed — free users can no longer bypass push tier gate. Three auth/security/admin flows now have automated E2E coverage. 84→92 Playwright tests total.
+FILES: frontend/index.html, backend/tests/playwright/test_logout_clears_token.py, backend/tests/playwright/test_free_push_upgrade_modal.py, backend/tests/playwright/test_admin_mrr_math.py
+
 ## 2026-03-27 — TESTING (Session 206)
 DONE: Added 9 Playwright E2E tests across 3 new files — account tab shows "Free" badge (tier-free class) and visible upgrade button for free users; leaderboard period filter defaults to #period-month active and correctly moves active state to #period-week/#period-all after switch (cards still render); guide tab becomes visible after showTab('guide') with an h1 heading and visible content blocks.
 IMPACT: Proves the account settings tab correctly renders tier status, the period filter toggle does not crash or lose state, and the guide tab is not blank for authenticated users. 75→84 Playwright tests total.

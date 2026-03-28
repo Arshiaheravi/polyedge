@@ -4623,7 +4623,31 @@
       "status": "pass",
       "checks": 9,
       "failures": 0,
-      "notes": "9 new Playwright tests all pass (75→84 Playwright tests)"
+      "notes": "9 new Playwright tests all pass (75\u00e2\u2020\u201984 Playwright tests)"
+    }
+  },
+  {
+    "session": 207,
+    "date": "2026-03-27",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Fixed BUG #8 (free-tier web push gate) and added 8 new Playwright E2E tests: logout clears pe_token and shows landing, free user toggleWebPush opens upgrade modal, admin MRR math verified correct via browser fetch",
+    "files": [
+      "frontend/index.html",
+      "backend/tests/playwright/test_logout_clears_token.py",
+      "backend/tests/playwright/test_free_push_upgrade_modal.py",
+      "backend/tests/playwright/test_admin_mrr_math.py"
+    ],
+    "tests": {
+      "before": 502,
+      "after": 502,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 8,
+      "failures": 0,
+      "notes": "8 new Playwright tests all green"
     }
   }
 ]

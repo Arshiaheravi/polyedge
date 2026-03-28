@@ -7,11 +7,7 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 3 — Security E2E
 
-- [ ] **Playwright: logout clears pe_token from localStorage and returns to landing** — login as free, call logout() via page.evaluate, assert localStorage.getItem('pe_token') is null AND #view-landing is visible (not hidden). Proves full auth cleanup on logout. Grep: `grep -r "def test.*logout.*token\|def test.*logout.*land\|def test.*logout.*redirect" backend/tests/playwright/` returns nothing.
-
-- [ ] **Playwright: free user enabling web push triggers upgrade modal** — login as free, showTab('alerts'), call togglePush(true) via page.evaluate (or click #toggle-push), assert upgrade modal becomes visible (#upgrade-modal loses hidden class). Proves push notifications correctly gate free users. Grep: `grep -r "def test.*free.*push.*blocked\|def test.*notifications.*free.*blocked\|def test.*push.*upgrade" backend/tests/playwright/` returns nothing.
-
-- [ ] **Playwright: admin stats MRR math correct via browser fetch** — from a browser page, fetch /admin/stats with x-admin-password header, assert mrr_estimate equals basic_count*4.99 + vip_count*9.99 (within 0.01). Proves the MRR formula is not broken in prod. Grep: `grep -r "def test.*admin.*mrr\|def test.*mrr.*math\|def test.*admin.*stats.*playwright" backend/tests/playwright/` returns nothing.
+*(All 3 tasks completed in session 207)*
 
 ## PRIORITY 4 — Error State E2E
 

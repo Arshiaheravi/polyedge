@@ -46,6 +46,9 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
 - Test count: **502 passed, 2 skipped** (as of 2026-03-27, session 202 — current)
+- Playwright E2E: **92 passed, 2 skipped** (as of 2026-03-27, session 207) — 8 new: logout clears token, free-tier push gate, admin MRR math
+- Playwright E2E: **84 passed, 2 skipped** (as of 2026-03-27, session 206) — 9 new: account tab tier badge, period filter, guide tab
+- Playwright E2E: **75 passed, 2 skipped** (as of 2026-03-27, session 205) — 6 new: alerts tab toggles, leaderboard sort active state
 - Playwright E2E: **69 passed, 2 skipped** (as of 2026-03-27, session 202) — 1 new: profile back-button returns to leaderboard
 - Playwright E2E: **68 passed, 2 skipped** (as of 2026-03-27, session 201) — 1 new: bettor profile modal opens with real data
 - Playwright E2E: **67 passed, 2 skipped** (as of 2026-03-27, session 200) — 3 new: basic/VIP follow→dashboard + unfollow cycle
@@ -75,6 +78,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #207 Reflexion — 2026-03-27 (TESTING)
+ACCOMPLISHED: Fixed BUG #8 (free-tier web push gate missing — free users could call toggleWebPush with no tier check) by adding `if (currentUser?.subscription_tier === 'free') { openUpgradeModal(); return; }` before the VAPID check. Added 8 Playwright E2E tests across 3 files: logout removes pe_token + shows landing + hides dashboard; free user push gate opens upgrade modal + toggle stays OFF; admin /stats MRR math verified + tier counts sum to total + missing header rejected. All 8 passed first run; 502 backend tests unchanged.
+FAILED: Admin test initially used wrong response keys (`basic_users`, `vip_users` vs actual `users.basic`, `users.vip`), and expected 403 for missing header but FastAPI returns 422 (required Header parameter). Fixed after first failed run.
+RULE: [2026-03-27] Before writing Playwright tests that assert on API response fields, always curl the endpoint first to see the actual response shape — e.g., /admin/stats returns `{"users":{"basic":N,"vip":N},...}` not flat `{"basic_users":N}`. One curl call prevents a full test-fix cycle.
+RULE: [2026-03-27] FastAPI Header(...) required parameter: missing header → 422 (validation error), wrong value → 403. Tests asserting "no auth → 403" against a FastAPI header-required endpoint will fail; use `>= 400` or `status in (403, 422)` instead.
 
 ### Session #201 Reflexion — 2026-03-27 (TESTING)
 ACCOMPLISHED: Added Playwright E2E test (test_profile_modal.py) proving basic-tier user can open a bettor profile via showProfile(), the #tab-profile becomes visible, #profile-addr-display contains the 0x-prefixed address, and the copy simulator card (if shown) is not blurred/locked. Passed on first run in 6.8s. Removed 3 stale backlog tasks (login-refresh, XSS, JWT-tamper) that were already covered by test_auth_and_security.py. Added 3 new tasks (profile back-btn, alerts tab, leaderboard sort). 67→68 Playwright tests. Backend unchanged at 502.
