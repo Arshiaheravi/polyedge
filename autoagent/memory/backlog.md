@@ -25,11 +25,13 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
-## PRIORITY 7 — High-Value Gaps (added session 194, LOW-WATER-MARK fill)
+## PRIORITY 7 — High-Value Gaps
 
-- [ ] **Playwright: leaderboard "No data yet" shown when API returns empty list** — route intercept returns `{"bettors": [], "cached": false}` with 200 → browse view shows "No data yet" text (not "Could not load", not blank). This covers the empty-list success path distinct from error states. Grep: `grep -r "No data yet" backend/tests/playwright/` returns nothing.
+- [ ] **Playwright: basic user hits 5-follow limit → upgrade modal shown** — register a fresh basic-tier user, follow 5 bettors (all succeed), attempt a 6th follow → server returns 403 → upgrade modal (#upgrade-modal) becomes visible. This is the basic-tier equivalent of the free-tier follow-limit test in test_auth_and_security.py. Grep: `grep -r "def test.*basic.*follow.*limit\|5.*follow.*basic" backend/tests/playwright/` returns nothing.
 
-- [ ] **Backend: copy_value_pct math is correct** — unit test in test_follows_live.py: mock position with avg_price=0.40, current_price=0.50 → assert copy_value_pct == 25.0; avg_price=0.20, current_price=0.30 → assert copy_value_pct == 50.0. Current tests pass the field through but never verify the formula. Grep: `grep -r "copy_value_pct.*formula\|avg_price.*current_price" backend/tests/` returns nothing.
+- [ ] **Playwright: basic user follows bettor → appears on follows dashboard** — login as basic, follow first leaderboard bettor, navigate to Follows tab, assert bettor address appears in #follows-container. Same flow as session 195 (free user) but for basic tier. Grep: `grep -r "def test.*basic.*follow.*dashboard" backend/tests/playwright/` returns nothing.
+
+- [ ] **Playwright: VIP user follows bettor → appears on follows dashboard** — login as VIP, follow first leaderboard bettor, navigate to Follows tab, assert bettor address appears. Completes the North Star table row "Follow bettor → see on dashboard | ✓ | ✓ | ✓". Grep: `grep -r "def test.*vip.*follow.*dashboard" backend/tests/playwright/` returns nothing.
 
 ---
 

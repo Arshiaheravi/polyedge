@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-27
+- **[SESSION #196] copy_value_pct exact math tests + Playwright leaderboard empty state** — 2 backend tests verify formula: avg=0.40/cur=0.50→25.0 (fair), avg=0.20/cur=0.30→50.0 (late); 1 Playwright test proves "No data yet" shows on 200 with empty bettors (not error state); 500→502 backend, 62→63 Playwright tests
 - **[SESSION #195] Playwright E2E — follow bettor appears on follows dashboard** — fresh user follows first leaderboard bettor, navigates to Follows tab, asserts bettor address in #follows-container; proves core "follow → see on dashboard" browser flow; 61→62 Playwright tests
 - **[SESSION #194] 4 Playwright E2E error state tests** — network abort + 503 on leaderboard show "Could not load leaderboard"; consensus abort shows "Could not load consensus signals"; fresh user follows tab shows "No traders followed yet"; 57→61 Playwright tests
 - **[SESSION #192] Code quality audit — fixed dead assertion and blocking sleep** — replaced always-pass `assert ... or True` in test_full_journeys.py with real assertion; replaced `time.sleep(0.5)` with `page.wait_for_timeout(500)` in test_notifications_tier_gates.py; 500 tests still passing

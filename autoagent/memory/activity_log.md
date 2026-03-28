@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 196)
+DONE: Added 2 backend tests for exact copy_value_pct formula math and 1 Playwright test for leaderboard "No data yet" empty state on successful empty API response.
+IMPACT: Formula tests prove the exact arithmetic is correct (not just approximate), catching any rounding or operator-precedence bugs in the copy timing signal. Playwright test proves the distinct empty-list success path (distinct from network error) renders correctly.
+FILES: backend/tests/test_polymarket_service.py, backend/tests/playwright/test_leaderboard_empty_state.py
+
 ## 2026-03-27 — TESTING (Session 195)
 DONE: Added Playwright E2E test — fresh user follows first leaderboard bettor, navigates to Follows tab, asserts the bettor's address appears in #follows-container.
 IMPACT: Proves the core "follow → see on dashboard" user flow works end-to-end in a real browser. Any regression breaking POST /follows, GET /follows, or the follow card renderer will now be caught automatically.

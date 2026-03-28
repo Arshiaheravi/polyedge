@@ -4377,5 +4377,27 @@
       "failures": 0,
       "notes": "New Playwright test passed in isolation"
     }
+  },
+  {
+    "session": 196,
+    "date": "2026-03-27",
+    "time": "11:00",
+    "type": "work",
+    "summary": "Added exact copy_value_pct formula math tests (avg=0.40/cur=0.50→25.0, avg=0.20/cur=0.30→50.0) and a Playwright test proving the leaderboard shows 'No data yet' on a 200 empty response \u2014 distinct from the error state shown on API failure",
+    "files": [
+      "backend/tests/test_polymarket_service.py",
+      "backend/tests/playwright/test_leaderboard_empty_state.py"
+    ],
+    "tests": {
+      "before": 500,
+      "after": 502,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 1,
+      "failures": 0,
+      "notes": "New Playwright leaderboard empty state test passed; 7 flaky failures in test_ui_flows.py are pre-existing (pass in isolation, fail in full suite due to browser state)"
+    }
   }
 ]
