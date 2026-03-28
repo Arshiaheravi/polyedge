@@ -1251,6 +1251,63 @@ def test_poll_vip_bets_duplicate_bet_skipped(sched_db):
     mock_notify.assert_not_called()
 
 
+def test_poll_vip_bets_get_recent_bets_raises_skips_address(sched_db):
+    """_poll_vip_bets skips an address gracefully when get_recent_bets raises an Exception.
+
+    Covers scheduler.py lines 328-329: `except Exception: logger.warning(...); continue`
+    No BetEvent must be created for the failing address.
+    """
+    session, Session = sched_db
+
+    vip_user = User(
+        email="vip_fetchfail@x.com", hashed_password=hash_password("p"),
+        name="FetchFailVIP", subscription_tier="vip",
+    )
+    session.add(vip_user)
+    session.flush()
+    session.add(BettorFollow(user_id=vip_user.id, bettor_address="0xfetchfail", bettor_name="FailWhale"))
+    session.commit()
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(side_effect=Exception("API down"))) as mock_fetch, \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()) as mock_notify:
+        run(_poll_vip_bets())
+
+    mock_fetch.assert_called_once()  # was called, then raised
+    mock_notify.assert_not_called()  # no notification fired
+
+    verify = Session()
+    count = verify.query(BetEvent).count()
+    verify.close()
+    assert count == 0, "no BetEvent must be created when get_recent_bets raises"
+
+
+def test_poll_vip_bets_free_tier_user_skips_notification(sched_db):
+    """_poll_vip_bets does not notify a follower whose subscription_tier is 'free'.
+
+    Covers scheduler.py line 379: `if ... user.subscription_tier == 'free': continue`
+    A new bet creates a BetEvent but send_telegram and send_web_push must NOT be called.
+    """
+    session, Session = sched_db
+
+    free_user = User(
+        email="free_vipskip@x.com", hashed_password=hash_password("p"),
+        name="FreeFollower", subscription_tier="free",
+        is_active=True,
+    )
+    session.add(free_user)
+    session.flush()
+    session.add(BettorFollow(user_id=free_user.id, bettor_address="0xfreeskip", bettor_name="SkipWhale"))
+    session.commit()
+
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=AsyncMock()) as mock_notify:
+        run(_poll_vip_bets())
+
+    mock_notify.assert_not_called()
+
+
 def test_start_scheduler_registers_two_jobs():
     """start_scheduler registers both poll_bets (30s) and poll_vip_bets (5s) jobs."""
     import app.services.scheduler as sched_mod

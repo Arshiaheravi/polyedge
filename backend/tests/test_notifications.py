@@ -590,3 +590,27 @@ async def test_send_web_push_vapid_set_no_endpoint_returns_false():
         )
     assert result is False
     mock_webpush.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# send_web_push — generic Exception (lines 106-108) caught, returns False
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_send_web_push_generic_exception_returns_false():
+    """send_web_push returns False when VAPID keys are set, endpoint is present, but
+    pywebpush.webpush raises a generic Exception (covers notifications.py lines 106-108).
+
+    The existing test_send_web_push_http_exception_returns_false calls without VAPID keys
+    so execution returns False at line 82 (no-VAPID guard) — it never reaches lines 106-108.
+    This test passes real VAPID keys and a valid endpoint so pywebpush.webpush is invoked,
+    then raises a generic Exception to hit the except-Exception branch.
+    """
+    sub_json = '{"endpoint": "https://push.example.com/exc", "keys": {"p256dh": "x", "auth": "y"}}'
+    with patch("pywebpush.webpush", side_effect=Exception("unexpected push failure")) as mock_webpush:
+        result = await send_web_push(
+            sub_json, {"title": "test"},
+            vapid_private_key="fake-private", vapid_public_key="fake-public",
+        )
+    assert result is False
+    assert mock_webpush.called
