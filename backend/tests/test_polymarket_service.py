@@ -1399,3 +1399,72 @@ async def test_fetch_positions_empty_condition_id_position_skipped():
     assert signals == [], (
         f"Positions with empty conditionId must be skipped → no signals, got {signals}"
     )
+
+
+# ── compute_copy_simulator: ISO timestamp path (lines 374-375) ───────────────
+
+@pytest.mark.asyncio
+async def test_copy_simulator_iso_timestamp_path_reached():
+    """compute_copy_simulator parses ISO-format timestamp string via fromisoformat
+    (polymarket.py lines 374-375: else: dt = datetime.fromisoformat(...);
+    bet_age_secs = now_ts - dt.timestamp()).
+
+    A TRADE BUY with timestamp="2020-01-01T00:00:00Z" (well over 7 days ago) and
+    no matching REDEEM → bet_age_secs set from ISO parse → counted as loss → -$100.
+    """
+    from unittest.mock import patch
+    from app.services.polymarket import compute_copy_simulator
+
+    activity = [
+        {
+            "type": "TRADE",
+            "side": "BUY",
+            "price": "0.50",
+            "conditionId": "cid_iso",
+            "timestamp": "2020-01-01T00:00:00Z",
+        },
+    ]
+    mock_client = _make_simulator_mock_client(activity)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        result = await compute_copy_simulator("0xtest", limit=10)
+
+    assert result["bets_analysed"] == 1, (
+        f"ISO timestamp bet must be parsed and counted, got bets_analysed={result['bets_analysed']}"
+    )
+    assert result["simulated_pnl_usd"] == pytest.approx(-100.0, rel=0.01), (
+        f"ISO timestamp bet >7 days old with no redeem must be a loss, got {result['simulated_pnl_usd']}"
+    )
+
+
+# ── compute_copy_simulator: invalid timestamp exception pass (lines 376-377) ──
+
+@pytest.mark.asyncio
+async def test_copy_simulator_invalid_timestamp_exception_pass():
+    """compute_copy_simulator silently ignores an unparseable timestamp via
+    except Exception: pass (polymarket.py lines 376-377).
+
+    When timestamp="not-a-date", fromisoformat raises ValueError → except pass fires →
+    bet_age_secs stays at seven_days+1 default → bet counted as loss (age > 7 days).
+    """
+    from unittest.mock import patch
+    from app.services.polymarket import compute_copy_simulator
+
+    activity = [
+        {
+            "type": "TRADE",
+            "side": "BUY",
+            "price": "0.50",
+            "conditionId": "cid_bad_ts",
+            "timestamp": "not-a-date",
+        },
+    ]
+    mock_client = _make_simulator_mock_client(activity)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        result = await compute_copy_simulator("0xtest", limit=10)
+
+    assert result["bets_analysed"] == 1, (
+        f"Invalid timestamp bet must use default age and be counted, got bets_analysed={result['bets_analysed']}"
+    )
+    assert result["simulated_pnl_usd"] == pytest.approx(-100.0, rel=0.01), (
+        f"Invalid timestamp treated as old bet → -$100 loss expected, got {result['simulated_pnl_usd']}"
+    )
