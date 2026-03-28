@@ -1370,3 +1370,84 @@ def test_detect_exits_web_push_called_for_vip_with_push_enabled(sched_db):
     assert mock_push.call_count == 1
     push_payload = mock_push.call_args[0][1]
     assert "PushWhale" in push_payload["title"]
+
+
+def test_detect_exits_notification_exception_caught_event_still_notified(sched_db):
+    """_detect_exits catches exceptions from send_web_push (lines 168-169) and still
+    marks exit_event.notified = True — the exit is recorded even if notification fails."""
+    from app.models import AlertSetting
+
+    session, Session = sched_db
+
+    vip_user = User(
+        email="vip_exc@x.com", hashed_password=hash_password("p"),
+        name="ExcVIP", subscription_tier="vip",
+    )
+    session.add(vip_user)
+    session.flush()
+    session.add(BettorFollow(
+        user_id=vip_user.id, bettor_address="0xexc", bettor_name="ExcWhale",
+    ))
+    session.add(AlertSetting(
+        user_id=vip_user.id,
+        web_push_enabled=True,
+        push_subscription='{"endpoint": "https://push.example.com/exc"}',
+        telegram_enabled=False,
+    ))
+    session.commit()
+
+    # Pre-seed: bettor had position cid_exc; empty current positions → exit detected
+    scheduler_module._last_positions["0xexc"] = {"cid_exc": 20.0}
+
+    with patch("app.services.scheduler.get_active_positions", new=AsyncMock(return_value=[])), \
+         patch("app.services.scheduler.send_telegram", new=AsyncMock()), \
+         patch("app.services.scheduler.send_web_push", new=AsyncMock(side_effect=RuntimeError("push down"))):
+        run(_detect_exits(session, ["0xexc"]))  # must not raise
+
+    from app.models import BetEvent as _BetEvent
+    events = session.query(_BetEvent).all()
+    assert len(events) == 1
+    assert events[0].notified is True  # exit_event.notified set at line 171 even when except fires
+
+
+def test_poll_vip_bets_dispatch_exception_does_not_crash_vip_poll_loop(sched_db):
+    """If dispatch_bet_notification raises inside _poll_vip_bets (lines 408-409), the
+    exception is caught, the loop continues, and event.notified is still set to True."""
+    session, Session = sched_db
+
+    vip_user = User(
+        email="vip_disp@x.com", hashed_password=hash_password("p"),
+        name="DispVIP", subscription_tier="vip",
+    )
+    session.add(vip_user)
+    session.flush()
+    session.add(BettorFollow(user_id=vip_user.id, bettor_address="0xdisp", bettor_name="DispWhale"))
+    session.commit()
+
+    failing_dispatch = AsyncMock(side_effect=RuntimeError("simulated vip dispatch failure"))
+    with patch("app.services.scheduler.SessionLocal", Session), \
+         patch("app.services.scheduler.get_recent_bets", new=AsyncMock(return_value=[SAMPLE_BET])), \
+         patch("app.services.scheduler.dispatch_bet_notification", new=failing_dispatch):
+        run(_poll_vip_bets())  # must not raise
+
+    verify = Session()
+    events = verify.query(BetEvent).all()
+    verify.close()
+
+    assert len(events) == 1
+    assert events[0].notified is True  # event.notified set at line 411 even when dispatch raised
+
+
+def test_stop_scheduler_when_running_calls_shutdown(monkeypatch):
+    """stop_scheduler() calls _scheduler.shutdown(wait=False) when scheduler is running
+    (covers scheduler.py lines 440-442)."""
+    from unittest.mock import MagicMock
+    from app.services.scheduler import stop_scheduler
+
+    mock_sched = MagicMock()
+    mock_sched.running = True
+
+    monkeypatch.setattr("app.services.scheduler._scheduler", mock_sched)
+    stop_scheduler()
+
+    mock_sched.shutdown.assert_called_once_with(wait=False)
