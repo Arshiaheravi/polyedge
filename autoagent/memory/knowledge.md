@@ -45,7 +45,8 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **521 passed, 2 skipped** (as of 2026-03-28, session 221 — current)
+- Test count: **550 passed, 2 skipped** (as of 2026-03-28, session 233 — current)
+- Test count: **521 passed, 2 skipped** (as of 2026-03-28, session 221)
 - Test count: **518 passed, 2 skipped** (as of 2026-03-28, session 220)
 - Test count: **514 passed, 2 skipped** (as of 2026-03-28, session 218)
 - Test count: **512 passed, 2 skipped** (as of 2026-03-28, session 217)
@@ -1484,3 +1485,9 @@ RULE: [2026-03-28] For manual mutation testing of auth/payments, the 3 highest-v
 ACCOMPLISHED: PRIORITY 21.5 code quality audit on sessions 225-228 changed files (test_scheduler.py, test_polymarket_service.py, test_database.py). All 8 team-member checklists run. One Leo smell fixed: removed redundant `scheduler_module._last_check = datetime(2000,1,1,utc)` assignment on test_scheduler.py line 1566 — the `reset_last_check` autouse fixture already sets this before every test. All other checks clean: no Marcus security issues, no cross-file coupling, no test specificity degradation. 538→538 tests (no count change — fix was dead-code removal only).
 FAILED: Nothing.
 RULE: [2026-03-28] When an autouse fixture sets a module-level variable, do NOT repeat that assignment inside individual tests — it signals distrust of the fixture and misleads readers into thinking the fixture is unreliable. Trust the autouse fixture; if you genuinely need a different value, set it with a clear comment explaining why it differs from the autouse default.
+
+### Session #233 Reflexion — 2026-03-28 (TESTING)
+ACCOMPLISHED: Manual mutation analysis identified 6 surviving mutants across 3 sessions (2 commits). All 6 killed: (1) copy_signal `<= 10` → `< 10` at exact 10.0%; (2) copy_signal `<= 30` → `< 30` at exact 30.0%; (3) follows.py _conviction `(None,"")` → `(1.0,"")` for zero avg; (4) _poll_bets `ts <= _last_check` → `ts < _last_check` at exact boundary; (5) follows.py _conviction `>= 3.0` → `> 3.0` for HIGH label; (6) get_consensus_signals `count < min_whales` → `count <= min_whales` at exact threshold. Also confirmed PRIORITY 24 tasks were already covered by existing tests (pre-pick greps confirmed). 544→550 tests.
+FAILED: PRIORITY 24 tasks were listed as unchecked in backlog but all had strong existing tests. Greps confirmed this immediately — no wasted implementation time.
+RULE: [2026-03-28] The most productive mutation analysis pattern is: identify threshold comparisons (`<`, `<=`, `>=`, `>`) and check if tests use values ON the boundary (not just clearly inside/outside). Existing tests typically use ±5-10% from the threshold; `<=10` with a 5% test doesn't kill `<10`. Always add a test at exactly the threshold value.
+OPTIMIZATION: [2026-03-28] When multiple boundary mutations exist in the same function (e.g., copy_signal has both 10.0 and 30.0 thresholds), write both boundary tests in the same session — they use the same mock infrastructure and take under 5 minutes total.

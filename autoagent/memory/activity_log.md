@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — TESTING (Session 233)
+DONE: Added 6 mutation-kill tests across 2 commits — (1) copy_signal exact 10.0% boundary ("good" not "fair"); (2) copy_signal exact 30.0% boundary ("fair" not "late"); (3) /follows/live conviction_score null when no recent bets; (4) _poll_bets skips bet at exact ts==_last_check; (5) /follows/live conviction_label "HIGH" at exactly score=3.0; (6) get_consensus_signals with exactly 3 whales produces signal.
+IMPACT: Six real logic bugs that could ship undetected are now caught — off-by-one mutations at boundary values in copy_signal thresholds, conviction labels, and consensus min-whale filter are all blocked. 544→550 tests.
+FILES: backend/tests/test_polymarket_service.py, backend/tests/test_follows_live.py, backend/tests/test_scheduler.py
+
 ## 2026-03-28 — TESTING (Session 232)
 DONE: Added 3 mutation-kill tests for payments + auth — (1) status="unpaid" downgrade path in stripe_service._handle_subscription_change (mutation: remove "unpaid" from tuple survives when not tested); (2) JWT sub claim is user.id not email (direct token decode: payload["sub"] == str(user.id)); (3) Stripe checkout metadata contains correct user_id (Session.create called with metadata["user_id"] == str(user.id)).
 IMPACT: Three real identity/access-control logic bugs that could ship undetected are now caught. An unpaid user can no longer retain VIP access. JWT sub-claim identity mutation is explicitly blocked. Stripe checkout cannot silently assign subscriptions to the wrong user.

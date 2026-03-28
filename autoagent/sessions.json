@@ -5187,7 +5187,7 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Mutation testing of payments + auth files — killed 3 surviving mutants: unpaid subscriptions could silently retain VIP access, JWT sub-claim could be wrong identifier without detection, and Stripe checkout could silently assign subscriptions to the wrong user",
+    "summary": "Mutation testing of payments + auth files \u00e2\u20ac\u201d killed 3 surviving mutants: unpaid subscriptions could silently retain VIP access, JWT sub-claim could be wrong identifier without detection, and Stripe checkout could silently assign subscriptions to the wrong user",
     "files": [
       "backend/tests/test_stripe_service.py",
       "backend/tests/test_auth.py"
@@ -5202,6 +5202,29 @@
       "checks": 0,
       "failures": 0,
       "notes": "test-only session"
+    }
+  },
+  {
+    "session": 233,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 6 mutation-kill tests covering boundary values: copy_signal at exactly 10% and 30%, conviction null with no bets, conviction HIGH at score 3.0, _poll_bets skips bet at exact _last_check, and consensus min-whale exact boundary",
+    "files": [
+      "backend/tests/test_polymarket_service.py",
+      "backend/tests/test_follows_live.py",
+      "backend/tests/test_scheduler.py"
+    ],
+    "tests": {
+      "before": 544,
+      "after": 550,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
     }
   }
 ]

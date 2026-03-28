@@ -131,18 +131,23 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
-## PRIORITY 24 — Mutation Tests: Alerts + Bettors + Notifications (generated session 232 — low-water-mark, 100% coverage, no gaps remaining)
+## PRIORITY 24 — Mutation Tests: Alerts + Bettors + Notifications
 
-**Context**: Manual mutation analysis approach. For each file: read the critical branching logic, identify mutations that change behavior, check whether existing tests assert the specific boundary, write tests for gaps.
+*(All 3 tasks already covered by existing tests — verified session 233 via grep. No new tests needed: test_web_push_blocked_for_free_tier + test_enable_web_push kill the alerts mutation; test_profile_cache_tier_gate_not_bypassed kills the bettors cache mutation; test_detect_exits_only_notifies_vip kills the notifications VIP mutation.)*
 
-- [ ] **Mutation test — routes/alerts.py tier gate for enabling web push** — Read the web push enable logic in routes/alerts.py. Key mutation: tier check condition inversion (`subscription_tier == "free"` → `subscription_tier != "free"`) would deny VIP users while allowing free users to "enable" push. Check if existing tests assert: (a) free user trying to enable gets a specific error (not just ignored), (b) basic/VIP user enabling actually sets `web_push_enabled=True`.
-  Grep: `grep -n "def test.*web_push\|web_push_enabled.*True\|subscription_tier.*free.*push" backend/tests/test_alerts.py`
+---
 
-- [ ] **Mutation test — routes/bettors.py profile cache key tier inclusion** — The cache key bug (#1) was fixed by including tier in the cache key. Key mutation: removing `user_tier` from cache key would serve VIP response to free users. Check if existing tests assert that calling the profile endpoint twice (once as free, once as VIP) returns DIFFERENT responses (locked vs unlocked simulator).
-  Grep: `grep -n "def test.*profile.*tier\|def test.*cache.*tier\|locked.*false\|locked.*true" backend/tests/test_bettors.py`
+## PRIORITY 25 — Mutation Tests: copy_signal boundaries + conviction null
 
-- [ ] **Mutation test — services/notifications.py VIP exit alert dispatch** — The exit alert fires only for VIP users. Key mutation: `subscription_tier == "vip"` → `subscription_tier != "vip"` (or removing the guard entirely). Check if existing tests assert that a basic-tier follower does NOT receive an exit alert notification when a bettor exits.
-  Grep: `grep -n "def test.*exit.*alert\|exit.*vip\|exit.*basic\|dispatch.*exit" backend/tests/test_scheduler.py`
+*(All 3 tasks completed in session 233 — copy_signal exact 10.0% boundary ("good"), exact 30.0% boundary ("fair"), and /follows/live conviction_score null when no recent bets; 544→547 tests)*
+
+---
+
+## PRIORITY 26 — Mutation Tests: scheduler ts boundary + follows conviction HIGH + consensus exact-3
+
+**Context**: Manual mutation analysis — 3 surviving mutants found during session 233 low-water-mark check.
+
+*(All 3 tasks completed in session 233 — ts exact boundary, conviction HIGH at 3.0, consensus exact-3-whale; 547→550 tests)*
 
 ---
 
