@@ -25,6 +25,12 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
+## PRIORITY 1 — Code Quality Audit
+
+- [ ] **Code quality audit — sessions 195-202 Playwright files** — triggered by 155 work sessions (multiple of 5). Scan test files from sessions 195-202 for: cross-file coupling (duplicate helpers not in conftest), dead assertions (`or True`), blocking `time.sleep()` calls, and hardcoded URLs that should use the `API_BASE` constant from conftest. Run `grep -rn "or True\|time.sleep\|localhost:8003" backend/tests/playwright/` to start.
+
+---
+
 ## PRIORITY 7 — High-Value Gaps
 
 - [ ] **Playwright: alerts tab renders push and telegram toggles** — login as basic, call showTab('alerts'), wait for #tab-alerts to not be hidden, assert #toggle-push element exists AND #toggle-telegram element exists. Proves the Alerts settings tab renders both notification toggles for authenticated users. Grep: `grep -r "def test.*alert.*tab\|def test.*notification.*tab\|def test.*alert.*page\|def test.*settings.*tab" backend/tests/playwright/` returns nothing.
@@ -34,6 +40,10 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 ---
 
 ## FEATURE MODE — Competitive Intelligence (do not implement in DEBUG mode)
+
+- [ ] **Min-bet-size filter per follow** — add a `min_bet_usd` field to `BettorFollow` model (default 0). Scheduler skips notifications when `bet_amount < follow.min_bet_usd`. Reduces noise from small test trades. Highest-demand competitive differentiator vs Polycule/PolycopytradBot per 2026 research. (Source: BRAIN session 203 competitor analysis — "every competing tool has min trigger amount filter")
+
+- [ ] **Rich push notification payloads** — add `bettor_name` (truncated address), `market_title`, and a "Copy Bet" action button to VAPID web push payload body. Named notifications achieve 2× CTR vs generic "New bet detected" copy. (Source: BRAIN session 203 Pushwoosh fintech benchmark 2026 — personalization doubles CTR)
 
 - [ ] **Polystrat competitor awareness** — Polystrat (olas.network) is an autonomous AI agent that executes 4,200+ trades/month on Polymarket for users. PolyEdge's copy-notification model (human makes the copy trade decision) is differentiated from fully autonomous execution. Competitive moat: PolyEdge's notification-only model is lower risk and likely compliant where autonomous bots may not be. Consider adding a landing page differentiator: "You control the trade, AI just spots the opportunity." (Source: CoinDesk 2026-03-15 "AI agents quietly rewriting prediction market trading")
 

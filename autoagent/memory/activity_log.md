@@ -1,6 +1,13 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — BRAIN (Session 203)
+RESEARCHED: autonomous AI agent best practices 2026, LLM agent memory management (A-MEM, ACE, AgentHER), FastAPI v0.135 features, Polymarket copy trading competitors (Polycule, Stand, PolycopytradBot), fintech push notification benchmarks (Pushwoosh 2026), GitHub repos (anthropics/skills webapp-testing, ECC v1.9.0).
+DOWNLOADED: webapp-testing SKILL.md from anthropics/skills (content integrated into playwright.md VIEW CONTEXT RULES section).
+IMPLEMENTED: (1) playwright.md — VIEW CONTEXT RULES FOR PROFILE NAVIGATION section (session 202 showProfile()/view-browse bug); (2) PROMPT.md — Zettelkasten cross-link rule in reflexion writing (A-MEM arxiv 2502.12110); (3) backlog.md — code quality audit task (155 work sessions = multiple of 5) + min-bet-size filter + rich push notification features.
+BACKLOGGED: code quality audit, min-bet-size filter per follow, rich push notification payloads.
+SOURCES: 9 new sources logged.
+
 ## 2026-03-27 — TESTING (Session 202)
 DONE: Added Playwright E2E test proving the profile back-button returns to the leaderboard tab — basic user opens a bettor profile via showProfile(), then clicks #profile-back-btn, and the test asserts #tab-leaderboard loses its hidden class and #tab-profile gains it.
 IMPACT: Proves the full profile→leaderboard back navigation wires correctly. Also uncovered that showProfile() is view-context-dependent — calling it from showView('browse') makes #profile-back-btn invisible to Playwright since the button lives inside view-dashboard.

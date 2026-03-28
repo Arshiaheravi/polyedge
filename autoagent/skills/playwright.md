@@ -553,3 +553,29 @@ This is ~3× faster than making individual Python-side `requests.delete()` calls
 **Rule**: For basic/VIP tier follow-limit tests that use shared accounts, always clean follows inside the test (not in a session-scoped fixture) — shared accounts accumulate follows across runs; without cleanup the test is non-deterministic.
 
 (Source: Session #197 — basic@polyedge.com had 3 leftover follows; without cleanup the 5-follow-limit test would be unreachable. page.evaluate cleanup took 1 round-trip instead of N Python-side requests.)
+
+---
+
+## VIEW CONTEXT RULES FOR PROFILE NAVIGATION (PolyEdge-specific)
+
+`showProfile(address)` calls `showTab('profile')` — this only toggles tab elements **inside `#view-dashboard`**. If the current view is `#view-browse` (the public leaderboard), `#view-dashboard` is hidden and `#profile-back-btn` is not visually interactive.
+
+**Rule for profile + back-button tests**: always stay inside `view-dashboard` context:
+
+```python
+# WRONG — showView('browse') hides view-dashboard → #profile-back-btn becomes invisible:
+await page.evaluate("window.init()")           # sets currentUser
+await page.evaluate("showView('browse')")      # navigates to public leaderboard
+await page.evaluate(f"showProfile('{addr}')")  # tab-profile hidden inside invisible view-dashboard
+# page.click("#profile-back-btn") will time out
+
+# CORRECT — stay inside view-dashboard using showTab('leaderboard'):
+await page.evaluate("window.init()")
+await page.evaluate("showTab('leaderboard')")  # dashboard leaderboard tab, NOT view-browse
+await page.evaluate(f"showProfile('{addr}')")  # tab-profile is visible inside view-dashboard
+# page.click("#profile-back-btn") works
+```
+
+**Rule for DOM class assertions vs interactive clicks**: DOM class assertions (`page.evaluate("el.classList.contains('hidden')")`) succeed on elements inside `display:none` parents — they read JS state, not render state. `page.click()` requires visual visibility. A test that only checks class state can pass even when the button is not interactable, masking real UX bugs. Always add a `page.click()` test for buttons that users must physically click.
+
+(Source: Session #202 — showProfile() called from view-browse context; #profile-back-btn was in DOM with correct class state but page.click() timed out because view-dashboard was hidden. Session #201 only used class assertions — that's why it didn't catch the same bug.)

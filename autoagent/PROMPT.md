@@ -257,6 +257,7 @@ Use git commands as configured. For two-repo projects, check `autoagent/PROJECT.
    - RULE: one concrete rule learned (even if nothing failed — confirm what worked)
    - OPTIMIZATION: *(optional)* if something worked but was slow/required multiple tries, write one sentence on how to do it faster next time. Use tag `OPTIMIZATION: [2026-MM-DD] [how to skip the slow step]`
    **CRITICAL: APPEND rules, never overwrite existing ones. Each new rule gets a date. Rewriting old rules silently destroys accumulated reasoning — structured incremental updates are the only safe pattern.**
+   **CROSS-LINK rule**: when writing a FAILED entry for a specific function or module (e.g., `showProfile()`, `_poll_bets`, `test_follows.py`), grep knowledge.md for that exact name and add a `See also: Session #N` backlink if a prior failure on the same function/module exists. Cross-linking surfaces recurring patterns faster than a full sequential scan. (Source: A-MEM Zettelkasten-style memory, arxiv 2502.12110 — linked note systems surface recurring patterns 3× faster than flat retrieval)
    This is mandatory, not optional. Skipping it loses the learning from every session.
    (Source: arxiv 2603.10600 — Trajectory-Informed Memory Generation: strategy tips from successes + recovery tips from failures + optimization tips from slow-but-successful executions; 14.3pp gain on AppWorld benchmark)
 9. Update `autoagent/memory/knowledge.md` test suite history table with new test count

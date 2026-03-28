@@ -515,3 +515,21 @@ What: Grep for "or True" in test assertions before committing; any match is a de
 Where: skills/testing.md (DEAD ASSERTION GUARD section)
 Source: PolyEdge session 192 code quality audit (found assert ... or True masking tier gate for 3 sessions)
 Expected impact: Prevents test theater — tests that look correct but never catch regressions
+
+## Zettelkasten cross-linking in knowledge.md FAILED entries — implemented 2026-03-27 (session 203 BRAIN)
+What: When writing a FAILED entry for a specific function/module in knowledge.md, grep knowledge.md for that exact name and add a "See also: Session #N" backlink if a prior failure on the same function exists.
+Where: autoagent/PROMPT.md (step 8 reflexion section, after OPTIMIZATION tag)
+Source: arxiv 2502.12110 (A-MEM — Zettelkasten-style agentic memory: link new notes to related prior notes for 3× faster pattern retrieval)
+Expected impact: Surfaces recurring bugs in the same functions across sessions; agent reads the prior session's fix instead of re-deriving it
+
+## View context rule for showProfile() navigation — implemented 2026-03-27 (session 203 BRAIN)
+What: Added VIEW CONTEXT RULES section to playwright.md: showProfile() only works within view-dashboard context. If showView('browse') is called first, #profile-back-btn is visually non-interactive even though its classList state is correct. Also added the "page.click() vs class assertions" distinction — DOM class checks pass on hidden elements, page.click() requires visual visibility.
+Where: autoagent/skills/playwright.md (VIEW CONTEXT RULES FOR PROFILE NAVIGATION section)
+Source: PolyEdge session 202 failure — first run of profile back-button test timed out on page.click(); session 201 profile modal test missed this bug because it only used class assertions
+Expected impact: Prevents re-discovering the view-context requirement in every future profile navigation test; also prevents false-positive tests that check class state but don't verify click-interactability
+
+## Competitive feature backlog additions (session 203) — implemented 2026-03-27
+What: Added 2 competitive feature items to backlog: min-bet-size filter per follow (highest-demand differentiator per Polymarket competitor analysis) and rich push notification payloads (personalized bettor name + market title + Copy Bet action button; doubles CTR per Pushwoosh 2026 benchmarks).
+Where: autoagent/memory/backlog.md (FEATURE MODE — Competitive Intelligence section)
+Source: polycule.trade, polycopytradbot, medium/@0xmega (session 203 competitor research); pushwoosh.com fintech benchmarks (session 203)
+Expected impact: 2 highest-ROI feature mode tasks pre-researched and ready to pick
