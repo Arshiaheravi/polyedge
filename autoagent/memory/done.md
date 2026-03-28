@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-27
+- **[SESSION #209] Playwright E2E — landing page navigation CTA tests** — 4 new tests in test_landing_navigation.py: "View Live Leaderboard" button navigates to browse view; "Log In" shows login form; "Start Free" shows register form (with animation timing fix for 150ms switchAuthTab delay); annual billing toggle hides monthly prices; 92→96 Playwright tests. Cleaned all 4 stale PRIORITY 9 backlog tasks (all were already implemented).
 - **[SESSION #207] Playwright E2E — logout auth cleanup + free-tier push gate + admin MRR math** — fixed BUG #8 (free users now get upgrade modal instead of bypassing push gate), 8 new Playwright tests: logout removes pe_token/shows landing/hides dashboard; free user toggleWebPush() opens upgrade modal and toggle stays OFF; admin /stats mrr_estimate math verified correct, tier counts sum to total, missing header rejected; 84→92 Playwright tests
 - **[SESSION #206] Playwright E2E — account tab tier badge, period filter, guide tab** — 9 new tests: free user sees tier-free badge + visible upgrade button in account tab; leaderboard period defaults to month and switches to week/all correctly; guide tab becomes visible with h1 heading and content blocks; 75→84 Playwright tests
 - **[SESSION #205] Playwright E2E — alerts tab toggles + leaderboard sort active state** — 6 new tests: basic-tier user opens Alerts tab and sees #toggle-push and #toggle-telegram; leaderboard #sort-profit starts active, switches to volume sort correctly, cards still load; 69→75 Playwright tests

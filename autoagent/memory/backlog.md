@@ -39,19 +39,10 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
-## PRIORITY 9 — Unfixed Bugs + Real-World Data Integrity
+## PRIORITY 9 — Landing Page Navigation Coverage
 
-- [ ] **Fix + test Bug #9** — `get_settings()` in `config.py` is not `@lru_cache` — creates a new `Settings()` on every call. Add `@lru_cache` decorator, write 1 test asserting `get_settings() is get_settings()` (same object returned twice).
-  Grep: `grep -n "lru_cache" backend/app/config.py` should return nothing.
-
-- [ ] **Fix + test Bug #10** — `_last_positions` dict in `scheduler.py` never purged when a bettor is unfollowed. Grows forever as follows are added/removed. Fix: in the DELETE /follows route (or scheduler poll loop), remove the address key from `_last_positions`. Write 1 unit test: follow bettor → unfollow → assert address not in `_last_positions`.
-  Grep: `grep -n "_last_positions" backend/app/services/scheduler.py returns nothing except the initial assignment` — confirm no purge logic exists.
-
-- [ ] **Fix + test Bug #12** — `_consensusLoaded` flag in `frontend/index.html` is set once and never cleared, causing stale consensus data within the same session. Fix: reset `_consensusLoaded = false` at the top of `loadConsensusSignals()` before the early-return check, or clear it on tab switch. Write 1 Playwright test: call `loadConsensusSignals()` twice, assert it fires the API a second time (or check `_consensusLoaded` resets).
-  Grep: `grep -n "_consensusLoaded" frontend/index.html` to see current state.
-
-- [ ] **Real-World Data Integrity: bettor address format** — Playwright test that calls GET /bettors (live), asserts every returned address matches `^0x[a-fA-F0-9]{40}$` regex. Catches any normalisation bug that corrupts addresses.
-  Grep: `grep -rn "0x.*fA-F0-9.*40" backend/tests/` should return nothing.
+- [ ] **Verify landing page leaderboard preview populates with real data** — Playwright test: load landing page, wait for `#preview-leaderboard` tbody to have non-skeleton content (at least 1 real row with profit/volume data). Catches any regression where the public leaderboard preview API call fails silently.
+  Grep: `grep -rn "def test.*preview.*leaderboard\|preview-leaderboard" backend/tests/playwright/` should return nothing.
 
 ## FEATURE MODE — Competitive Intelligence (do not implement in DEBUG mode)
 

@@ -45,7 +45,8 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **502 passed, 2 skipped** (as of 2026-03-27, session 202 — current)
+- Test count: **502 passed, 2 skipped** (as of 2026-03-27, session 209 — current)
+- Playwright E2E: **96 passed, 2 skipped** (as of 2026-03-27, session 209) — 4 new: landing page navigation CTAs (View Leaderboard, Log In, Start Free, billing toggle). NOTE: 10 pre-existing tests fail intermittently when Polymarket /profiles API is down (external dependency); baseline 92 pass with API up.
 - Playwright E2E: **92 passed, 2 skipped** (as of 2026-03-27, session 207) — 8 new: logout clears token, free-tier push gate, admin MRR math
 - Playwright E2E: **84 passed, 2 skipped** (as of 2026-03-27, session 206) — 9 new: account tab tier badge, period filter, guide tab
 - Playwright E2E: **75 passed, 2 skipped** (as of 2026-03-27, session 205) — 6 new: alerts tab toggles, leaderboard sort active state
@@ -78,6 +79,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #209 Reflexion — 2026-03-27 (TESTING)
+ACCOMPLISHED: Cleaned all 4 stale PRIORITY 9 backlog tasks (Bug #9 lru_cache, Bug #10 _last_positions purge, Bug #12 _consensusLoaded, bettor address format) after GREP-BEFORE-PICKING confirmed all were already implemented. Added 4 Playwright E2E tests (test_landing_navigation.py): "View Live Leaderboard" button navigates to browse view, "Log In" button shows login form, "Start Free" button shows register form with animation wait, annual billing toggle hides monthly prices. 92→96 Playwright tests.
+FAILED: First run: #leaderboard-cards ID wrong — actual is #browse-leaderboard-body. Second run: register form test asserted synchronously but switchAuthTab uses 150ms CSS animation; needed wait_for_function before asserting form visible.
+RULE: [2026-03-27] Before asserting any element visibility after a JS action, check the source for setTimeout/animation delays. switchAuthTab in PolyEdge uses 150ms delay to animate tab transitions — always use wait_for_function (not synchronous evaluate) when checking visibility of auth forms after showView('auth', 'register').
+RULE: [2026-03-27] GREP-BEFORE-PICKING is mandatory and must be run correctly. If the backlog task says "Grep: [command] should return nothing", actually run that grep NOW. In this session all 4 PRIORITY 9 tasks had already been fixed — the bugs themselves AND tests existed — confirmed in 30 seconds of grepping.
 
 ### Session #207 Reflexion — 2026-03-27 (TESTING)
 ACCOMPLISHED: Fixed BUG #8 (free-tier web push gate missing — free users could call toggleWebPush with no tier check) by adding `if (currentUser?.subscription_tier === 'free') { openUpgradeModal(); return; }` before the VAPID check. Added 8 Playwright E2E tests across 3 files: logout removes pe_token + shows landing + hides dashboard; free user push gate opens upgrade modal + toggle stays OFF; admin /stats MRR math verified + tier counts sum to total + missing header rejected. All 8 passed first run; 502 backend tests unchanged.

@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 209)
+DONE: Added 4 Playwright E2E tests for landing page navigation CTAs (test_landing_navigation.py) — each major CTA button now has an automated check: "View Live Leaderboard" navigates to browse view, "Log In" shows login form, "Start Free" shows register form (with animation timing fix), annual billing toggle changes price display. Also cleaned all 4 stale PRIORITY 9 backlog tasks after GREP-BEFORE-PICKING confirmed they were already implemented.
+IMPACT: PROJECT.md checklist §11 "All links open correctly (no 404s)" is now covered. Landing page navigation regressions will be caught automatically. 92→96 Playwright tests. Also discovered that Polymarket /profiles API is currently returning 404 (external outage) — pre-existing tests that depend on live leaderboard data are failing intermittently.
+FILES: backend/tests/playwright/test_landing_navigation.py
+
 ## 2026-03-27 — META (Session 208)
 IMPROVED: playwright.md — added VERIFY API RESPONSE SHAPE section (curl endpoint before asserting on field names; FastAPI required Header → 422 not 403). testing.md — added FastAPI Header() 422 pattern under PolyEdge-specific section. backlog.md — added PRIORITY 9 with 4 new bug-fix/data-integrity tasks (Bug #9 lru_cache, Bug #10 _last_positions purge, Bug #12 _consensusLoaded reset, bettor address regex Playwright test).
 PATTERNS FOUND: Session 207 failed on admin Playwright test because it asserted wrong nested key names (flat vs nested) and expected 403 for missing FastAPI required Header (actually 422). Both rules were in knowledge.md reflexion only — not in the skill files where they fire at write-time.

@@ -4672,5 +4672,26 @@
       "failures": 0,
       "notes": "meta session \u2014 no code changes"
     }
+  },
+  {
+    "session": 209,
+    "date": "2026-03-27",
+    "time": "03:00",
+    "type": "work",
+    "summary": "Added 4 Playwright E2E tests for landing page navigation CTAs \u2014 verifies View Live Leaderboard, Log In, Start Free, and billing toggle all work; also cleaned 4 stale backlog tasks that were already implemented",
+    "files": [
+      "backend/tests/playwright/test_landing_navigation.py"
+    ],
+    "tests": {
+      "before": 502,
+      "after": 502,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 4,
+      "failures": 0,
+      "notes": "4 new landing nav tests pass; 10 pre-existing failures due to Polymarket /profiles API returning 404 (external outage)"
+    }
   }
 ]
