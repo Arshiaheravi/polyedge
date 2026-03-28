@@ -112,6 +112,57 @@ class TestFreeTierAlertsGates:
         assert not sms_on, "SMS toggle must remain OFF after free-tier gate fires"
 
 
+class TestBasicTierAlertsAccess:
+    """Basic-tier user should have full access to Telegram and web push channels."""
+
+    @pytest.mark.skipif(
+        not BASE_URL,
+        reason="frontend server not configured",
+    )
+    def test_basic_telegram_toggle_does_not_open_upgrade_modal(self, page: Page):
+        """Basic user clicking Telegram toggle must NOT trigger the upgrade modal.
+
+        NORTH_STAR: 'Notifications: Basic = enabled'. Free users get an upgrade modal;
+        basic users must NOT — they have paid for notification access.
+        """
+        login(page, "basic")
+        _open_alerts_tab(page)
+
+        assert not _is_upgrade_modal_visible(page), \
+            "Upgrade modal should not be visible before any action"
+
+        page.evaluate("toggleTelegram()")
+        page.wait_for_timeout(500)
+
+        assert not _is_upgrade_modal_visible(page), \
+            "Upgrade modal must NOT appear when basic user clicks Telegram toggle — " \
+            "basic tier has paid access to Telegram notifications"
+
+    @pytest.mark.skipif(
+        not BASE_URL,
+        reason="frontend server not configured",
+    )
+    def test_basic_push_toggle_does_not_open_upgrade_modal(self, page: Page):
+        """Basic user calling toggleWebPush() must NOT trigger the upgrade modal.
+
+        VAPID may not be configured in test env (a toast error may appear instead),
+        but the free-tier upgrade modal gate must not fire for basic tier users.
+        Free users get the upgrade modal; basic users must NOT.
+        """
+        login(page, "basic")
+        _open_alerts_tab(page)
+
+        assert not _is_upgrade_modal_visible(page), \
+            "Upgrade modal should not be visible before any action"
+
+        page.evaluate("toggleWebPush()")
+        page.wait_for_timeout(500)
+
+        assert not _is_upgrade_modal_visible(page), \
+            "Upgrade modal must NOT appear when basic user calls toggleWebPush() — " \
+            "only a VAPID toast error is expected in test env, not the upgrade modal"
+
+
 class TestVipTierAlertsAccess:
     """VIP user should have full access to all notification channels."""
 
