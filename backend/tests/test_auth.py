@@ -428,6 +428,26 @@ def test_auth_me_does_not_expose_sensitive_fields(client):
     assert "telegram_chat_id" not in user, "GET /auth/me must not expose telegram_chat_id"
 
 
+def test_register_and_login_do_not_expose_hashed_password_or_stripe_customer_id(client):
+    """POST /auth/register and POST /auth/login must never return hashed_password or
+    stripe_customer_id in the user dict — these are internal DB fields that must stay server-side."""
+    reg_resp = client.post("/auth/register", json={
+        "email": "sensitivecheck2@example.com", "password": "pw123", "name": "SensCheck2"
+    })
+    assert reg_resp.status_code == 201
+    reg_user = reg_resp.json().get("user", {})
+    assert "hashed_password" not in reg_user, "POST /auth/register must not expose hashed_password"
+    assert "stripe_customer_id" not in reg_user, "POST /auth/register must not expose stripe_customer_id"
+
+    login_resp = client.post("/auth/login", json={
+        "email": "sensitivecheck2@example.com", "password": "pw123"
+    })
+    assert login_resp.status_code == 200
+    login_user = login_resp.json().get("user", {})
+    assert "hashed_password" not in login_user, "POST /auth/login must not expose hashed_password"
+    assert "stripe_customer_id" not in login_user, "POST /auth/login must not expose stripe_customer_id"
+
+
 def test_register_rate_limit_triggers_429_after_10_requests(client):
     """POST /auth/register is limited to 10 req/min per IP — the 11th request must return 429."""
     # Make 10 register attempts with unique emails (all should succeed 201)
