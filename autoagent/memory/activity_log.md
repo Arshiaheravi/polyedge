@@ -1,6 +1,14 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — BRAIN DEEP (Session 224)
+RESEARCHED: autonomous AI agent reliability 2026, hard-to-cover branch test generation (TELPA arxiv 2404.04966), TDAD test-driven agentic development (arxiv 2603.17973), Polymarket 2026 rule changes (taker bots, WebSocket latency), ECC v1.9.0 re-check (no updates), AgentAssay regression testing.
+DOWNLOADED: No new skill files — ECC still at v1.9.0, anthropics/skills testing/SKILL.md returned 404.
+IMPLEMENTED: (1) testing.md — COVERAGE-GAP TEST PATH REACHABILITY CHECKLIST section: enumerate all early-exit guards above target line, verify setup bypasses each, post-write coverage verification. Includes concrete `_poll_vip_bets` guard pattern. (2) PROMPT.md — VACUOUS-TEST GUARD added to LOW-WATER-MARK CHECK: after writing coverage-gap test, confirm target line leaves MISS column before committing. (3) backlog.md — WebSocket scheduler migration added to FEATURE MODE HIGH PRIORITY with 2026 Polymarket rule-change urgency context.
+DEEP META: Reflexion gap check passed (session 223 has reflexion). No new propagation gaps after testing.md update. activity_log 23 entries < 30 threshold (no archiving). knowledge.md rules all distinct (no merges needed).
+BACKLOGGED: 6 new sources logged; 1 technique logged.
+SOURCES: 6 new sources logged (TELPA, TDAD, AgentAssay, AgentDevel, ECC re-check, Polymarket 2026 rules).
+
 ## 2026-03-28 — TESTING (Session 223)
 DONE: Code quality audit (PRIORITY 16.5) found no issues in test_scheduler.py, test_notifications.py, test_alerts.py — no dead assertions, no test specificity gaps, no tier mismatches. Then added 3 PRIORITY 17 coverage-gap tests: test_poll_vip_bets_skips_old_bets (sets _last_check past FUTURE_TS to verify old bets skipped in VIP poll), test_poll_vip_bets_outer_exception_handler_fires_on_commit_failure (wraps db.commit to raise, verifies rollback called and _last_check unchanged), test_get_live_trades_api_exception_returns_empty_list (ConnectError → empty list). 524→527 backend tests.
 IMPACT: All VIP poll exception branches and live-trades error path are now regression-protected. The broken session-221 test that exited early (no VIP users) documented as PRIORITY 18 task — the real line 379 gap is now tracked and will be covered in the next session.

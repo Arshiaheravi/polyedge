@@ -545,3 +545,9 @@ What: Document pytest 9.0 subtests pattern (runtime-generated test values withou
 Where: autoagent/skills/testing.md (PYTEST 9.0+ FEATURES section)
 Source: pytest 9.0.0 release notes (2025-11-05); pytest 9.1 draft (2026-03-26)
 Expected impact: Prevents silent test suite collection failures from deprecated generator parametrize; provides subtests pattern for iterating over API response items in tests
+
+## Coverage-gap test path reachability checklist — implemented 2026-03-28
+What: Before writing a test for a line from `--cov-report=term-missing`, enumerate ALL early-exit guards above the target line and verify the test setup bypasses each one. After writing, re-run with coverage to confirm the target line leaves the MISS column. If it's still there, the test is vacuous — fix the setup.
+Where: autoagent/skills/testing.md (COVERAGE-GAP TEST — PATH REACHABILITY CHECKLIST section); autoagent/PROMPT.md (VACUOUS-TEST GUARD in LOW-WATER-MARK CHECK)
+Source: PolyEdge sessions 221+223 (2 consecutive vacuous tests); TELPA arxiv 2404.04966 (dependency analysis for hard-to-cover branches, +31.39% branch coverage); TDAD arxiv 2603.17973 (surfacing contextual guard info > prescriptive procedural rules; post-change coverage verification -70% regressions)
+Expected impact: Eliminates the recurring pattern where coverage-gap tests pass trivially but never cover the intended branch; saves one full session of re-discovery every ~3-4 testing sessions

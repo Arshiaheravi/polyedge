@@ -398,6 +398,31 @@ This affects any parametrize call that uses a generator expression or `map()`/`f
 
 (Source: pytest 9.0.0 release notes 2025-11-05; pytest 9.1 draft 2026-03-26)
 
+## COVERAGE-GAP TEST — PATH REACHABILITY CHECKLIST
+
+When picking a task from the coverage report (`--cov-report=term-missing`), a test that trivially PASSES may still fail to cover the target line — if the function takes an early-exit path first, the test is vacuously passing and the line remains uncovered.
+
+**BEFORE writing the test — trace every guard above the target line**:
+1. Open the source file. Find the target line number.
+2. Read from the TOP of the function to the target line.
+3. List every early-exit condition above the target: `if not X: return`, `if X: continue`, `raise`, `break`.
+4. For each guard, verify your test setup bypasses it (makes the guard condition FALSE so execution continues past it).
+5. If any guard requires specific DB state (e.g., VIP users + follows + addresses), create that state BEFORE the action under test.
+
+**AFTER writing the test — verify the line is now covered**:
+```bash
+cd backend && py -m pytest tests/test_yourfile.py::test_your_new_function -v --cov=app --cov-report=term-missing 2>&1 | grep "services/scheduler.py\|routes/yourfile.py"
+```
+The target line number must NO LONGER appear in the MISS column. If it's still there, the test is taking an early exit — fix the setup, do not commit.
+
+**Concrete guard bypass pattern for `_poll_vip_bets`** (PolyEdge's most guarded function):
+- Guard line 309 (`if not vip_user_ids: return`): requires ≥1 VIP-tier user in DB
+- Guard line 319 (`if not addresses: return`): requires that VIP user to have ≥1 BettorFollow row
+- Inner branch guards (lines 337-418): reachable ONLY after BOTH guards above are bypassed
+- Pattern: `create_vip_user() → create_BettorFollow(vip_user_id, "0xaddr") → mock_get_recent_bets → call _poll_vip_bets`
+
+(Source: PolyEdge sessions 221+223 — 2 consecutive tests were vacuously passing; TELPA arxiv 2404.04966 — "dependency analysis for hard-to-cover branches": enumerate inter-procedural guard constraints before test construction; TDAD arxiv 2603.17973 — coverage verification before/after reduces regressions 70%; "surfacing contextual guard information outperforms prescribing procedural rules")
+
 ## IMPORT CHECK BEFORE TESTS
 ```bash
 cd backend && py -c "from app.main import app; print('OK')"

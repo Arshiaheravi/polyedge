@@ -116,6 +116,8 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## FEATURE MODE — Competitive Intelligence (do not implement in DEBUG mode)
 
+- [ ] **WebSocket scheduler migration** — replace REST poll-every-30s in `services/scheduler.py` with Polymarket `/v1/ws/markets` WebSocket subscription. January 2026 update removed the 100-instrument cap (now 500/socket), removing the main scaling blocker. March 2026 Polymarket rule changes (taker bot unviable, <100ms execution window standard) make real-time detection (30s → <1s) the primary competitive differentiator vs PolyAlertHub. Architecture: `_start_ws_listener()` subscribes at startup; on trade event, call `dispatch_bet_notification()` directly; keep REST poll as fallback on WS disconnect. (Source: PolyEdge knowledge.md + quicknode.com 2026 + coincodecap 2026)
+
 - [ ] **Min-bet-size filter per follow** — add a `min_bet_usd` field to `BettorFollow` model (default 0). Scheduler skips notifications when `bet_amount < follow.min_bet_usd`. Reduces noise from small test trades. Highest-demand competitive differentiator vs Polycule/PolycopytradBot per 2026 research. (Source: BRAIN session 203 competitor analysis — "every competing tool has min trigger amount filter")
 
 - [ ] **Rich push notification payloads** — add `bettor_name` (truncated address), `market_title`, and a "Copy Bet" action button to VAPID web push payload body. Named notifications achieve 2× CTR vs generic "New bet detected" copy. (Source: BRAIN session 203 Pushwoosh fintech benchmark 2026 — personalization doubles CTR)
