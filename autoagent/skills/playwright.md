@@ -495,7 +495,9 @@ If the isolated run passes, it's a pre-existing rate-limit flake — do NOT inve
 
 If the isolated run also fails, the failure is real and caused by this session's changes — debug it.
 
-(Source: Session #187 — first full-suite run showed 6 failures; all 6 passed individually. Wasted time investigating before discovering they were rate-limit flakes.)
+**Windows DB lock**: Before running any Playwright tests in isolation on Windows, confirm no background Python processes hold a lock on `test_polyedge.db`. A stale process from an interrupted run causes `CREATE TABLE` to fail with `OperationalError: table already exists` on the first test. Fix: run the backend unit tests first (`cd backend && py -m pytest tests/ --ignore=tests/playwright -q`) to get a clean DB state, then run playwright tests.
+
+(Source: Session #187 — first full-suite run showed 6 failures; all 6 passed individually. Session #190 — stale test_polyedge.db from interrupted run caused OperationalError on first playwright test.)
 
 ---
 
@@ -527,3 +529,27 @@ assert followed_count == 1, f"Expected 1 follow before testing limit, got {follo
 **Rule**: For follow-limit, quota, or paywall-trigger tests: always register a fresh timestamp-email user. Never reuse a shared fixture account for state that could accumulate across runs.
 
 (Source: Session #187 — follow-limit test was written with fresh user registration; using free@polyedge.com would have risked interference from prior runs.)
+
+---
+
+## SHARED ACCOUNT CLEANUP (for tests on shared tier accounts)
+
+When a test **must** use a shared tier account (`basic@polyedge.com`, `vip@polyedge.com`) — e.g. to test tier-specific follow limits — clean existing follows inside the test before asserting, using `page.evaluate()`:
+
+```python
+# Clean all follows for the shared account at the start of the test
+await page.evaluate("""async () => {
+    const data = await apiFetch('/follows');
+    const addrs = (data.follows || []).map(f => f.address);
+    for (const addr of addrs) {
+        await apiFetch('/follows/' + addr, { method: 'DELETE' });
+        window.followedAddresses?.delete(addr);
+    }
+}""")
+```
+
+This is ~3× faster than making individual Python-side `requests.delete()` calls, and keeps the cleanup inside the browser session (so `followedAddresses` state is consistent).
+
+**Rule**: For basic/VIP tier follow-limit tests that use shared accounts, always clean follows inside the test (not in a session-scoped fixture) — shared accounts accumulate follows across runs; without cleanup the test is non-deterministic.
+
+(Source: Session #197 — basic@polyedge.com had 3 leftover follows; without cleanup the 5-follow-limit test would be unreachable. page.evaluate cleanup took 1 round-trip instead of N Python-side requests.)

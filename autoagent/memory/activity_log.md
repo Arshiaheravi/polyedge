@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — META (Session 198)
+IMPROVED: playwright.md — added SHARED ACCOUNT CLEANUP section (page.evaluate batch-delete pattern for shared tier accounts) and Windows DB lock note to FLAKY TEST HANDLING. backlog.md — added 3 new testing tasks (unfollow cycle, profile modal, login form validation) to prevent backlog exhaustion after 2-3 more sessions.
+PATTERNS FOUND: (1) Session 197 RULE about cleaning shared-account follows via page.evaluate had no matching section in playwright.md — would be re-discovered. (2) Session 190 RULE about Windows DB lock before isolated playwright runs also absent from playwright.md. (3) Backlog had only 2 priority items + 1 audit item; after 2-3 sessions it would be empty (low-water-mark rule generates 3 items at commit time but that's too late if sessions run fast).
+PREDICTED IMPACT: Next session adding a basic/VIP tier follow-limit test will find the cleanup pattern in playwright.md immediately. The 3 new backlog items (unfollow, profile modal, login validation) extend the testing sprint by 3 sessions.
+
 ## 2026-03-27 — TESTING (Session 197)
 DONE: Added Playwright E2E test for basic-tier 5-follow-limit gate — logs in as basic@polyedge.com, cleans all existing follows, follows 5 bettors (all succeed), attempts 6th → server returns 403 → upgrade modal (#upgrade-modal) becomes visible.
 IMPACT: Proves the basic-tier follow limit enforces correctly at the browser level. Any regression that breaks the 403 response or openUpgradeModal() call will be caught automatically.
