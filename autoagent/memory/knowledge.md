@@ -73,6 +73,11 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 
 ## Session Reflexions
 
+### Session #199 Reflexion — 2026-03-27
+ACCOMPLISHED: Code quality audit of last 5 sessions' Playwright test files. Fixed `API_BASE = "http://localhost:8003"` duplication — constant moved to conftest.py and imported in test_leaderboard_empty_state.py and test_error_states.py. Logged 2 deferred items to tech_debt.md: duplicate registration helpers with different email prefixes (non-trivial extraction), and brittle wait_for_timeout calls.
+FAILED: Nothing.
+RULE: [2026-03-27] When auditing Playwright test files for duplication, distinguish between "same code, different constants" (e.g. email prefixes) and "truly duplicate logic." The email prefix difference in registration helpers is intentional — it tags test accounts by test module in the DB. Do NOT blindly extract to a shared helper if the variant strings have meaning (DB traceability). The right fix is parameterized extraction: `register_fresh_user(page, prefix="follow_test")` — but defer if tests are passing and the duplication is bounded.
+
 ### Session #197 Reflexion — 2026-03-27
 ACCOMPLISHED: Playwright E2E test for basic-tier 5-follow-limit: login as basic@polyedge.com, clean all existing follows via apiFetch + followedAddresses.clear() in page.evaluate(), follow 5 bettors from leaderboard, attempt 6th → upgrade modal appears. 502 backend tests still passing, 63→64 Playwright tests. Passed on first run in 15s.
 FAILED: Nothing. Test worked first try.

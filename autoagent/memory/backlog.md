@@ -25,12 +25,6 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
-## CODE QUALITY AUDIT (session 197 — count=150, multiple of 5)
-
-- [ ] **Code quality audit** — scan last 5 work sessions' changed files (test_polymarket_service.py, test_leaderboard_empty_state.py, test_follow_appears_on_dashboard.py, test_error_states.py, test_full_journeys.py, test_notifications_tier_gates.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits.
-
----
-
 ## PRIORITY 7 — High-Value Gaps
 
 - [ ] **Playwright: basic user follows bettor → appears on follows dashboard** — login as basic, follow first leaderboard bettor, navigate to Follows tab, assert bettor address appears in #follows-container. Same flow as session 195 (free user) but for basic tier. Grep: `grep -r "def test.*basic.*follow.*dashboard" backend/tests/playwright/` returns nothing.
@@ -40,8 +34,6 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 - [ ] **Playwright: follow then unfollow cycle** — login as basic, follow first leaderboard bettor, assert address appears in #follows-container, then call unfollowBettor() via page.evaluate, assert address disappears from #follows-container. Proves DELETE /follows/{address} wires through to UI. Grep: `grep -r "def test.*unfollow\|def test.*delete.*follow" backend/tests/playwright/` returns nothing.
 
 - [ ] **Playwright: bettor profile modal opens with real data** — login as basic, click first leaderboard card via page.evaluate("viewProfile(addr)"), assert #view-profile becomes visible and contains `.profile-address` with `0x` prefix and `.simulator-pnl` element (not blurred). Proves viewProfile() wires correctly for authenticated basic/vip users. Grep: `grep -r "def test.*profile.*modal\|def test.*view.*profile\|def test.*open.*profile" backend/tests/playwright/` returns nothing.
-
-- [ ] **Playwright: login form validation** — (1) attempt login with wrong password, assert error message appears (e.g. text includes "Invalid" or similar) and page stays on login; (2) no JS error thrown during the failure. Proves the most common user mistake (wrong password) shows a clear error rather than silently failing or crashing. Grep: `grep -r "def test.*login.*invalid\|def test.*login.*wrong\|def test.*wrong.*password" backend/tests/playwright/` returns nothing.
 
 ---
 

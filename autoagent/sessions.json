@@ -4383,7 +4383,7 @@
     "date": "2026-03-27",
     "time": "11:00",
     "type": "work",
-    "summary": "Added exact copy_value_pct formula math tests (avg=0.40/cur=0.50→25.0, avg=0.20/cur=0.30→50.0) and a Playwright test proving the leaderboard shows 'No data yet' on a 200 empty response \u2014 distinct from the error state shown on API failure",
+    "summary": "Added exact copy_value_pct formula math tests (avg=0.40/cur=0.50\u00e2\u2020\u201925.0, avg=0.20/cur=0.30\u00e2\u2020\u201950.0) and a Playwright test proving the leaderboard shows 'No data yet' on a 200 empty response \u2014 distinct from the error state shown on API failure",
     "files": [
       "backend/tests/test_polymarket_service.py",
       "backend/tests/playwright/test_leaderboard_empty_state.py"
@@ -4405,9 +4405,15 @@
     "date": "2026-03-27",
     "time": "14:00",
     "type": "work",
-    "summary": "Added Playwright test proving that a basic-tier user who follows 5 bettors and tries a 6th sees the upgrade modal — the paywall gate is working correctly in the browser",
-    "files": ["backend/tests/playwright/test_basic_follow_limit.py"],
-    "tests": {"before": 502, "after": 502, "status": "pass"},
+    "summary": "Added Playwright test proving that a basic-tier user who follows 5 bettors and tries a 6th sees the upgrade modal \u00e2\u20ac\u201d the paywall gate is working correctly in the browser",
+    "files": [
+      "backend/tests/playwright/test_basic_follow_limit.py"
+    ],
+    "tests": {
+      "before": 502,
+      "after": 502,
+      "status": "pass"
+    },
     "frontend": {
       "status": "pass",
       "checks": 1,
@@ -4421,8 +4427,43 @@
     "time": "15:00",
     "type": "meta",
     "summary": "Added shared-account cleanup pattern and Windows DB lock note to playwright.md; added 3 new testing tasks to backlog to prevent exhaustion after the next 2-3 sessions",
-    "files": ["autoagent/skills/playwright.md", "autoagent/memory/backlog.md"],
-    "tests": {"before": 0, "after": 0, "status": "skip"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "meta session — no code changes"}
+    "files": [
+      "autoagent/skills/playwright.md",
+      "autoagent/memory/backlog.md"
+    ],
+    "tests": {
+      "before": 0,
+      "after": 0,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "meta session \u00e2\u20ac\u201d no code changes"
+    }
+  },
+  {
+    "session": 199,
+    "date": "2026-03-27",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Code quality audit of last 5 sessions test files \u2014 moved hardcoded API_BASE constant from 2 test files into conftest.py, eliminating duplicate backend URL definitions",
+    "files": [
+      "backend/tests/playwright/conftest.py",
+      "backend/tests/playwright/test_error_states.py",
+      "backend/tests/playwright/test_leaderboard_empty_state.py"
+    ],
+    "tests": {
+      "before": 502,
+      "after": 502,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "only import constant refactored, no logic change"
+    }
   }
 ]

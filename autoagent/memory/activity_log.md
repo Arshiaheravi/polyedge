@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 199)
+DONE: Code quality audit of last 5 sessions' Playwright test files. Fixed API_BASE duplication — constant moved to conftest.py and imported in 2 test files. Logged duplicate registration helper pattern and brittle wait_for_timeout calls to tech_debt.md.
+IMPACT: Eliminates hardcoded backend URL scattered across test files — future port changes require editing only conftest.py.
+FILES: backend/tests/playwright/conftest.py, backend/tests/playwright/test_error_states.py, backend/tests/playwright/test_leaderboard_empty_state.py
+
 ## 2026-03-27 — META (Session 198)
 IMPROVED: playwright.md — added SHARED ACCOUNT CLEANUP section (page.evaluate batch-delete pattern for shared tier accounts) and Windows DB lock note to FLAKY TEST HANDLING. backlog.md — added 3 new testing tasks (unfollow cycle, profile modal, login form validation) to prevent backlog exhaustion after 2-3 more sessions.
 PATTERNS FOUND: (1) Session 197 RULE about cleaning shared-account follows via page.evaluate had no matching section in playwright.md — would be re-discovered. (2) Session 190 RULE about Windows DB lock before isolated playwright runs also absent from playwright.md. (3) Backlog had only 2 priority items + 1 audit item; after 2-3 sessions it would be empty (low-water-mark rule generates 3 items at commit time but that's too late if sessions run fast).
