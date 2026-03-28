@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 200)
+DONE: Added 3 Playwright E2E tests completing the North Star "follow bettor → see on dashboard" coverage for all 3 tiers, plus the unfollow cycle. Basic and VIP login, clean follows, follow a bettor, assert address in #follows-container. Unfollow cycle: follow → assert present → unfollow → assert gone.
+IMPACT: The North Star table row "Follow bettor → see on dashboard" is now fully proven for Free (session 195), Basic, and VIP tiers. The unfollow cycle proves DELETE /follows/{address} wires through to the UI end-to-end. 64→67 Playwright tests.
+FILES: backend/tests/playwright/test_basic_follow_appears_on_dashboard.py, backend/tests/playwright/test_vip_follow_appears_on_dashboard.py, backend/tests/playwright/test_unfollow_cycle.py
+
 ## 2026-03-27 — TESTING (Session 199)
 DONE: Code quality audit of last 5 sessions' Playwright test files. Fixed API_BASE duplication — constant moved to conftest.py and imported in 2 test files. Logged duplicate registration helper pattern and brittle wait_for_timeout calls to tech_debt.md.
 IMPACT: Eliminates hardcoded backend URL scattered across test files — future port changes require editing only conftest.py.

@@ -45,7 +45,8 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **502 passed, 2 skipped** (as of 2026-03-27, session 197 — current)
+- Test count: **502 passed, 2 skipped** (as of 2026-03-27, session 200 — current)
+- Playwright E2E: **67 passed, 2 skipped** (as of 2026-03-27, session 200) — 3 new: basic/VIP follow→dashboard + unfollow cycle
 - Playwright E2E: **64 passed, 2 skipped** (as of 2026-03-27, session 197) — 1 new: basic-tier 5-follow-limit upgrade modal
 - Playwright E2E: **63 passed, 2 skipped** (as of 2026-03-27, session 196) — 1 new: leaderboard "No data yet" empty state
 - Playwright E2E: **62 passed, 2 skipped** (as of 2026-03-27, session 195) — 1 new: follow-bettor-appears-on-dashboard
@@ -72,6 +73,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #200 Reflexion — 2026-03-27 (TESTING)
+ACCOMPLISHED: Added 3 Playwright E2E tests completing the North Star "follow → dashboard" coverage for all tiers: test_basic_follow_appears_on_dashboard.py (basic tier), test_vip_follow_appears_on_dashboard.py (VIP tier), test_unfollow_cycle.py (follow → assert present → unfollow → assert gone). All 3 passed on first run. 64→67 Playwright tests. Backend tests unchanged at 502 passing.
+FAILED: Nothing — all 3 tests passed first run in ~27s.
+RULE: [2026-03-27] For follow→dashboard Playwright tests on shared accounts (basic/VIP), always clean existing follows at the start via `page.evaluate("async () => { const r = await apiFetch('/follows'); ... delete each ... followedAddresses.clear(); }")`. Without cleanup, prior test runs leave follows on the shared account and the test may skip (pre-condition guard) rather than assert correctly.
+RULE: [2026-03-27] The unfollow assertion pattern: call `unfollowFromFollowsTab(addr, null)` (null is safe — all `if (btn)` guards handle it), wait 2.5s, then assert `addr.lower() not in container_html.lower()`. `unfollowFromFollowsTab` calls `loadMyFollows()` after success — the DOM is already re-rendered by the time the 2.5s wait completes.
 
 ### Session #199 Reflexion — 2026-03-27
 ACCOMPLISHED: Code quality audit of last 5 sessions' Playwright test files. Fixed `API_BASE = "http://localhost:8003"` duplication — constant moved to conftest.py and imported in test_leaderboard_empty_state.py and test_error_states.py. Logged 2 deferred items to tech_debt.md: duplicate registration helpers with different email prefixes (non-trivial extraction), and brittle wait_for_timeout calls.

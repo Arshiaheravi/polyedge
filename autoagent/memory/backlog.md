@@ -27,13 +27,15 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 7 — High-Value Gaps
 
-- [ ] **Playwright: basic user follows bettor → appears on follows dashboard** — login as basic, follow first leaderboard bettor, navigate to Follows tab, assert bettor address appears in #follows-container. Same flow as session 195 (free user) but for basic tier. Grep: `grep -r "def test.*basic.*follow.*dashboard" backend/tests/playwright/` returns nothing.
-
-- [ ] **Playwright: VIP user follows bettor → appears on follows dashboard** — login as VIP, follow first leaderboard bettor, navigate to Follows tab, assert bettor address appears. Completes the North Star table row "Follow bettor → see on dashboard | ✓ | ✓ | ✓". Grep: `grep -r "def test.*vip.*follow.*dashboard" backend/tests/playwright/` returns nothing.
-
-- [ ] **Playwright: follow then unfollow cycle** — login as basic, follow first leaderboard bettor, assert address appears in #follows-container, then call unfollowBettor() via page.evaluate, assert address disappears from #follows-container. Proves DELETE /follows/{address} wires through to UI. Grep: `grep -r "def test.*unfollow\|def test.*delete.*follow" backend/tests/playwright/` returns nothing.
-
 - [ ] **Playwright: bettor profile modal opens with real data** — login as basic, click first leaderboard card via page.evaluate("viewProfile(addr)"), assert #view-profile becomes visible and contains `.profile-address` with `0x` prefix and `.simulator-pnl` element (not blurred). Proves viewProfile() wires correctly for authenticated basic/vip users. Grep: `grep -r "def test.*profile.*modal\|def test.*view.*profile\|def test.*open.*profile" backend/tests/playwright/` returns nothing.
+
+---
+
+- [ ] **Playwright: login → refresh page → still logged in** — login as basic, reload the page (page.reload()), assert dashboard view is still visible (not redirected to auth/landing). Proves localStorage pe_token persists across page loads and the app restores auth state on init. Grep: `grep -r "def test.*login.*refresh\|def test.*refresh.*logged\|def test.*stay.*logged" backend/tests/playwright/` returns nothing.
+
+- [ ] **Playwright: XSS attempt → escaped in UI** — register a fresh user with name `<script>alert(1)</script>`, navigate to profile/dashboard, assert no alert dialog fires and the literal string appears escaped (angle brackets visible as text, not executed). Proves escapeHtml() is applied to user-supplied name in all render paths. Grep: `grep -r "def test.*xss\|def test.*script.*inject\|def test.*escape.*html" backend/tests/playwright/` returns nothing.
+
+- [ ] **Playwright: JWT tamper → redirect to login** — login as basic, manually overwrite localStorage pe_token with a garbage string via page.evaluate, then trigger a protected API call (navigate to Follows tab), assert app redirects to auth view (view-auth becomes visible or view-dashboard gets 'hidden' class). Proves the frontend handles 401 responses by redirecting to login rather than silently failing. Grep: `grep -r "def test.*jwt.*tamper\|def test.*bad.*token\|def test.*tamper" backend/tests/playwright/` returns nothing.
 
 ---
 

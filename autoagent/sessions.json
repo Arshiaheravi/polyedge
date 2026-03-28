@@ -4465,5 +4465,28 @@
       "failures": 0,
       "notes": "only import constant refactored, no logic change"
     }
+  },
+  {
+    "session": 200,
+    "date": "2026-03-27",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 3 Playwright tests completing the North Star follow\u2192dashboard coverage for all 3 tiers and proving the unfollow cycle works end-to-end",
+    "files": [
+      "backend/tests/playwright/test_basic_follow_appears_on_dashboard.py",
+      "backend/tests/playwright/test_vip_follow_appears_on_dashboard.py",
+      "backend/tests/playwright/test_unfollow_cycle.py"
+    ],
+    "tests": {
+      "before": 502,
+      "after": 502,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 3,
+      "failures": 0,
+      "notes": "3 new Playwright tests all passed"
+    }
   }
 ]
