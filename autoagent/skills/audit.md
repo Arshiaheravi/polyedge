@@ -156,6 +156,7 @@ Mandate: every change must be regression-tested against what already works. No f
 - [ ] **Pricing accuracy**: The pricing modal in `index.html` must accurately reflect what the backend actually enforces (tier limits, market access). If you change backend tier logic, update the pricing modal too.
 - [ ] **Console clean**: After any frontend change, the Playwright check (playwright.md) must report zero JS errors. Warnings are okay, errors are not.
 - [ ] **Feature explanations**: Any complex feature (pattern detection, score breakdown, market regime) must have a tooltip, info icon, or explanatory text visible to the user. If you add a chip or metric, add its explanation too.
+- [ ] **Test specificity gate** (Source: Session 217): For each test in changed test files, verify the user fixture's tier matches the tier required by the first HTTP call. If the test uses `auth_headers` (free-tier by default) but the first call hits a Basic/VIP-gated endpoint, the test will 403 and silently verify something trivial instead of the intended behavior. Fix: upgrade the fixture to the minimum required tier before the gated call.
 
 ---
 
