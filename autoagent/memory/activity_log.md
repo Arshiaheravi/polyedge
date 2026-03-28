@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 212)
+DONE: Fixed root cause of intermittent SQLite "database is locked" failures in the full test suite — switched conftest.py from file-based `test_polyedge.db` to `sqlite:///:memory:` with `StaticPool`. Result: 503 passed / 0 failed (was 452–490 passed, 6–20 failed/errored per run non-deterministically).
+IMPACT: The test suite is now fully deterministic. CI/CD and future sessions can trust green = green, red = real bug. Previously, 6–20 tests would randomly fail on every run, masking real regressions and wasting diagnosis time.
+FILES: backend/tests/conftest.py
+
 ## 2026-03-27 — TESTING (Session 211)
 DONE: Added regression test `test_register_and_login_do_not_expose_hashed_password_or_stripe_customer_id` to test_auth.py — proves POST /auth/register and POST /auth/login never return hashed_password or stripe_customer_id in the user dict. Confirmed the other 2 PRIORITY 10 tasks (duplicate follow 409, bettor non-existent 404) were already covered by existing tests with different function names than the grep patterns expected.
 IMPACT: Any future route change that accidentally adds hashed_password or stripe_customer_id to register/login responses will now fail the test suite before shipping. Closes all 3 PRIORITY 10 backlog items.

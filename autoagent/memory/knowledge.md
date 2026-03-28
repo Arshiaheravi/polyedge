@@ -45,7 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **503 passed, 2 skipped** (as of 2026-03-27, session 211 — current)
+- Test count: **503 passed, 2 skipped** (as of 2026-03-27, session 212 — current)
 - Playwright E2E: **96 passed, 2 skipped** (as of 2026-03-27, session 209) — 4 new: landing page navigation CTAs (View Leaderboard, Log In, Start Free, billing toggle). NOTE: 10 pre-existing tests fail intermittently when Polymarket /profiles API is down (external dependency); baseline 92 pass with API up.
 - Playwright E2E: **92 passed, 2 skipped** (as of 2026-03-27, session 207) — 8 new: logout clears token, free-tier push gate, admin MRR math
 - Playwright E2E: **84 passed, 2 skipped** (as of 2026-03-27, session 206) — 9 new: account tab tier badge, period filter, guide tab
@@ -79,6 +79,11 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #212 Reflexion — 2026-03-27 (TESTING)
+ACCOMPLISHED: Fixed SQLite "database is locked" intermittent failures that caused 6–20 random test failures per run. Root cause: conftest.py `engine` pointed to file-based `test_polyedge.db` — multiple DB connections writing concurrently caused SQLite file-level lock contention. Fix: switched to `sqlite:///:memory:` with `sqlalchemy.pool.StaticPool`. Result: 503/503 passed, 0 failures, deterministic.
+FAILED: Nothing — fix was correct on first attempt, tests passed immediately.
+RULE: [2026-03-27] SQLite `OperationalError: database is locked` in pytest always means the engine is file-based and multiple connections are competing. Fix: `create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False}, poolclass=StaticPool)` — StaticPool reuses one connection so all test code sees the same in-memory DB. Never use a file path for the test engine unless the test explicitly requires two separate processes (e.g., test_scheduler.py's sched_db fixture uses tmp_path for that reason).
 
 ### Session #211 Reflexion — 2026-03-27 (TESTING)
 ACCOMPLISHED: Added test `test_register_and_login_do_not_expose_hashed_password_or_stripe_customer_id` to test_auth.py. Discovered all 3 PRIORITY 10 backlog tasks were partially or fully covered already: (1) hashed_password/stripe_customer_id in /me already covered by `test_auth_me_does_not_expose_sensitive_fields` — only register/login coverage was missing (now fixed). (2) Duplicate follow already covered by `test_duplicate_follow_rejected` at line 30. (3) Bettor non-existent address already covered by `test_bettor_detail_none_profile_returns_200`. The EMBEDDED-GREP patterns were word-order-wrong: `def test.*follow.*duplicate` missed `test_duplicate_follow_*` because "duplicate" comes before "follow" in the function name.

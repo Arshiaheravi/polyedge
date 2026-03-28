@@ -4735,5 +4735,26 @@
       "failures": 0,
       "notes": "test-only change, no frontend files modified"
     }
+  },
+  {
+    "session": 212,
+    "date": "2026-03-27",
+    "time": "05:30",
+    "type": "work",
+    "summary": "Fixed SQLite database-is-locked intermittent failures by switching test DB from file-based to in-memory with StaticPool — test suite went from 452-490 passed with 6-20 random failures to a deterministic 503 passed, 0 failed",
+    "files": [
+      "backend/tests/conftest.py"
+    ],
+    "tests": {
+      "before": 503,
+      "after": 503,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "test infrastructure change only, no frontend files modified"
+    }
   }
 ]
