@@ -5052,5 +5052,15 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 226,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 3 tests covering polymarket.py lines 279/332/477 — leaderboard dict response in profile fetch, activity dict reset in copy simulator, and empty conditionId skip in consensus positions",
+    "files": ["backend/tests/test_polymarket_service.py"],
+    "tests": {"before": 531, "after": 534, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]

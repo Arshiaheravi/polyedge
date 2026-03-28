@@ -103,14 +103,17 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 19 — Coverage Gaps (generated session 225 via coverage report — 99% total, 11 missed lines in polymarket.py)
 
-- [ ] **`get_bettor_profile` paginated non-list break** — polymarket.py line 279: inner paginated loop `if not isinstance(page, list): break`. Mock `httpx.AsyncClient` to return a dict response → `page` is not a list → break is hit. Verify function returns empty dict or fallback without raising.
-  Grep: `grep -n "get_bettor_profile.*dict\|bettor_profile.*not.*list\|page.*not.*list" backend/tests/test_polymarket_service.py` returns nothing
+*(All 3 tasks completed in session 226)*
 
-- [ ] **`compute_copy_simulator` non-list activity response** — polymarket.py line 332: `if not isinstance(raw_list, list): raw_list = []`. Call `compute_copy_simulator("0xaddr")` with mock API returning `{"error": "bad"}` (dict) → raw_list reset to [] → return `{"simulated_pnl_usd": 0, "simulated_roi_pct": 0, "bets_analysed": 0}`.
-  Grep: `grep -n "compute_copy_simulator.*dict\|copy_simulator.*raw_list\|compute_copy.*exception" backend/tests/test_polymarket_service.py` returns nothing
+---
 
-- [ ] **`_fetch_positions` empty conditionId skip** — polymarket.py line 477: `if not cid or not outcome: continue`. Mock `_fetch_positions` via `get_consensus_signals` with a position that has `conditionId=""` or missing → skipped → no signal generated.
-  Grep: `grep -n "fetch_positions.*empty.*cid\|conditionId.*empty\|not.*cid.*not.*outcome" backend/tests/test_polymarket_service.py` returns nothing
+## PRIORITY 20 — Coverage Gaps (generated session 226 via coverage report — 99% total, 4 missed lines in polymarket.py)
+
+- [ ] **`compute_copy_simulator` ISO timestamp path** — polymarket.py lines 374-375: `else: dt = datetime.fromisoformat(...); bet_age_secs = now_ts - dt.timestamp()`. Call `compute_copy_simulator` with a bet that has an ISO timestamp (e.g. `"2026-03-01T10:00:00Z"`) and a valid price/conditionId so the ISO branch is reached. Verify function returns a result dict without raising.
+  Grep: `grep -n "fromisoformat\|ISO.*timestamp\|copy_sim.*date\|iso.*bet" backend/tests/test_polymarket_service.py` returns nothing
+
+- [ ] **`compute_copy_simulator` invalid timestamp exception pass** — polymarket.py lines 376-377: `except Exception: pass`. Call with a bet where `timestamp` is `"not-a-date"` (causes fromisoformat to raise) → exception caught → `pass` executes → `bet_age_secs` stays at default `seven_days + 1` → bet counted as old → function returns a result.
+  Grep: `grep -n "invalid.*timestamp\|bad.*timestamp\|fromisoformat.*raise\|timestamp.*pass" backend/tests/test_polymarket_service.py` returns nothing
 
 ---
 

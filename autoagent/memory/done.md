@@ -234,3 +234,4 @@
 
 ## 2026-03-28
 - **[SESSION #225] PRIORITY 18 coverage-gap tests** — Added 4 tests covering scheduler.py line 379 (free-tier follower skip with VIP+free same address), polymarket.py line 429 (conviction score fallback for zero-amount bets), and polymarket.py lines 467-469 (_fetch_positions dict-response and ConnectError branches via get_consensus_signals); 527→531 tests, scheduler.py now 100% covered.
+- **[SESSION #226] PRIORITY 19 coverage-gap tests** — 3 tests covering polymarket.py lines 279/332/477 (leaderboard dict break, copy simulator dict reset, empty conditionId skip)

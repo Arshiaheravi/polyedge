@@ -132,3 +132,8 @@ FILES: backend/tests/playwright/test_profile_back_button.py
 DONE: Added Playwright E2E test proving basic-tier user can open a bettor profile via showProfile(), the #tab-profile becomes visible, #profile-addr-display contains the 0x-prefixed address, and the copy simulator card (if shown) is not blurred/locked.
 IMPACT: Proves the full "click bettor → view profile" flow works end-to-end for authenticated basic users. Any regression breaking showProfile(), the bettors/{address} API, or the tier-gated simulator rendering will be caught automatically.
 FILES: backend/tests/playwright/test_profile_modal.py
+
+## 2026-03-28 — TESTING (Session 226)
+DONE: Added 3 PRIORITY 19 coverage-gap tests in polymarket.py — test_get_bettor_profile_leaderboard_dict_response_returns_profile_without_lb_data (line 279: leaderboard returns dict → isinstance break, profile built from activity), test_compute_copy_simulator_dict_response_returns_zero_pnl (line 332: activity dict → raw_list=[] → zero-pnl result), test_fetch_positions_empty_condition_id_position_skipped (line 477: conditionId="" → position skipped → no signals). 531→534 backend tests.
+IMPACT: polymarket.py is now 99% covered (only 4 lines remain — ISO timestamp parsing in compute_copy_simulator lines 374-377). Any future refactor that removes these defensive isinstance checks will fail the test suite before shipping.
+FILES: backend/tests/test_polymarket_service.py
