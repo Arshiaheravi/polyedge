@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — TESTING (Session 221)
+DONE: Added 3 backend tests closing PRIORITY 15 coverage gaps — test_send_web_push_generic_exception_returns_false (notifications.py lines 106-108: the generic except-Exception branch when VAPID keys + valid endpoint present but webpush raises), test_poll_vip_bets_get_recent_bets_raises_skips_address (scheduler.py lines 328-329: graceful skip of an address when get_recent_bets throws), test_poll_vip_bets_free_tier_user_skips_notification (scheduler.py line 379: free-tier follower's dispatch skipped entirely). 518→521 backend tests.
+IMPACT: Every error branch in the VIP poll notification path and web push exception path is now regression-protected. Any future refactor that removes the free-tier guard or exception handlers will fail the test suite before shipping.
+FILES: backend/tests/test_notifications.py, backend/tests/test_scheduler.py
+
 ## 2026-03-28 — TESTING (Session 220)
 DONE: Added 4 backend tests closing PRIORITY 14 coverage gaps — test_format_exit_message_basic_format, test_format_exit_message_long_market_truncated (notifications.py lines 57-65 both branches covered), test_send_web_push_vapid_set_no_endpoint_returns_false (lines 91-92 — the VAPID branch of the no-endpoint guard, previously unreachable because existing test omits VAPID keys), test_detect_exits_web_push_called_for_vip_with_push_enabled (scheduler.py lines 161-167 — first test to assert send_web_push call_count in detect_exits). 514→518 backend tests.
 IMPACT: The format_exit_message function was completely untested; the VAPID no-endpoint branch was shadowed by a guard two lines earlier; the detect_exits web push path could silently break on any refactor and no test would catch it.

@@ -4927,5 +4927,15 @@
     "files": ["backend/tests/test_notifications.py", "backend/tests/test_scheduler.py"],
     "tests": {"before": 514, "after": 518, "status": "pass"},
     "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+  },
+  {
+    "session": 221,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 3 tests covering the generic-exception branch of send_web_push (lines 106-108), the get_recent_bets exception skip in _poll_vip_bets (lines 328-329), and the free-tier follower notification skip (line 379) — every exception and guard in the VIP notification path now has regression coverage",
+    "files": ["backend/tests/test_notifications.py", "backend/tests/test_scheduler.py"],
+    "tests": {"before": 518, "after": 521, "status": "pass"},
+    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
   }
 ]

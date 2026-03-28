@@ -45,7 +45,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **507 passed, 2 skipped** (as of 2026-03-27, session 213 — current)
+- Test count: **521 passed, 2 skipped** (as of 2026-03-28, session 221 — current)
+- Test count: **518 passed, 2 skipped** (as of 2026-03-28, session 220)
+- Test count: **514 passed, 2 skipped** (as of 2026-03-28, session 218)
+- Test count: **512 passed, 2 skipped** (as of 2026-03-28, session 217)
+- Test count: **509 passed, 2 skipped** (as of 2026-03-27, session 216)
+- Test count: **507 passed, 2 skipped** (as of 2026-03-27, session 213)
 - Playwright E2E: **96 passed, 2 skipped** (as of 2026-03-27, session 209) — 4 new: landing page navigation CTAs (View Leaderboard, Log In, Start Free, billing toggle). NOTE: 10 pre-existing tests fail intermittently when Polymarket /profiles API is down (external dependency); baseline 92 pass with API up.
 - Playwright E2E: **92 passed, 2 skipped** (as of 2026-03-27, session 207) — 8 new: logout clears token, free-tier push gate, admin MRR math
 - Playwright E2E: **84 passed, 2 skipped** (as of 2026-03-27, session 206) — 9 new: account tab tier badge, period filter, guide tab
@@ -1411,3 +1416,8 @@ ACCOMPLISHED: Added 4 backend tests for PRIORITY 14 coverage gaps — 2 for form
 FAILED: Nothing.
 RULE: [2026-03-28] When a function has multiple early-return guards in sequence (e.g. `if not vapid_keys: return False` at line 82, `if not endpoint: return False` at line 92), each guard needs its own test that satisfies all PRIOR guards to reach that branch. A test for the second guard must NOT trigger the first guard — pass valid values for the first guard's condition to ensure the code reaches the second.
 OPTIMIZATION: [2026-03-28] For detect_exits web push test, the pattern is: create VIP user + BettorFollow + AlertSetting(web_push_enabled=True, push_subscription='{"endpoint":"..."}'), pre-seed _last_positions with a position, mock get_active_positions to return [] (empty → exit detected), mock send_web_push as AsyncMock, assert call_count=1 and payload title contains bettor_name.
+
+### Session #221 Reflexion — 2026-03-28 (TESTING)
+ACCOMPLISHED: Added 3 backend tests for PRIORITY 15 coverage gaps — test_send_web_push_generic_exception_returns_false (notifications.py lines 106-108: VAPID keys + valid endpoint + pywebpush.webpush raises generic Exception), test_poll_vip_bets_get_recent_bets_raises_skips_address (scheduler.py lines 328-329: get_recent_bets raises → no BetEvent created), test_poll_vip_bets_free_tier_user_skips_notification (scheduler.py line 379: free-tier follow → dispatch_bet_notification not called). All 3 passed first run. 518→521 tests. Coverage: 98% overall (24 missed lines from 1245 total).
+FAILED: Initial version of test_poll_vip_bets_free_tier_user_skips_notification patched send_telegram/send_web_push directly. Fixed: the `continue` at line 379 fires before `dispatch_bet_notification` is called — send_telegram/send_web_push are called INSIDE dispatch_bet_notification, not from the scheduler directly. Correct assertion: `dispatch_bet_notification.assert_not_called()`.
+RULE: [2026-03-28] When patching to verify a guard (`continue`/`return`) before a function call, patch the function that is guarded against (dispatch_bet_notification), NOT the sub-functions it would call internally. The guard prevents the call entirely — the inner calls never happen, so patching them tests the wrong boundary.

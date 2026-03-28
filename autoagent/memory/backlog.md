@@ -79,14 +79,20 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 15 — Coverage Gaps (generated session 220 via low-water-mark check + coverage report)
 
-- [ ] **`send_web_push` generic exception handler returns False** — notifications.py lines 106-108: `except Exception as exc: logger.warning(...); return False`. The existing `test_send_web_push_http_exception_returns_false` mocks httpx and calls WITHOUT VAPID keys (returns False at line 82, never reaches 106-108). Test with VAPID keys set + valid endpoint + `pywebpush.webpush` raises generic Exception → assert returns False and webpush was called.
-  Grep: `grep -n "webpush.*side_effect\|send_web_push.*generic.*exception\|vapid.*exception.*false" backend/tests/test_notifications.py` returns nothing
+*(All 3 tasks completed in session 221)*
 
-- [ ] **`_poll_vip_bets` skips address when `get_recent_bets` raises** — scheduler.py lines 328-329: `except Exception: logger.warning(...); continue`. Create a basic/VIP user+follow, mock `get_recent_bets` to raise Exception for that address, assert no BetEvent is created (address gracefully skipped).
-  Grep: `grep -n "poll_vip.*bets.*fetch.*fail\|get_recent_bets.*raises.*vip\|vip.*poll.*exception.*skip" backend/tests/test_scheduler.py` returns nothing
+---
 
-- [ ] **`_poll_vip_bets` skips free-tier user in notification loop** — scheduler.py line 379: `if not user or not user.is_active or user.subscription_tier == "free": continue`. Create a follow where the user is `subscription_tier="free"`, trigger a new bet, assert `send_telegram` and `send_web_push` are NOT called for that user.
-  Grep: `grep -n "poll_vip.*free.*skip\|vip_poll.*free.*tier\|free.*tier.*vip_bets" backend/tests/test_scheduler.py` returns nothing
+## PRIORITY 16 — Coverage Gaps (generated session 221 via coverage report — 98% total, 24 missed lines)
+
+- [ ] **`_detect_exits` notification except handler** — scheduler.py lines 168-169: `except Exception as exc: logger.warning("Exit notification failed for user %s: %s", ...)`. An existing detect_exits test mocks send_web_push but never makes it raise. Patch `send_telegram` or `send_web_push` to raise inside `_detect_exits`, assert the exit event still gets `notified=True` (loop continues).
+  Grep: `grep -n "detect_exits.*exception\|exit.*notification.*fail\|168\|169" backend/tests/test_scheduler.py` returns nothing
+
+- [ ] **`_poll_vip_bets` dispatch_bet_notification raises → continues** — scheduler.py lines 408-409: `except Exception as exc: logger.warning("VIP notification failed for user %s: %s", ...)`. VIP user + follow + new bet exists, but `dispatch_bet_notification` raises → assert BetEvent is still created and `event.notified` state reflects the exception branch.
+  Grep: `grep -n "dispatch_bet_notification.*raises\|vip.*notify.*fail\|408\|409" backend/tests/test_scheduler.py` returns nothing — NOTE: session 638 line references a test about dispatch raising for _poll_bets (not _poll_vip_bets); verify the grep result.
+
+- [ ] **`stop_scheduler` when running** — scheduler.py lines 440-442: `if _scheduler and _scheduler.running: _scheduler.shutdown(wait=False)`. No existing test calls `stop_scheduler()` with a live scheduler. Patch `_scheduler.running=True` and `_scheduler.shutdown`, call `stop_scheduler()`, assert `shutdown(wait=False)` was called once.
+  Grep: `grep -n "stop_scheduler\|_scheduler.*running\|scheduler.*shutdown" backend/tests/test_scheduler.py` returns nothing
 
 ---
 
