@@ -30,9 +30,16 @@ def test_web_push_blocked_for_free_tier(client, auth_headers):
     assert "Basic or VIP" in resp.json()["detail"]
 
 
-def test_disable_web_push_returns_false(client, auth_headers):
-    """Disabling web_push after it was enabled returns web_push_enabled=False."""
-    client.put("/alerts/settings", json={"web_push_enabled": True}, headers=auth_headers)
+def test_disable_web_push_returns_false(client, db, auth_headers, registered_user):
+    """Enabling web_push for a paid user then disabling it returns web_push_enabled=False."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.subscription_tier = "basic"
+    db.commit()
+
+    enable_resp = client.put("/alerts/settings", json={"web_push_enabled": True}, headers=auth_headers)
+    assert enable_resp.status_code == 200, "basic tier must be able to enable web_push"
     resp = client.put("/alerts/settings", json={"web_push_enabled": False}, headers=auth_headers)
     assert resp.status_code == 200
     assert resp.json()["web_push_enabled"] is False
@@ -335,7 +342,7 @@ def test_telegram_already_verified_can_start_again(client, db, auth_headers, reg
 def test_get_alert_settings_returns_parsed_push_subscription(client, db, auth_headers, registered_user):
     """GET /alerts/settings returns push_subscription as a parsed dict, not a raw string."""
     from app.models import AlertSetting, User
-    import json as _json
+    import json
     _, user_data = registered_user
     user = db.query(User).filter(User.id == user_data["id"]).first()
     sub_dict = {"endpoint": "https://push.example.com/sub/abc", "keys": {"p256dh": "AAAA", "auth": "BBBB"}}
@@ -343,7 +350,7 @@ def test_get_alert_settings_returns_parsed_push_subscription(client, db, auth_he
     if not alert:
         alert = AlertSetting(user_id=user.id)
         db.add(alert)
-    alert.push_subscription = _json.dumps(sub_dict)
+    alert.push_subscription = json.dumps(sub_dict)
     db.commit()
 
     resp = client.get("/alerts/settings", headers=auth_headers)
