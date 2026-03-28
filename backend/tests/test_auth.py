@@ -464,6 +464,31 @@ def test_register_and_login_do_not_expose_hashed_password_or_stripe_customer_id(
     assert "stripe_customer_id" not in login_user, "POST /auth/login must not expose stripe_customer_id"
 
 
+def test_register_jwt_sub_is_user_id(client):
+    """JWT returned by POST /auth/register has sub == str(user.id).
+
+    Mutation kill: `create_access_token({"sub": str(user.id)})` →
+    `create_access_token({"sub": str(user.email)})` would produce a sub like
+    "subclaim@example.com" which can never equal the integer user ID as a string.
+    This test directly decodes the token and asserts the exact sub value.
+    """
+    from jose import jwt as jose_jwt
+    from app.config import get_settings
+
+    settings = get_settings()
+
+    resp = client.post("/auth/register", json={
+        "email": "subclaim@example.com", "password": "pass123", "name": "SubClaim"
+    })
+    assert resp.status_code == 201
+    data = resp.json()
+    token = data["access_token"]
+    user_id = data["user"]["id"]
+
+    payload = jose_jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
+    assert payload["sub"] == str(user_id)
+
+
 def test_register_rate_limit_triggers_429_after_10_requests(client):
     """POST /auth/register is limited to 10 req/min per IP — the 11th request must return 429."""
     # Make 10 register attempts with unique emails (all should succeed 201)

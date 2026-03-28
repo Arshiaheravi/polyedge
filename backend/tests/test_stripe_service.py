@@ -428,6 +428,66 @@ async def test_webhook_subscription_active_upgrades_to_basic(db):
 
 
 @pytest.mark.asyncio
+async def test_webhook_subscription_unpaid_downgrades_user(db):
+    """customer.subscription.updated with status=unpaid sets user back to free.
+
+    Mutation kill: `status in ("canceled", "unpaid", "past_due")` →
+    `status in ("canceled", "past_due")` (removing "unpaid") would leave an unpaid
+    user at their existing tier. This test catches that mutation — unpaid must downgrade.
+    """
+    from app.models import User
+    from app.auth import hash_password
+    from app.services.stripe_service import handle_webhook_event
+
+    user = User(email="unpaid@x.com", hashed_password=hash_password("p"),
+                name="Unpaid", subscription_tier="vip", stripe_customer_id="cus_unpaid_test")
+    db.add(user)
+    db.commit()
+
+    event = json.dumps({
+        "type": "customer.subscription.updated",
+        "data": {"object": {
+            "customer": "cus_unpaid_test",
+            "status": "unpaid",
+        }}
+    }).encode()
+
+    await handle_webhook_event(payload=event, sig_header="", db=db)
+    db.refresh(user)
+    assert user.subscription_tier == "free"
+
+
+@pytest.mark.asyncio
+async def test_create_checkout_metadata_contains_correct_user_id(db):
+    """create_checkout_session passes the correct user_id in Stripe Session.create metadata.
+
+    Mutation kill: `metadata={"user_id": str(user.id), "plan": plan}` →
+    `metadata={"user_id": str(user.id + 1), "plan": plan}` would assign the subscription
+    to a different user in the webhook handler — this test asserts the exact user ID.
+    """
+    from app.models import User
+    from app.auth import hash_password
+    from app.services.stripe_service import create_checkout_session
+
+    user = User(email="metacheck@x.com", hashed_password=hash_password("p"),
+                name="MetaCheck", stripe_customer_id="cus_metacheck")
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    mock_stripe = MagicMock()
+    mock_stripe.checkout.Session.create.return_value = {"url": "https://checkout.stripe.com/pay/meta"}
+
+    with patch("app.services.stripe_service._get_stripe_client", return_value=mock_stripe), \
+         patch("app.services.stripe_service.PLAN_PRICE_MAP", {"basic": "price_basic", "vip": "price_vip"}):
+        await create_checkout_session(user=user, plan="vip", db=db)
+
+    call_kwargs = mock_stripe.checkout.Session.create.call_args[1]
+    assert call_kwargs["metadata"]["user_id"] == str(user.id)
+    assert call_kwargs["metadata"]["plan"] == "vip"
+
+
+@pytest.mark.asyncio
 async def test_webhook_checkout_unknown_plan_falls_back_to_basic(db):
     """checkout.session.completed with an unrecognised plan string uses
     PLAN_TIER_MAP.get(plan, 'basic') fallback — sets subscription_tier to 'basic'."""
