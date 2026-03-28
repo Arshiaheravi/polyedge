@@ -400,3 +400,33 @@ async def test_webhook_subscription_active_upgrades_to_basic(db):
 
     db.refresh(user)
     assert user.subscription_tier == "basic"
+
+
+@pytest.mark.asyncio
+async def test_webhook_checkout_unknown_plan_falls_back_to_basic(db):
+    """checkout.session.completed with an unrecognised plan string uses
+    PLAN_TIER_MAP.get(plan, 'basic') fallback — sets subscription_tier to 'basic'."""
+    from app.models import User
+    from app.auth import hash_password
+    from app.services.stripe_service import handle_webhook_event
+
+    user = User(email="enterprise@x.com", hashed_password=hash_password("p"),
+                name="EnterpriseUser", subscription_tier="free",
+                stripe_customer_id="cus_ent_fallback")
+    db.add(user)
+    db.commit()
+
+    event = json.dumps({
+        "type": "checkout.session.completed",
+        "data": {"object": {
+            "metadata": {"user_id": str(user.id), "plan": "enterprise"},
+            "subscription": None,
+        }}
+    }).encode()
+
+    with patch("app.services.stripe_service.settings") as mock_settings:
+        mock_settings.stripe_webhook_secret = ""
+        await handle_webhook_event(payload=event, sig_header="", db=db)
+
+    db.refresh(user)
+    assert user.subscription_tier == "basic"

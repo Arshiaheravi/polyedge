@@ -912,3 +912,21 @@ async def test_dispatch_bet_notification_web_push_skipped_without_vapid():
     )
     # web_push result should be False (not absent — it was attempted and declined)
     assert result.get("web_push") is False
+
+
+def test_web_push_config_returns_available_true_when_vapid_key_is_set(client):
+    """GET /alerts/web-push-config returns available=True and the public key string
+    when a VAPID public key is configured — the branch not covered by the no-keys test."""
+    from unittest.mock import patch, MagicMock
+
+    fake_key = "BFakeVAPIDPublicKeyForTesting1234567890abcdef"
+    mock_cfg = MagicMock()
+    mock_cfg.vapid_public_key = fake_key
+
+    with patch("app.routes.alerts.get_settings", return_value=mock_cfg):
+        resp = client.get("/alerts/web-push-config")
+
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["available"] is True
+    assert data["vapid_public_key"] == fake_key
