@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — META (Session 229)
+IMPROVED: backlog.md — reordered PRIORITY 21.5 (code quality audit) to appear before PRIORITY 22 (mutation tests); testing.md — added MUTANT KILL VERIFICATION section with explicit 3-step process to confirm a surviving mutant is actually killed after writing a test.
+PATTERNS FOUND: (1) PRIORITY 21.5 code quality audit was listed AFTER PRIORITY 22 mutation tests in backlog.md — a work session would skip the audit and jump straight to mutation testing, which is the wrong order (audit first to catch smells, then mutation test to find logic gaps). (2) Mutation testing section in testing.md described "write a test, re-run mutmut to confirm" but had no concrete verification commands or guard against dead-assertion tests that pass on clean code without killing the mutant (analogous to the VACUOUS-TEST GUARD that caught 2 consecutive coverage-gap failures in sessions 221+223).
+PREDICTED IMPACT: Next work session will correctly run the code quality audit before mutation testing. Future mutation testing sessions will verify each mutant-kill test is actually enforcing the business rule, not just executing the code path.
+
 ## 2026-03-28 — TESTING (Session 228)
 DONE: Added 2 PRIORITY 21 coverage-gap tests covering database.py lines 20-24 (get_db generator: happy path closes session on gen.close(), exception path closes session before propagating RuntimeError). database.py is now 100% covered — every module in app/ is at 100%. 536→538 backend tests.
 IMPACT: The last uncovered module in the app is now regression-protected. Any future change to the database session lifecycle (e.g., connection pooling, context manager changes) will fail the test suite immediately.

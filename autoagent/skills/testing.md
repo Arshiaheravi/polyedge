@@ -308,7 +308,25 @@ py -m mutmut show --all-survived     # shows ALL surviving mutants = your test g
 
 **What to do with survivors**:
 Each surviving mutant points to a code branch or comparison that no test asserts on.
-Write a test that would kill it, then re-run mutmut to confirm mutation score increased.
+Write a test that would kill it, then verify the mutant is killed using the steps below.
+
+**MUTANT KILL VERIFICATION** (Source: PolyEdge session 229 META — analogous to VACUOUS-TEST GUARD for coverage gaps):
+After writing a test intended to kill a surviving mutant, do NOT assume it works. Verify explicitly:
+
+Step 1 — Confirm the test PASSES on unmodified code (otherwise you have a broken test, not a mutant killer):
+```bash
+cd backend && py -m pytest tests/test_yourfile.py::test_your_new_function -v
+```
+
+Step 2 — Re-run mutmut to confirm the mutant is now killed:
+```bash
+cd backend && py -m mutmut run --paths-to-mutate "app/routes/follows.py" --tests-dir "tests/"
+py -m mutmut results   # check that surviving count decreased
+```
+
+Step 3 — If the mutant is still surviving: apply the mutation manually (change the code as mutmut describes) and run your test — if the test still passes with the mutated code, the test is not asserting on the right boundary value. Adjust the assertion.
+
+A test that passes on clean code but doesn't kill the mutant is a dead assertion — it covers the line but doesn't enforce the business rule.
 
 **Target mutation score**: > 70% killed = strong test suite. < 50% = significant gaps.
 

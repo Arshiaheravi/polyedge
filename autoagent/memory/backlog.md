@@ -113,6 +113,12 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
+## PRIORITY 21.5 — Code Quality Audit (generated session 228 — work session count hit 175)
+
+- [ ] **Code quality audit** — scan last 5 work sessions' changed files (test_polymarket_service.py, test_scheduler.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits.
+
+---
+
 ## PRIORITY 22 — Mutation Tests (generated session 228 — 100% line coverage achieved; mutation testing is next quality frontier)
 
 **Context**: All app/ modules are now at 100% line coverage. Mutation testing finds surviving mutants — code changes that don't break any test, meaning untested business logic. Each surviving mutant = a real bug that could ship undetected. Run `py -m pip install mutmut` first if not installed.
@@ -125,12 +131,6 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 - [ ] **Mutation test — services/scheduler.py VIP exit gate** — Run mutmut on `app/services/scheduler.py` focused on `_detect_exits`. Focus: VIP-only check (`subscription_tier == "vip"`), exit detection comparison logic. A surviving mutant on the tier check means basic users could receive exit alerts.
   Grep: `grep -n "def test.*mutmut\|mutmut" backend/tests/test_scheduler.py` returns nothing — mutation tests not yet run
-
----
-
-## PRIORITY 21.5 — Code Quality Audit (generated session 228 — work session count hit 175)
-
-- [ ] **Code quality audit** — scan last 5 work sessions' changed files (test_polymarket_service.py, test_scheduler.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits.
 
 ---
 
