@@ -1,5 +1,8 @@
 # Done
 
+## 2026-03-28
+- **[SESSION #217] Code quality audit — fixed 2 test smells in test_alerts.py** — test_disable_web_push_returns_false upgraded to basic tier so it actually tests enable→disable flow (was silently 403ing on the first PUT as a free user); `import json as _json` alias removed (needless alias). 512 backend tests.
+
 ## 2026-03-27
 - **[SESSION #216] Backend tests — PRIORITY 12 coverage gaps closed** — added test_get_current_user_optional_catches_http_exception_returns_none (auth.py lines 76-77), test_webhook_generic_exception_returns_502 (payments.py lines 53-54), test_webhook_signature_verification_failure_raises_value_error (stripe_service.py lines 75-78); 509→512 backend tests.
 - **[SESSION #215] Backend tests — PRIORITY 11 coverage gaps closed** — added test_web_push_config_returns_available_true_when_vapid_key_is_set (covers available=True branch of GET /alerts/web-push-config) and test_webhook_checkout_unknown_plan_falls_back_to_basic (covers PLAN_TIER_MAP fallback in _handle_checkout_completed); removed already-covered task 3 (unauthenticated simulator already tested); 507→509 backend tests.

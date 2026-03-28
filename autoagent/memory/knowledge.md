@@ -93,12 +93,17 @@ ACCOMPLISHED: Closed all 3 PRIORITY 11 coverage gaps. Added `test_web_push_confi
 FAILED: Nothing — both tests passed on first run.
 RULE: [2026-03-27] To find real coverage gaps fast: run `py -m pytest tests/ --cov=app --cov-report=term-missing --ignore=tests/playwright` and read the MISS column directly. Produces specific line numbers in under 3 minutes vs manual branch counting. Then grep-confirm each gap before adding to backlog.
 
-- Test count: **512 passed, 2 skipped** as of session 216
+- Test count: **512 passed, 2 skipped** as of session 217 (no change from 216)
 
 ### Session #216 Reflexion — 2026-03-27 (TESTING)
 ACCOMPLISHED: Added 3 tests covering the last uncovered error branches in auth, payments, and stripe_service. (1) `test_get_current_user_optional_catches_http_exception_returns_none` — calls `get_current_user_optional` directly with mocked `decode_token` raising HTTPException, asserts result is None. (2) `test_webhook_generic_exception_returns_502` — patches `handle_webhook_event` to raise RuntimeError, asserts POST /payments/webhook returns 502. (3) `test_webhook_signature_verification_failure_raises_value_error` — patches both `settings` (non-empty secret) and stripe client to raise SignatureVerificationError, asserts ValueError is raised. 509→512 tests.
 FAILED: Nothing — all 3 passed first run.
 RULE: [2026-03-27] To test optional-auth dependency functions directly (not via HTTP), call the function with explicit args — FastAPI `Depends()` is only injected by the router; the raw function is a plain Python callable. Pattern: `creds = HTTPAuthorizationCredentials(scheme="Bearer", credentials="tok"); result = get_current_user_optional(credentials=creds, db=db)`. This avoids needing a route that uses optional auth to exercise the branch.
+
+### Session #217 Reflexion — 2026-03-28 (AUDIT)
+ACCOMPLISHED: Code quality audit — scanned 7 files changed in sessions 212-216 (conftest.py, test_alerts.py, test_stripe_service.py, test_tier_gates.py, test_scheduler.py, test_auth.py, routes/markets.py). Found and fixed 2 smells: (1) `test_disable_web_push_returns_false` used free-tier `auth_headers` fixture — the first `PUT web_push_enabled=True` was silently returning 403, making the test trivially check "set False returns False" instead of the intended "enable then disable" flow. Fixed: upgrade to basic tier before enabling. (2) `import json as _json` needless alias → `import json`. Also ran `py -m pytest --cov=app --cov-report=term-missing` and found 35 uncovered lines; generated 3 new PRIORITY 13 backlog tasks from the real gaps. 512→512 tests (no change).
+FAILED: Nothing — 2 fixes applied cleanly, tests green on first run.
+RULE: [2026-03-28] Test specificity gate — when a test's first action would be blocked by a tier/auth gate (e.g., free user POSTing a paid-tier request), the test silently measures something simpler than its name implies. During audit, check: does the user fixture match the tier required by the first HTTP call? If the first call would 403, the test is not testing what it claims.
 
 ### Session #213 Reflexion — 2026-03-27 (TESTING)
 ACCOMPLISHED: Fixed bug in markets.py consensus route — no try/except around `get_consensus_signals` meant API failures returned 500 instead of 502 and the cache was left corrupted. Added 4 regression tests: `test_consensus_api_error_returns_502`, `test_consensus_each_signal_has_required_fields`, `test_detect_exits_inactive_vip_not_notified`, `test_detect_exits_exit_event_stored_regardless_of_follower_tier`. All 507 tests green first run.

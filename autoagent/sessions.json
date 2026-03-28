@@ -4812,16 +4812,65 @@
     "date": "2026-03-27",
     "time": "12:00",
     "type": "work",
-    "summary": "Added 2 backend tests closing the last PRIORITY 11 coverage gaps — web-push-config available=True branch and Stripe unknown-plan fallback to basic tier",
-    "files": ["backend/tests/test_alerts.py", "backend/tests/test_stripe_service.py"],
-    "tests": {"before": 507, "after": 509, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+    "summary": "Added 2 backend tests closing the last PRIORITY 11 coverage gaps \u00e2\u20ac\u201d web-push-config available=True branch and Stripe unknown-plan fallback to basic tier",
+    "files": [
+      "backend/tests/test_alerts.py",
+      "backend/tests/test_stripe_service.py"
+    ],
+    "tests": {
+      "before": 507,
+      "after": 509,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   },
   {
-    "session": 216, "date": "2026-03-27", "time": "12:00", "type": "work",
+    "session": 216,
+    "date": "2026-03-27",
+    "time": "12:00",
+    "type": "work",
     "summary": "Added 3 coverage-gap tests for previously untested error branches: get_current_user_optional catches HTTPException and returns None, webhook route wraps generic exceptions into 502, and Stripe signature verification failure raises ValueError",
-    "files": ["backend/tests/test_auth.py", "backend/tests/test_payments.py", "backend/tests/test_stripe_service.py"],
-    "tests": {"before": 509, "after": 512, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+    "files": [
+      "backend/tests/test_auth.py",
+      "backend/tests/test_payments.py",
+      "backend/tests/test_stripe_service.py"
+    ],
+    "tests": {
+      "before": 509,
+      "after": 512,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
+  },
+  {
+    "session": 217,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Code quality audit \u2014 fixed 2 test smells in test_alerts.py: the disable-web-push test now actually enables push first (it was silently 403ing as a free-tier user), and removed a needless json alias",
+    "files": [
+      "backend/tests/test_alerts.py"
+    ],
+    "tests": {
+      "before": 512,
+      "after": 512,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]

@@ -53,15 +53,28 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 *(All 3 tasks completed or confirmed already covered in session 215)*
 
-## PRIORITY 11.5 — Code Quality Audit (mandatory — session 216, 165 work sessions = multiple of 5)
+## PRIORITY 11.5 — Code Quality Audit
 
-- [ ] **Code quality audit** — scan last 5 work sessions' changed files (test_alerts.py, test_stripe_service.py, test_tier_gates.py, test_scheduler.py, test_auth.py, conftest.py, routes/markets.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits.
+*(Completed session 217)*
 
 ---
 
 ## PRIORITY 12 — Coverage Gaps (generated session 215 via low-water-mark check)
 
 *(All 3 tasks completed in session 216)*
+
+---
+
+## PRIORITY 13 — Coverage Gaps (generated session 217 via low-water-mark check + coverage report)
+
+- [ ] **`_poll_vip_bets` VIP user exists but has no follows → early return** — scheduler.py line 320: `if not addresses: return`. Create a VIP user in `sched_db` but add NO `BettorFollow` rows for them. Run `_poll_vip_bets()`. Assert `get_recent_bets` is never called and function completes without error.
+  Grep: `grep -n "vip.*no_follow\|vip.*no_addresses" backend/tests/test_scheduler.py` returns nothing
+
+- [ ] **`_poll_vip_bets` duplicate bet skipped (line 349)** — when a `BetEvent` already exists for the same bettor_address/market_id/timestamp, the VIP poll's `if exists: continue` branch fires. Create VIP user + follow, pre-insert a matching BetEvent, run `_poll_vip_bets()` with the same bet — assert only one BetEvent exists (no duplicate) and notification was NOT sent a second time.
+  Grep: `grep -n "vip.*duplicate\|duplicate.*vip_bet" backend/tests/test_scheduler.py` returns nothing
+
+- [ ] **`send_web_push` exception returns False (notifications.py 106-108)** — when the httpx post call succeeds delivery but the library raises an unexpected Exception (not a missing VAPID key), the `except Exception` handler must catch it, log a warning, and return False. Patch `httpx.AsyncClient.__aenter__` or `pywebpush.webpush` to raise `RuntimeError("push failed")`. Assert return value is `False`.
+  Grep: `grep -n "web_push.*exception\|send_web_push.*raises" backend/tests/test_notifications.py` returns nothing
 
 ---
 

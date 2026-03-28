@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — AUDIT (Session 217)
+DONE: Code quality audit of last 5 sessions' changed files — fixed 2 test smells in test_alerts.py: upgraded test_disable_web_push_returns_false to basic tier so it actually tests the enable→disable flow (was silently 403ing on the first PUT as free user), and removed `import json as _json` needless alias.
+IMPACT: The disable test now validates the real use case (paid user enables then disables push). The json alias was confusing — `_json` looked like a private module but was just stdlib json.
+FILES: backend/tests/test_alerts.py
+
 ## 2026-03-27 — TESTING (Session 216)
 DONE: Added 3 backend tests closing PRIORITY 12 coverage gaps — test_get_current_user_optional_catches_http_exception_returns_none (auth.py lines 76-77: except HTTPException branch in get_current_user_optional now covered), test_webhook_generic_exception_returns_502 (payments.py lines 53-54: generic Exception → 502 in POST /payments/webhook), test_webhook_signature_verification_failure_raises_value_error (stripe_service.py lines 75-78: SignatureVerificationError → ValueError when webhook secret is set). 509→512 tests.
 IMPACT: Every error branch in auth, payments, and Stripe service is now covered. Any future refactor that accidentally removes the except clauses or changes error types will fail the test suite before shipping.
