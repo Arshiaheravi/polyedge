@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — TESTING (Session 223)
+DONE: Code quality audit (PRIORITY 16.5) found no issues in test_scheduler.py, test_notifications.py, test_alerts.py — no dead assertions, no test specificity gaps, no tier mismatches. Then added 3 PRIORITY 17 coverage-gap tests: test_poll_vip_bets_skips_old_bets (sets _last_check past FUTURE_TS to verify old bets skipped in VIP poll), test_poll_vip_bets_outer_exception_handler_fires_on_commit_failure (wraps db.commit to raise, verifies rollback called and _last_check unchanged), test_get_live_trades_api_exception_returns_empty_list (ConnectError → empty list). 524→527 backend tests.
+IMPACT: All VIP poll exception branches and live-trades error path are now regression-protected. The broken session-221 test that exited early (no VIP users) documented as PRIORITY 18 task — the real line 379 gap is now tracked and will be covered in the next session.
+FILES: backend/tests/test_scheduler.py, backend/tests/test_polymarket_service.py
+
 ## 2026-03-28 — TESTING (Session 222)
 DONE: Added 3 backend tests closing PRIORITY 16 coverage gaps — test_detect_exits_notification_exception_caught_event_still_notified (scheduler.py lines 168-169: send_web_push raises inside _detect_exits except handler, exit_event.notified still True), test_poll_vip_bets_dispatch_exception_does_not_crash_vip_poll_loop (scheduler.py lines 408-409: dispatch_bet_notification raises, event.notified still True), test_stop_scheduler_when_running_calls_shutdown (scheduler.py lines 440-442: _scheduler.running=True, shutdown(wait=False) called). 521→524 backend tests.
 IMPACT: All exception-path branches in the VIP scheduler that were previously unreachable from tests are now protected. A future refactor removing any of these safety handlers will fail the test suite before shipping.

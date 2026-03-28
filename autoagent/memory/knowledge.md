@@ -196,6 +196,12 @@ ACCOMPLISHED: Added 1 test for compute_copy_simulator API ConnectError path — 
 FAILED: Nothing.
 RULE: [2026-03-26] An empty-response test (mock returns []) does NOT cover the exception branch (except Exception: raw_list = []) — the two paths look identical in outcome but are reached by different code paths. Always add a separate ConnectError test for any function with a try/except wrapping an HTTP call.
 
+### Session #223 Reflexion — 2026-03-28
+ACCOMPLISHED: Code quality audit (PRIORITY 16.5) on test_scheduler.py, test_notifications.py, test_alerts.py — zero issues found (no dead assertions, no tier specificity mismatches, no dead code). Then added 3 PRIORITY 17 coverage-gap tests: test_poll_vip_bets_skips_old_bets (sets _last_check=2099-06-01 so FUTURE_TS=2099-01-01 is "old", verifies no BetEvent created), test_poll_vip_bets_outer_exception_handler_fires_on_commit_failure (wraps Session's commit() to raise, verifies db.rollback() called and _last_check unchanged), test_get_live_trades_api_exception_returns_empty_list (ConnectError on client.get → catches exception at lines 104-105 → result=[]). All 3 passed first run. 524→527.
+FAILED: During coverage report analysis, discovered that test_poll_vip_bets_free_tier_user_skips_notification (session 221) is a broken test — it creates ONLY a free user, so vip_user_ids=[] fires the early return at line 309 and the function never reaches line 379. The test passes trivially (mock_notify.assert_not_called() is vacuously true). Scheduler.py line 379 is still uncovered.
+RULE: [2026-03-28] When testing a skip/continue branch inside `_poll_vip_bets`, the early-return guards at lines 309 (`if not vip_user_ids`) and 319 (`if not addresses`) must be bypassed first. This requires: (1) at least one VIP-tier user in DB, AND (2) that VIP user following at least one address. Only THEN does execution reach the inner follow-loop body where the free-tier skip (line 379), the old-bet skip (line 337), and the outer exception handler (lines 417-418) live. `See also: Session #221 (same gap — test_poll_vip_bets_free_tier_user_skips_notification created only a free user)`
+- Test count: **527 passed, 2 skipped** (as of 2026-03-28, session 223)
+
 ### Session #185 Reflexion — 2026-03-26
 ACCOMPLISHED: Added 3 tests for conviction_score/label in get_recent_bets: single-bet score=1.0 label="", 19-small+1-large (score=19.6) label="EXTREME", API ConnectError → []. All 3 passed first run. 496→499 tests.
 FAILED: Nothing — direct pattern reuse from prior get_recent_bets tests.

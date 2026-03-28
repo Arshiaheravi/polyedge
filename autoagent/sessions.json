@@ -4982,5 +4982,27 @@
       "failures": 0,
       "notes": "server not running"
     }
+  },
+  {
+    "session": 223,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Code quality audit (PRIORITY 16.5) found no issues; added 3 PRIORITY 17 tests covering old-bet skip in VIP poll, outer exception handler rollback, and get_live_trades exception path \u2014 every scheduler and live-trades exception branch is now regression-protected.",
+    "files": [
+      "backend/tests/test_scheduler.py",
+      "backend/tests/test_polymarket_service.py"
+    ],
+    "tests": {
+      "before": 524,
+      "after": 527,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend files changed"
+    }
   }
 ]
