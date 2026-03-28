@@ -45,7 +45,7 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **503 passed, 2 skipped** (as of 2026-03-27, session 212 — current)
+- Test count: **507 passed, 2 skipped** (as of 2026-03-27, session 213 — current)
 - Playwright E2E: **96 passed, 2 skipped** (as of 2026-03-27, session 209) — 4 new: landing page navigation CTAs (View Leaderboard, Log In, Start Free, billing toggle). NOTE: 10 pre-existing tests fail intermittently when Polymarket /profiles API is down (external dependency); baseline 92 pass with API up.
 - Playwright E2E: **92 passed, 2 skipped** (as of 2026-03-27, session 207) — 8 new: logout clears token, free-tier push gate, admin MRR math
 - Playwright E2E: **84 passed, 2 skipped** (as of 2026-03-27, session 206) — 9 new: account tab tier badge, period filter, guide tab
@@ -79,6 +79,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #213 Reflexion — 2026-03-27 (TESTING)
+ACCOMPLISHED: Fixed bug in markets.py consensus route — no try/except around `get_consensus_signals` meant API failures returned 500 instead of 502 and the cache was left corrupted. Added 4 regression tests: `test_consensus_api_error_returns_502`, `test_consensus_each_signal_has_required_fields`, `test_detect_exits_inactive_vip_not_notified`, `test_detect_exits_exit_event_stored_regardless_of_follower_tier`. All 507 tests green first run.
+FAILED: Nothing — all 4 tests passed on first attempt.
+RULE: [2026-03-27] When auditing routes for missing error handling, grep `grep -n "await get_" backend/app/routes/*.py` and check each one is wrapped in try/except that raises HTTPException(502). The consensus route was the only one missing this — all others (bettors, follows) had it. Add this grep to any future audit session.
+OPTIMIZATION: [2026-03-27] Finding test gaps: the most reliable method at 500+ tests is to read the ACTUAL route code and check each branch manually (lines 1-100 of the route), rather than pattern-matching test function names. Reading markets.py took 2 minutes and immediately revealed the missing try/except that no grep for test function names would have found.
 
 ### Session #212 Reflexion — 2026-03-27 (TESTING)
 ACCOMPLISHED: Fixed SQLite "database is locked" intermittent failures that caused 6–20 random test failures per run. Root cause: conftest.py `engine` pointed to file-based `test_polyedge.db` — multiple DB connections writing concurrently caused SQLite file-level lock contention. Fix: switched to `sqlite:///:memory:` with `sqlalchemy.pool.StaticPool`. Result: 503/503 passed, 0 failures, deterministic.

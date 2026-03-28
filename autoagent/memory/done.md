@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-27
+- **[SESSION #213] Backend bugfix + tests — consensus 502 error handling + 4 regression tests** — fixed markets.py missing try/except (API failure returned 500 not 502, cache could be poisoned); added test_consensus_api_error_returns_502, test_consensus_each_signal_has_required_fields, test_detect_exits_inactive_vip_not_notified, test_detect_exits_exit_event_stored_regardless_of_follower_tier; 503→507 backend tests.
 - **[SESSION #212] Backend infra — fix SQLite database-is-locked test flakiness** — switched conftest.py to sqlite:///:memory: + StaticPool; test suite went from 452-490 passed/6-20 failed (non-deterministic) to 503 passed/0 failed (deterministic).
 - **[SESSION #211] Backend tests — sensitive field leak regression for register/login** — added `test_register_and_login_do_not_expose_hashed_password_or_stripe_customer_id` to test_auth.py; confirmed duplicate-follow and bettor-404 tasks were already covered by existing tests with differently-named functions; 502→503 backend tests.
 - **[SESSION #210] Playwright E2E — landing leaderboard preview + code quality audit** — 3 new tests in test_landing_leaderboard_preview.py: skeleton-is-replaced regression guard (uses wait_for_function 20s), has-at-least-one-row, data-quality auto-skips on Polymarket outage; code quality audit of sessions 205-209 found duplicate tab-helper functions logged to tech_debt.md; 96→99 Playwright tests.

@@ -49,6 +49,14 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 *(All 3 tasks completed or confirmed already covered in session 211)*
 
+## PRIORITY 11 — Coverage Gaps (generated session 213 via low-water-mark check)
+
+- [ ] **web-push-config `available=True` branch** — `GET /alerts/web-push-config` with VAPID key configured should return `available=True` and the key string. The existing test only covers `available=False`. Grep: `grep -n "available.*true\|vapid.*available.*true" backend/tests/test_alerts.py` should return nothing for this specific branch assertion.
+
+- [ ] **Stripe webhook unknown plan falls back to "basic"** — `_handle_checkout_completed` uses `PLAN_TIER_MAP.get(plan, "basic")`, so a webhook with `plan="enterprise"` sets `subscription_tier="basic"`. No test covers this fallback. Add to `test_stripe_service.py`. Grep: `grep -n "enterprise\|unknown.*tier\|fallback.*basic" backend/tests/test_stripe_service.py` returns nothing.
+
+- [ ] **`GET /bettors/{address}` unauthenticated returns `tier:"free"` locked simulator** — already tested by `test_bettor_detail_unauthenticated_copy_simulator_locked`. If grep confirms covered, remove this task. Grep: `grep -n "unauthenticated.*copy.*simulator\|copy_simulator.*unauthenticated" backend/tests/test_bettors.py`
+
 ## FEATURE MODE — Competitive Intelligence (do not implement in DEBUG mode)
 
 - [ ] **Min-bet-size filter per follow** — add a `min_bet_usd` field to `BettorFollow` model (default 0). Scheduler skips notifications when `bet_amount < follow.min_bet_usd`. Reduces noise from small test trades. Highest-demand competitive differentiator vs Polycule/PolycopytradBot per 2026 research. (Source: BRAIN session 203 competitor analysis — "every competing tool has min trigger amount filter")

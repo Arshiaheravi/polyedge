@@ -4699,7 +4699,7 @@
     "date": "2026-03-27",
     "time": "04:00",
     "type": "work",
-    "summary": "Added 3 Playwright E2E tests for landing leaderboard preview — verifies skeleton is replaced, tbody has at least one row, and data quality is valid when Polymarket API is available; also completed code quality audit of sessions 205-209 test files",
+    "summary": "Added 3 Playwright E2E tests for landing leaderboard preview \u00e2\u20ac\u201d verifies skeleton is replaced, tbody has at least one row, and data quality is valid when Polymarket API is available; also completed code quality audit of sessions 205-209 test files",
     "files": [
       "backend/tests/playwright/test_landing_leaderboard_preview.py"
     ],
@@ -4741,7 +4741,7 @@
     "date": "2026-03-27",
     "time": "05:30",
     "type": "work",
-    "summary": "Fixed SQLite database-is-locked intermittent failures by switching test DB from file-based to in-memory with StaticPool — test suite went from 452-490 passed with 6-20 random failures to a deterministic 503 passed, 0 failed",
+    "summary": "Fixed SQLite database-is-locked intermittent failures by switching test DB from file-based to in-memory with StaticPool \u00e2\u20ac\u201d test suite went from 452-490 passed with 6-20 random failures to a deterministic 503 passed, 0 failed",
     "files": [
       "backend/tests/conftest.py"
     ],
@@ -4755,6 +4755,29 @@
       "checks": 0,
       "failures": 0,
       "notes": "test infrastructure change only, no frontend files modified"
+    }
+  },
+  {
+    "session": 213,
+    "date": "2026-03-27",
+    "time": "14:00",
+    "type": "work",
+    "summary": "Fixed bug where /markets/consensus returned 500 instead of 502 on Polymarket API failure, and added 4 regression tests covering the fix plus two uncovered exit-detection branches in the scheduler",
+    "files": [
+      "backend/app/routes/markets.py",
+      "backend/tests/test_tier_gates.py",
+      "backend/tests/test_scheduler.py"
+    ],
+    "tests": {
+      "before": 503,
+      "after": 507,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
     }
   }
 ]

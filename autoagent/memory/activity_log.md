@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 213)
+DONE: Fixed bug in /markets/consensus — no error handling meant Polymarket API failures returned 500 instead of 502 and left the cache unset. Added try/except matching all other endpoints. Added 4 regression tests: consensus 502 response + cache-not-poisoned, consensus per-signal field contract (event_slug etc.), detect_exits inactive VIP not notified, detect_exits EXIT BetEvent stored for non-VIP followers.
+IMPACT: Any future Polymarket API outage now returns a clean 502 from the consensus endpoint instead of an unhandled 500. The 4 new tests prevent silent regressions on the exit detection and consensus response contract. 503 → 507 tests passing.
+FILES: backend/app/routes/markets.py, backend/tests/test_tier_gates.py, backend/tests/test_scheduler.py
+
 ## 2026-03-27 — TESTING (Session 212)
 DONE: Fixed root cause of intermittent SQLite "database is locked" failures in the full test suite — switched conftest.py from file-based `test_polyedge.db` to `sqlite:///:memory:` with `StaticPool`. Result: 503 passed / 0 failed (was 452–490 passed, 6–20 failed/errored per run non-deterministically).
 IMPACT: The test suite is now fully deterministic. CI/CD and future sessions can trust green = green, red = real bug. Previously, 6–20 tests would randomly fail on every run, masking real regressions and wasting diagnosis time.
