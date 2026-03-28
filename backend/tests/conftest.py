@@ -6,6 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from app.database import Base, get_db
 from app.main import app
@@ -20,9 +21,14 @@ def clear_stripe_webhook_secret():
     yield
     stripe_service.settings.stripe_webhook_secret = original
 
-TEST_DB_URL = "sqlite:///./test_polyedge.db"
-
-engine = create_engine(TEST_DB_URL, connect_args={"check_same_thread": False})
+# In-memory SQLite with StaticPool so all connections share the same DB instance.
+# This eliminates "database is locked" errors that occur with file-based SQLite
+# when multiple connections write concurrently during the test suite.
+engine = create_engine(
+    "sqlite:///:memory:",
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
