@@ -1468,3 +1468,54 @@ async def test_copy_simulator_invalid_timestamp_exception_pass():
     assert result["simulated_pnl_usd"] == pytest.approx(-100.0, rel=0.01), (
         f"Invalid timestamp treated as old bet → -$100 loss expected, got {result['simulated_pnl_usd']}"
     )
+
+
+# ── copy_signal exact boundary values ────────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_copy_signal_good_at_exact_10_pct_boundary():
+    """copy_value_pct == 10.0 must produce copy_signal='good', NOT 'fair'.
+
+    Kills mutation: `copy_value_pct <= 10` → `copy_value_pct < 10`.
+    avg_price=0.40, cur_price=0.44 → (0.44-0.40)/0.40*100 = 10.0 exactly.
+    The rule is <=10 is 'good'; a < mutation would make 10.0 fall into 'fair'.
+    """
+    from unittest.mock import patch
+    data = [{"redeemable": False, "title": "T", "outcome": "Yes",
+             "avgPrice": 0.40, "curPrice": 0.44, "eventSlug": "s"}]  # exactly +10.0%
+    mock_client = _make_mock_positions_client(data)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest")
+    assert result[0]["copy_value_pct"] == pytest.approx(10.0, abs=0.01), (
+        f"Expected copy_value_pct=10.0 for avg=0.40, cur=0.44, got {result[0]['copy_value_pct']}"
+    )
+    assert result[0]["copy_signal"] == "good", (
+        "Exactly 10.0% gain must be 'good' (rule: <= 10 is good). "
+        f"Got {result[0]['copy_signal']!r} — mutation `< 10` would cause this."
+    )
+
+
+@pytest.mark.asyncio
+async def test_copy_signal_fair_at_exact_30_pct_boundary():
+    """copy_value_pct == 30.0 must produce copy_signal='fair', NOT 'late'.
+
+    Kills mutation: `copy_value_pct <= 30` → `copy_value_pct < 30`.
+    avg_price=0.40, cur_price=0.52 → (0.52-0.40)/0.40*100 = 30.0 exactly.
+    The rule is <=30 is 'fair'; a < mutation would make 30.0 fall into 'late'.
+    """
+    from unittest.mock import patch
+    data = [{"redeemable": False, "title": "T", "outcome": "Yes",
+             "avgPrice": 0.40, "curPrice": 0.52, "eventSlug": "s"}]  # exactly +30.0%
+    mock_client = _make_mock_positions_client(data)
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        from app.services.polymarket import get_active_positions
+        result = await get_active_positions("0xtest")
+    assert result[0]["copy_value_pct"] == pytest.approx(30.0, abs=0.01), (
+        f"Expected copy_value_pct=30.0 for avg=0.40, cur=0.52, got {result[0]['copy_value_pct']}"
+    )
+    assert result[0]["copy_signal"] == "fair", (
+        "Exactly 30.0% gain must be 'fair' (rule: <= 30 is fair). "
+        f"Got {result[0]['copy_signal']!r} — mutation `< 30` would cause this."
+    )

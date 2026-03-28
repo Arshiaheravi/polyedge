@@ -448,3 +448,48 @@ def test_follows_live_copy_signal_is_valid_enum(client, auth_headers):
             f"copy_signal={signal!r} is not a valid enum value. "
             f"Expected one of {valid_signals}. Position: {pos}"
         )
+
+
+def test_follows_live_conviction_score_null_when_no_recent_bets(client, auth_headers):
+    """conviction_score is null (not 1.0) when there are no recent bets (avg_bet=0).
+
+    Kills mutation: `_conviction` inner function returning (1.0, '') instead of
+    (None, '') when avg <= 0. The follow.py inner function is separate from the
+    scheduler's _compute_conviction — it must return None for unknown conviction.
+
+    Setup: a position exists (initial_value_usd=100), but get_recent_bets returns []
+    so avg_bet=0. _conviction(100.0, 0.0) must produce conviction_score=null.
+    """
+    from unittest.mock import AsyncMock, patch
+
+    position = {
+        "market_title": "BTC $200k?",
+        "outcome": "Yes",
+        "size": 50.0,
+        "current_value_usd": 1000.0,
+        "initial_value_usd": 100.0,
+        "avg_price": 0.40,
+        "cur_price": 0.45,
+        "cash_pnl": 0.0,
+        "percent_pnl": 0.0,
+        "end_date": "2026-12-31",
+        "poly_url": "https://polymarket.com/event/btc",
+        "icon": "",
+    }
+
+    client.post("/follows", json={"bettor_address": "0xconvnull", "bettor_name": "whale"},
+                headers=auth_headers)
+
+    with patch("app.routes.follows.get_active_positions", new=AsyncMock(return_value=[position])), \
+         patch("app.routes.follows.get_recent_bets", new=AsyncMock(return_value=[])):
+        resp = client.get("/follows/live", headers=auth_headers)
+
+    assert resp.status_code == 200
+    pos = resp.json()["bettors"][0]["active_positions"][0]
+    assert pos["conviction_score"] is None, (
+        f"conviction_score must be null when no recent bets (avg_bet=0), got {pos['conviction_score']!r}. "
+        "Mutation: _conviction returning (1.0, '') instead of (None, '') for zero avg."
+    )
+    assert pos["conviction_label"] == "", (
+        f"conviction_label must be empty string when no recent bets, got {pos['conviction_label']!r}"
+    )
