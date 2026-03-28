@@ -1,9 +1,10 @@
 """
-Playwright E2E: Account tab shows correct tier badge and upgrade button for free user.
+Playwright E2E: Account tab shows correct tier badge and upgrade button per tier.
 
-Verifies that a free-tier user navigating to the Account tab sees:
-  - #acct-plan-badge with class 'tier-free' and text "Free"
-  - #acct-upgrade-btn visible and not hidden (renderAccount() removes 'hidden' for free tier)
+Verifies:
+  Free:  #acct-plan-badge class 'tier-free', text "Free", upgrade button visible
+  Basic: #acct-plan-badge class 'tier-basic', text "Basic", upgrade btn shows "Upgrade to VIP →"
+  VIP:   #acct-plan-badge class 'tier-vip', text "VIP", upgrade button hidden
 
 Requires servers running:
   backend:  py -m uvicorn app.main:app --port 8003
@@ -84,3 +85,96 @@ class TestAccountTabTierBadge:
             }"""
         )
         assert visible, "#acct-upgrade-btn has zero size — it may be invisible despite lacking 'hidden' class"
+
+
+class TestAccountTabBasicTierBadge:
+    """Account tab must show Basic tier badge for basic-tier users."""
+
+    @pytest.mark.skipif(not BASE_URL, reason="frontend server not configured")
+    def test_account_tab_shows_basic_tier_badge(self, page: Page):
+        """#acct-plan-badge must have class 'tier-basic' for a basic-tier user."""
+        login(page, "basic")
+        _open_account_tab(page)
+
+        badge_classes = page.evaluate(
+            "() => document.getElementById('acct-plan-badge').className"
+        )
+        assert "tier-basic" in badge_classes, (
+            f"Expected #acct-plan-badge to have class 'tier-basic', got: {badge_classes}"
+        )
+
+    @pytest.mark.skipif(not BASE_URL, reason="frontend server not configured")
+    def test_account_tab_badge_text_is_basic(self, page: Page):
+        """#acct-plan-badge text must be 'Basic' for a basic-tier user."""
+        login(page, "basic")
+        _open_account_tab(page)
+
+        badge_text = page.evaluate(
+            "() => (document.getElementById('acct-plan-badge')?.textContent || '').trim()"
+        )
+        assert badge_text == "Basic", (
+            f"Expected badge text 'Basic', got: '{badge_text}'"
+        )
+
+
+class TestAccountTabVipTierBadge:
+    """Account tab must show VIP tier badge for VIP users."""
+
+    @pytest.mark.skipif(not BASE_URL, reason="frontend server not configured")
+    def test_account_tab_shows_vip_tier_badge(self, page: Page):
+        """#acct-plan-badge must have class 'tier-vip' for a VIP user."""
+        login(page, "vip")
+        _open_account_tab(page)
+
+        badge_classes = page.evaluate(
+            "() => document.getElementById('acct-plan-badge').className"
+        )
+        assert "tier-vip" in badge_classes, (
+            f"Expected #acct-plan-badge to have class 'tier-vip', got: {badge_classes}"
+        )
+
+    @pytest.mark.skipif(not BASE_URL, reason="frontend server not configured")
+    def test_account_tab_badge_text_is_vip(self, page: Page):
+        """#acct-plan-badge text must be 'VIP' for a VIP user."""
+        login(page, "vip")
+        _open_account_tab(page)
+
+        badge_text = page.evaluate(
+            "() => (document.getElementById('acct-plan-badge')?.textContent || '').trim()"
+        )
+        assert badge_text == "VIP", (
+            f"Expected badge text 'VIP', got: '{badge_text}'"
+        )
+
+
+class TestAccountTabUpgradeButtonPaidTiers:
+    """Upgrade button behaviour differs for Basic (shows VIP upgrade) and VIP (hidden)."""
+
+    @pytest.mark.skipif(not BASE_URL, reason="frontend server not configured")
+    def test_account_tab_upgrade_button_hidden_for_vip_user(self, page: Page):
+        """#acct-upgrade-btn must have 'hidden' class for VIP users — no upgrade path."""
+        login(page, "vip")
+        _open_account_tab(page)
+
+        is_hidden = page.evaluate(
+            "() => document.getElementById('acct-upgrade-btn').classList.contains('hidden')"
+        )
+        assert is_hidden, (
+            "#acct-upgrade-btn is NOT hidden for VIP user — renderAccount() should add 'hidden' for VIP tier"
+        )
+
+    @pytest.mark.skipif(not BASE_URL, reason="frontend server not configured")
+    def test_account_tab_upgrade_button_shows_vip_upsell_for_basic_user(self, page: Page):
+        """For basic tier, upgrade button must say 'Upgrade to VIP →' (not the generic free-tier text)."""
+        login(page, "basic")
+        _open_account_tab(page)
+
+        btn_text = page.evaluate(
+            "() => (document.getElementById('acct-upgrade-btn')?.textContent || '').trim()"
+        )
+        assert "VIP" in btn_text, (
+            f"Expected upgrade button to mention 'VIP' for basic user, got: '{btn_text}'"
+        )
+        assert btn_text != "Upgrade Plan →", (
+            "Basic user should see 'Upgrade to VIP →', not the generic 'Upgrade Plan →' shown to free users"
+        )
