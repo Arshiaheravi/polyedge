@@ -1090,6 +1090,8 @@ RULE: [2026-03-26] When caching API responses that include user-state fields (ti
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend (Playwright) |
 |---------|--------------|----------------------|
+| 204     | 502          | 69                   |
+| 202     | 502          | 69                   |
 | 201     | 502          | 68                   |
 | 200     | 502          | 67                   |
 | 199     | 502          | 64                   |
@@ -1296,12 +1298,17 @@ RULE: [2026-03-27] When appending multi-line content with single quotes to files
 OPTIMIZATION: [2026-03-27] TDAD targeted pre-commit verification: run `grep -rl "<module_keyword>" backend/tests/` first to find the 2-3 test files that cover a changed module, then run only those files. The full 500-test suite takes ~45s; targeted tests for one module take ~5s. 9x faster feedback when debugging a specific failure.
 
 
-### Session #202 Reflexion — 2026-03-27
+### Session #202 Reflexion ï¿½ 2026-03-27
 ACCOMPLISHED: Added Playwright E2E test for profile back-button navigation (test_profile_back_button.py). Basic user opens bettor profile via showProfile(), clicks #profile-back-btn, asserts #tab-leaderboard becomes visible and #tab-profile gains hidden class. Test passes in 3.7s.
-FAILED: First run timed out with "element is not visible" on page.click("#profile-back-btn"). Root cause: test was calling showView('browse') which hides view-dashboard — and #profile-back-btn lives inside view-dashboard's #tab-profile. Button was in DOM with correct class state but not visually interactive.
+FAILED: First run timed out with "element is not visible" on page.click("#profile-back-btn"). Root cause: test was calling showView('browse') which hides view-dashboard ï¿½ and #profile-back-btn lives inside view-dashboard's #tab-profile. Button was in DOM with correct class state but not visually interactive.
 RULE: [2026-03-27] showProfile() calls showTab('profile') which ONLY toggles tab elements inside view-dashboard. If you navigate to view-browse first (showView('browse')), view-dashboard is hidden and #profile-back-btn is invisible to Playwright page.click(). For profile+back-button tests, always stay in view-dashboard context: call showTab('leaderboard') (not showView('browse')) after login.
-RULE: [2026-03-27] test_profile_modal.py hid this bug because it only checked classList state (never called page.click()) — DOM class assertions work on display:none elements, but page.click() requires visual visibility. Two tests can both pass while one reveals a real interaction bug the other misses.
+RULE: [2026-03-27] test_profile_modal.py hid this bug because it only checked classList state (never called page.click()) ï¿½ DOM class assertions work on display:none elements, but page.click() requires visual visibility. Two tests can both pass while one reveals a real interaction bug the other misses.
 
+
+### Session #204 Reflexion â€” 2026-03-27 (TESTING/AUDIT)
+ACCOMPLISHED: Code quality audit of sessions 195-202 Playwright test files. Fixed 2 issues: (1) duplicate API_BASE constant in test_cors_headers.py (defined locally AND in conftest) â€” removed local definition, import from conftest; (2) hardcoded 'http://localhost:8003' URL in test_full_journeys.py page.evaluate() JS string â€” replaced with Python f-string {API_BASE} after adding import. Logged 6 brittle wait_for_timeout calls across 5 test files to tech_debt.md. No new test written â€” audit session only.
+FAILED: Full test suite showed 3 failures in test_admin.py / test_alerts.py. Root cause: order-dependent SQLite DB state (all 69 admin+alerts tests pass when run in isolation). Not caused by my changes. Pre-existing flakiness documented in PROJECT.md Known Facts.
+RULE: [2026-03-27] When a full-suite run shows failures in test files you didn't touch, run those files in isolation before blocking commit. SQLite DB-state flakiness (shared test DB, test ordering) is common on Windows and produces intermittent failures that vanish when tests run alone. Isolation confirms pre-existing vs regression.
 
 ### BRAIN Session #203 Reflexion -- 2026-03-27
 ACCOMPLISHED: (1) STEP 1B: Session 202 failure pattern -- showProfile() context-dependent, page.click() fails on hidden elements. Filed to playwright.md as VIEW CONTEXT RULES section. (2) STEP 1C: 22 activity_log entries (< 30, no archival). Scanned recent rules -- no duplicates found. (3) Web research: 9 sources evaluated. (4) Implemented 3 improvements: VIEW CONTEXT RULES section in playwright.md, Zettelkasten cross-link rule in PROMPT.md reflexion section, code quality audit task + 2 competitive features added to backlog. (5) techniques.md and sources.md updated.

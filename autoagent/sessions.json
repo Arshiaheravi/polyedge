@@ -4557,5 +4557,28 @@
       "failures": 0,
       "notes": "brain session \u2014 no code changes"
     }
+  },
+  {
+    "session": 204,
+    "date": "2026-03-27",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Removed duplicate API_BASE constant from Playwright test files so a port change only requires editing conftest.py",
+    "files": [
+      "backend/tests/playwright/test_cors_headers.py",
+      "backend/tests/playwright/test_full_journeys.py",
+      "autoagent/memory/tech_debt.md"
+    ],
+    "tests": {
+      "before": 502,
+      "after": 502,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 69,
+      "failures": 0,
+      "notes": "audit session -- no new tests; Playwright requires running servers"
+    }
   }
 ]

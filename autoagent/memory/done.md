@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-27
+- **[SESSION #204] Code quality audit — deduplicate API_BASE in Playwright test files** — removed duplicate API_BASE constant from test_cors_headers.py and replaced hardcoded localhost:8003 URL in test_full_journeys.py with the conftest constant; logged 6+ brittle wait_for_timeout usages to tech_debt.md; backend tests 498 passed (3 pre-existing DB-state flakes)
 - **[SESSION #202] Playwright E2E — profile back-button returns to leaderboard** — 1 new test proves clicking #profile-back-btn after opening a bettor profile returns to #tab-leaderboard; 68→69 Playwright tests
 - **[SESSION #201] Playwright E2E — bettor profile modal opens with real data** — 1 new test proves basic-tier user can open a bettor profile via showProfile(), sees the address (0x prefix), and sees an unlocked (non-blurred) copy simulator card; 67→68 Playwright tests
 - **[SESSION #200] Playwright E2E — basic/VIP follow→dashboard + unfollow cycle** — 3 new tests prove "follow bettor → see on dashboard" for basic and VIP tiers, and that unfollowing removes the card from #follows-container; North Star table row fully covered for all 3 tiers; 64→67 Playwright tests

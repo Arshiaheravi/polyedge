@@ -25,12 +25,6 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
-## PRIORITY 1 — Code Quality Audit
-
-- [ ] **Code quality audit — sessions 195-202 Playwright files** — triggered by 155 work sessions (multiple of 5). Scan test files from sessions 195-202 for: cross-file coupling (duplicate helpers not in conftest), dead assertions (`or True`), blocking `time.sleep()` calls, and hardcoded URLs that should use the `API_BASE` constant from conftest. Run `grep -rn "or True\|time.sleep\|localhost:8003" backend/tests/playwright/` to start.
-
----
-
 ## PRIORITY 7 — High-Value Gaps
 
 - [ ] **Playwright: alerts tab renders push and telegram toggles** — login as basic, call showTab('alerts'), wait for #tab-alerts to not be hidden, assert #toggle-push element exists AND #toggle-telegram element exists. Proves the Alerts settings tab renders both notification toggles for authenticated users. Grep: `grep -r "def test.*alert.*tab\|def test.*notification.*tab\|def test.*alert.*page\|def test.*settings.*tab" backend/tests/playwright/` returns nothing.
