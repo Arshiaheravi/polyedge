@@ -45,7 +45,9 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **502 passed, 2 skipped** (as of 2026-03-27, session 200 — current)
+- Test count: **502 passed, 2 skipped** (as of 2026-03-27, session 202 — current)
+- Playwright E2E: **69 passed, 2 skipped** (as of 2026-03-27, session 202) — 1 new: profile back-button returns to leaderboard
+- Playwright E2E: **68 passed, 2 skipped** (as of 2026-03-27, session 201) — 1 new: bettor profile modal opens with real data
 - Playwright E2E: **67 passed, 2 skipped** (as of 2026-03-27, session 200) — 3 new: basic/VIP follow→dashboard + unfollow cycle
 - Playwright E2E: **64 passed, 2 skipped** (as of 2026-03-27, session 197) — 1 new: basic-tier 5-follow-limit upgrade modal
 - Playwright E2E: **63 passed, 2 skipped** (as of 2026-03-27, session 196) — 1 new: leaderboard "No data yet" empty state
@@ -1292,3 +1294,10 @@ ACCOMPLISHED: (1) STEP 1D: archived sessions 161-180 (32->12 entries in activity
 FAILED: Nothing — heredoc bash syntax failed for archive append (single quotes in content, same as session 183). Recovered immediately by writing temp Python file.
 RULE: [2026-03-27] When appending multi-line content with single quotes to files via bash, always use a temp Python file (write content with triple-quoted string, append with open(..., "a")). The bash heredoc failure with single quotes is a KNOWN recurring pattern — skip bash directly.
 OPTIMIZATION: [2026-03-27] TDAD targeted pre-commit verification: run `grep -rl "<module_keyword>" backend/tests/` first to find the 2-3 test files that cover a changed module, then run only those files. The full 500-test suite takes ~45s; targeted tests for one module take ~5s. 9x faster feedback when debugging a specific failure.
+
+
+### Session #202 Reflexion � 2026-03-27
+ACCOMPLISHED: Added Playwright E2E test for profile back-button navigation (test_profile_back_button.py). Basic user opens bettor profile via showProfile(), clicks #profile-back-btn, asserts #tab-leaderboard becomes visible and #tab-profile gains hidden class. Test passes in 3.7s.
+FAILED: First run timed out with "element is not visible" on page.click("#profile-back-btn"). Root cause: test was calling showView('browse') which hides view-dashboard � and #profile-back-btn lives inside view-dashboard's #tab-profile. Button was in DOM with correct class state but not visually interactive.
+RULE: [2026-03-27] showProfile() calls showTab('profile') which ONLY toggles tab elements inside view-dashboard. If you navigate to view-browse first (showView('browse')), view-dashboard is hidden and #profile-back-btn is invisible to Playwright page.click(). For profile+back-button tests, always stay in view-dashboard context: call showTab('leaderboard') (not showView('browse')) after login.
+RULE: [2026-03-27] test_profile_modal.py hid this bug because it only checked classList state (never called page.click()) � DOM class assertions work on display:none elements, but page.click() requires visual visibility. Two tests can both pass while one reveals a real interaction bug the other misses.

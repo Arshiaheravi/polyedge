@@ -4509,5 +4509,26 @@
       "failures": 0,
       "notes": "New profile modal test passed in 6.8s"
     }
+  },
+  {
+    "session": 202,
+    "date": "2026-03-27",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added Playwright E2E test proving that clicking the profile back-button returns to the leaderboard tab — basic user opens a profile then clicks back, asserting leaderboard becomes visible and profile becomes hidden",
+    "files": [
+      "backend/tests/playwright/test_profile_back_button.py"
+    ],
+    "tests": {
+      "before": 502,
+      "after": 502,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 1,
+      "failures": 0,
+      "notes": "New back-button test passed in 3.7s; key insight: must use showTab('leaderboard') not showView('browse') — profile tab lives in view-dashboard"
+    }
   }
 ]

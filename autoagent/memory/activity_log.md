@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 202)
+DONE: Added Playwright E2E test proving the profile back-button returns to the leaderboard tab — basic user opens a bettor profile via showProfile(), then clicks #profile-back-btn, and the test asserts #tab-leaderboard loses its hidden class and #tab-profile gains it.
+IMPACT: Proves the full profile→leaderboard back navigation wires correctly. Also uncovered that showProfile() is view-context-dependent — calling it from showView('browse') makes #profile-back-btn invisible to Playwright since the button lives inside view-dashboard.
+FILES: backend/tests/playwright/test_profile_back_button.py
+
 ## 2026-03-27 — TESTING (Session 201)
 DONE: Added Playwright E2E test proving basic-tier user can open a bettor profile via showProfile(), the #tab-profile becomes visible, #profile-addr-display contains the 0x-prefixed address, and the copy simulator card (if shown) is not blurred/locked.
 IMPACT: Proves the full "click bettor → view profile" flow works end-to-end for authenticated basic users. Any regression breaking showProfile(), the bettors/{address} API, or the tier-gated simulator rendering will be caught automatically.

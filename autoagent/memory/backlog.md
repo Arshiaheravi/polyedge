@@ -27,8 +27,6 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 7 — High-Value Gaps
 
-- [ ] **Playwright: profile back-button returns to leaderboard** — login as basic, navigate to leaderboard, call showProfile(addr), assert #tab-profile is visible, then click #profile-back-btn, assert #tab-leaderboard becomes visible (hidden class removed). Proves the back navigation from profile to leaderboard wires correctly. Grep: `grep -r "def test.*back.*profile\|def test.*profile.*back" backend/tests/playwright/` returns nothing.
-
 - [ ] **Playwright: alerts tab renders push and telegram toggles** — login as basic, call showTab('alerts'), wait for #tab-alerts to not be hidden, assert #toggle-push element exists AND #toggle-telegram element exists. Proves the Alerts settings tab renders both notification toggles for authenticated users. Grep: `grep -r "def test.*alert.*tab\|def test.*notification.*tab\|def test.*alert.*page\|def test.*settings.*tab" backend/tests/playwright/` returns nothing.
 
 - [ ] **Playwright: leaderboard sort toggle changes active button** — login as basic, navigate to leaderboard, assert #sort-profit has class 'active', click #sort-profit button (already exists — loadLeaderboard('profit')), verify cards loaded. Then call loadLeaderboard('accuracy') via page.evaluate, wait for cards to reload, assert #sort-profit no longer active (or that at least 1 .lb-card is present after sort switch). Proves sort switching does not crash the UI. Grep: `grep -r "def test.*sort.*leaderboard\|def test.*leaderboard.*sort\|def test.*sort.*change" backend/tests/playwright/` returns nothing.
