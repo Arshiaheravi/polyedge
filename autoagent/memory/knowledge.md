@@ -80,6 +80,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 
 ## Session Reflexions
 
+### Session #210 Reflexion — 2026-03-27 (TESTING)
+ACCOMPLISHED: Code quality audit of sessions 205–209 Playwright test files — found duplicate tab-helper functions (_open_alerts_tab ×3, _open_leaderboard_tab ×2) logged to tech_debt.md; no blocking issues. Added 3 Playwright E2E tests (test_landing_leaderboard_preview.py): skeleton-replaced-after-load, has-at-least-one-row, data-quality-when-api-available (auto-skips on Polymarket outage). All 3 passed first run. 96→99 Playwright tests.
+FAILED: Nothing — designed tests to be resilient from the start by using wait_for_function for skeleton replacement (20s timeout) instead of networkidle (10s).
+RULE: [2026-03-27] For landing page tests depending on external APIs: use wait_for_function to wait for skeleton replacement (20s+ timeout) rather than networkidle (10s) — Polymarket API calls can take up to 15s to timeout, which exceeds networkidle's window. The skeleton is always replaced (even on error via catch block), making it a reliable wait target.
+RULE: [2026-03-27] For tests that depend on external API availability (Polymarket data), use pytest.skip() with a clear reason rather than an assertion when the API is down. Tests that assert on live external data will fail during outages and create noise — skip gracefully and document the condition.
+
 ### Session #209 Reflexion — 2026-03-27 (TESTING)
 ACCOMPLISHED: Cleaned all 4 stale PRIORITY 9 backlog tasks (Bug #9 lru_cache, Bug #10 _last_positions purge, Bug #12 _consensusLoaded, bettor address format) after GREP-BEFORE-PICKING confirmed all were already implemented. Added 4 Playwright E2E tests (test_landing_navigation.py): "View Live Leaderboard" button navigates to browse view, "Log In" button shows login form, "Start Free" button shows register form with animation wait, annual billing toggle hides monthly prices. 92→96 Playwright tests.
 FAILED: First run: #leaderboard-cards ID wrong — actual is #browse-leaderboard-body. Second run: register form test asserted synchronously but switchAuthTab uses 150ms CSS animation; needed wait_for_function before asserting form visible.
@@ -1106,6 +1112,10 @@ RULE: [2026-03-26] When caching API responses that include user-state fields (ti
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend (Playwright) |
 |---------|--------------|----------------------|
+| 210     | 502          | 99                   |
+| 209     | 502          | 96                   |
+| 207     | 502          | 92                   |
+| 206     | 502          | 84                   |
 | 205     | 502          | 75                   |
 | 204     | 502          | 69                   |
 | 202     | 502          | 69                   |

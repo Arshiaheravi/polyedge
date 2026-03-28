@@ -4693,5 +4693,26 @@
       "failures": 0,
       "notes": "4 new landing nav tests pass; 10 pre-existing failures due to Polymarket /profiles API returning 404 (external outage)"
     }
+  },
+  {
+    "session": 210,
+    "date": "2026-03-27",
+    "time": "04:00",
+    "type": "work",
+    "summary": "Added 3 Playwright E2E tests for landing leaderboard preview — verifies skeleton is replaced, tbody has at least one row, and data quality is valid when Polymarket API is available; also completed code quality audit of sessions 205-209 test files",
+    "files": [
+      "backend/tests/playwright/test_landing_leaderboard_preview.py"
+    ],
+    "tests": {
+      "before": 502,
+      "after": 502,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 3,
+      "failures": 0,
+      "notes": "3 new leaderboard preview tests pass; used wait_for_function (20s) instead of networkidle to handle Polymarket API timeout"
+    }
   }
 ]

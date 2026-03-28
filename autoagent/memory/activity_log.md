@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 210)
+DONE: Code quality audit of sessions 205-209 Playwright test files (no blocking issues found; logged duplicate tab-helpers to tech_debt.md). Added 3 Playwright E2E tests for the landing page leaderboard preview: skeleton-is-replaced (regression guard), has-at-least-one-row, and data-quality-when-api-available (auto-skips on Polymarket outage). All 3 passed first run. 96→99 Playwright tests total.
+IMPACT: Landing page preview table regressions are now automatically caught — any silent failure where the skeleton never loads will fail this test. Test design is resilient to Polymarket API outages by using wait_for_function (20s) and pytest.skip() for data-quality assertions when API is unavailable.
+FILES: backend/tests/playwright/test_landing_leaderboard_preview.py
+
 ## 2026-03-27 — TESTING (Session 209)
 DONE: Added 4 Playwright E2E tests for landing page navigation CTAs (test_landing_navigation.py) — each major CTA button now has an automated check: "View Live Leaderboard" navigates to browse view, "Log In" shows login form, "Start Free" shows register form (with animation timing fix), annual billing toggle changes price display. Also cleaned all 4 stale PRIORITY 9 backlog tasks after GREP-BEFORE-PICKING confirmed they were already implemented.
 IMPACT: PROJECT.md checklist §11 "All links open correctly (no 404s)" is now covered. Landing page navigation regressions will be caught automatically. 92→96 Playwright tests. Also discovered that Polymarket /profiles API is currently returning 404 (external outage) — pre-existing tests that depend on live leaderboard data are failing intermittently.
