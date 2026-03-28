@@ -152,3 +152,8 @@ FILES: backend/tests/playwright/test_profile_modal.py
 DONE: Added 3 PRIORITY 19 coverage-gap tests in polymarket.py — test_get_bettor_profile_leaderboard_dict_response_returns_profile_without_lb_data (line 279: leaderboard returns dict → isinstance break, profile built from activity), test_compute_copy_simulator_dict_response_returns_zero_pnl (line 332: activity dict → raw_list=[] → zero-pnl result), test_fetch_positions_empty_condition_id_position_skipped (line 477: conditionId="" → position skipped → no signals). 531→534 backend tests.
 IMPACT: polymarket.py is now 99% covered (only 4 lines remain — ISO timestamp parsing in compute_copy_simulator lines 374-377). Any future refactor that removes these defensive isinstance checks will fail the test suite before shipping.
 FILES: backend/tests/test_polymarket_service.py
+
+## 2026-03-28 — TESTING (Session 230)
+DONE: PRIORITY 21.5 code quality audit — scanned sessions 225-228 changed test files (test_scheduler.py, test_polymarket_service.py, test_database.py) against all 8 team-member checklists. Fixed one Leo smell: removed redundant `scheduler_module._last_check = datetime(2000,1,1,utc)` assignment inside test_poll_vip_bets_free_tier_follower_skipped — the reset_last_check autouse fixture already sets this before every test. All Marcus/Nina/cross-coupling checks clean.
+IMPACT: Tests are now internally consistent — autouse fixtures are trusted rather than re-overridden, which prevents future readers from doubting whether the fixture actually runs.
+FILES: backend/tests/test_scheduler.py

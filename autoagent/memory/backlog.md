@@ -115,7 +115,7 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 21.5 — Code Quality Audit (generated session 228 — work session count hit 175)
 
-- [ ] **Code quality audit** — scan last 5 work sessions' changed files (test_polymarket_service.py, test_scheduler.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits.
+*(Completed session 230 — one Leo smell fixed: removed redundant autouse-duplicate _last_check assignment; all other checks clean)*
 
 ---
 
