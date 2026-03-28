@@ -20,7 +20,7 @@ Requires servers running:
 import time
 import pytest
 from playwright.sync_api import Page
-from .conftest import login, BASE_URL, ACCOUNTS
+from .conftest import login, BASE_URL, API_BASE, ACCOUNTS
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -379,7 +379,7 @@ class TestVIPUserFullJourney:
             const token = localStorage.getItem('pe_token');
             if (!token) return -1;
             try {{
-                const resp = await fetch('http://localhost:8003/follows', {{
+                const resp = await fetch('{API_BASE}/follows', {{
                     method: 'POST',
                     headers: {{
                         'Content-Type': 'application/json',

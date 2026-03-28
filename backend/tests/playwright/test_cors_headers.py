@@ -19,9 +19,7 @@ Requires servers running:
 """
 import pytest
 from playwright.sync_api import Page, Response
-from .conftest import BASE_URL
-
-API_BASE = "http://localhost:8003"
+from .conftest import BASE_URL, API_BASE
 
 
 class TestCORSHeaders:
