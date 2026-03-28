@@ -4602,5 +4602,28 @@
       "failures": 0,
       "notes": "6 new Playwright tests all pass"
     }
+  },
+  {
+    "session": 206,
+    "date": "2026-03-27",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 9 Playwright E2E tests across 3 new files: account tab shows free-tier badge and visible upgrade button for free users; leaderboard period filter defaults to month and correctly updates active state on week/all switch without blanking cards; guide tab becomes visible with heading and content blocks for authenticated users",
+    "files": [
+      "backend/tests/playwright/test_account_tab_tier_badge.py",
+      "backend/tests/playwright/test_period_filter.py",
+      "backend/tests/playwright/test_guide_tab.py"
+    ],
+    "tests": {
+      "before": 502,
+      "after": 502,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 9,
+      "failures": 0,
+      "notes": "9 new Playwright tests all pass (75→84 Playwright tests)"
+    }
   }
 ]

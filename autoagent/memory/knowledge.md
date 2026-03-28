@@ -1306,6 +1306,11 @@ RULE: [2026-03-27] showProfile() calls showTab('profile') which ONLY toggles tab
 RULE: [2026-03-27] test_profile_modal.py hid this bug because it only checked classList state (never called page.click()) � DOM class assertions work on display:none elements, but page.click() requires visual visibility. Two tests can both pass while one reveals a real interaction bug the other misses.
 
 
+### Session #206 Reflexion — 2026-03-27 (TESTING)
+ACCOMPLISHED: Added 9 Playwright E2E tests across 3 new files. (1) test_account_tab_tier_badge.py — 3 tests: free user's #acct-plan-badge has tier-free class, text is "Free", and #acct-upgrade-btn is visible (not hidden, non-zero size) after renderAccount(). (2) test_period_filter.py — 3 tests: #period-month active on load, after loadLeaderboard(currentSort,'week') the #period-week gains active and #period-month loses it, after switching to 'all' cards still render. (3) test_guide_tab.py — 3 tests: #tab-guide loses hidden class, h1 heading present, visible content blocks present. All 9 passed first run. 75→84 Playwright tests.
+FAILED: Nothing — clean run on first attempt.
+RULE: [2026-03-27] For testing JS-rendered DOM state (renderAccount(), loadLeaderboard()), call the JS function via page.evaluate() then wait_for_load_state("networkidle") before asserting — the function may trigger async API fetches that update the DOM after the function returns synchronously.
+
 ### Session #205 Reflexion — 2026-03-27 (TESTING)
 ACCOMPLISHED: Added 6 Playwright E2E tests across 2 new files. (1) test_alerts_tab_toggles.py — 3 tests verifying basic-tier user can navigate to Alerts tab and see #toggle-push and #toggle-telegram with non-zero rendered size. (2) test_leaderboard_sort_toggle.py — 3 tests: #sort-profit active on load, switching to volume sort moves active class to #sort-volume, cards still present after sort switch. All 6 passed first run. 69→75 Playwright tests.
 FAILED: Nothing — clean run on first attempt.

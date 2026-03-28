@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 206)
+DONE: Added 9 Playwright E2E tests across 3 new files — account tab shows "Free" badge (tier-free class) and visible upgrade button for free users; leaderboard period filter defaults to #period-month active and correctly moves active state to #period-week/#period-all after switch (cards still render); guide tab becomes visible after showTab('guide') with an h1 heading and visible content blocks.
+IMPACT: Proves the account settings tab correctly renders tier status, the period filter toggle does not crash or lose state, and the guide tab is not blank for authenticated users. 75→84 Playwright tests total.
+FILES: backend/tests/playwright/test_account_tab_tier_badge.py, backend/tests/playwright/test_period_filter.py, backend/tests/playwright/test_guide_tab.py
+
 ## 2026-03-27 — TESTING (Session 205)
 DONE: Added 6 Playwright E2E tests — 3 for alerts tab toggle presence (basic-tier user opens Alerts tab, asserts #toggle-push and #toggle-telegram exist and have non-zero size) and 3 for leaderboard sort toggle (initial #sort-profit is active, switching to volume moves active class to #sort-volume, cards still render after sort switch).
 IMPACT: Proves the Alerts settings tab correctly renders both notification toggles for authenticated users, and that the leaderboard sort mechanism does not crash or blank the UI on sort change. 69→75 Playwright tests.
