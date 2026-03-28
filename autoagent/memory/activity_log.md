@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — TESTING (Session 222)
+DONE: Added 3 backend tests closing PRIORITY 16 coverage gaps — test_detect_exits_notification_exception_caught_event_still_notified (scheduler.py lines 168-169: send_web_push raises inside _detect_exits except handler, exit_event.notified still True), test_poll_vip_bets_dispatch_exception_does_not_crash_vip_poll_loop (scheduler.py lines 408-409: dispatch_bet_notification raises, event.notified still True), test_stop_scheduler_when_running_calls_shutdown (scheduler.py lines 440-442: _scheduler.running=True, shutdown(wait=False) called). 521→524 backend tests.
+IMPACT: All exception-path branches in the VIP scheduler that were previously unreachable from tests are now protected. A future refactor removing any of these safety handlers will fail the test suite before shipping.
+FILES: backend/tests/test_scheduler.py
+
 ## 2026-03-28 — TESTING (Session 221)
 DONE: Added 3 backend tests closing PRIORITY 15 coverage gaps — test_send_web_push_generic_exception_returns_false (notifications.py lines 106-108: the generic except-Exception branch when VAPID keys + valid endpoint present but webpush raises), test_poll_vip_bets_get_recent_bets_raises_skips_address (scheduler.py lines 328-329: graceful skip of an address when get_recent_bets throws), test_poll_vip_bets_free_tier_user_skips_notification (scheduler.py line 379: free-tier follower's dispatch skipped entirely). 518→521 backend tests.
 IMPACT: Every error branch in the VIP poll notification path and web push exception path is now regression-protected. Any future refactor that removes the free-tier guard or exception handlers will fail the test suite before shipping.

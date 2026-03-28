@@ -1158,6 +1158,8 @@ RULE: [2026-03-26] When caching API responses that include user-state fields (ti
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend (Playwright) |
 |---------|--------------|----------------------|
+| 222     | 524          | 99                   |
+| 221     | 521          | 99                   |
 | 220     | 518          | 99                   |
 | 218     | 514          | 99                   |
 | 217     | 512          | 99                   |
@@ -1416,6 +1418,11 @@ ACCOMPLISHED: Added 4 backend tests for PRIORITY 14 coverage gaps — 2 for form
 FAILED: Nothing.
 RULE: [2026-03-28] When a function has multiple early-return guards in sequence (e.g. `if not vapid_keys: return False` at line 82, `if not endpoint: return False` at line 92), each guard needs its own test that satisfies all PRIOR guards to reach that branch. A test for the second guard must NOT trigger the first guard — pass valid values for the first guard's condition to ensure the code reaches the second.
 OPTIMIZATION: [2026-03-28] For detect_exits web push test, the pattern is: create VIP user + BettorFollow + AlertSetting(web_push_enabled=True, push_subscription='{"endpoint":"..."}'), pre-seed _last_positions with a position, mock get_active_positions to return [] (empty → exit detected), mock send_web_push as AsyncMock, assert call_count=1 and payload title contains bettor_name.
+
+### Session #222 Reflexion — 2026-03-28 (TESTING)
+ACCOMPLISHED: Added 3 backend tests for PRIORITY 16 coverage gaps — test_detect_exits_notification_exception_caught_event_still_notified (scheduler.py lines 168-169: send_web_push raises inside _detect_exits except handler → exit_event.notified still True), test_poll_vip_bets_dispatch_exception_does_not_crash_vip_poll_loop (scheduler.py lines 408-409: dispatch_bet_notification raises → event.notified still True), test_stop_scheduler_when_running_calls_shutdown (scheduler.py lines 440-442: monkeypatched _scheduler.running=True → shutdown(wait=False) called once). All 3 passed first run. 521→524 tests. Coverage: 98% overall (21 missed lines from 1245 total).
+FAILED: Nothing failed this session.
+RULE: [2026-03-28] For `stop_scheduler` tests that need to patch a module-level global (`_scheduler`), use `monkeypatch.setattr("app.services.scheduler._scheduler", mock_sched)` — this cleanly restores the original after the test. Do NOT use `patch()` context manager for module-level mutable globals in scheduler; monkeypatch handles cleanup automatically.
 
 ### Session #221 Reflexion — 2026-03-28 (TESTING)
 ACCOMPLISHED: Added 3 backend tests for PRIORITY 15 coverage gaps — test_send_web_push_generic_exception_returns_false (notifications.py lines 106-108: VAPID keys + valid endpoint + pywebpush.webpush raises generic Exception), test_poll_vip_bets_get_recent_bets_raises_skips_address (scheduler.py lines 328-329: get_recent_bets raises → no BetEvent created), test_poll_vip_bets_free_tier_user_skips_notification (scheduler.py line 379: free-tier follow → dispatch_bet_notification not called). All 3 passed first run. 518→521 tests. Coverage: 98% overall (24 missed lines from 1245 total).

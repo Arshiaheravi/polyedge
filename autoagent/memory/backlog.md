@@ -83,16 +83,28 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
+## PRIORITY 17 — Coverage Gaps (generated session 222 via coverage report — 98% total, 21 missed lines)
+
+- [ ] **`_poll_vip_bets` skips old bets** — scheduler.py line 337: `if ts and ts <= _last_check: continue`. VIP user + follow + bet with timestamp before `_last_check` → BetEvent not created and `get_recent_bets` called but no event row. Mirror of `test_poll_bets_skips_old_bets` for VIP path.
+  Grep: `grep -n "poll_vip_bets.*skip.*old\|vip.*old.*bet\|skips_old.*vip" backend/tests/test_scheduler.py` returns nothing
+
+- [ ] **`_poll_vip_bets` outer exception handler** — scheduler.py lines 417-418: `except Exception as exc: logger.error("VIP poll_bets error: %s", exc); db.rollback()`. Patch `db.commit` inside `_poll_vip_bets` to raise, assert the function doesn't crash and the except branch fires.
+  Grep: `grep -n "poll_vip_bets.*outer.*except\|vip.*rollback\|poll_vip.*error.*handler" backend/tests/test_scheduler.py` returns nothing
+
+- [ ] **`get_live_trades` exception handler** — polymarket.py lines 104-105: `except Exception: trades = []`. Mock `client.get` to raise `httpx.ConnectError`, call `get_live_trades()`, assert result is `[]` without raising. Mirror of `test_get_recent_bets_api_exception_returns_empty_list` for the live-trades path.
+  Grep: `grep -n "get_live_trades.*exception\|live_trades.*error\|live_trades.*raises" backend/tests/test_polymarket_service.py` returns nothing
+
+---
+
+## PRIORITY 16.5 — Code Quality Audit (generated session 222 — work session count hit 170)
+
+- [ ] **Code quality audit** — scan last 5 work sessions' changed files (test_scheduler.py, test_notifications.py, test_alerts.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits.
+
+---
+
 ## PRIORITY 16 — Coverage Gaps (generated session 221 via coverage report — 98% total, 24 missed lines)
 
-- [ ] **`_detect_exits` notification except handler** — scheduler.py lines 168-169: `except Exception as exc: logger.warning("Exit notification failed for user %s: %s", ...)`. An existing detect_exits test mocks send_web_push but never makes it raise. Patch `send_telegram` or `send_web_push` to raise inside `_detect_exits`, assert the exit event still gets `notified=True` (loop continues).
-  Grep: `grep -n "detect_exits.*exception\|exit.*notification.*fail\|168\|169" backend/tests/test_scheduler.py` returns nothing
-
-- [ ] **`_poll_vip_bets` dispatch_bet_notification raises → continues** — scheduler.py lines 408-409: `except Exception as exc: logger.warning("VIP notification failed for user %s: %s", ...)`. VIP user + follow + new bet exists, but `dispatch_bet_notification` raises → assert BetEvent is still created and `event.notified` state reflects the exception branch.
-  Grep: `grep -n "dispatch_bet_notification.*raises\|vip.*notify.*fail\|408\|409" backend/tests/test_scheduler.py` returns nothing — NOTE: session 638 line references a test about dispatch raising for _poll_bets (not _poll_vip_bets); verify the grep result.
-
-- [ ] **`stop_scheduler` when running** — scheduler.py lines 440-442: `if _scheduler and _scheduler.running: _scheduler.shutdown(wait=False)`. No existing test calls `stop_scheduler()` with a live scheduler. Patch `_scheduler.running=True` and `_scheduler.shutdown`, call `stop_scheduler()`, assert `shutdown(wait=False)` was called once.
-  Grep: `grep -n "stop_scheduler\|_scheduler.*running\|scheduler.*shutdown" backend/tests/test_scheduler.py` returns nothing
+*(All 3 tasks completed in session 222)*
 
 ---
 

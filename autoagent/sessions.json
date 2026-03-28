@@ -4923,19 +4923,64 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 4 tests covering format_exit_message output format and truncation, the VAPID-keys-set but no-endpoint branch of send_web_push, and detect_exits web push delivery to VIP users — proving all 3 previously uncovered code paths work correctly",
-    "files": ["backend/tests/test_notifications.py", "backend/tests/test_scheduler.py"],
-    "tests": {"before": 514, "after": 518, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+    "summary": "Added 4 tests covering format_exit_message output format and truncation, the VAPID-keys-set but no-endpoint branch of send_web_push, and detect_exits web push delivery to VIP users \u00e2\u20ac\u201d proving all 3 previously uncovered code paths work correctly",
+    "files": [
+      "backend/tests/test_notifications.py",
+      "backend/tests/test_scheduler.py"
+    ],
+    "tests": {
+      "before": 514,
+      "after": 518,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   },
   {
     "session": 221,
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 3 tests covering the generic-exception branch of send_web_push (lines 106-108), the get_recent_bets exception skip in _poll_vip_bets (lines 328-329), and the free-tier follower notification skip (line 379) — every exception and guard in the VIP notification path now has regression coverage",
-    "files": ["backend/tests/test_notifications.py", "backend/tests/test_scheduler.py"],
-    "tests": {"before": 518, "after": 521, "status": "pass"},
-    "frontend": {"status": "skip", "checks": 0, "failures": 0, "notes": "no frontend changes"}
+    "summary": "Added 3 tests covering the generic-exception branch of send_web_push (lines 106-108), the get_recent_bets exception skip in _poll_vip_bets (lines 328-329), and the free-tier follower notification skip (line 379) \u00e2\u20ac\u201d every exception and guard in the VIP notification path now has regression coverage",
+    "files": [
+      "backend/tests/test_notifications.py",
+      "backend/tests/test_scheduler.py"
+    ],
+    "tests": {
+      "before": 518,
+      "after": 521,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
+  },
+  {
+    "session": 222,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 3 tests covering the last uncovered exception branches in the scheduler \u2014 detect_exits notification failure, VIP poll dispatch failure, and stop_scheduler shutdown call. Any refactor that removes these safety nets will now fail the test suite.",
+    "files": [
+      "backend/tests/test_scheduler.py"
+    ],
+    "tests": {
+      "before": 521,
+      "after": 524,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "server not running"
+    }
   }
 ]
