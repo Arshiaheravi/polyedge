@@ -44,14 +44,14 @@
       "failures": 0,
       "notes": "server not running"
     },
-    "notes": "No git remote configured \u00e2\u20ac\u201d commits are local only"
+    "notes": "No git remote configured â€” commits are local only"
   },
   {
     "session": 2,
     "date": "2026-03-23",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 17 scheduler tests covering timestamp parsing and the core polling loop \u00e2\u20ac\u201d new bets are saved, old/duplicate bets are skipped, free-tier users get no notification, API errors don't crash the poll",
+    "summary": "Added 17 scheduler tests covering timestamp parsing and the core polling loop â€” new bets are saved, old/duplicate bets are skipped, free-tier users get no notification, API errors don't crash the poll",
     "files": [
       "backend/tests/test_scheduler.py"
     ],
@@ -66,14 +66,14 @@
       "failures": 0,
       "notes": "no frontend code changed"
     },
-    "notes": "No git remote configured \u00e2\u20ac\u201d commits are local only"
+    "notes": "No git remote configured â€” commits are local only"
   },
   {
     "session": 3,
     "date": "2026-03-23",
     "time": "00:00",
     "type": "work",
-    "summary": "Ran full E2E frontend smoke test with Playwright \u00e2\u20ac\u201d all 7 checks pass: landing page loads, backend API responds with real leaderboard data (100 bettors), browse view opens, login form works, register form works, no JS errors",
+    "summary": "Ran full E2E frontend smoke test with Playwright â€” all 7 checks pass: landing page loads, backend API responds with real leaderboard data (100 bettors), browse view opens, login form works, register form works, no JS errors",
     "files": [],
     "tests": {
       "before": 108,
@@ -86,14 +86,14 @@
       "failures": 0,
       "notes": "All core user flows verified: landing, leaderboard (100 bettors), login form, register form, no JS errors"
     },
-    "notes": "No code changes this session \u00e2\u20ac\u201d pure verification run"
+    "notes": "No code changes this session â€” pure verification run"
   },
   {
     "session": 4,
     "date": "2026-03-23",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 18 security and business-rule tests \u00e2\u20ac\u201d JWT tokens can't be tampered or expired to gain access, VIP tier correctly allows unlimited follows, register/login reject malformed input, re-following after unfollow works fine",
+    "summary": "Added 18 security and business-rule tests â€” JWT tokens can't be tampered or expired to gain access, VIP tier correctly allows unlimited follows, register/login reject malformed input, re-following after unfollow works fine",
     "files": [
       "backend/tests/test_security.py"
     ],
@@ -108,14 +108,14 @@
       "failures": 0,
       "notes": "no frontend code changed"
     },
-    "notes": "No git remote configured \u00e2\u20ac\u201d commits are local only"
+    "notes": "No git remote configured â€” commits are local only"
   },
   {
     "session": 5,
     "date": "2026-03-23",
     "time": "00:00",
     "type": "work",
-    "summary": "Found and fixed a bug where invalid JSON in push_subscription was silently stored then crashed GET with 500 \u00e2\u20ac\u201d route now validates and returns 422. Added 8 edge-case tests covering error message wording, SQL injection safety, empty-DB admin stats, and the push_subscription bug.",
+    "summary": "Found and fixed a bug where invalid JSON in push_subscription was silently stored then crashed GET with 500 â€” route now validates and returns 422. Added 8 edge-case tests covering error message wording, SQL injection safety, empty-DB admin stats, and the push_subscription bug.",
     "files": [
       "backend/tests/test_edge_cases.py",
       "backend/app/routes/alerts.py"
@@ -131,7 +131,7 @@
       "failures": 0,
       "notes": "server not running"
     },
-    "notes": "No git remote configured \u00e2\u20ac\u201d commits are local only"
+    "notes": "No git remote configured â€” commits are local only"
   },
   {
     "session": 6,
@@ -156,7 +156,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u00e2\u20ac\u201d no code changes"
+      "notes": "meta session â€” no code changes"
     },
     "notes": "Fixed: missing project_root.md, empty backlog, admin password conflict in docs, PROMPT.md DEBUG MODE rule"
   },
@@ -165,7 +165,7 @@
     "date": "2026-03-23",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 11 tests covering notification dispatch edge cases and the full Telegram account-linking flow \u00e2\u20ac\u201d every branch in dispatch_bet_notification and telegram/verify is now tested. Also confirmed admin password loads correctly from .env (polyedge-admin-2026).",
+    "summary": "Added 11 tests covering notification dispatch edge cases and the full Telegram account-linking flow â€” every branch in dispatch_bet_notification and telegram/verify is now tested. Also confirmed admin password loads correctly from .env (polyedge-admin-2026).",
     "files": [
       "backend/tests/test_notifications.py",
       "backend/tests/test_alerts.py"
@@ -181,14 +181,14 @@
       "failures": 0,
       "notes": "no frontend code changed"
     },
-    "notes": "No git remote configured \u00e2\u20ac\u201d commits are local only"
+    "notes": "No git remote configured â€” commits are local only"
   },
   {
     "session": 8,
     "date": "2026-03-23",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 6 tests: BetEvent field values are now verified (market_question, outcome, amount_usd, timestamp) and the downgrade path is documented \u00e2\u20ac\u201d follows survive a tier change, new ones are blocked at the new limit",
+    "summary": "Added 6 tests: BetEvent field values are now verified (market_question, outcome, amount_usd, timestamp) and the downgrade path is documented â€” follows survive a tier change, new ones are blocked at the new limit",
     "files": [
       "backend/tests/test_scheduler.py",
       "backend/tests/test_stripe_service.py"
@@ -204,14 +204,14 @@
       "failures": 0,
       "notes": "no frontend code changed"
     },
-    "notes": "No git remote configured \u00e2\u20ac\u201d commits are local only"
+    "notes": "No git remote configured â€” commits are local only"
   },
   {
     "session": 9,
     "date": "2026-03-24",
     "time": "04:30",
     "type": "work",
-    "summary": "Ran 16-check Playwright E2E verification of follows and alerts pages \u00e2\u20ac\u201d all 16 pass. Confirmed: follows tab shows correct count, follow button works for logged-in users (found and fixed a test-script bug where init() must be called instead of showView() so currentUser is set), free tier limit enforced, alerts toggles visible, web push toggle changes state with notification permission, Telegram toggle correctly blocked on free tier, settings persist after reload.",
+    "summary": "Ran 16-check Playwright E2E verification of follows and alerts pages â€” all 16 pass. Confirmed: follows tab shows correct count, follow button works for logged-in users (found and fixed a test-script bug where init() must be called instead of showView() so currentUser is set), free tier limit enforced, alerts toggles visible, web push toggle changes state with notification permission, Telegram toggle correctly blocked on free tier, settings persist after reload.",
     "files": [],
     "tests": {
       "before": 151,
@@ -230,7 +230,7 @@
     "date": "2026-03-24",
     "time": "05:00",
     "type": "work",
-    "summary": "Added 2 field-coverage tests: GET /follows now verified to return bettor_address + bettor_name + created_at in each array item; GET /auth/me verified to return updated subscription_tier after DB change \u00e2\u20ac\u201d closes all 4 uncovered backend edge cases from backlog.",
+    "summary": "Added 2 field-coverage tests: GET /follows now verified to return bettor_address + bettor_name + created_at in each array item; GET /auth/me verified to return updated subscription_tier after DB change â€” closes all 4 uncovered backend edge cases from backlog.",
     "files": [
       "backend/tests/test_follows.py",
       "backend/tests/test_auth.py"
@@ -252,7 +252,7 @@
     "date": "2026-03-24",
     "time": "06:00",
     "type": "brain",
-    "summary": "Researched Polymarket trading strategies and found the information arbitrage window is under 30 seconds \u00e2\u20ac\u201d added VIP 15s polling, win_rate display, and Alembic migrations to high-priority backlog. Implemented ACE Curator step so the agent reviews its own knowledge base for duplicates each brain session.",
+    "summary": "Researched Polymarket trading strategies and found the information arbitrage window is under 30 seconds â€” added VIP 15s polling, win_rate display, and Alembic migrations to high-priority backlog. Implemented ACE Curator step so the agent reviews its own knowledge base for duplicates each brain session.",
     "files": [
       "autoagent/meta/BRAIN_PROMPT.md",
       "autoagent/brain/sources.md",
@@ -278,7 +278,7 @@
     "date": "2026-03-24",
     "time": "07:00",
     "type": "work",
-    "summary": "Ran 9-check Playwright E2E verifying leaderboard sort tabs, period tabs, account tier display, and public browse view all work correctly \u00e2\u20ac\u201d also discovered the bettor profile click-through was never built and updated the backlog.",
+    "summary": "Ran 9-check Playwright E2E verifying leaderboard sort tabs, period tabs, account tier display, and public browse view all work correctly â€” also discovered the bettor profile click-through was never built and updated the backlog.",
     "files": [],
     "tests": {
       "before": 153,
@@ -364,7 +364,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added sort=accuracy leaderboard test and multi-follower notification test \u00e2\u20ac\u201d two uncovered branches in bettors and scheduler now locked in",
+    "summary": "Added sort=accuracy leaderboard test and multi-follower notification test â€” two uncovered branches in bettors and scheduler now locked in",
     "files": [
       "backend/tests/test_bettors.py",
       "backend/tests/test_scheduler.py"
@@ -386,7 +386,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 coverage-gap tests: basic-tier follows shows correct limit, leaderboard cached field verified, DELETE /follows auth enforced, web-push disable tested, admin user counts by tier verified \u00e2\u20ac\u201d 169\u00e2\u2020\u2019174",
+    "summary": "Added 5 coverage-gap tests: basic-tier follows shows correct limit, leaderboard cached field verified, DELETE /follows auth enforced, web-push disable tested, admin user counts by tier verified â€” 169â†’174",
     "files": [
       "backend/tests/test_follows.py",
       "backend/tests/test_bettors.py",
@@ -483,7 +483,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 coverage-gap tests: bettor profile cache hit path, subscription past_due downgrade, subscription.updated basic upgrade, admin stats bet_events count verification, and POST /follows full response body \u00e2\u20ac\u201d closes the last untested branches in bettors, stripe webhooks, and follows routes",
+    "summary": "Added 5 coverage-gap tests: bettor profile cache hit path, subscription past_due downgrade, subscription.updated basic upgrade, admin stats bet_events count verification, and POST /follows full response body â€” closes the last untested branches in bettors, stripe webhooks, and follows routes",
     "files": [
       "backend/tests/test_bettors.py",
       "backend/tests/test_stripe_service.py",
@@ -507,7 +507,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 tests for core polymarket service functions (get_bettor_profile, get_recent_bets, get_live_trades, get_leaderboard pagination) and auth email case-insensitivity \u00e2\u20ac\u201d these were the only core data pipeline functions with zero coverage",
+    "summary": "Added 5 tests for core polymarket service functions (get_bettor_profile, get_recent_bets, get_live_trades, get_leaderboard pagination) and auth email case-insensitivity â€” these were the only core data pipeline functions with zero coverage",
     "files": [
       "backend/tests/test_polymarket_service.py",
       "backend/tests/test_auth.py"
@@ -529,7 +529,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 coverage-gap tests closing the VIP follows limit slot, bettor profile empty-activity path, follows/live followed_at field contract, get_recent_bets dict-response defense, and /bettors limit=0 boundary \u00e2\u20ac\u201d 194 to 199 tests",
+    "summary": "Added 5 coverage-gap tests closing the VIP follows limit slot, bettor profile empty-activity path, follows/live followed_at field contract, get_recent_bets dict-response defense, and /bettors limit=0 boundary â€” 194 to 199 tests",
     "files": [
       "backend/tests/test_follows.py",
       "backend/tests/test_follows_live.py",
@@ -553,7 +553,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 6 coverage-gap tests closing the two untested poly_url branches in get_active_positions (slug-only and no-slug fallback), get_live_trades non-list API response, get_recent_bets activity-key dict fallback, and send_telegram empty bot_token and empty chat_id guards \u00e2\u20ac\u201d 199 to 205 tests",
+    "summary": "Added 6 coverage-gap tests closing the two untested poly_url branches in get_active_positions (slug-only and no-slug fallback), get_live_trades non-list API response, get_recent_bets activity-key dict fallback, and send_telegram empty bot_token and empty chat_id guards â€” 199 to 205 tests",
     "files": [
       "backend/tests/test_polymarket_service.py",
       "backend/tests/test_notifications.py"
@@ -575,7 +575,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "meta",
-    "summary": "Improved the testing skill file \u00e2\u20ac\u201d fixed a stale import-check command pointing to the wrong project, added a branch-audit workflow checklist that sessions 22-25 used successfully but was undocumented, and replenished the backlog with 6 concrete test tasks so the next session starts immediately instead of spending turns on task discovery",
+    "summary": "Improved the testing skill file â€” fixed a stale import-check command pointing to the wrong project, added a branch-audit workflow checklist that sessions 22-25 used successfully but was undocumented, and replenished the backlog with 6 concrete test tasks so the next session starts immediately instead of spending turns on task discovery",
     "files": [
       "autoagent/skills/testing.md",
       "autoagent/memory/knowledge.md",
@@ -591,7 +591,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u00e2\u20ac\u201d no code changed"
+      "notes": "meta session â€” no code changed"
     }
   },
   {
@@ -599,7 +599,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 stripe_service branch tests that close every untested code path: checkout with missing metadata returns early, checkout saves stripe_subscription_id, subscription change with unknown customer returns early, active subscription with unrecognized price_id leaves tier unchanged, and a direct unit test for create_billing_portal_session \u00e2\u20ac\u201d 205 to 210 tests",
+    "summary": "Added 5 stripe_service branch tests that close every untested code path: checkout with missing metadata returns early, checkout saves stripe_subscription_id, subscription change with unknown customer returns early, active subscription with unrecognized price_id leaves tier unchanged, and a direct unit test for create_billing_portal_session â€” 205 to 210 tests",
     "files": [
       "backend/tests/test_stripe_service.py"
     ],
@@ -620,7 +620,7 @@
     "date": "2026-03-24",
     "time": "02:20",
     "type": "work",
-    "summary": "Added 19 tests \u00e2\u20ac\u201d first direct coverage of send_web_push, scheduler graceful handling when API returns None, and Hypothesis invariant tests for tier limits, auth enforcement, and adversarial addresses",
+    "summary": "Added 19 tests â€” first direct coverage of send_web_push, scheduler graceful handling when API returns None, and Hypothesis invariant tests for tier limits, auth enforcement, and adversarial addresses",
     "files": [
       "backend/tests/test_notifications.py",
       "backend/tests/test_scheduler.py",
@@ -691,7 +691,7 @@
     "date": "2026-03-24",
     "time": "12:00",
     "type": "brain",
-    "summary": "Researched agent reliability, competitor features, and tech-debt patterns \u00e2\u20ac\u201d added periodic De-Sloppify trigger to PROMPT.md so code quality gets audited every 5 work sessions, and replenished the testing backlog with 5 new edge-case tests",
+    "summary": "Researched agent reliability, competitor features, and tech-debt patterns â€” added periodic De-Sloppify trigger to PROMPT.md so code quality gets audited every 5 work sessions, and replenished the testing backlog with 5 new edge-case tests",
     "files": [
       "autoagent/PROMPT.md",
       "autoagent/memory/backlog.md",
@@ -708,7 +708,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session \u00e2\u20ac\u201d no code changed"
+      "notes": "brain session â€” no code changed"
     }
   },
   {
@@ -742,7 +742,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "De-Sloppify audit found a real login bug \u00e2\u20ac\u201d email normalization stripped whitespace on register but not on login, so padded email caused silent 401. Fixed, added test, removed dead placeholder function in hypothesis tests",
+    "summary": "De-Sloppify audit found a real login bug â€” email normalization stripped whitespace on register but not on login, so padded email caused silent 401. Fixed, added test, removed dead placeholder function in hypothesis tests",
     "files": [
       "backend/app/routes/auth.py",
       "backend/tests/test_auth.py",
@@ -790,7 +790,7 @@
     "date": "2026-03-24",
     "time": "05:00",
     "type": "work",
-    "summary": "Fixed empty password security bug (no min_length on RegisterRequest.password \u2014 empty string was silently hashed and accepted), then added 5 tests covering the 3 untested AlertSetting auto-create branches, PUT empty body no-op path, and name whitespace stripping behavior",
+    "summary": "Fixed empty password security bug (no min_length on RegisterRequest.password — empty string was silently hashed and accepted), then added 5 tests covering the 3 untested AlertSetting auto-create branches, PUT empty body no-op path, and name whitespace stripping behavior",
     "files": [
       "backend/app/routes/auth.py",
       "backend/tests/test_auth.py",
@@ -827,7 +827,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u00e2\u20ac\u201d no code changes"
+      "notes": "meta session â€” no code changes"
     }
   },
   {
@@ -835,7 +835,7 @@
     "date": "2026-03-24",
     "time": "07:00",
     "type": "work",
-    "summary": "Added 5 tests locking in response shape contracts and dual-channel notification dispatch \u00e2\u20ac\u201d DELETE /follows 204 has no body, 404 returns exact 'Follow not found' detail, checkout response key is exactly 'checkout_url', scheduler fires both Telegram and web push simultaneously when both are enabled",
+    "summary": "Added 5 tests locking in response shape contracts and dual-channel notification dispatch â€” DELETE /follows 204 has no body, 404 returns exact 'Follow not found' detail, checkout response key is exactly 'checkout_url', scheduler fires both Telegram and web push simultaneously when both are enabled",
     "files": [
       "backend/tests/test_follows.py",
       "backend/tests/test_payments.py",
@@ -858,7 +858,7 @@
     "date": "2026-03-24",
     "time": "08:00",
     "type": "work",
-    "summary": "Removed 2 duplicate per-tier tests in test_follows.py that were already covered by parametrized invariant tests in test_hypothesis_invariants.py, and deleted unused BETTOR_C constant \u2014 keeps test suite clean as coverage accumulates",
+    "summary": "Removed 2 duplicate per-tier tests in test_follows.py that were already covered by parametrized invariant tests in test_hypothesis_invariants.py, and deleted unused BETTOR_C constant — keeps test suite clean as coverage accumulates",
     "files": [
       "backend/tests/test_follows.py"
     ],
@@ -879,7 +879,7 @@
     "date": "2026-03-24",
     "time": "09:00",
     "type": "work",
-    "summary": "Added 5 branch-coverage tests: send_telegram happy path (HTTP success returns True), scheduler dispatch exception is caught and event still marked notified, telegram/start response shape verified (code+instructions+bot_link), telegram/verify accepts lowercase code, PUT alerts settings response includes telegram_verified and phone_verified fields \u00e2\u20ac\u201d 258\u00e2\u2020\u2019263 tests",
+    "summary": "Added 5 branch-coverage tests: send_telegram happy path (HTTP success returns True), scheduler dispatch exception is caught and event still marked notified, telegram/start response shape verified (code+instructions+bot_link), telegram/verify accepts lowercase code, PUT alerts settings response includes telegram_verified and phone_verified fields â€” 258â†’263 tests",
     "files": [
       "backend/tests/test_notifications.py",
       "backend/tests/test_scheduler.py",
@@ -902,7 +902,7 @@
     "date": "2026-03-24",
     "time": "10:00",
     "type": "work",
-    "summary": "Added 5 branch-coverage tests for send_sms (3 direct unit paths), scheduler SMS dispatch for VIP users, and dispatch phone_number guard \u2014 closes the last untested paths in the SMS notification stack",
+    "summary": "Added 5 branch-coverage tests for send_sms (3 direct unit paths), scheduler SMS dispatch for VIP users, and dispatch phone_number guard — closes the last untested paths in the SMS notification stack",
     "files": [
       "backend/tests/test_notifications.py",
       "backend/tests/test_scheduler.py"
@@ -924,7 +924,7 @@
     "date": "2026-03-24",
     "time": "11:00",
     "type": "brain",
-    "summary": "Deep brain session \u00e2\u20ac\u201d curated knowledge.md (merged duplicate cache rules), fixed META patterns (backlog low-water-mark rule, symmetry audit for sibling functions, activity log archival), searched 7 topics, replenished 5 testing tasks in backlog",
+    "summary": "Deep brain session â€” curated knowledge.md (merged duplicate cache rules), fixed META patterns (backlog low-water-mark rule, symmetry audit for sibling functions, activity log archival), searched 7 topics, replenished 5 testing tasks in backlog",
     "files": [
       "autoagent/PROMPT.md",
       "autoagent/brain/sources.md",
@@ -1046,7 +1046,7 @@
     "date": "2026-03-24",
     "time": "17:00",
     "type": "work",
-    "summary": "Added 6 response-contract tests locking in the full auth user dict (7 fields), bettor null-profile behavior, leaderboard limit passthrough, portal subscription_id handling, and webhook unknown-event 200 response \u00e2\u20ac\u201d 281 to 287 tests",
+    "summary": "Added 6 response-contract tests locking in the full auth user dict (7 fields), bettor null-profile behavior, leaderboard limit passthrough, portal subscription_id handling, and webhook unknown-event 200 response â€” 281 to 287 tests",
     "files": [
       "backend/tests/test_auth.py",
       "backend/tests/test_bettors.py",
@@ -1069,7 +1069,7 @@
     "date": "2026-03-24",
     "time": "10:00",
     "type": "work",
-    "summary": "3 edge-case tests added: non-list API response in get_active_positions returns empty list, unknown subscription tier blocked at 403, and full nested type contract for /admin/stats \u2014 287 to 290 tests",
+    "summary": "3 edge-case tests added: non-list API response in get_active_positions returns empty list, unknown subscription tier blocked at 403, and full nested type contract for /admin/stats — 287 to 290 tests",
     "files": [
       "backend/tests/test_polymarket_service.py",
       "backend/tests/test_follows.py",
@@ -1158,7 +1158,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session \u00e2\u20ac\u201d no code changed"
+      "notes": "brain session â€” no code changed"
     }
   },
   {
@@ -1166,7 +1166,7 @@
     "date": "2026-03-24",
     "time": "21:00",
     "type": "meta",
-    "summary": "Code quality audit of sessions 46-50 test files \u2014 removed dead ADMIN_PW constant and _admin_headers() helper from test_admin.py (never called), and removed duplicate test_vip_can_add_more_than_5_follows from test_security.py (fully subsumed by test_follows.py). Test count 295 to 294.",
+    "summary": "Code quality audit of sessions 46-50 test files — removed dead ADMIN_PW constant and _admin_headers() helper from test_admin.py (never called), and removed duplicate test_vip_can_add_more_than_5_follows from test_security.py (fully subsumed by test_follows.py). Test count 295 to 294.",
     "files": [
       "backend/tests/test_admin.py",
       "backend/tests/test_security.py"
@@ -1180,7 +1180,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u2014 audit only"
+      "notes": "meta session — audit only"
     }
   },
   {
@@ -1188,7 +1188,7 @@
     "date": "2026-03-24",
     "time": "22:00",
     "type": "work",
-    "summary": "Added 2 tests closing last 3 backlog items \u00e2\u20ac\u201d task 1 (basic tier GET /follows limit=5) was already covered by parametrize; new tests lock in scheduler outer exception safety (commit failure leaves _last_check unchanged) and push subscription PUT-to-GET roundtrip.",
+    "summary": "Added 2 tests closing last 3 backlog items â€” task 1 (basic tier GET /follows limit=5) was already covered by parametrize; new tests lock in scheduler outer exception safety (commit failure leaves _last_check unchanged) and push subscription PUT-to-GET roundtrip.",
     "files": [
       "backend/tests/test_scheduler.py",
       "backend/tests/test_alerts.py"
@@ -1210,7 +1210,7 @@
     "date": "2026-03-24",
     "time": "23:00",
     "type": "work",
-    "summary": "Added 3 tests confirming Pydantic ignores extra fields on register, and URL-special chars in DELETE /follows path return 404 not 500 \u00e2\u20ac\u201d both verify existing defensive behavior isn't accidentally broken by future changes.",
+    "summary": "Added 3 tests confirming Pydantic ignores extra fields on register, and URL-special chars in DELETE /follows path return 404 not 500 â€” both verify existing defensive behavior isn't accidentally broken by future changes.",
     "files": [
       "backend/tests/test_auth.py",
       "backend/tests/test_follows.py"
@@ -1232,7 +1232,7 @@
     "date": "2026-03-24",
     "time": "23:30",
     "type": "work",
-    "summary": "Added 2 tests verifying that GET /auth/me returns 401 when the user row has been deleted from DB and when is_active=False \u00e2\u20ac\u201d locks in the get_current_user guard so a regression would be caught immediately.",
+    "summary": "Added 2 tests verifying that GET /auth/me returns 401 when the user row has been deleted from DB and when is_active=False â€” locks in the get_current_user guard so a regression would be caught immediately.",
     "files": [
       "backend/tests/test_auth.py"
     ],
@@ -1253,7 +1253,7 @@
     "date": "2026-03-24",
     "time": "23:55",
     "type": "work",
-    "summary": "Added 3 polymarket service tests \u2014 locked in the BUY default for missing side, anon fallback for empty wallets, and empty-first-page early exit \u2014 ensuring any normalization regression is caught immediately",
+    "summary": "Added 3 polymarket service tests — locked in the BUY default for missing side, anon fallback for empty wallets, and empty-first-page early exit — ensuring any normalization regression is caught immediately",
     "files": [
       "backend/tests/test_polymarket_service.py"
     ],
@@ -1274,7 +1274,7 @@
     "date": "2026-03-24",
     "time": "23:59",
     "type": "work",
-    "summary": "Converted leaderboard table rows to a responsive card grid \u00e2\u20ac\u201d each card shows rank badge, avatar, profit, ROI %, volume, and a follow button with hover lift/glow; makes the leaderboard feel like a real trading platform",
+    "summary": "Converted leaderboard table rows to a responsive card grid â€” each card shows rank badge, avatar, profit, ROI %, volume, and a follow button with hover lift/glow; makes the leaderboard feel like a real trading platform",
     "files": [
       "frontend/index.html"
     ],
@@ -1295,7 +1295,7 @@
     "date": "2026-03-24",
     "time": "23:59",
     "type": "meta",
-    "summary": "Code quality audit caught 6 XSS injection points in the leaderboard card renderer \u00e2\u20ac\u201d bettor names from Polymarket API were inserted raw into innerHTML; added escapeHtml() and applied it everywhere, then removed dead legacy table-row fallback code",
+    "summary": "Code quality audit caught 6 XSS injection points in the leaderboard card renderer â€” bettor names from Polymarket API were inserted raw into innerHTML; added escapeHtml() and applied it everywhere, then removed dead legacy table-row fallback code",
     "files": [
       "frontend/index.html"
     ],
@@ -1316,7 +1316,7 @@
     "date": "2026-03-24",
     "time": "23:59",
     "type": "work",
-    "summary": "Hero redesign \u00e2\u20ac\u201d added live Bets Detected Today counter that animates up and slowly increments, shimmer sweep animation on primary CTA, social proof line showing 847+ traders, and fixed the last XSS gap in the live ticker buildTickerItem function",
+    "summary": "Hero redesign â€” added live Bets Detected Today counter that animates up and slowly increments, shimmer sweep animation on primary CTA, social proof line showing 847+ traders, and fixed the last XSS gap in the live ticker buildTickerItem function",
     "files": [
       "frontend/index.html"
     ],
@@ -1337,7 +1337,7 @@
     "date": "2026-03-24",
     "time": "23:59",
     "type": "brain",
-    "summary": "Deep brain session \u00e2\u20ac\u201d found 2 failure patterns (XSS in template helpers + Playwright selector staleness), fixed both in skill files; rewrote design.md for PolyEdge; downloaded Anthropic frontend-design skill; added 4 new UI/UX backlog tasks from fintech research",
+    "summary": "Deep brain session â€” found 2 failure patterns (XSS in template helpers + Playwright selector staleness), fixed both in skill files; rewrote design.md for PolyEdge; downloaded Anthropic frontend-design skill; added 4 new UI/UX backlog tasks from fintech research",
     "files": [
       "autoagent/skills/audit.md",
       "autoagent/skills/playwright.md",
@@ -1359,7 +1359,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session \u00e2\u20ac\u201d no frontend code changed"
+      "notes": "brain session â€” no frontend code changed"
     }
   },
   {
@@ -1367,7 +1367,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Pricing section redesign \u2014 Basic card now permanently elevated 8px above peers with animated green glow border, trust copy under all CTA buttons, and VIP card styled via CSS class instead of inline styles",
+    "summary": "Pricing section redesign — Basic card now permanently elevated 8px above peers with animated green glow border, trust copy under all CTA buttons, and VIP card styled via CSS class instead of inline styles",
     "files": [
       "frontend/index.html"
     ],
@@ -1388,7 +1388,7 @@
     "date": "2026-03-24",
     "time": "12:00",
     "type": "work",
-    "summary": "Added CSS font-size scale variables, h1-h4 heading defaults, universal button press feedback, and staggered fadeInUp animation for leaderboard cards \u2014 polishes type consistency and gives all interactive elements tactile feel",
+    "summary": "Added CSS font-size scale variables, h1-h4 heading defaults, universal button press feedback, and staggered fadeInUp animation for leaderboard cards — polishes type consistency and gives all interactive elements tactile feel",
     "files": [
       "frontend/index.html"
     ],
@@ -1409,7 +1409,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Hero section background upgraded to premium CSS \u00e2\u20ac\u201d dot grid texture fades at edges, three ambient glows (green top, blue bottom-right, soft green bottom-left), bg-image hook added for when a hero photo is available; NovaBanana API key invalid so documented in ASSETS_NEEDED.md",
+    "summary": "Hero section background upgraded to premium CSS â€” dot grid texture fades at edges, three ambient glows (green top, blue bottom-right, soft green bottom-left), bg-image hook added for when a hero photo is available; NovaBanana API key invalid so documented in ASSETS_NEEDED.md",
     "files": [
       "frontend/index.html",
       "autoagent/ASSETS_NEEDED.md"
@@ -1431,7 +1431,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Empty state illustrations added \u00e2\u20ac\u201d follows page now shows a chart+follow SVG instead of a plain star emoji, alerts page shows a bell+lightning banner when no notifications are active, leaderboard errors show a styled warning triangle instead of a raw HTML entity",
+    "summary": "Empty state illustrations added â€” follows page now shows a chart+follow SVG instead of a plain star emoji, alerts page shows a bell+lightning banner when no notifications are active, leaderboard errors show a styled warning triangle instead of a raw HTML entity",
     "files": [
       "frontend/index.html"
     ],
@@ -1452,7 +1452,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Code quality audit \u00e2\u20ac\u201d fixed XSS in toast() where API-sourced bettor names and server error strings were injected via innerHTML (now uses textContent); deleted 46 lines of dead code (renderBettorRow + renderSkeletonRows, unreachable since session 58)",
+    "summary": "Code quality audit â€” fixed XSS in toast() where API-sourced bettor names and server error strings were injected via innerHTML (now uses textContent); deleted 46 lines of dead code (renderBettorRow + renderSkeletonRows, unreachable since session 58)",
     "files": [
       "frontend/index.html"
     ],
@@ -1473,7 +1473,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Mobile responsiveness audit \u00e2\u20ac\u201d mobile users can now navigate all dashboard tabs via a fixed bottom nav; landing page 2-column sections no longer overflow at 375px; search is full-width, tab bar scrolls horizontally, live ticker hidden on mobile",
+    "summary": "Mobile responsiveness audit â€” mobile users can now navigate all dashboard tabs via a fixed bottom nav; landing page 2-column sections no longer overflow at 375px; search is full-width, tab bar scrolls horizontally, live ticker hidden on mobile",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -1487,7 +1487,7 @@
       "status": "pass",
       "checks": 12,
       "failures": 0,
-      "notes": "3 new mobile checks: 375px overflow, bottom nav, topbar \u00e2\u20ac\u201d all pass"
+      "notes": "3 new mobile checks: 375px overflow, bottom nav, topbar â€” all pass"
     }
   },
   {
@@ -1495,7 +1495,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added bettor profile page \u00e2\u20ac\u201d clicking a bettor's name/avatar on the leaderboard now opens a full profile with stats, recent bets timeline (YES/NO outcome colors, price in cents, Copy-bet links), and a Follow/Unfollow button that stays in sync",
+    "summary": "Added bettor profile page â€” clicking a bettor's name/avatar on the leaderboard now opens a full profile with stats, recent bets timeline (YES/NO outcome colors, price in cents, Copy-bet links), and a Follow/Unfollow button that stays in sync",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -1517,7 +1517,7 @@
     "date": "2026-03-24",
     "time": "19:40",
     "type": "work",
-    "summary": "Polished the login/register form \u00e2\u20ac\u201d password fields now have eye-icon visibility toggle, validation errors appear inline below each field (not in a toast), and the auth card slides in with a fadeUp animation on every show",
+    "summary": "Polished the login/register form â€” password fields now have eye-icon visibility toggle, validation errors appear inline below each field (not in a toast), and the auth card slides in with a fadeUp animation on every show",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -1539,7 +1539,7 @@
     "date": "2026-03-24",
     "time": "19:44",
     "type": "brain",
-    "summary": "Brain session \u00e2\u20ac\u201d found 6 new ECC skills; added toast stack pattern, probability chip CSS, 10-dimension visual audit checklist, and accessibility check patterns; added 2 new backlog tasks; 12 sources evaluated",
+    "summary": "Brain session â€” found 6 new ECC skills; added toast stack pattern, probability chip CSS, 10-dimension visual audit checklist, and accessibility check patterns; added 2 new backlog tasks; 12 sources evaluated",
     "files": [
       "autoagent/skills/design.md",
       "autoagent/skills/playwright.md",
@@ -1557,7 +1557,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session \u00e2\u20ac\u201d no code changed"
+      "notes": "brain session â€” no code changed"
     }
   },
   {
@@ -1565,7 +1565,7 @@
     "date": "2026-03-24",
     "time": "20:00",
     "type": "work",
-    "summary": "Upgraded toast notifications to a Sonner-style stacked deck \u2014 toasts fan behind each other when idle and expand on hover, with a new bet-alert type that fires automatically when followed traders place new bets",
+    "summary": "Upgraded toast notifications to a Sonner-style stacked deck — toasts fan behind each other when idle and expand on hover, with a new bet-alert type that fires automatically when followed traders place new bets",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -1587,7 +1587,7 @@
     "date": "2026-03-24",
     "time": "21:00",
     "type": "work",
-    "summary": "Audit fixed 3 XSS vulnerabilities on the public landing page \u00e2\u20ac\u201d bettor names and avatar URLs from the Polymarket API were being injected unescaped into innerHTML, meaning a malicious API response could execute arbitrary JS in visitors' browsers",
+    "summary": "Audit fixed 3 XSS vulnerabilities on the public landing page â€” bettor names and avatar URLs from the Polymarket API were being injected unescaped into innerHTML, meaning a malicious API response could execute arbitrary JS in visitors' browsers",
     "files": [
       "frontend/index.html"
     ],
@@ -1608,7 +1608,7 @@
     "date": "2026-03-24",
     "time": "22:00",
     "type": "work",
-    "summary": "Bettor profile bet rows now show YES/NO as a styled pill with price inline (YES 72\u00c2\u00a2 green / NO 28\u00c2\u00a2 red) and an Active badge for bets under 14 days old \u00e2\u20ac\u201d makes copy-trade decisions faster",
+    "summary": "Bettor profile bet rows now show YES/NO as a styled pill with price inline (YES 72Â¢ green / NO 28Â¢ red) and an Active badge for bets under 14 days old â€” makes copy-trade decisions faster",
     "files": [
       "frontend/index.html"
     ],
@@ -1629,7 +1629,7 @@
     "date": "2026-03-24",
     "time": "22:30",
     "type": "work",
-    "summary": "Leaderboard bettor cards now show 4 metrics in a 2x2 grid \u00e2\u20ac\u201d PnL%, Profit, Volume, and a Win Rate slot with a '90d history' badge \u00e2\u20ac\u201d so users can evaluate traders the same way OKX/eToro copy-trading platforms display them",
+    "summary": "Leaderboard bettor cards now show 4 metrics in a 2x2 grid â€” PnL%, Profit, Volume, and a Win Rate slot with a '90d history' badge â€” so users can evaluate traders the same way OKX/eToro copy-trading platforms display them",
     "files": [
       "frontend/index.html"
     ],
@@ -1650,7 +1650,7 @@
     "date": "2026-03-24",
     "time": "23:00",
     "type": "meta",
-    "summary": "Fixed systemic XSS recurrence: expanded design.md with a write-time prevention protocol and added a second audit grep to catch two-line innerHTML patterns \u00e2\u20ac\u201d the same pattern caused post-hoc XSS audits in sessions 59, 67, and 73",
+    "summary": "Fixed systemic XSS recurrence: expanded design.md with a write-time prevention protocol and added a second audit grep to catch two-line innerHTML patterns â€” the same pattern caused post-hoc XSS audits in sessions 59, 67, and 73",
     "files": [
       "autoagent/skills/design.md",
       "autoagent/skills/audit.md",
@@ -1665,7 +1665,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "META session \u00e2\u20ac\u201d no code changed"
+      "notes": "META session â€” no code changed"
     }
   },
   {
@@ -1673,7 +1673,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Redesigned the alerts settings page so users can see at a glance which notification channels are active \u00e2\u20ac\u201d each channel now has its own card with a live status dot (Active / Connected / Not linked / VIP required) and a Test button that only appears when the channel is fully set up",
+    "summary": "Redesigned the alerts settings page so users can see at a glance which notification channels are active â€” each channel now has its own card with a live status dot (Active / Connected / Not linked / VIP required) and a Test button that only appears when the channel is fully set up",
     "files": [
       "frontend/index.html"
     ],
@@ -1694,7 +1694,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Added structured skeleton cards to the follows tab \u00e2\u20ac\u201d the page no longer shows blank space while loading, instead showing follow-card and position-card shaped skeletons that match the real layout",
+    "summary": "Added structured skeleton cards to the follows tab â€” the page no longer shows blank space while loading, instead showing follow-card and position-card shaped skeletons that match the real layout",
     "files": [
       "frontend/index.html"
     ],
@@ -1715,7 +1715,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Code quality audit (sessions 74-78) \u00e2\u20ac\u201d fixed 5 unescaped XSS variables in renderPositionItem (bettor name, market title, outcome, poly_url, avatarUrl all from Polymarket API), removed dead renderBetItem function that was replaced but never cleaned up",
+    "summary": "Code quality audit (sessions 74-78) â€” fixed 5 unescaped XSS variables in renderPositionItem (bettor name, market title, outcome, poly_url, avatarUrl all from Polymarket API), removed dead renderBetItem function that was replaced but never cleaned up",
     "files": [
       "frontend/index.html"
     ],
@@ -1736,7 +1736,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Bettor profile page hero upgrade \u00e2\u20ac\u201d profile now shows rank badge, profit badge, gradient-initials avatar fallback, 4-stat strip (Profit/PnL%/Volume/Bets), and follow preview text so users know they'll be notified within 30s when the bettor bets",
+    "summary": "Bettor profile page hero upgrade â€” profile now shows rank badge, profit badge, gradient-initials avatar fallback, 4-stat strip (Profit/PnL%/Volume/Bets), and follow preview text so users know they'll be notified within 30s when the bettor bets",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -1781,7 +1781,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session \u2014 no code changed"
+      "notes": "brain session — no code changed"
     }
   },
   {
@@ -1789,7 +1789,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Upgraded the pricing section with an annual billing toggle (Monthly/Annual pill), aligned 7-row feature comparison across all 3 tiers with outcome-oriented language, social proof line, and a shared trust row \u00e2\u20ac\u201d making the pricing page clearer and more conversion-ready",
+    "summary": "Upgraded the pricing section with an annual billing toggle (Monthly/Annual pill), aligned 7-row feature comparison across all 3 tiers with outcome-oriented language, social proof line, and a shared trust row â€” making the pricing page clearer and more conversion-ready",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -1811,7 +1811,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Upgraded the follows tab to feel like a dashboard \u00e2\u20ac\u201d added a 3-stat summary strip (Following count, Copyable bets, Tracked P&L) and richer follow cards with rank badge, gradient avatar fallback, profit/PnL% stats, and View Profile button",
+    "summary": "Upgraded the follows tab to feel like a dashboard â€” added a 3-stat summary strip (Following count, Copyable bets, Tracked P&L) and richer follow cards with rank badge, gradient avatar fallback, profit/PnL% stats, and View Profile button",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -1833,7 +1833,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Upgraded the How it Works landing section \u00e2\u20ac\u201d replaced emoji icons with inline SVGs (bar chart, user-plus, bell), added step connector arrows between the 3 step cards on desktop, green numbered badges on each card, and a CTA button with trust sub-line at the end of the section",
+    "summary": "Upgraded the How it Works landing section â€” replaced emoji icons with inline SVGs (bar chart, user-plus, bell), added step connector arrows between the 3 step cards on desktop, green numbered badges on each card, and a CTA button with trust sub-line at the end of the section",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -1855,7 +1855,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "meta",
-    "summary": "Code quality audit of sessions 77\u00e2\u20ac\u201c83 frontend work \u00e2\u20ac\u201d all 9 team checks passed: zero XSS (all API-sourced strings use escapeHtml), no console.error, upgrade CTAs wired, nav consistent, no dead code",
+    "summary": "Code quality audit of sessions 77â€“83 frontend work â€” all 9 team checks passed: zero XSS (all API-sourced strings use escapeHtml), no console.error, upgrade CTAs wired, nav consistent, no dead code",
     "files": [
       "autoagent/memory/backlog.md",
       "autoagent/memory/done.md",
@@ -1872,7 +1872,7 @@
       "status": "pass",
       "checks": 39,
       "failures": 0,
-      "notes": "No frontend changes \u00e2\u20ac\u201d audit only"
+      "notes": "No frontend changes â€” audit only"
     }
   },
   {
@@ -1880,7 +1880,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Polished the login and sign-up page \u00e2\u20ac\u201d it now animates smoothly when switching tabs, goes full-screen on mobile, and shows an 'or' divider with a Google login placeholder below the submit button",
+    "summary": "Polished the login and sign-up page â€” it now animates smoothly when switching tabs, goes full-screen on mobile, and shows an 'or' divider with a Google login placeholder below the submit button",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -1902,7 +1902,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Leaderboard cards now expand on click to show recent market titles and a View Profile button \u00e2\u20ac\u201d users can preview a bettor's recent bets without navigating away from the leaderboard",
+    "summary": "Leaderboard cards now expand on click to show recent market titles and a View Profile button â€” users can preview a bettor's recent bets without navigating away from the leaderboard",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -1924,7 +1924,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Hovering the Follow button on any leaderboard card now shows a tooltip: 'You'll be notified within 30s when [Name] bets' \u00e2\u20ac\u201d the core value promise shown at the exact moment of decision",
+    "summary": "Hovering the Follow button on any leaderboard card now shows a tooltip: 'You'll be notified within 30s when [Name] bets' â€” the core value promise shown at the exact moment of decision",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -1946,7 +1946,7 @@
     "date": "2026-03-24",
     "time": "00:00",
     "type": "work",
-    "summary": "Playwright screenshot gallery completed \u00e2\u20ac\u201d captured screenshots of all 7 major screens (landing, leaderboard, profile, follows, alerts, pricing, auth) saved to autoagent/reports/screenshots/; added 7 new Playwright checks (49-55) verifying each screen renders correctly",
+    "summary": "Playwright screenshot gallery completed â€” captured screenshots of all 7 major screens (landing, leaderboard, profile, follows, alerts, pricing, auth) saved to autoagent/reports/screenshots/; added 7 new Playwright checks (49-55) verifying each screen renders correctly",
     "files": [
       "autoagent/playwright_registry.py"
     ],
@@ -1988,7 +1988,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session \u00e2\u20ac\u201d no code changes"
+      "notes": "brain session â€” no code changes"
     }
   },
   {
@@ -1996,7 +1996,7 @@
     "date": "2026-03-24",
     "time": "14:00",
     "type": "work",
-    "summary": "Mobile UX audit \u00e2\u20ac\u201d fixed 8 issues at 375px: tap targets on tab and follow buttons (were too small for iPhone), landing section padding reduced from 80px to 48px, modal compact, preview table Volume column hidden on narrow screens, preview card overflow-x scrollable, follows stat dividers hidden at 480px.",
+    "summary": "Mobile UX audit â€” fixed 8 issues at 375px: tap targets on tab and follow buttons (were too small for iPhone), landing section padding reduced from 80px to 48px, modal compact, preview table Volume column hidden on narrow screens, preview card overflow-x scrollable, follows stat dividers hidden at 480px.",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -2036,7 +2036,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "META session \u00e2\u20ac\u201d no code changed"
+      "notes": "META session â€” no code changed"
     }
   },
   {
@@ -2044,7 +2044,7 @@
     "date": "2026-03-24",
     "time": "15:00",
     "type": "work",
-    "summary": "Profile page skeleton loading \u00e2\u20ac\u201d when you click a bettor profile, stat cards (Profit, PnL%, Volume, Total Bets) and the name heading now show animated shimmer instead of a blank dash while the API loads. Users see a polished loading state immediately on navigate.",
+    "summary": "Profile page skeleton loading â€” when you click a bettor profile, stat cards (Profit, PnL%, Volume, Total Bets) and the name heading now show animated shimmer instead of a blank dash while the API loads. Users see a polished loading state immediately on navigate.",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -2066,7 +2066,7 @@
     "date": "2026-03-24",
     "time": "15:30",
     "type": "work",
-    "summary": "Account tab redesign \u00e2\u20ac\u201d when logged in, users now see a profile hero card with their initials in a green circle, a color-coded plan badge (gray=Free, blue=Basic, gold=VIP), a Free-tier upgrade nudge banner, and a prominent Sign Out button instead of the old minimal text layout.",
+    "summary": "Account tab redesign â€” when logged in, users now see a profile hero card with their initials in a green circle, a color-coded plan badge (gray=Free, blue=Basic, gold=VIP), a Free-tier upgrade nudge banner, and a prominent Sign Out button instead of the old minimal text layout.",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -2088,7 +2088,7 @@
     "date": "2026-03-25",
     "time": "09:00",
     "type": "meta",
-    "summary": "Fixed backlog confusion where 3 of 5 high-priority tasks required backend changes but PROJECT.md bans backend work \u00e2\u20ac\u201d sessions were wasting turns skipping them. Moved backend tasks to a dedicated BACKEND PENDING section. Also added the missing pytest command to PROJECT.md so baseline health checks run correctly.",
+    "summary": "Fixed backlog confusion where 3 of 5 high-priority tasks required backend changes but PROJECT.md bans backend work â€” sessions were wasting turns skipping them. Moved backend tasks to a dedicated BACKEND PENDING section. Also added the missing pytest command to PROJECT.md so baseline health checks run correctly.",
     "files": [
       "autoagent/memory/backlog.md",
       "autoagent/PROJECT.md",
@@ -2105,7 +2105,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "META session \u00e2\u20ac\u201d no code changed"
+      "notes": "META session â€” no code changed"
     }
   },
   {
@@ -2113,7 +2113,7 @@
     "date": "2026-03-25",
     "time": "10:00",
     "type": "work",
-    "summary": "Leaderboard sort controls upgraded to a pill-style segmented control \u00e2\u20ac\u201d sort buttons now sit inside a dark pill group container, the active sort gets a green fill, hover shows a CSS tooltip explaining each metric, and a count badge fades in after data loads showing how many bettors are listed.",
+    "summary": "Leaderboard sort controls upgraded to a pill-style segmented control â€” sort buttons now sit inside a dark pill group container, the active sort gets a green fill, hover shows a CSS tooltip explaining each metric, and a count badge fades in after data loads showing how many bettors are listed.",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -2135,7 +2135,7 @@
     "date": "2026-03-25",
     "time": "11:00",
     "type": "work",
-    "summary": "Fixed stale leaderboard card market titles \u00e2\u20ac\u201d disclosure cache now expires after 5 minutes so users who leave the page open see fresh bettor activity instead of the titles from initial load.",
+    "summary": "Fixed stale leaderboard card market titles â€” disclosure cache now expires after 5 minutes so users who leave the page open see fresh bettor activity instead of the titles from initial load.",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -2157,7 +2157,7 @@
     "date": "2026-03-25",
     "time": "12:00",
     "type": "work",
-    "summary": "Added trust signals to the leaderboard \u00e2\u20ac\u201d visitors now see a 'Built on real Polymarket data' badge and a live animated dot showing how many traders are being tracked, which builds credibility and social proof at the point of decision.",
+    "summary": "Added trust signals to the leaderboard â€” visitors now see a 'Built on real Polymarket data' badge and a live animated dot showing how many traders are being tracked, which builds credibility and social proof at the point of decision.",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -2179,7 +2179,7 @@
     "date": "2026-03-25",
     "time": "13:00",
     "type": "meta",
-    "summary": "Code quality audit of sessions 94\u00e2\u20ac\u201c98 (profile skeleton, account redesign, sort pills, disclosure cache TTL, trust signals) \u00e2\u20ac\u201d all 9 virtual team checks passed with zero issues. Removed stale tech debt entry for disclosureCache (fixed session 98).",
+    "summary": "Code quality audit of sessions 94â€“98 (profile skeleton, account redesign, sort pills, disclosure cache TTL, trust signals) â€” all 9 virtual team checks passed with zero issues. Removed stale tech debt entry for disclosureCache (fixed session 98).",
     "files": [
       "autoagent/memory/tech_debt.md",
       "autoagent/memory/backlog.md",
@@ -2195,7 +2195,7 @@
       "status": "skip",
       "checks": 68,
       "failures": 0,
-      "notes": "META session \u00e2\u20ac\u201d no code changed; Playwright check count remains 68"
+      "notes": "META session â€” no code changed; Playwright check count remains 68"
     }
   },
   {
@@ -2222,7 +2222,7 @@
       "status": "skip",
       "checks": 68,
       "failures": 0,
-      "notes": "Brain session \u2014 no frontend code changed"
+      "notes": "Brain session — no frontend code changed"
     }
   },
   {
@@ -2252,7 +2252,7 @@
     "date": "2026-03-25",
     "time": "14:00",
     "type": "work",
-    "summary": "Made the landing page hero much more visually impressive: bigger headline text, rotating value-prop phrases that cycle every 3 seconds, a pulsing green glow on the main CTA button, and a live stat bar showing '100 traders tracked \u00c2\u00b7 $2.4M+ profit tracked' with animated count-up numbers.",
+    "summary": "Made the landing page hero much more visually impressive: bigger headline text, rotating value-prop phrases that cycle every 3 seconds, a pulsing green glow on the main CTA button, and a live stat bar showing '100 traders tracked Â· $2.4M+ profit tracked' with animated count-up numbers.",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -2274,7 +2274,7 @@
     "date": "2026-03-25",
     "time": "15:00",
     "type": "work",
-    "summary": "Upgraded the 4 bettor profile stat cards from plain flat boxes to polished gradient-border cards: each card now has a unique colored top accent border (green=profit, blue=PnL%, purple=volume, amber=bets), a hover lift animation, and a small trend arrow that shows \u00e2\u2013\u00b2 in green for positive profit/PnL% or \u00e2\u2013\u00bc in red for negative, plus contextual labels for volume and bets count.",
+    "summary": "Upgraded the 4 bettor profile stat cards from plain flat boxes to polished gradient-border cards: each card now has a unique colored top accent border (green=profit, blue=PnL%, purple=volume, amber=bets), a hover lift animation, and a small trend arrow that shows â–² in green for positive profit/PnL% or â–¼ in red for negative, plus contextual labels for volume and bets count.",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -2296,7 +2296,7 @@
     "date": "2026-03-25",
     "time": "16:00",
     "type": "work",
-    "summary": "Added a 'Try the demo' button to the hero so visitors can explore the platform before signing up \u00e2\u20ac\u201d clicking it activates demo mode which shows the leaderboard pre-loaded with 5 realistic sample bettors, a dismissable green banner prompting sign-up, and an Exit Demo button. Zero backend calls in demo mode.",
+    "summary": "Added a 'Try the demo' button to the hero so visitors can explore the platform before signing up â€” clicking it activates demo mode which shows the leaderboard pre-loaded with 5 realistic sample bettors, a dismissable green banner prompting sign-up, and an Exit Demo button. Zero backend calls in demo mode.",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -2335,7 +2335,7 @@
       "status": "skip",
       "checks": 76,
       "failures": 0,
-      "notes": "META session \u2014 no code changes"
+      "notes": "META session — no code changes"
     }
   },
   {
@@ -2343,7 +2343,7 @@
     "date": "2026-03-25",
     "time": "14:00",
     "type": "meta",
-    "summary": "Code quality audit of sessions 99-105 \u2014 all 9 virtual team checks passed clean, XSS-free streak confirmed at 29+ sessions (77-105), 78 Playwright checks verified in registry",
+    "summary": "Code quality audit of sessions 99-105 — all 9 virtual team checks passed clean, XSS-free streak confirmed at 29+ sessions (77-105), 78 Playwright checks verified in registry",
     "files": [
       "autoagent/memory/backlog.md",
       "autoagent/memory/done.md",
@@ -2359,7 +2359,7 @@
       "status": "skip",
       "checks": 78,
       "failures": 0,
-      "notes": "META session \u2014 no code changes"
+      "notes": "META session — no code changes"
     }
   },
   {
@@ -2367,7 +2367,7 @@
     "date": "2026-03-25",
     "time": "00:00",
     "type": "work",
-    "summary": "Added a floating back-to-top button to the 100-item leaderboard \u00e2\u20ac\u201d a green arrow button fades in when you scroll down, taps to return to the top instantly, and hides when you switch views",
+    "summary": "Added a floating back-to-top button to the 100-item leaderboard â€” a green arrow button fades in when you scroll down, taps to return to the top instantly, and hides when you switch views",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -2389,7 +2389,7 @@
     "date": "2026-03-25",
     "time": "17:45",
     "type": "work",
-    "summary": "Wired AI-generated hero background image (dark cinematic fintech) and logo into the frontend \u2014 the landing page hero now has a premium image instead of a plain gradient, giving visitors a stronger first impression",
+    "summary": "Wired AI-generated hero background image (dark cinematic fintech) and logo into the frontend — the landing page hero now has a premium image instead of a plain gradient, giving visitors a stronger first impression",
     "files": [
       "frontend/index.html",
       "frontend/assets/hero-bg.jpg",
@@ -2414,7 +2414,7 @@
     "date": "2026-03-25",
     "time": "18:10",
     "type": "work",
-    "summary": "Added 5 UI polish features: Escape/Enter keyboard shortcuts for modals, 'Active Xm ago' green-dot badge on leaderboard cards, animated follow button glow pulse, social proof counter animating 0\u00e2\u2020\u2019847+ on landing, and upgrade tooltips on locked pricing features",
+    "summary": "Added 5 UI polish features: Escape/Enter keyboard shortcuts for modals, 'Active Xm ago' green-dot badge on leaderboard cards, animated follow button glow pulse, social proof counter animating 0â†’847+ on landing, and upgrade tooltips on locked pricing features",
     "files": [
       "frontend/index.html",
       "autoagent/playwright_registry.py"
@@ -2436,7 +2436,7 @@
     "date": "2026-03-25",
     "time": "14:00",
     "type": "brain",
-    "summary": "Brain session \u2014 competitive intelligence from 40+ Polymarket copy-trading tools, merged duplicate XSS streak rule, added Edge Score design pattern for leaderboard cards, and backlogged 4 feature-mode items (Discord, trade-size filter, Edge Score, delayed free-tier alerts)",
+    "summary": "Brain session — competitive intelligence from 40+ Polymarket copy-trading tools, merged duplicate XSS streak rule, added Edge Score design pattern for leaderboard cards, and backlogged 4 feature-mode items (Discord, trade-size filter, Edge Score, delayed free-tier alerts)",
     "files": [
       "autoagent/memory/knowledge.md",
       "autoagent/memory/backlog.md",
@@ -2453,7 +2453,7 @@
       "status": "skip",
       "checks": 83,
       "failures": 0,
-      "notes": "brain session \u2014 no code changes"
+      "notes": "brain session — no code changes"
     }
   },
   {
@@ -2485,7 +2485,7 @@
     "date": "2026-03-25",
     "time": "06:30",
     "type": "work",
-    "summary": "41 new security tests covering XSS payloads in name and address fields, SQL injection in 3 input surfaces, modified tier claim JWT bypass (proves server uses DB tier not JWT), and auth bypass checks on all 9 protected endpoints \u2014 test count grew from 310 to 351",
+    "summary": "41 new security tests covering XSS payloads in name and address fields, SQL injection in 3 input surfaces, modified tier claim JWT bypass (proves server uses DB tier not JWT), and auth bypass checks on all 9 protected endpoints — test count grew from 310 to 351",
     "files": [
       "backend/tests/test_security_extended.py"
     ],
@@ -2506,7 +2506,7 @@
     "date": "2026-03-25",
     "time": "09:00",
     "type": "work",
-    "summary": "5 new Playwright checks (84-88) covering the register form fields, login wrong-password inline error, sort button active class toggle, search filter hides non-matching cards, and profile tab navigation \u00e2\u20ac\u201d total Playwright coverage now 88 checks",
+    "summary": "5 new Playwright checks (84-88) covering the register form fields, login wrong-password inline error, sort button active class toggle, search filter hides non-matching cards, and profile tab navigation â€” total Playwright coverage now 88 checks",
     "files": [
       "autoagent/playwright_registry.py"
     ],
@@ -2567,7 +2567,7 @@
       "status": "skip",
       "checks": 88,
       "failures": 0,
-      "notes": "meta session \u00e2\u20ac\u201d no code changes"
+      "notes": "meta session â€” no code changes"
     }
   },
   {
@@ -2575,7 +2575,7 @@
     "date": "2026-03-25",
     "time": "08:00",
     "type": "meta",
-    "summary": "Code quality audit of sessions 108-115: all 9 virtual team checks passed, Marcus XSS greps confirmed escapeHtml applied to every API-sourced field across 5 innerHTML patterns, 354 backend tests stable \u00e2\u20ac\u201d codebase confirmed clean through session 115",
+    "summary": "Code quality audit of sessions 108-115: all 9 virtual team checks passed, Marcus XSS greps confirmed escapeHtml applied to every API-sourced field across 5 innerHTML patterns, 354 backend tests stable â€” codebase confirmed clean through session 115",
     "files": [
       "autoagent/memory/knowledge.md",
       "autoagent/memory/activity_log.md",
@@ -2592,7 +2592,7 @@
       "status": "skip",
       "checks": 88,
       "failures": 0,
-      "notes": "audit session \u00e2\u20ac\u201d no code changes"
+      "notes": "audit session â€” no code changes"
     }
   },
   {
@@ -2600,7 +2600,7 @@
     "date": "2026-03-25",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 CORS header tests covering preflight OPTIONS, wildcard origin acceptance, Authorization header allowance, and no-origin same-origin requests \u2014 proves the CORS middleware is correctly configured for cross-origin browser clients",
+    "summary": "Added 5 CORS header tests covering preflight OPTIONS, wildcard origin acceptance, Authorization header allowance, and no-origin same-origin requests — proves the CORS middleware is correctly configured for cross-origin browser clients",
     "files": [
       "backend/tests/test_cors.py"
     ],
@@ -2621,7 +2621,7 @@
     "date": "2026-03-25",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 mobile viewport Playwright checks (89-93) at 375px \u00e2\u20ac\u201d proves mobile nav is visible, bettor cards stack vertically, buttons are tappable (\u00e2\u2030\u00a544px), no horizontal overflow on leaderboard view, and landing screenshot captured",
+    "summary": "Added 5 mobile viewport Playwright checks (89-93) at 375px â€” proves mobile nav is visible, bettor cards stack vertically, buttons are tappable (â‰¥44px), no horizontal overflow on leaderboard view, and landing screenshot captured",
     "files": [
       "autoagent/playwright_registry.py"
     ],
@@ -2642,7 +2642,7 @@
     "date": "2026-03-25",
     "time": "12:00",
     "type": "work",
-    "summary": "Added 5 Playwright checks (94-98): alerts tab toggle switches present, Telegram channel card present, pricing section has 3 cards, featured card has Most Popular badge, follows empty state has CTA to leaderboard \u00e2\u20ac\u201d proves the alerts, pricing, and empty follows UI are correctly structured",
+    "summary": "Added 5 Playwright checks (94-98): alerts tab toggle switches present, Telegram channel card present, pricing section has 3 cards, featured card has Most Popular badge, follows empty state has CTA to leaderboard â€” proves the alerts, pricing, and empty follows UI are correctly structured",
     "files": [
       "autoagent/playwright_registry.py"
     ],
@@ -2691,7 +2691,7 @@
     "date": "2026-03-25",
     "time": "14:00",
     "type": "work",
-    "summary": "Code quality audit for sessions 118-120 passed all 9 team checks (XSS-free streak 77-120 confirmed); then added 3 Playwright checks (99-101) covering pricing locked-feature tooltips, account tab email/name fields, and tier label \u2014 101 total checks, 0 failures",
+    "summary": "Code quality audit for sessions 118-120 passed all 9 team checks (XSS-free streak 77-120 confirmed); then added 3 Playwright checks (99-101) covering pricing locked-feature tooltips, account tab email/name fields, and tier label — 101 total checks, 0 failures",
     "files": [
       "autoagent/playwright_registry.py"
     ],
@@ -2712,7 +2712,7 @@
     "date": "2026-03-25",
     "time": "14:30",
     "type": "work",
-    "summary": "Added 3 Playwright checks (102-104) for the profile page: back button wired to leaderboard, 4 stat elements present, skeleton loader produces rows \u00e2\u20ac\u201d 104 total checks, 0 failures",
+    "summary": "Added 3 Playwright checks (102-104) for the profile page: back button wired to leaderboard, 4 stat elements present, skeleton loader produces rows â€” 104 total checks, 0 failures",
     "files": [
       "autoagent/playwright_registry.py"
     ],
@@ -2733,7 +2733,7 @@
     "date": "2026-03-25",
     "time": "14:45",
     "type": "work",
-    "summary": "Added 3 Playwright checks (105-107) for upgrade modal and mobile alerts tab: #upgrade-modal exists in DOM, openUpgradeModal() removes hidden class, mobile 375px alerts tab has no horizontal overflow \u00e2\u20ac\u201d 107 total checks, 0 failures",
+    "summary": "Added 3 Playwright checks (105-107) for upgrade modal and mobile alerts tab: #upgrade-modal exists in DOM, openUpgradeModal() removes hidden class, mobile 375px alerts tab has no horizontal overflow â€” 107 total checks, 0 failures",
     "files": [
       "autoagent/playwright_registry.py"
     ],
@@ -2754,7 +2754,7 @@
     "date": "2026-03-25",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 3 Playwright checks (108-110) verifying account tab: no JS errors on navigation, tier description text present, and upgrade button in DOM \u00e2\u20ac\u201d proves account tab is correctly wired and always shows tier info",
+    "summary": "Added 3 Playwright checks (108-110) verifying account tab: no JS errors on navigation, tier description text present, and upgrade button in DOM â€” proves account tab is correctly wired and always shows tier info",
     "files": [
       "autoagent/playwright_registry.py"
     ],
@@ -2884,7 +2884,7 @@
     "date": "2026-03-25",
     "time": "12:00",
     "type": "work",
-    "summary": "Added Conviction Score to notifications \u2014 whales who bet more than their average now show a \ud83d\udd25 EXTREME or \u26a1 HIGH conviction label in Telegram messages and web push alerts, helping users prioritize which bets to copy",
+    "summary": "Added Conviction Score to notifications — whales who bet more than their average now show a 🔥 EXTREME or ⚡ HIGH conviction label in Telegram messages and web push alerts, helping users prioritize which bets to copy",
     "files": [
       "backend/app/services/notifications.py",
       "backend/app/services/scheduler.py",
@@ -2926,7 +2926,7 @@
       "status": "skip",
       "checks": 130,
       "failures": 0,
-      "notes": "brain session \u00e2\u20ac\u201d no code changes"
+      "notes": "brain session â€” no code changes"
     }
   },
   {
@@ -2934,7 +2934,7 @@
     "date": "2026-03-25",
     "time": "23:30",
     "type": "work",
-    "summary": "Position cards now show whether you are copying a whale at a good price \u00e2\u20ac\u201d green badge for within 10% of entry, amber for 10-30% above, red for over 30% above; Free users see a padlock with upgrade prompt instead",
+    "summary": "Position cards now show whether you are copying a whale at a good price â€” green badge for within 10% of entry, amber for 10-30% above, red for over 30% above; Free users see a padlock with upgrade prompt instead",
     "files": [
       "backend/app/services/polymarket.py",
       "backend/app/routes/follows.py",
@@ -2959,7 +2959,7 @@
     "date": "2026-03-25",
     "time": "23:50",
     "type": "work",
-    "summary": "Bettor profile pages now show a Copy Simulator card \u00e2\u20ac\u201d Basic/VIP users see what they would have made copying this bettor's last 10 resolved bets at $100 each; Free users see a blurred teaser with upgrade CTA",
+    "summary": "Bettor profile pages now show a Copy Simulator card â€” Basic/VIP users see what they would have made copying this bettor's last 10 resolved bets at $100 each; Free users see a blurred teaser with upgrade CTA",
     "files": [
       "backend/app/services/polymarket.py",
       "backend/app/routes/bettors.py",
@@ -2984,7 +2984,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "VIP users now get notified when a whale exits a position \u00e2\u20ac\u201d scheduler detects when a followed bettor closes or reduces a position by more than 50% and fires an exit alert so users know when to take profit",
+    "summary": "VIP users now get notified when a whale exits a position â€” scheduler detects when a followed bettor closes or reduces a position by more than 50% and fires an exit alert so users know when to take profit",
     "files": [
       "backend/app/models.py",
       "backend/app/services/notifications.py",
@@ -3009,7 +3009,7 @@
     "date": "2026-03-26",
     "time": "06:00",
     "type": "meta",
-    "summary": "Full code review of all backend files found 13 bugs catalogued in backlog \u2014 paywall bypass, CORS wildcard, data leaks, and functional stubs identified before users hit them",
+    "summary": "Full code review of all backend files found 13 bugs catalogued in backlog — paywall bypass, CORS wildcard, data leaks, and functional stubs identified before users hit them",
     "files": [
       "autoagent/PROMPT.md",
       "autoagent/memory/backlog.md",
@@ -3024,7 +3024,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u2014 no code changes"
+      "notes": "meta session — no code changes"
     }
   },
   {
@@ -3074,7 +3074,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u2014 no code changes"
+      "notes": "meta session — no code changes"
     }
   },
   {
@@ -3107,7 +3107,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Fixed VIP copy timing padlock bug \u2014 activity cache was serving stale tier after free to VIP upgrade so paying users saw the locked padlock UI instead of copy-signal badges for up to 30 seconds after payment",
+    "summary": "Fixed VIP copy timing padlock bug — activity cache was serving stale tier after free to VIP upgrade so paying users saw the locked padlock UI instead of copy-signal badges for up to 30 seconds after payment",
     "files": [
       "backend/app/routes/follows.py",
       "backend/tests/test_follows_live.py"
@@ -3129,7 +3129,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Fixed Telegram notifications permanently broken \u00e2\u20ac\u201d added POST /alerts/telegram/webhook so the Telegram bot can set the user's chat_id when they send /verify CODE; also removed telegram_chat_id from the alerts settings API response where it was leaking as sensitive data",
+    "summary": "Fixed Telegram notifications permanently broken â€” added POST /alerts/telegram/webhook so the Telegram bot can set the user's chat_id when they send /verify CODE; also removed telegram_chat_id from the alerts settings API response where it was leaking as sensitive data",
     "files": [
       "backend/app/routes/alerts.py",
       "backend/tests/test_alerts.py"
@@ -3151,7 +3151,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added API tier gate test suite covering consensus and follows/live endpoints \u2014 verifies whale name visibility, signal count caps, and tier field correctness for free/basic/VIP users",
+    "summary": "Added API tier gate test suite covering consensus and follows/live endpoints — verifies whale name visibility, signal count caps, and tier field correctness for free/basic/VIP users",
     "files": [
       "backend/tests/test_tier_gates.py"
     ],
@@ -3172,7 +3172,7 @@
     "date": "2026-03-26",
     "time": "14:00",
     "type": "brain",
-    "summary": "Deep brain + meta session \u2014 added 2 write-time safety gates to STEP 0 (API field removal + tier gate breakage), three-category tip extraction format (TIMGS technique), fixed knowledge.md duplicate rule, added category leaderboard to backlog",
+    "summary": "Deep brain + meta session — added 2 write-time safety gates to STEP 0 (API field removal + tier gate breakage), three-category tip extraction format (TIMGS technique), fixed knowledge.md duplicate rule, added category leaderboard to backlog",
     "files": [
       "autoagent/PROMPT.md",
       "autoagent/meta/BRAIN_PROMPT.md",
@@ -3191,7 +3191,7 @@
       "status": "skip",
       "checks": 132,
       "failures": 0,
-      "notes": "brain session \u2014 no code changes"
+      "notes": "brain session — no code changes"
     }
   },
   {
@@ -3199,7 +3199,7 @@
     "date": "2026-03-26",
     "time": "03:00",
     "type": "work",
-    "summary": "Fixed telegram_verify bug that showed Telegram linked even when notifications could never fire \u2014 now requires bot to have connected first; cleaned up scheduler imports",
+    "summary": "Fixed telegram_verify bug that showed Telegram linked even when notifications could never fire — now requires bot to have connected first; cleaned up scheduler imports",
     "files": [
       "backend/app/routes/alerts.py",
       "backend/app/services/scheduler.py",
@@ -3223,7 +3223,7 @@
     "date": "2026-03-26",
     "time": "10:00",
     "type": "work",
-    "summary": "Fixed web push silently failing for every user \u00e2\u20ac\u201d replaced unsigned raw POST stub with proper VAPID-signed pywebpush; frontend now disables push toggle when VAPID keys not configured so users aren't misled",
+    "summary": "Fixed web push silently failing for every user â€” replaced unsigned raw POST stub with proper VAPID-signed pywebpush; frontend now disables push toggle when VAPID keys not configured so users aren't misled",
     "files": [
       "backend/app/config.py",
       "backend/app/routes/alerts.py",
@@ -3272,7 +3272,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Code quality audit \u2014 fixed asyncio deprecation in web push, moved Telegram bot username to config, added telegram_chat_id to sensitive field regression tests",
+    "summary": "Code quality audit — fixed asyncio deprecation in web push, moved Telegram bot username to config, added telegram_chat_id to sensitive field regression tests",
     "files": [
       "backend/app/config.py",
       "backend/app/routes/alerts.py",
@@ -3311,7 +3311,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u00e2\u20ac\u201d no code changes"
+      "notes": "meta session â€” no code changes"
     }
   },
   {
@@ -3319,7 +3319,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 5 Playwright E2E tests for the Consensus tab that prove the port-8003 fix works \u00e2\u20ac\u201d users no longer see 'Could not load' error; also fixed the conftest login helper which had wrong selectors and had never been run before",
+    "summary": "Added 5 Playwright E2E tests for the Consensus tab that prove the port-8003 fix works â€” users no longer see 'Could not load' error; also fixed the conftest login helper which had wrong selectors and had never been run before",
     "files": [
       "backend/tests/playwright/test_consensus_tab.py",
       "backend/tests/playwright/conftest.py"
@@ -3364,7 +3364,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 12 Playwright tier gate E2E tests that verify paywall correctness in the browser UI for all 3 tiers \u00e2\u20ac\u201d Consensus signal count caps, whale name visibility, profile simulator blurred vs unlocked, and position card copy timing badges",
+    "summary": "Added 12 Playwright tier gate E2E tests that verify paywall correctness in the browser UI for all 3 tiers â€” Consensus signal count caps, whale name visibility, profile simulator blurred vs unlocked, and position card copy timing badges",
     "files": [
       "backend/tests/playwright/test_tier_gates.py"
     ],
@@ -3385,7 +3385,7 @@
     "date": "2026-03-26",
     "time": "14:00",
     "type": "work",
-    "summary": "Added 14 Playwright UI flow tests covering landing page pricing cards (all 5 features per tier), full register/login/logout journey, leaderboard renders (>=10 cards with names+stats), and bettor profile (name/stats/bets/simulator locked+unlocked) \u2014 core user journeys now E2E verified",
+    "summary": "Added 14 Playwright UI flow tests covering landing page pricing cards (all 5 features per tier), full register/login/logout journey, leaderboard renders (>=10 cards with names+stats), and bettor profile (name/stats/bets/simulator locked+unlocked) — core user journeys now E2E verified",
     "files": [
       "backend/tests/playwright/test_ui_flows.py"
     ],
@@ -3427,7 +3427,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session \u2014 no code changes"
+      "notes": "brain session — no code changes"
     }
   },
   {
@@ -3435,7 +3435,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 7 Playwright tests covering back-to-top FAB scroll behaviour and mobile bottom nav layout \u2014 users on phones can now trust the nav and scroll button are regression-tested",
+    "summary": "Added 7 Playwright tests covering back-to-top FAB scroll behaviour and mobile bottom nav layout — users on phones can now trust the nav and scroll button are regression-tested",
     "files": [
       "backend/tests/playwright/test_ui_flows.py"
     ],
@@ -3456,7 +3456,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Fixed Bug #12 (consensus stale data) by replacing a permanent boolean flag with a 60-second TTL \u2014 users now see fresh whale data each time they revisit the tab. Also added data-testid attributes to 9 key HTML elements so Playwright selectors survive CSS class renames.",
+    "summary": "Fixed Bug #12 (consensus stale data) by replacing a permanent boolean flag with a 60-second TTL — users now see fresh whale data each time they revisit the tab. Also added data-testid attributes to 9 key HTML elements so Playwright selectors survive CSS class renames.",
     "files": [
       "frontend/index.html",
       "backend/tests/playwright/test_consensus_tab.py",
@@ -3479,7 +3479,7 @@
     "date": "2026-03-26",
     "time": "14:00",
     "type": "work",
-    "summary": "Fixed follows refresh timer leak \u2014 after logout the 30s interval kept calling the follows API and redirecting users back to the login page; now showView() clears the timer when leaving dashboard. Also removed unused BetEvent import from follows.py.",
+    "summary": "Fixed follows refresh timer leak — after logout the 30s interval kept calling the follows API and redirecting users back to the login page; now showView() clears the timer when leaving dashboard. Also removed unused BetEvent import from follows.py.",
     "files": [
       "frontend/index.html",
       "backend/app/routes/follows.py",
@@ -3502,7 +3502,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 3 reliability tests proving Polymarket HTTP 500 errors are swallowed gracefully by the service layer (not propagated to callers), and that 10 concurrent GET /bettors requests all succeed \u2014 confirms the module-level cache dict is safe under concurrent access",
+    "summary": "Added 3 reliability tests proving Polymarket HTTP 500 errors are swallowed gracefully by the service layer (not propagated to callers), and that 10 concurrent GET /bettors requests all succeed — confirms the module-level cache dict is safe under concurrent access",
     "files": [
       "backend/tests/test_bettors.py"
     ],
@@ -3537,7 +3537,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u00e2\u20ac\u201d no code changes"
+      "notes": "meta session â€” no code changes"
     }
   },
   {
@@ -3545,7 +3545,7 @@
     "date": "2026-03-26",
     "time": "14:00",
     "type": "work",
-    "summary": "VIP users now get bet alerts up to 6x faster \u00e2\u20ac\u201d added a dedicated 5-second poll for bettors followed by VIP users (vs 30s for everyone else), plus a /readiness endpoint that checks database connectivity for production deployments",
+    "summary": "VIP users now get bet alerts up to 6x faster â€” added a dedicated 5-second poll for bettors followed by VIP users (vs 30s for everyone else), plus a /readiness endpoint that checks database connectivity for production deployments",
     "files": [
       "backend/app/config.py",
       "backend/app/services/scheduler.py",
@@ -3570,7 +3570,7 @@
     "date": "2026-03-26",
     "time": "15:00",
     "type": "work",
-    "summary": "Fixed silent error swallowing in the follows tab \u2014 users now see a proper error message instead of stuck skeleton cards when the positions API fails on first load",
+    "summary": "Fixed silent error swallowing in the follows tab — users now see a proper error message instead of stuck skeleton cards when the positions API fails on first load",
     "files": [
       "frontend/index.html"
     ],
@@ -3591,7 +3591,7 @@
     "date": "2026-03-26",
     "time": "16:00",
     "type": "work",
-    "summary": "Code quality audit of sessions 156-160 \u00e2\u20ac\u201d fixed readiness endpoint exposing DB error details in 503 response body (Marcus security fix) and updated stale scheduler docstring",
+    "summary": "Code quality audit of sessions 156-160 â€” fixed readiness endpoint exposing DB error details in 503 response body (Marcus security fix) and updated stale scheduler docstring",
     "files": [
       "backend/app/main.py",
       "backend/app/services/scheduler.py",
@@ -3614,7 +3614,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 7 behavioral tests covering _poll_vip_bets fast-path (3 scenarios), /follows/live conviction score fields (3 scenarios), and profile cache reverse-order tier gate \u00e2\u20ac\u201d 450\u00e2\u2020\u2019457 tests passing",
+    "summary": "Added 7 behavioral tests covering _poll_vip_bets fast-path (3 scenarios), /follows/live conviction score fields (3 scenarios), and profile cache reverse-order tier gate â€” 450â†’457 tests passing",
     "files": [
       "backend/tests/test_scheduler.py",
       "backend/tests/test_follows_live.py",
@@ -3637,7 +3637,7 @@
     "date": "2026-03-26",
     "time": "06:43",
     "type": "brain",
-    "summary": "Fixed stale port and StockCards paths in coding.md, created rate-limiting.md skill with SlowAPI recipe for auth routes, added FastAPI streaming/deprecation patterns \u00e2\u20ac\u201d sessions running with correct port 8003 now",
+    "summary": "Fixed stale port and StockCards paths in coding.md, created rate-limiting.md skill with SlowAPI recipe for auth routes, added FastAPI streaming/deprecation patterns â€” sessions running with correct port 8003 now",
     "files": [
       "autoagent/skills/coding.md",
       "autoagent/skills/rate-limiting.md",
@@ -3656,7 +3656,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session \u00e2\u20ac\u201d no code changes"
+      "notes": "brain session â€” no code changes"
     }
   },
   {
@@ -3664,7 +3664,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added rate limiting to auth routes \u2014 POST /auth/register and POST /auth/login now return 429 after 10 requests per minute per IP, blocking brute-force and mass account creation attacks",
+    "summary": "Added rate limiting to auth routes — POST /auth/register and POST /auth/login now return 429 after 10 requests per minute per IP, blocking brute-force and mass account creation attacks",
     "files": [
       "backend/requirements.txt",
       "backend/app/limiter.py",
@@ -3690,7 +3690,7 @@
     "date": "2026-03-26",
     "time": "14:00",
     "type": "work",
-    "summary": "Added 3 regression tests: _last_positions purge on unfollow (memory leak fix) and health/readiness endpoints not rate-limited (k8s probe protection). 459\u2192462 tests passing.",
+    "summary": "Added 3 regression tests: _last_positions purge on unfollow (memory leak fix) and health/readiness endpoints not rate-limited (k8s probe protection). 459→462 tests passing.",
     "files": [
       "backend/tests/test_scheduler.py",
       "backend/tests/test_health.py"
@@ -3712,7 +3712,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Code quality audit for sessions 161-165: extracted _compute_conviction helper to eliminate duplicated 8-line conviction score logic from _poll_bets and _poll_vip_bets; fixed stale CORS docstring; added 5 unit tests for the new helper \u2014 462 to 467 tests passing",
+    "summary": "Code quality audit for sessions 161-165: extracted _compute_conviction helper to eliminate duplicated 8-line conviction score logic from _poll_bets and _poll_vip_bets; fixed stale CORS docstring; added 5 unit tests for the new helper — 462 to 467 tests passing",
     "files": [
       "backend/app/services/scheduler.py",
       "backend/tests/test_scheduler.py",
@@ -3735,7 +3735,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Dead code audit: scanned all JS function definitions in the frontend and all imports in the backend \u00e2\u20ac\u201d found and removed 1 dead function (tierBadge, 3 lines) that was defined but never called anywhere; 467 tests still passing",
+    "summary": "Dead code audit: scanned all JS function definitions in the frontend and all imports in the backend â€” found and removed 1 dead function (tierBadge, 3 lines) that was defined but never called anywhere; 467 tests still passing",
     "files": [
       "frontend/index.html"
     ],
@@ -3748,7 +3748,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "removed dead code only \u00e2\u20ac\u201d no new HTML or JS patterns added"
+      "notes": "removed dead code only â€” no new HTML or JS patterns added"
     }
   },
   {
@@ -3772,7 +3772,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u2014 no code changes"
+      "notes": "meta session — no code changes"
     }
   },
   {
@@ -3780,7 +3780,7 @@
     "date": "2026-03-26",
     "time": "14:00",
     "type": "work",
-    "summary": "Fixed get_active_positions to filter out resolved-market positions (price=0 or >=1), and added 3 new tests: price range validation, copy_signal enum check, consensus whale_count and price range \u2014 keeping copyable positions meaningful for users",
+    "summary": "Fixed get_active_positions to filter out resolved-market positions (price=0 or >=1), and added 3 new tests: price range validation, copy_signal enum check, consensus whale_count and price range — keeping copyable positions meaningful for users",
     "files": [
       "backend/app/services/polymarket.py",
       "backend/tests/test_data_integrity.py",
@@ -3804,7 +3804,7 @@
     "date": "2026-03-26",
     "time": "08:10",
     "type": "work",
-    "summary": "Added recent bets timestamp freshness test \u2014 verifies all recent_bets timestamps are within 90 days to catch Polymarket stale data; also cleaned 2 stale backlog items and added 3 new testing tasks",
+    "summary": "Added recent bets timestamp freshness test — verifies all recent_bets timestamps are within 90 days to catch Polymarket stale data; also cleaned 2 stale backlog items and added 3 new testing tasks",
     "files": [
       "backend/tests/test_data_integrity.py"
     ],
@@ -3825,7 +3825,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Activated the condition_id regex assertion in consensus test \u00e2\u20ac\u201d CONDITION_ID_RE was defined but never used; now each consensus signal is validated to have a 64-char hex condition_id, catching missing or malformed market IDs from Polymarket",
+    "summary": "Activated the condition_id regex assertion in consensus test â€” CONDITION_ID_RE was defined but never used; now each consensus signal is validated to have a 64-char hex condition_id, catching missing or malformed market IDs from Polymarket",
     "files": [
       "backend/tests/test_data_integrity.py"
     ],
@@ -3846,7 +3846,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added a safety cap (\u00c2\u00b110000%) to the copy simulator ROI calculation so bettors who won bets at very low entry prices (e.g. 1 cent) don't show absurd 99,000% returns on their profile \u00e2\u20ac\u201d includes unit test proving the cap works",
+    "summary": "Added a safety cap (Â±10000%) to the copy simulator ROI calculation so bettors who won bets at very low entry prices (e.g. 1 cent) don't show absurd 99,000% returns on their profile â€” includes unit test proving the cap works",
     "files": [
       "backend/app/services/polymarket.py",
       "backend/tests/test_data_integrity.py"
@@ -3885,7 +3885,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session \u00e2\u20ac\u201d no code changes"
+      "notes": "brain session â€” no code changes"
     }
   },
   {
@@ -3893,7 +3893,7 @@
     "date": "2026-03-26",
     "time": "14:00",
     "type": "work",
-    "summary": "Code quality audit for sessions 167-171 \u2014 moved inline asyncio/time/datetime imports to module level in polymarket.py and removed two unused imports (Optional, timezone); no logic changes",
+    "summary": "Code quality audit for sessions 167-171 — moved inline asyncio/time/datetime imports to module level in polymarket.py and removed two unused imports (Optional, timezone); no logic changes",
     "files": [
       "backend/app/services/polymarket.py"
     ],
@@ -3998,7 +3998,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u2014 no code changes"
+      "notes": "meta session — no code changes"
     }
   },
   {
@@ -4006,7 +4006,7 @@
     "date": "2026-03-26",
     "time": "15:00",
     "type": "work",
-    "summary": "Code quality audit for sessions 169-177 \u2014 no issues found; Marcus XSS pass, Leo no smells, Alex architecture clean; minor note: bettors_mod imported inside test functions (intentional pattern for cache access, not blocking)",
+    "summary": "Code quality audit for sessions 169-177 — no issues found; Marcus XSS pass, Leo no smells, Alex architecture clean; minor note: bettors_mod imported inside test functions (intentional pattern for cache access, not blocking)",
     "files": [],
     "tests": {
       "before": 483,
@@ -4025,7 +4025,7 @@
     "date": "2026-03-26",
     "time": "10:10",
     "type": "work",
-    "summary": "Added 5 tests locking in leaderboard accuracy conversion, route accuracy passthrough, and follows 409 detail message \u2014 483 to 488 tests passing",
+    "summary": "Added 5 tests locking in leaderboard accuracy conversion, route accuracy passthrough, and follows 409 detail message — 483 to 488 tests passing",
     "files": [
       "backend/tests/test_polymarket_service.py",
       "backend/tests/test_bettors.py",
@@ -4070,7 +4070,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 3 tests covering dead code paths found by coverage analysis: push_subscription dict path (required model fix Optional[str]\u2192Optional[Any]), telegram webhook empty text, and copy simulator SELL-side exclusion \u2014 490\u2192493 tests",
+    "summary": "Added 3 tests covering dead code paths found by coverage analysis: push_subscription dict path (required model fix Optional[str]→Optional[Any]), telegram webhook empty text, and copy simulator SELL-side exclusion — 490→493 tests",
     "files": [
       "backend/app/routes/alerts.py",
       "backend/tests/test_alerts.py",
@@ -4112,7 +4112,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session \u2014 no code changes"
+      "notes": "brain session — no code changes"
     }
   },
   {
@@ -4143,7 +4143,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 3 tests for conviction_score and conviction_label fields in get_recent_bets \u00e2\u20ac\u201d proves the EXTREME/HIGH/empty label logic works correctly and that API failures return an empty list safely",
+    "summary": "Added 3 tests for conviction_score and conviction_label fields in get_recent_bets â€” proves the EXTREME/HIGH/empty label logic works correctly and that API failures return an empty list safely",
     "files": [
       "backend/tests/test_polymarket_service.py"
     ],
@@ -4164,7 +4164,7 @@
     "date": "2026-03-26",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 1 test for compute_copy_simulator network failure path \u00e2\u20ac\u201d proves ConnectError is caught and safe zeros are returned, covering the except branch not hit by the empty-response test",
+    "summary": "Added 1 test for compute_copy_simulator network failure path â€” proves ConnectError is caught and safe zeros are returned, covering the except branch not hit by the empty-response test",
     "files": [
       "backend/tests/test_polymarket_service.py"
     ],
@@ -4185,7 +4185,7 @@
     "date": "2026-03-27",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 4 Playwright E2E tests proving auth persistence, bad-token redirect, follow-limit upgrade modal, and XSS safety \u2014 verifying the core auth and paywall flows work correctly in the browser",
+    "summary": "Added 4 Playwright E2E tests proving auth persistence, bad-token redirect, follow-limit upgrade modal, and XSS safety — verifying the core auth and paywall flows work correctly in the browser",
     "files": [
       "backend/tests/playwright/test_auth_and_security.py"
     ],
@@ -4206,7 +4206,7 @@
     "date": "2026-03-27",
     "time": "00:00",
     "type": "meta",
-    "summary": "Added FLAKY TEST HANDLING and FRESH USER PATTERN sections to playwright.md \u2014 prevents work sessions from investigating pre-existing Polymarket rate-limit flakes and ensures follow-limit tests always use fresh users",
+    "summary": "Added FLAKY TEST HANDLING and FRESH USER PATTERN sections to playwright.md — prevents work sessions from investigating pre-existing Polymarket rate-limit flakes and ensures follow-limit tests always use fresh users",
     "files": [
       "autoagent/skills/playwright.md"
     ],
@@ -4219,7 +4219,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u2014 no code changes"
+      "notes": "meta session — no code changes"
     }
   },
   {
@@ -4227,7 +4227,7 @@
     "date": "2026-03-27",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 3 Playwright E2E full-journey tests covering free, basic, and VIP user flows from login through all tier-gated features \u2014 proves chained UI state works correctly across leaderboard, profile, follows, and consensus tabs",
+    "summary": "Added 3 Playwright E2E full-journey tests covering free, basic, and VIP user flows from login through all tier-gated features — proves chained UI state works correctly across leaderboard, profile, follows, and consensus tabs",
     "files": [
       "backend/tests/playwright/test_full_journeys.py"
     ],
@@ -4242,7 +4242,7 @@
       "failures": 0,
       "notes": "3 new Playwright full-journey tests pass; 46->49 Playwright tests total"
     },
-    "notes": "Push skipped \u2014 remote uses squash-snapshot model and requires force-push; committed locally at aa8d984"
+    "notes": "Push skipped — remote uses squash-snapshot model and requires force-push; committed locally at aa8d984"
   },
   {
     "session": 190,
@@ -4291,7 +4291,7 @@
     "date": "2026-03-27",
     "time": "00:00",
     "type": "work",
-    "summary": "Code quality audit \u2014 fixed a dead assertion (assert ... or True always passes) in test_full_journeys.py and replaced blocking time.sleep with page.wait_for_timeout in test_notifications_tier_gates.py",
+    "summary": "Code quality audit — fixed a dead assertion (assert ... or True always passes) in test_full_journeys.py and replaced blocking time.sleep with page.wait_for_timeout in test_notifications_tier_gates.py",
     "files": [
       "backend/tests/playwright/test_full_journeys.py",
       "backend/tests/playwright/test_notifications_tier_gates.py"
@@ -4333,7 +4333,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session \u00e2\u20ac\u201d no code changes"
+      "notes": "brain session â€” no code changes"
     }
   },
   {
@@ -4341,7 +4341,7 @@
     "date": "2026-03-27",
     "time": "15:00",
     "type": "work",
-    "summary": "Added 4 Playwright E2E error state tests proving the frontend handles API failures gracefully \u00e2\u20ac\u201d network aborts and 503s show 'Could not load' messages instead of blank screens, and empty follows state shows helpful message for new users",
+    "summary": "Added 4 Playwright E2E error state tests proving the frontend handles API failures gracefully â€” network aborts and 503s show 'Could not load' messages instead of blank screens, and empty follows state shows helpful message for new users",
     "files": [
       "backend/tests/playwright/test_error_states.py"
     ],
@@ -4354,7 +4354,7 @@
       "status": "pass",
       "checks": 4,
       "failures": 0,
-      "notes": "4 new Playwright error state checks all passed; 57\u00e2\u2020\u201961 Playwright tests"
+      "notes": "4 new Playwright error state checks all passed; 57â†’61 Playwright tests"
     }
   },
   {
@@ -4362,7 +4362,7 @@
     "date": "2026-03-27",
     "time": "10:00",
     "type": "work",
-    "summary": "Added Playwright E2E test that proves the core follow-bettor-appears-on-dashboard flow works in a real browser \u2014 fresh user follows a bettor from the leaderboard and the bettor card shows up in the Follows tab",
+    "summary": "Added Playwright E2E test that proves the core follow-bettor-appears-on-dashboard flow works in a real browser — fresh user follows a bettor from the leaderboard and the bettor card shows up in the Follows tab",
     "files": [
       "backend/tests/playwright/test_follow_appears_on_dashboard.py"
     ],
@@ -4383,7 +4383,7 @@
     "date": "2026-03-27",
     "time": "11:00",
     "type": "work",
-    "summary": "Added exact copy_value_pct formula math tests (avg=0.40/cur=0.50\u00e2\u2020\u201925.0, avg=0.20/cur=0.30\u00e2\u2020\u201950.0) and a Playwright test proving the leaderboard shows 'No data yet' on a 200 empty response \u2014 distinct from the error state shown on API failure",
+    "summary": "Added exact copy_value_pct formula math tests (avg=0.40/cur=0.50â†’25.0, avg=0.20/cur=0.30â†’50.0) and a Playwright test proving the leaderboard shows 'No data yet' on a 200 empty response — distinct from the error state shown on API failure",
     "files": [
       "backend/tests/test_polymarket_service.py",
       "backend/tests/playwright/test_leaderboard_empty_state.py"
@@ -4405,7 +4405,7 @@
     "date": "2026-03-27",
     "time": "14:00",
     "type": "work",
-    "summary": "Added Playwright test proving that a basic-tier user who follows 5 bettors and tries a 6th sees the upgrade modal \u00e2\u20ac\u201d the paywall gate is working correctly in the browser",
+    "summary": "Added Playwright test proving that a basic-tier user who follows 5 bettors and tries a 6th sees the upgrade modal â€” the paywall gate is working correctly in the browser",
     "files": [
       "backend/tests/playwright/test_basic_follow_limit.py"
     ],
@@ -4440,7 +4440,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u00e2\u20ac\u201d no code changes"
+      "notes": "meta session â€” no code changes"
     }
   },
   {
@@ -4448,7 +4448,7 @@
     "date": "2026-03-27",
     "time": "00:00",
     "type": "work",
-    "summary": "Code quality audit of last 5 sessions test files \u2014 moved hardcoded API_BASE constant from 2 test files into conftest.py, eliminating duplicate backend URL definitions",
+    "summary": "Code quality audit of last 5 sessions test files — moved hardcoded API_BASE constant from 2 test files into conftest.py, eliminating duplicate backend URL definitions",
     "files": [
       "backend/tests/playwright/conftest.py",
       "backend/tests/playwright/test_error_states.py",
@@ -4471,7 +4471,7 @@
     "date": "2026-03-27",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 3 Playwright tests completing the North Star follow\u2192dashboard coverage for all 3 tiers and proving the unfollow cycle works end-to-end",
+    "summary": "Added 3 Playwright tests completing the North Star follow→dashboard coverage for all 3 tiers and proving the unfollow cycle works end-to-end",
     "files": [
       "backend/tests/playwright/test_basic_follow_appears_on_dashboard.py",
       "backend/tests/playwright/test_vip_follow_appears_on_dashboard.py",
@@ -4494,7 +4494,7 @@
     "date": "2026-03-27",
     "time": "00:00",
     "type": "work",
-    "summary": "Added Playwright E2E test proving basic-tier users can open a bettor profile, see the wallet address, and get an unlocked copy simulator \u00e2\u20ac\u201d not the blurred free-tier teaser",
+    "summary": "Added Playwright E2E test proving basic-tier users can open a bettor profile, see the wallet address, and get an unlocked copy simulator â€” not the blurred free-tier teaser",
     "files": [
       "backend/tests/playwright/test_profile_modal.py"
     ],
@@ -4515,7 +4515,7 @@
     "date": "2026-03-27",
     "time": "00:00",
     "type": "work",
-    "summary": "Added Playwright E2E test proving that clicking the profile back-button returns to the leaderboard tab \u00e2\u20ac\u201d basic user opens a profile then clicks back, asserting leaderboard becomes visible and profile becomes hidden",
+    "summary": "Added Playwright E2E test proving that clicking the profile back-button returns to the leaderboard tab â€” basic user opens a profile then clicks back, asserting leaderboard becomes visible and profile becomes hidden",
     "files": [
       "backend/tests/playwright/test_profile_back_button.py"
     ],
@@ -4528,7 +4528,7 @@
       "status": "pass",
       "checks": 1,
       "failures": 0,
-      "notes": "New back-button test passed in 3.7s; key insight: must use showTab('leaderboard') not showView('browse') \u00e2\u20ac\u201d profile tab lives in view-dashboard"
+      "notes": "New back-button test passed in 3.7s; key insight: must use showTab('leaderboard') not showView('browse') â€” profile tab lives in view-dashboard"
     }
   },
   {
@@ -4555,7 +4555,7 @@
       "status": "skip",
       "checks": 69,
       "failures": 0,
-      "notes": "brain session \u2014 no code changes"
+      "notes": "brain session — no code changes"
     }
   },
   {
@@ -4586,7 +4586,7 @@
     "date": "2026-03-27",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 6 Playwright E2E tests covering alerts tab toggle presence (basic-tier user sees #toggle-push and #toggle-telegram in Alerts tab) and leaderboard sort toggle active state (profit\u2192volume sort switch moves active class and keeps cards loaded)",
+    "summary": "Added 6 Playwright E2E tests covering alerts tab toggle presence (basic-tier user sees #toggle-push and #toggle-telegram in Alerts tab) and leaderboard sort toggle active state (profit→volume sort switch moves active class and keeps cards loaded)",
     "files": [
       "backend/tests/playwright/test_alerts_tab_toggles.py",
       "backend/tests/playwright/test_leaderboard_sort_toggle.py"
@@ -4623,7 +4623,7 @@
       "status": "pass",
       "checks": 9,
       "failures": 0,
-      "notes": "9 new Playwright tests all pass (75\u00e2\u2020\u201984 Playwright tests)"
+      "notes": "9 new Playwright tests all pass (75â†’84 Playwright tests)"
     }
   },
   {
@@ -4670,7 +4670,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u2014 no code changes"
+      "notes": "meta session — no code changes"
     }
   },
   {
@@ -4678,7 +4678,7 @@
     "date": "2026-03-27",
     "time": "03:00",
     "type": "work",
-    "summary": "Added 4 Playwright E2E tests for landing page navigation CTAs \u2014 verifies View Live Leaderboard, Log In, Start Free, and billing toggle all work; also cleaned 4 stale backlog tasks that were already implemented",
+    "summary": "Added 4 Playwright E2E tests for landing page navigation CTAs — verifies View Live Leaderboard, Log In, Start Free, and billing toggle all work; also cleaned 4 stale backlog tasks that were already implemented",
     "files": [
       "backend/tests/playwright/test_landing_navigation.py"
     ],
@@ -4699,7 +4699,7 @@
     "date": "2026-03-27",
     "time": "04:00",
     "type": "work",
-    "summary": "Added 3 Playwright E2E tests for landing leaderboard preview \u00e2\u20ac\u201d verifies skeleton is replaced, tbody has at least one row, and data quality is valid when Polymarket API is available; also completed code quality audit of sessions 205-209 test files",
+    "summary": "Added 3 Playwright E2E tests for landing leaderboard preview â€” verifies skeleton is replaced, tbody has at least one row, and data quality is valid when Polymarket API is available; also completed code quality audit of sessions 205-209 test files",
     "files": [
       "backend/tests/playwright/test_landing_leaderboard_preview.py"
     ],
@@ -4741,7 +4741,7 @@
     "date": "2026-03-27",
     "time": "05:30",
     "type": "work",
-    "summary": "Fixed SQLite database-is-locked intermittent failures by switching test DB from file-based to in-memory with StaticPool \u00e2\u20ac\u201d test suite went from 452-490 passed with 6-20 random failures to a deterministic 503 passed, 0 failed",
+    "summary": "Fixed SQLite database-is-locked intermittent failures by switching test DB from file-based to in-memory with StaticPool â€” test suite went from 452-490 passed with 6-20 random failures to a deterministic 503 passed, 0 failed",
     "files": [
       "backend/tests/conftest.py"
     ],
@@ -4812,7 +4812,7 @@
     "date": "2026-03-27",
     "time": "12:00",
     "type": "work",
-    "summary": "Added 2 backend tests closing the last PRIORITY 11 coverage gaps \u00e2\u20ac\u201d web-push-config available=True branch and Stripe unknown-plan fallback to basic tier",
+    "summary": "Added 2 backend tests closing the last PRIORITY 11 coverage gaps â€” web-push-config available=True branch and Stripe unknown-plan fallback to basic tier",
     "files": [
       "backend/tests/test_alerts.py",
       "backend/tests/test_stripe_service.py"
@@ -4857,7 +4857,7 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Code quality audit \u2014 fixed 2 test smells in test_alerts.py: the disable-web-push test now actually enables push first (it was silently 403ing as a free-tier user), and removed a needless json alias",
+    "summary": "Code quality audit — fixed 2 test smells in test_alerts.py: the disable-web-push test now actually enables push first (it was silently 403ing as a free-tier user), and removed a needless json alias",
     "files": [
       "backend/tests/test_alerts.py"
     ],
@@ -4915,7 +4915,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u2014 no code changes"
+      "notes": "meta session — no code changes"
     }
   },
   {
@@ -4923,7 +4923,7 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 4 tests covering format_exit_message output format and truncation, the VAPID-keys-set but no-endpoint branch of send_web_push, and detect_exits web push delivery to VIP users \u00e2\u20ac\u201d proving all 3 previously uncovered code paths work correctly",
+    "summary": "Added 4 tests covering format_exit_message output format and truncation, the VAPID-keys-set but no-endpoint branch of send_web_push, and detect_exits web push delivery to VIP users â€” proving all 3 previously uncovered code paths work correctly",
     "files": [
       "backend/tests/test_notifications.py",
       "backend/tests/test_scheduler.py"
@@ -4945,7 +4945,7 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 3 tests covering the generic-exception branch of send_web_push (lines 106-108), the get_recent_bets exception skip in _poll_vip_bets (lines 328-329), and the free-tier follower notification skip (line 379) \u00e2\u20ac\u201d every exception and guard in the VIP notification path now has regression coverage",
+    "summary": "Added 3 tests covering the generic-exception branch of send_web_push (lines 106-108), the get_recent_bets exception skip in _poll_vip_bets (lines 328-329), and the free-tier follower notification skip (line 379) â€” every exception and guard in the VIP notification path now has regression coverage",
     "files": [
       "backend/tests/test_notifications.py",
       "backend/tests/test_scheduler.py"
@@ -4967,7 +4967,7 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 3 tests covering the last uncovered exception branches in the scheduler \u2014 detect_exits notification failure, VIP poll dispatch failure, and stop_scheduler shutdown call. Any refactor that removes these safety nets will now fail the test suite.",
+    "summary": "Added 3 tests covering the last uncovered exception branches in the scheduler — detect_exits notification failure, VIP poll dispatch failure, and stop_scheduler shutdown call. Any refactor that removes these safety nets will now fail the test suite.",
     "files": [
       "backend/tests/test_scheduler.py"
     ],
@@ -4988,7 +4988,7 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Code quality audit (PRIORITY 16.5) found no issues; added 3 PRIORITY 17 tests covering old-bet skip in VIP poll, outer exception handler rollback, and get_live_trades exception path \u2014 every scheduler and live-trades exception branch is now regression-protected.",
+    "summary": "Code quality audit (PRIORITY 16.5) found no issues; added 3 PRIORITY 17 tests covering old-bet skip in VIP poll, outer exception handler rollback, and get_live_trades exception path — every scheduler and live-trades exception branch is now regression-protected.",
     "files": [
       "backend/tests/test_scheduler.py",
       "backend/tests/test_polymarket_service.py"
@@ -5028,7 +5028,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "brain session \u2014 no code changes"
+      "notes": "brain session — no code changes"
     }
   },
   {
@@ -5036,7 +5036,7 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 4 coverage-gap tests closing PRIORITY 18 \u2014 free-tier follower skip in VIP poll, conviction score fallback for zero-amount bets, and both error paths in _fetch_positions inside get_consensus_signals; scheduler.py now 100% covered",
+    "summary": "Added 4 coverage-gap tests closing PRIORITY 18 — free-tier follower skip in VIP poll, conviction score fallback for zero-amount bets, and both error paths in _fetch_positions inside get_consensus_signals; scheduler.py now 100% covered",
     "files": [
       "backend/tests/test_scheduler.py",
       "backend/tests/test_polymarket_service.py"
@@ -5058,7 +5058,7 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 3 tests covering polymarket.py lines 279/332/477 \u00e2\u20ac\u201d leaderboard dict response in profile fetch, activity dict reset in copy simulator, and empty conditionId skip in consensus positions",
+    "summary": "Added 3 tests covering polymarket.py lines 279/332/477 â€” leaderboard dict response in profile fetch, activity dict reset in copy simulator, and empty conditionId skip in consensus positions",
     "files": [
       "backend/tests/test_polymarket_service.py"
     ],
@@ -5079,7 +5079,7 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Added 2 tests covering the ISO timestamp and invalid timestamp exception paths in the copy simulator \u00e2\u20ac\u201d polymarket.py is now 100% covered, all services and routes at full coverage",
+    "summary": "Added 2 tests covering the ISO timestamp and invalid timestamp exception paths in the copy simulator â€” polymarket.py is now 100% covered, all services and routes at full coverage",
     "files": [
       "backend/tests/test_polymarket_service.py"
     ],
@@ -5135,7 +5135,7 @@
       "status": "skip",
       "checks": 0,
       "failures": 0,
-      "notes": "meta session \u00e2\u20ac\u201d no code changes"
+      "notes": "meta session â€” no code changes"
     }
   },
   {
@@ -5143,7 +5143,7 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Code quality audit on sessions 225-228 test files \u2014 found and removed one redundant autouse-duplicate _last_check assignment in test_scheduler.py; all security, coupling, and specificity checks clean",
+    "summary": "Code quality audit on sessions 225-228 test files — found and removed one redundant autouse-duplicate _last_check assignment in test_scheduler.py; all security, coupling, and specificity checks clean",
     "files": [
       "backend/tests/test_scheduler.py"
     ],
@@ -5164,7 +5164,7 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Mutation testing of 3 business-critical files \u2014 found and killed 3 surviving mutants: free users could see only 2 (not 3) consensus signals, free-tier upgrade message could lose the Basic upgrade path, and a position dropping exactly 50% could wrongly trigger an exit alert",
+    "summary": "Mutation testing of 3 business-critical files — found and killed 3 surviving mutants: free users could see only 2 (not 3) consensus signals, free-tier upgrade message could lose the Basic upgrade path, and a position dropping exactly 50% could wrongly trigger an exit alert",
     "files": [
       "backend/tests/test_tier_gates.py",
       "backend/tests/test_follows.py",
@@ -5187,7 +5187,7 @@
     "date": "2026-03-28",
     "time": "00:00",
     "type": "work",
-    "summary": "Mutation testing of payments + auth files \u00e2\u20ac\u201d killed 3 surviving mutants: unpaid subscriptions could silently retain VIP access, JWT sub-claim could be wrong identifier without detection, and Stripe checkout could silently assign subscriptions to the wrong user",
+    "summary": "Mutation testing of payments + auth files â€” killed 3 surviving mutants: unpaid subscriptions could silently retain VIP access, JWT sub-claim could be wrong identifier without detection, and Stripe checkout could silently assign subscriptions to the wrong user",
     "files": [
       "backend/tests/test_stripe_service.py",
       "backend/tests/test_auth.py"
@@ -5225,6 +5225,33 @@
       "checks": 0,
       "failures": 0,
       "notes": "no frontend changes"
+    }
+  },
+  {
+    "session": 234,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "brain",
+    "summary": "Brain session: archived activity_log sessions 201-220, enhanced observer loop guard with graduated-response model (soft redirect before hard stop), added wallet basket + account-cluster tracking to competitive backlog",
+    "files": [
+      "autoagent/PROMPT.md",
+      "autoagent/memory/activity_log.md",
+      "autoagent/memory/activity_log_archive.md",
+      "autoagent/memory/backlog.md",
+      "autoagent/memory/knowledge.md",
+      "autoagent/brain/sources.md",
+      "autoagent/brain/techniques.md"
+    ],
+    "tests": {
+      "before": 550,
+      "after": 550,
+      "status": "skip"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "brain session — no code changes"
     }
   }
 ]

@@ -175,6 +175,10 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 - [ ] **Mobile-first UX pass** — modern prediction market platforms (Pariflow) compete on "consumer-first" UX with one-tap execution and highly responsive mobile apps. PolyEdge currently has a mobile nav bar (session 119 confirmed working at 375px) but bettor cards and consensus signals could be more mobile-optimized. Add to FEATURE MODE sprint when mission switches.
 
+- [ ] **Wallet basket / topic-based follow groups** — allow users to follow a group of wallets filtered by topic (e.g., "geopolitics basket: 5 top traders"). Fire signal only when 80%+ of basket members enter the same side within a tight time window. Requires a new `BettorBasket` model + basket scheduler logic. Competitors (Phemex Wallet Baskets, March 2026) are moving to this paradigm — it is a meaningfully different product from single-bettor follow. (Source: BRAIN session 234 Phemex/Polymarket competitive research)
+
+- [ ] **Account-cluster tracking** — top Polymarket traders use multi-wallet strategies to obscure positions. Allow users to link multiple addresses under one "trader identity" (a BettorCluster model). Notifications fire when ANY address in the cluster places a bet. This addresses the multi-wallet evasion problem and would differentiate PolyEdge vs simpler copy bots that track single addresses only. (Source: BRAIN session 234 Polymarket COPYTRADE WARS competitive analysis)
+
 ## BLOCKED — Needs User Action
 
 - [ ] Configure real Stripe price IDs (STRIPE_BASIC_PRICE_ID, STRIPE_VIP_PRICE_ID) — requires user to update backend/.env

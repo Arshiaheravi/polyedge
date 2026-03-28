@@ -1016,3 +1016,105 @@ FILES: backend/tests/playwright/conftest.py, backend/tests/playwright/test_error
 DONE: Added 3 Playwright E2E tests completing North Star "follow bettor â†’ see on dashboard" coverage for all 3 tiers, plus unfollow cycle. 64â†’67 Playwright tests.
 IMPACT: The North Star "Follow bettor â†’ see on dashboard" row is now fully proven for Free, Basic, and VIP tiers.
 FILES: backend/tests/playwright/test_basic_follow_appears_on_dashboard.py, backend/tests/playwright/test_vip_follow_appears_on_dashboard.py, backend/tests/playwright/test_unfollow_cycle.py
+
+
+*(Sessions 201-220 — archived from activity_log.md on 2026-03-28)*
+
+## 2026-03-27 — TESTING (Session 201)
+DONE: Added Playwright E2E test proving basic-tier user can open a bettor profile via showProfile(), the #tab-profile becomes visible, #profile-addr-display contains the 0x-prefixed address, and the copy simulator card is not blurred/locked.
+IMPACT: Proves the full click-bettor-to-view-profile flow works end-to-end. Any regression breaking showProfile(), bettors/{address} API, or tier-gated simulator rendering will be caught automatically.
+FILES: backend/tests/playwright/test_profile_modal.py
+
+## 2026-03-27 — TESTING (Session 202)
+DONE: Added Playwright E2E test proving the profile back-button returns to the leaderboard tab.
+IMPACT: Proves full profile->leaderboard back navigation. Uncovered showProfile() is view-context-dependent.
+FILES: backend/tests/playwright/test_profile_back_button.py
+
+## 2026-03-27 — BRAIN (Session 203)
+RESEARCHED: AI agent best practices 2026, LLM memory (A-MEM, ACE, AgentHER), FastAPI v0.135, Polymarket competitors, push notification benchmarks, GitHub repos.
+DOWNLOADED: anthropics/skills webapp-testing SKILL.md content integrated into playwright.md.
+IMPLEMENTED: playwright.md VIEW CONTEXT RULES; PROMPT.md Zettelkasten cross-link rule; backlog.md code quality audit + min-bet-size + rich push.
+SOURCES: 9 new sources logged.
+
+## 2026-03-27 — TESTING (Session 204)
+DONE: Code quality audit of sessions 195-202 Playwright test files. Removed duplicate API_BASE, replaced hardcoded URL, updated tech_debt.md.
+IMPACT: Future backend port change requires editing only conftest.py.
+FILES: backend/tests/playwright/test_cors_headers.py, backend/tests/playwright/test_full_journeys.py, autoagent/memory/tech_debt.md
+
+## 2026-03-27 — TESTING (Session 205)
+DONE: Added 6 Playwright E2E tests: alerts tab toggles + leaderboard sort toggle. 69->75 Playwright tests.
+IMPACT: Alerts tab and sort mechanism have automated regression coverage.
+FILES: backend/tests/playwright/test_alerts_tab_toggles.py, backend/tests/playwright/test_leaderboard_sort_toggle.py
+
+## 2026-03-27 — TESTING (Session 206)
+DONE: Added 9 Playwright E2E tests: account tier badge, period filter, guide tab. 75->84 Playwright tests.
+IMPACT: Account tab, period filter, and guide tab have automated E2E coverage.
+FILES: backend/tests/playwright/test_account_tab_tier_badge.py, backend/tests/playwright/test_period_filter.py, backend/tests/playwright/test_guide_tab.py
+
+## 2026-03-27 — TESTING (Session 207)
+DONE: Fixed BUG #8 (free-tier web push gate missing in toggleWebPush). Added 8 Playwright E2E tests: logout clears pe_token, free user push upgrade modal, admin MRR math. 84->92 tests.
+IMPACT: BUG #8 paywall hole closed. Three auth/security/admin flows have E2E coverage.
+FILES: frontend/index.html, backend/tests/playwright/test_logout_clears_token.py, backend/tests/playwright/test_free_push_upgrade_modal.py, backend/tests/playwright/test_admin_mrr_math.py
+
+## 2026-03-27 — META (Session 208)
+IMPROVED: playwright.md VERIFY API RESPONSE SHAPE (curl before asserting); testing.md FastAPI Header 422 pattern; backlog.md PRIORITY 9 bug-fix tasks.
+PATTERNS FOUND: Session 207 asserted wrong nested key names + expected 403 for missing FastAPI Header (actual 422). Rules in knowledge.md only, not skill files.
+
+## 2026-03-27 — TESTING (Session 209)
+DONE: Added 4 Playwright E2E tests for landing page navigation CTAs. Cleaned 4 stale backlog tasks. 92->96 tests.
+IMPACT: Landing page navigation regressions caught automatically.
+FILES: backend/tests/playwright/test_landing_navigation.py
+
+## 2026-03-27 — TESTING (Session 210)
+DONE: Code quality audit clean. Added 3 Playwright tests for landing leaderboard preview. 96->99 Playwright tests.
+IMPACT: Landing page preview regressions caught automatically. Resilient to Polymarket API outages.
+FILES: backend/tests/playwright/test_landing_leaderboard_preview.py
+
+## 2026-03-27 — TESTING (Session 211)
+DONE: Added regression test blocking hashed_password/stripe_customer_id in auth responses. Confirmed 2 other PRIORITY 10 tasks already covered.
+IMPACT: Sensitive field exposure in auth responses now fails tests before shipping.
+FILES: backend/tests/test_auth.py
+
+## 2026-03-27 — TESTING (Session 212)
+DONE: Fixed intermittent SQLite database-is-locked failures by switching conftest.py to in-memory SQLite with StaticPool. Result: 503 passed / 0 failed.
+IMPACT: Test suite is now fully deterministic.
+FILES: backend/tests/conftest.py
+
+## 2026-03-27 — TESTING (Session 213)
+DONE: Fixed /markets/consensus missing error handling (500->502 on Polymarket outage). Added 4 regression tests. 503->507 tests.
+IMPACT: Polymarket API outages return clean 502 from consensus endpoint.
+FILES: backend/app/routes/markets.py, backend/tests/test_tier_gates.py, backend/tests/test_scheduler.py
+
+## 2026-03-27 — BRAIN (Session 214)
+RESEARCHED: ERL, Kitchen Loop, MemPO, CLAG papers; pytest 9.0; Playwright expect() assertions; FastAPI v0.135.2; ECC v1.9.0 re-check.
+IMPLEMENTED: playwright.md PREFER expect() ASSERTIONS; testing.md PYTEST 9.0+ FEATURES; activity_log archived sessions 181-200.
+SOURCES: 8 new sources logged.
+
+## 2026-03-27 — TESTING (Session 215)
+DONE: Added 2 PRIORITY 11 coverage-gap tests (VAPID available=True; Stripe plan fallback). Confirmed task 3 already covered. 509->512 tests.
+IMPACT: VAPID config and Stripe fallback paths are regression-protected.
+FILES: backend/tests/test_alerts.py, backend/tests/test_stripe_service.py
+
+## 2026-03-27 — TESTING (Session 216)
+DONE: Added 3 PRIORITY 12 coverage-gap tests: auth optional HTTPException, payments webhook 502, Stripe SignatureVerificationError. 509->512 tests.
+IMPACT: Every error branch in auth/payments/Stripe is now covered.
+FILES: backend/tests/test_auth.py, backend/tests/test_payments.py, backend/tests/test_stripe_service.py
+
+## 2026-03-27 — AUDIT (Session 217)
+DONE: Code quality audit: fixed 2 test smells in test_alerts.py (upgraded test to basic tier; removed needless json alias).
+IMPACT: The disable test now validates real paid-user flow.
+FILES: backend/tests/test_alerts.py
+
+## 2026-03-28 — TESTING (Session 218)
+DONE: Added 2 PRIORITY 13 coverage-gap tests: VIP poll early-return when no follows; duplicate bet skipped. Task 3 already covered. 512->514 tests.
+IMPACT: Both _poll_vip_bets early-exit and duplicate-skip branches are regression-protected.
+FILES: backend/tests/test_scheduler.py
+
+## 2026-03-28 — META (Session 219)
+IMPROVED: PROMPT.md EMBEDDED-GREP stronger directive; LOW-WATER-MARK fast coverage command; audit.md free-tier tier gate test-specificity check.
+PATTERNS FOUND: EMBEDDED-GREP rule violated again. Test-specificity rule in knowledge.md only. LOW-WATER-MARK used slow branch-counting.
+
+## 2026-03-28 — TESTING (Session 220)
+DONE: Added 4 PRIORITY 14 coverage-gap tests: format_exit_message (2 branches), VAPID no-endpoint guard, detect_exits web push call count. 514->518 tests.
+IMPACT: format_exit_message was completely untested; VAPID branch shadowed; detect_exits path now regression-protected.
+FILES: backend/tests/test_notifications.py, backend/tests/test_scheduler.py

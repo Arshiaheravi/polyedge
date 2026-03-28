@@ -551,3 +551,9 @@ What: Before writing a test for a line from `--cov-report=term-missing`, enumera
 Where: autoagent/skills/testing.md (COVERAGE-GAP TEST â€” PATH REACHABILITY CHECKLIST section); autoagent/PROMPT.md (VACUOUS-TEST GUARD in LOW-WATER-MARK CHECK)
 Source: PolyEdge sessions 221+223 (2 consecutive vacuous tests); TELPA arxiv 2404.04966 (dependency analysis for hard-to-cover branches, +31.39% branch coverage); TDAD arxiv 2603.17973 (surfacing contextual guard info > prescriptive procedural rules; post-change coverage verification -70% regressions)
 Expected impact: Eliminates the recurring pattern where coverage-gap tests pass trivially but never cover the intended branch; saves one full session of re-discovery every ~3-4 testing sessions
+
+## Graduated-response observer loop — implemented 2026-03-28
+What: On 3rd tool-repeat, soft redirect (pivot to fundamentally different approach); on 4th repeat still failing, hard stop (write BLOCKED to current_task.md). Removes binary stop that forced abandoning recoverable situations.
+Where: PROMPT.md (OBSERVER LOOP GUARD section)
+Source: arxiv 2603.03515 (The Controllability Trap, ICLR 2026) — layered governance model
+Expected impact: Fewer unnecessary hard stops on retriable failures; harder stop on true dead-ends
