@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-180 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 197)
+DONE: Added Playwright E2E test for basic-tier 5-follow-limit gate — logs in as basic@polyedge.com, cleans all existing follows, follows 5 bettors (all succeed), attempts 6th → server returns 403 → upgrade modal (#upgrade-modal) becomes visible.
+IMPACT: Proves the basic-tier follow limit enforces correctly at the browser level. Any regression that breaks the 403 response or openUpgradeModal() call will be caught automatically.
+FILES: backend/tests/playwright/test_basic_follow_limit.py
+
 ## 2026-03-27 — TESTING (Session 196)
 DONE: Added 2 backend tests for exact copy_value_pct formula math and 1 Playwright test for leaderboard "No data yet" empty state on successful empty API response.
 IMPACT: Formula tests prove the exact arithmetic is correct (not just approximate), catching any rounding or operator-precedence bugs in the copy timing signal. Playwright test proves the distinct empty-list success path (distinct from network error) renders correctly.

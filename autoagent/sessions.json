@@ -4399,5 +4399,20 @@
       "failures": 0,
       "notes": "New Playwright leaderboard empty state test passed; 7 flaky failures in test_ui_flows.py are pre-existing (pass in isolation, fail in full suite due to browser state)"
     }
+  },
+  {
+    "session": 197,
+    "date": "2026-03-27",
+    "time": "14:00",
+    "type": "work",
+    "summary": "Added Playwright test proving that a basic-tier user who follows 5 bettors and tries a 6th sees the upgrade modal — the paywall gate is working correctly in the browser",
+    "files": ["backend/tests/playwright/test_basic_follow_limit.py"],
+    "tests": {"before": 502, "after": 502, "status": "pass"},
+    "frontend": {
+      "status": "pass",
+      "checks": 1,
+      "failures": 0,
+      "notes": "New basic-tier follow-limit Playwright test passed in 15s on first run"
+    }
   }
 ]

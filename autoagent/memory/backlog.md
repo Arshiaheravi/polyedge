@@ -25,9 +25,13 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
-## PRIORITY 7 — High-Value Gaps
+## CODE QUALITY AUDIT (session 197 — count=150, multiple of 5)
 
-- [ ] **Playwright: basic user hits 5-follow limit → upgrade modal shown** — register a fresh basic-tier user, follow 5 bettors (all succeed), attempt a 6th follow → server returns 403 → upgrade modal (#upgrade-modal) becomes visible. This is the basic-tier equivalent of the free-tier follow-limit test in test_auth_and_security.py. Grep: `grep -r "def test.*basic.*follow.*limit\|5.*follow.*basic" backend/tests/playwright/` returns nothing.
+- [ ] **Code quality audit** — scan last 5 work sessions' changed files (test_polymarket_service.py, test_leaderboard_empty_state.py, test_follow_appears_on_dashboard.py, test_error_states.py, test_full_journeys.py, test_notifications_tier_gates.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits.
+
+---
+
+## PRIORITY 7 — High-Value Gaps
 
 - [ ] **Playwright: basic user follows bettor → appears on follows dashboard** — login as basic, follow first leaderboard bettor, navigate to Follows tab, assert bettor address appears in #follows-container. Same flow as session 195 (free user) but for basic tier. Grep: `grep -r "def test.*basic.*follow.*dashboard" backend/tests/playwright/` returns nothing.
 

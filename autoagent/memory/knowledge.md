@@ -45,7 +45,8 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - Run with: `cd backend && py -m pytest tests/ -v`
 - conftest.py: in-memory SQLite, autouse `setup_db`, `db`, `client`, `registered_user`, `auth_headers` fixtures
 - autouse `clear_stripe_webhook_secret` fixture in conftest.py zeroes stripe_webhook_secret so webhook tests work (STRIPE_WEBHOOK_SECRET=whsec_REPLACE_ME in .env was causing failures)
-- Test count: **502 passed, 2 skipped** (as of 2026-03-27, session 196 — current)
+- Test count: **502 passed, 2 skipped** (as of 2026-03-27, session 197 — current)
+- Playwright E2E: **64 passed, 2 skipped** (as of 2026-03-27, session 197) — 1 new: basic-tier 5-follow-limit upgrade modal
 - Playwright E2E: **63 passed, 2 skipped** (as of 2026-03-27, session 196) — 1 new: leaderboard "No data yet" empty state
 - Playwright E2E: **62 passed, 2 skipped** (as of 2026-03-27, session 195) — 1 new: follow-bettor-appears-on-dashboard
 - Playwright E2E: **61 passed, 2 skipped** (as of 2026-03-27, session 194) — 4 new: error states
@@ -71,6 +72,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 - No git remote configured — `git push` will fail (commits are local only)
 
 ## Session Reflexions
+
+### Session #197 Reflexion — 2026-03-27
+ACCOMPLISHED: Playwright E2E test for basic-tier 5-follow-limit: login as basic@polyedge.com, clean all existing follows via apiFetch + followedAddresses.clear() in page.evaluate(), follow 5 bettors from leaderboard, attempt 6th → upgrade modal appears. 502 backend tests still passing, 63→64 Playwright tests. Passed on first run in 15s.
+FAILED: Nothing. Test worked first try.
+RULE: [2026-03-27] For basic-tier (or any shared account) follow-limit tests, always clean existing follows inside the test via page.evaluate async cleanup (apiFetch DELETE each follow + followedAddresses.clear()) before the test asserts anything. Shared accounts accumulate follows across runs; without cleanup the test is non-deterministic.
+OPTIMIZATION: [2026-03-27] Using page.evaluate("async () => { ... }") to batch multiple async API calls (fetch all follows, delete each) in one Playwright round-trip is ~3× faster than making individual Python-side API calls via requests.
 
 ### Session #196 Reflexion — 2026-03-27
 ACCOMPLISHED: Two backlog tasks closed: (1) 2 unit tests in test_polymarket_service.py verify copy_value_pct formula exactly — avg=0.40/cur=0.50→25.0 (fair), avg=0.20/cur=0.30→50.0 (late). These use exact equality not pytest.approx, exposing any rounding or formula drift. (2) Playwright test for leaderboard "No data yet" empty state on HTTP 200 with empty bettors array. 500→502 backend, 62→63 Playwright.

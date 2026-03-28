@@ -206,3 +206,5 @@
 - **[SESSION #175] 3 regression tests** — lru_cache identity, copy simulator open-bet skip, auth/me sensitive field absence; 472 → 475 tests
 
 - **[SESSION #179] Code quality audit — sessions 169-177** — all changed files passed Marcus XSS, Leo smells, and Alex architecture checks; no code changes required; 483 tests unchanged
+
+- **[SESSION #197] Playwright: basic-tier 5-follow-limit upgrade modal** — login as basic tier, clean existing follows, follow 5, attempt 6th → upgrade modal appears; 63→64 Playwright tests
