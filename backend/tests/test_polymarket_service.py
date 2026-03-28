@@ -1289,3 +1289,113 @@ async def test_fetch_positions_connect_error_produces_no_signal():
     assert signals == [], (
         f"ConnectError in _fetch_positions must produce empty positions → no signals, got {signals}"
     )
+
+
+# ── get_bettor_profile: paginated non-list break (line 279) ──────────────────
+
+@pytest.mark.asyncio
+async def test_get_bettor_profile_leaderboard_dict_response_returns_profile_without_lb_data():
+    """_fetch_leaderboard_entry inside get_bettor_profile breaks immediately when
+    the leaderboard API returns a dict instead of a list (polymarket.py line 279:
+    if not isinstance(page, list): break).
+
+    lb_entry is None → has_lb_data=False → profile built from activity only.
+    Function must NOT raise; returns a valid profile dict with address populated.
+    """
+    from unittest.mock import AsyncMock, MagicMock, patch
+    from app.services.polymarket import get_bettor_profile
+
+    async def url_dependent_get(url, **kwargs):
+        resp = MagicMock()
+        resp.raise_for_status = MagicMock()
+        if "leaderboard" in url:
+            resp.json.return_value = {"error": "not a list"}
+        else:
+            resp.json.return_value = []
+        return resp
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = url_dependent_get
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        result = await get_bettor_profile("0xdeadbeef")
+
+    assert isinstance(result, dict), f"Expected dict profile, got {type(result)}"
+    assert result["address"] == "0xdeadbeef", (
+        f"Profile address must be preserved when leaderboard returns dict, got {result.get('address')!r}"
+    )
+
+
+# ── compute_copy_simulator: non-list activity response (line 332) ─────────────
+
+@pytest.mark.asyncio
+async def test_compute_copy_simulator_dict_response_returns_zero_pnl():
+    """compute_copy_simulator resets raw_list=[] when the activity API returns a
+    dict instead of a list (polymarket.py line 332:
+    if not isinstance(raw_list, list): raw_list = []).
+
+    With no tradeable items, bets_analysed==0 → returns zero-pnl sentinel dict.
+    """
+    from unittest.mock import AsyncMock, MagicMock, patch
+    from app.services.polymarket import compute_copy_simulator
+
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {"error": "bad"}
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client):
+        result = await compute_copy_simulator("0xaddr", limit=10)
+
+    assert result == {"simulated_pnl_usd": 0.0, "simulated_roi_pct": 0.0, "bets_analysed": 0}, (
+        f"Dict API response must produce zero-pnl result, got {result}"
+    )
+
+
+# ── _fetch_positions: empty conditionId skip (line 477) ──────────────────────
+
+@pytest.mark.asyncio
+async def test_fetch_positions_empty_condition_id_position_skipped():
+    """_fetch_positions inside get_consensus_signals skips any position where
+    conditionId is empty (polymarket.py line 477:
+    if not cid or not outcome: continue).
+
+    3 whales each get a position with conditionId="" → all skipped → result=[].
+    With no valid positions, no consensus signals are generated.
+    """
+    from unittest.mock import AsyncMock, MagicMock, patch
+    from app.services.polymarket import get_consensus_signals
+
+    mock_leaderboard = [
+        {"address": f"0x{i:040x}", "name": f"whale{i}", "pnl_usd": 1000.0, "rank": i}
+        for i in range(1, 4)
+    ]
+
+    # Position with empty conditionId — passes redeemable check but hits line 477
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = [
+        {"conditionId": "", "outcome": "Yes", "avgPrice": "0.5", "curPrice": "0.55",
+         "title": "Test Market", "redeemable": False}
+    ]
+    mock_resp.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=False)
+    mock_client.get = AsyncMock(return_value=mock_resp)
+
+    with (
+        patch("app.services.polymarket.get_leaderboard", new=AsyncMock(return_value=mock_leaderboard)),
+        patch("app.services.polymarket.httpx.AsyncClient", return_value=mock_client),
+    ):
+        signals = await get_consensus_signals(min_whales=3)
+
+    assert signals == [], (
+        f"Positions with empty conditionId must be skipped → no signals, got {signals}"
+    )
