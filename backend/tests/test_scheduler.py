@@ -1563,8 +1563,6 @@ def test_poll_vip_bets_free_tier_follower_skipped_when_vip_also_follows(sched_db
     session.add(BettorFollow(user_id=free_user.id, bettor_address="0xvipfree", bettor_name="whale"))
     session.commit()
 
-    scheduler_module._last_check = datetime(2000, 1, 1, tzinfo=timezone.utc)
-
     fresh_bet = dict(SAMPLE_BET, timestamp=FUTURE_TS)
 
     with patch("app.services.scheduler.SessionLocal", Session), \
