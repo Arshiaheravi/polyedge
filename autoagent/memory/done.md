@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-27
+- **[SESSION #201] Playwright E2E — bettor profile modal opens with real data** — 1 new test proves basic-tier user can open a bettor profile via showProfile(), sees the address (0x prefix), and sees an unlocked (non-blurred) copy simulator card; 67→68 Playwright tests
 - **[SESSION #200] Playwright E2E — basic/VIP follow→dashboard + unfollow cycle** — 3 new tests prove "follow bettor → see on dashboard" for basic and VIP tiers, and that unfollowing removes the card from #follows-container; North Star table row fully covered for all 3 tiers; 64→67 Playwright tests
 - **[SESSION #199] Code quality audit — API_BASE constant deduplication** — moved hardcoded `API_BASE = "http://localhost:8003"` from 2 Playwright test files into conftest.py; logged 2 deferred smells to tech_debt.md; 502 backend tests, 64 Playwright tests unchanged
 - **[SESSION #196] copy_value_pct exact math tests + Playwright leaderboard empty state** — 2 backend tests verify formula: avg=0.40/cur=0.50→25.0 (fair), avg=0.20/cur=0.30→50.0 (late); 1 Playwright test proves "No data yet" shows on 200 with empty bettors (not error state); 500→502 backend, 62→63 Playwright tests

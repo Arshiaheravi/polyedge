@@ -74,6 +74,12 @@ These accounts exist in the live SQLite database. Playwright tests MUST use thes
 
 ## Session Reflexions
 
+### Session #201 Reflexion — 2026-03-27 (TESTING)
+ACCOMPLISHED: Added Playwright E2E test (test_profile_modal.py) proving basic-tier user can open a bettor profile via showProfile(), the #tab-profile becomes visible, #profile-addr-display contains the 0x-prefixed address, and the copy simulator card (if shown) is not blurred/locked. Passed on first run in 6.8s. Removed 3 stale backlog tasks (login-refresh, XSS, JWT-tamper) that were already covered by test_auth_and_security.py. Added 3 new tasks (profile back-btn, alerts tab, leaderboard sort). 67→68 Playwright tests. Backend unchanged at 502.
+FAILED: Nothing.
+RULE: [2026-03-27] When the EMBEDDED-GREP RULE for a backlog task returns nothing, don't assume the test doesn't exist — also read the candidate test files. The function may have a different name from the grep pattern. Example: "login → refresh" → grep for `test.*refresh.*logged` returns nothing but `test_auth_persists_after_page_refresh` exists in test_auth_and_security.py. Always do a quick scan of the full test file before re-implementing.
+RULE: [2026-03-27] Profile page wait strategy: wait for `#profile-name` to lose its `.skeleton` child (not just wait_for_timeout) — this is the reliable signal that `renderProfileData()` completed after the `GET /bettors/{address}` response.
+
 ### Session #200 Reflexion — 2026-03-27 (TESTING)
 ACCOMPLISHED: Added 3 Playwright E2E tests completing the North Star "follow → dashboard" coverage for all tiers: test_basic_follow_appears_on_dashboard.py (basic tier), test_vip_follow_appears_on_dashboard.py (VIP tier), test_unfollow_cycle.py (follow → assert present → unfollow → assert gone). All 3 passed on first run. 64→67 Playwright tests. Backend tests unchanged at 502 passing.
 FAILED: Nothing — all 3 tests passed first run in ~27s.
@@ -1082,6 +1088,11 @@ RULE: [2026-03-26] When caching API responses that include user-state fields (ti
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend (Playwright) |
 |---------|--------------|----------------------|
+| 201     | 502          | 68                   |
+| 200     | 502          | 67                   |
+| 199     | 502          | 64                   |
+| 197     | 502          | 64                   |
+| 196     | 502          | 63                   |
 | 195     | 500          | 62                   |
 | 194     | 500          | 61                   |
 | 192     | 500          | 57                   |

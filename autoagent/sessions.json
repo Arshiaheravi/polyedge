@@ -4488,5 +4488,26 @@
       "failures": 0,
       "notes": "3 new Playwright tests all passed"
     }
+  },
+  {
+    "session": 201,
+    "date": "2026-03-27",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added Playwright E2E test proving basic-tier users can open a bettor profile, see the wallet address, and get an unlocked copy simulator — not the blurred free-tier teaser",
+    "files": [
+      "backend/tests/playwright/test_profile_modal.py"
+    ],
+    "tests": {
+      "before": 502,
+      "after": 502,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "pass",
+      "checks": 1,
+      "failures": 0,
+      "notes": "New profile modal test passed in 6.8s"
+    }
   }
 ]
