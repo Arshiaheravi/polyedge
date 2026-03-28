@@ -579,3 +579,23 @@ await page.evaluate(f"showProfile('{addr}')")  # tab-profile is visible inside v
 **Rule for DOM class assertions vs interactive clicks**: DOM class assertions (`page.evaluate("el.classList.contains('hidden')")`) succeed on elements inside `display:none` parents — they read JS state, not render state. `page.click()` requires visual visibility. A test that only checks class state can pass even when the button is not interactable, masking real UX bugs. Always add a `page.click()` test for buttons that users must physically click.
 
 (Source: Session #202 — showProfile() called from view-browse context; #profile-back-btn was in DOM with correct class state but page.click() timed out because view-dashboard was hidden. Session #201 only used class assertions — that's why it didn't catch the same bug.)
+
+---
+
+## VERIFY API RESPONSE SHAPE BEFORE ASSERTING (session 207 failure)
+
+Before writing any Playwright test that asserts on specific API response field names, **curl the endpoint once** to see the actual structure. Do not assume the shape from the route name or CLAUDE.md.
+
+```bash
+# Example: before asserting on /admin/stats fields:
+TOKEN=$(curl -s -X POST http://localhost:8003/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"basic@polyedge.com","password":"BasicTest123!"}' | py -c "import json,sys; print(json.load(sys.stdin)['access_token'])")
+curl -s http://localhost:8003/admin/stats -H "x-admin-password: polyedge-admin-2026" | py -m json.tool
+```
+
+**Rule**: Nested keys vs flat keys are a common mismatch. Example: `/admin/stats` returns `{"users": {"basic": N, "vip": N}}` (nested), NOT `{"basic_users": N, "vip_users": N}` (flat). Writing assertions with the wrong key shape causes a test that passes regardless of the actual response (KeyError is swallowed or the field is `None`).
+
+**FastAPI Header() required parameter behavior**: A missing required Header in a FastAPI route returns **422** (validation error), NOT 403. Tests asserting "no auth header → 403" will fail on a required FastAPI Header parameter. Use `>= 400` or `status_code in (403, 422)` when the exact code depends on whether the header is optional vs required.
+
+(Source: Session #207 — admin test used `basic_users`/`vip_users` instead of `users.basic`/`users.vip`; expected 403 for missing header but FastAPI Header(...) required → 422.)

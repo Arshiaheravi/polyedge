@@ -164,6 +164,21 @@ finally:
     alerts_mod.settings.twilio_account_sid = original
 ```
 
+### FastAPI Header() required parameter — 422 not 403 when missing
+When a route uses `Header(...)` (required, no default), a missing header returns **422** (validation error), NOT 403. Tests asserting "no header → 403" will fail. Use `assert resp.status_code >= 400` or `assert resp.status_code in (403, 422)`.
+
+```python
+# WRONG — 422 not 403 for FastAPI required Header:
+response = client.get("/admin/stats")
+assert response.status_code == 403
+
+# CORRECT:
+response = client.get("/admin/stats")
+assert response.status_code in (403, 422)
+```
+
+(Source: Session #207 — test_admin_stats_requires_header asserted 403 but received 422.)
+
 ### Admin endpoint tests — always use get_settings().admin_password
 NEVER hardcode `"admin"` as the admin password in tests. The `.env` file overrides the config default, and the test environment loads `.env`.
 ```python
