@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — TESTING (Session 218)
+DONE: Added 2 backend tests closing PRIORITY 13 coverage gaps — test_poll_vip_bets_no_follows_returns_early (scheduler.py line 319: VIP user exists but no BettorFollow rows → addresses list empty → early return, get_recent_bets never called) and test_poll_vip_bets_duplicate_bet_skipped (lines 348-349: pre-existing BetEvent with same bettor/market/timestamp → if exists: continue fires, no duplicate row, no second notification). Task 3 confirmed already covered by existing test. 512→514 backend tests.
+IMPACT: Both branches of _poll_vip_bets' early-exit and duplicate-skip logic are now regression-protected. Any future refactor that removes the `if not addresses: return` guard or `if exists: continue` check will fail the test suite before shipping.
+FILES: backend/tests/test_scheduler.py
+
 ## 2026-03-28 — AUDIT (Session 217)
 DONE: Code quality audit of last 5 sessions' changed files — fixed 2 test smells in test_alerts.py: upgraded test_disable_web_push_returns_false to basic tier so it actually tests the enable→disable flow (was silently 403ing on the first PUT as free user), and removed `import json as _json` needless alias.
 IMPACT: The disable test now validates the real use case (paid user enables then disables push). The json alias was confusing — `_json` looked like a private module but was just stdlib json.

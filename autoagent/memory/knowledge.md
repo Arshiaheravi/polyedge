@@ -1153,6 +1153,12 @@ RULE: [2026-03-26] When caching API responses that include user-state fields (ti
 ## Test Suite History (updated)
 | Session | Backend Tests | Frontend (Playwright) |
 |---------|--------------|----------------------|
+| 218     | 514          | 99                   |
+| 217     | 512          | 99                   |
+| 216     | 512          | 99                   |
+| 215     | 509          | 99                   |
+| 213     | 507          | 99                   |
+| 212     | 503          | 99                   |
 | 210     | 502          | 99                   |
 | 209     | 502          | 96                   |
 | 207     | 502          | 92                   |
@@ -1393,3 +1399,8 @@ ACCOMPLISHED: (1) STEP 1B: Session 202 failure pattern -- showProfile() context-
 FAILED: Nothing -- all research agents completed successfully.
 RULE: [2026-03-27] showProfile() context rule: always stay in showTab() context inside view-dashboard -- never call showView("browse") before showProfile() in tests. See also: Session #202 RULE.
 OPTIMIZATION: [2026-03-27] Parallel foreground research agents (4 launched simultaneously) complete a full BRAIN session research phase in ~90 seconds. The 0-byte failure in sessions 121/132/163 was from run_in_background=true agents -- foreground agents work fine for BRAIN research.
+
+### Session #218 Reflexion — 2026-03-28 (TESTING)
+ACCOMPLISHED: Added 2 backend tests for PRIORITY 13 coverage gaps — test_poll_vip_bets_no_follows_returns_early (scheduler.py line 319: `if not addresses: return` branch) and test_poll_vip_bets_duplicate_bet_skipped (scheduler.py lines 348-349: `if exists: continue` branch). Task 3 (send_web_push exception) confirmed already covered by test_send_web_push_http_exception_returns_false (line 340). 512→514 tests.
+FAILED: Nothing — both tests passed first run.
+RULE: [2026-03-28] Before adding a PRIORITY task from backlog, run the embedded grep even if it says "returns nothing" — task 3 had a grep that would have found the existing test immediately. The EMBEDDED-GREP RULE must be run for EVERY backlog item, not just ones without a grep line. The backlog grep description may be stale.

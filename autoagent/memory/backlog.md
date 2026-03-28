@@ -67,14 +67,20 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ## PRIORITY 13 — Coverage Gaps (generated session 217 via low-water-mark check + coverage report)
 
-- [ ] **`_poll_vip_bets` VIP user exists but has no follows → early return** — scheduler.py line 320: `if not addresses: return`. Create a VIP user in `sched_db` but add NO `BettorFollow` rows for them. Run `_poll_vip_bets()`. Assert `get_recent_bets` is never called and function completes without error.
-  Grep: `grep -n "vip.*no_follow\|vip.*no_addresses" backend/tests/test_scheduler.py` returns nothing
+*(All 3 tasks completed or confirmed already covered in session 218)*
 
-- [ ] **`_poll_vip_bets` duplicate bet skipped (line 349)** — when a `BetEvent` already exists for the same bettor_address/market_id/timestamp, the VIP poll's `if exists: continue` branch fires. Create VIP user + follow, pre-insert a matching BetEvent, run `_poll_vip_bets()` with the same bet — assert only one BetEvent exists (no duplicate) and notification was NOT sent a second time.
-  Grep: `grep -n "vip.*duplicate\|duplicate.*vip_bet" backend/tests/test_scheduler.py` returns nothing
+---
 
-- [ ] **`send_web_push` exception returns False (notifications.py 106-108)** — when the httpx post call succeeds delivery but the library raises an unexpected Exception (not a missing VAPID key), the `except Exception` handler must catch it, log a warning, and return False. Patch `httpx.AsyncClient.__aenter__` or `pywebpush.webpush` to raise `RuntimeError("push failed")`. Assert return value is `False`.
-  Grep: `grep -n "web_push.*exception\|send_web_push.*raises" backend/tests/test_notifications.py` returns nothing
+## PRIORITY 14 — Coverage Gaps (generated session 218 via low-water-mark check)
+
+- [ ] **`format_exit_message` basic format + long-market truncation** — `format_exit_message` in notifications.py lines 57-65 has zero tests. Two branches: market ≤ 80 chars (no truncation) and market > 80 chars (truncated with "..."). Assert HTML structure and truncation logic.
+  Grep: `grep -n "format_exit_message" backend/tests/test_notifications.py` returns nothing
+
+- [ ] **`send_web_push` with VAPID keys set but no endpoint in subscription JSON returns False** — lines 91-92 in notifications.py: `if not endpoint: return False`. The existing `test_send_web_push_no_endpoint_returns_false` doesn't reach this branch (it omits VAPID keys so line 82 fires first). Test with `vapid_private_key="fake"`, `vapid_public_key="fake"`, and subscription JSON that has no "endpoint" key — assert returns False.
+  Grep: `grep -n "vapid.*no_endpoint\|no_endpoint.*vapid\|vapid.*fake.*endpoint" backend/tests/test_notifications.py` returns nothing
+
+- [ ] **`detect_exits` sends web push to VIP follower when `web_push_enabled=True` and `push_subscription` is set** — scheduler.py lines 161-167: web push branch for exit notification. Existing tests only assert Telegram calls; web push call count is never asserted. Create VIP user with `AlertSetting(web_push_enabled=True, push_subscription='{"endpoint":"..."}')`, trigger a position exit, assert `send_web_push` was called once with the correct payload title.
+  Grep: `grep -n "detect_exits.*web_push_called\|exit.*push.*call_count" backend/tests/test_scheduler.py` returns nothing
 
 ---
 

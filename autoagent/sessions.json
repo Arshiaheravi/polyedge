@@ -4872,5 +4872,26 @@
       "failures": 0,
       "notes": "no frontend changes"
     }
+  },
+  {
+    "session": 218,
+    "date": "2026-03-28",
+    "time": "00:00",
+    "type": "work",
+    "summary": "Added 2 tests for _poll_vip_bets coverage gaps: the no-follows early-return guard and the duplicate-bet skip guard are now regression-protected; task 3 (web push exception) confirmed already covered",
+    "files": [
+      "backend/tests/test_scheduler.py"
+    ],
+    "tests": {
+      "before": 512,
+      "after": 514,
+      "status": "pass"
+    },
+    "frontend": {
+      "status": "skip",
+      "checks": 0,
+      "failures": 0,
+      "notes": "no frontend changes"
+    }
   }
 ]
