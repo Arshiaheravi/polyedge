@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-28 — TESTING (Session 228)
+DONE: Added 2 PRIORITY 21 coverage-gap tests covering database.py lines 20-24 (get_db generator: happy path closes session on gen.close(), exception path closes session before propagating RuntimeError). database.py is now 100% covered — every module in app/ is at 100%. 536→538 backend tests.
+IMPACT: The last uncovered module in the app is now regression-protected. Any future change to the database session lifecycle (e.g., connection pooling, context manager changes) will fail the test suite immediately.
+FILES: backend/tests/test_database.py
+
 ## 2026-03-28 — TESTING (Session 227)
 DONE: Added 2 PRIORITY 20 coverage-gap tests for compute_copy_simulator ISO timestamp path (polymarket.py lines 374-375) and invalid timestamp exception pass (lines 376-377). polymarket.py is now 100% covered. 534→536 backend tests.
 IMPACT: Every branch in the copy simulator timestamp parsing logic is now regression-protected. Any future refactor that removes the ISO or invalid-timestamp handling will fail the test suite before shipping.

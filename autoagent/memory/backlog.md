@@ -113,16 +113,30 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 ---
 
+## PRIORITY 22 — Mutation Tests (generated session 228 — 100% line coverage achieved; mutation testing is next quality frontier)
+
+**Context**: All app/ modules are now at 100% line coverage. Mutation testing finds surviving mutants — code changes that don't break any test, meaning untested business logic. Each surviving mutant = a real bug that could ship undetected. Run `py -m pip install mutmut` first if not installed.
+
+- [ ] **Mutation test — routes/follows.py tier limits** — Run `cd backend && py -m mutmut run --paths-to-mutate "app/routes/follows.py" --tests-dir "tests/"`. View surviving mutants with `py -m mutmut show --all-survived`. Focus: TIER_LIMITS dict values (free=1, basic=5), `>=` vs `>` comparisons in limit checks. For each survivor, write a test that kills it.
+  Grep: `grep -n "def test.*mutmut\|mutmut" backend/tests/test_follows.py` returns nothing — mutation tests not yet run
+
+- [ ] **Mutation test — routes/markets.py consensus gates** — Run mutmut on `app/routes/markets.py`. Focus: `signals[:3]` slice for free tier, `names_visible` flag, whale_count threshold. A surviving mutant on the slice means free users could see all signals if a developer accidentally changes the index.
+  Grep: `grep -n "def test.*mutmut\|mutmut" backend/tests/test_tier_gates.py` returns nothing — mutation tests not yet run
+
+- [ ] **Mutation test — services/scheduler.py VIP exit gate** — Run mutmut on `app/services/scheduler.py` focused on `_detect_exits`. Focus: VIP-only check (`subscription_tier == "vip"`), exit detection comparison logic. A surviving mutant on the tier check means basic users could receive exit alerts.
+  Grep: `grep -n "def test.*mutmut\|mutmut" backend/tests/test_scheduler.py` returns nothing — mutation tests not yet run
+
+---
+
+## PRIORITY 21.5 — Code Quality Audit (generated session 228 — work session count hit 175)
+
+- [ ] **Code quality audit** — scan last 5 work sessions' changed files (test_polymarket_service.py, test_scheduler.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits.
+
+---
+
 ## PRIORITY 21 — Coverage Gaps (generated session 227 via low-water-mark check — 99% total, 4 missed lines in database.py only)
 
-- [ ] **`get_db` generator coverage** — database.py lines 20-24: `db = SessionLocal(); try: yield db; finally: db.close()`. Write a direct unit test that calls `get_db()` as a generator: `gen = get_db(); db = next(gen)`, assert it's a sqlalchemy Session, then send StopIteration to trigger the `finally: db.close()`. This is the only uncovered module — all services/routes/scheduler are at 100%.
-  Grep: `grep -n "def test_get_db\|def test_database" backend/tests/*.py` returns nothing
-
-- [ ] **`get_db` close-on-exception path** — database.py finally block fires even when the generator consumer raises. Write a test that calls `next(get_db())` to get the db session, then calls `gen.throw(RuntimeError("boom"))` — the `finally: db.close()` should fire and not re-raise. Verify the session is closed afterward via `db.is_active == False` or no exception propagates from the finally.
-  Grep: `grep -n "gen.throw\|throw.*RuntimeError\|get_db.*exception" backend/tests/*.py` returns nothing
-
-- [ ] **Stripe webhook unhandled event type** — stripe_service.py already 100% covered, but verify there is a test for an unknown/unhandled Stripe event type (e.g. `payment_intent.created`) hitting the webhook endpoint — should return 200 with no side effects. Cross-check: verify the `if event_type not in handled_types` branch exists and returns 200.
-  Grep: `grep -n "unhandled\|unknown.*event\|payment_intent.created" backend/tests/test_payments.py` returns nothing
+*(All 3 tasks completed in session 228 — database.py now 100% covered; Stripe webhook unhandled event was already covered)*
 
 ---
 
