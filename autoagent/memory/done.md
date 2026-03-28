@@ -1,6 +1,7 @@
 # Done
 
 ## 2026-03-27
+- **[SESSION #216] Backend tests — PRIORITY 12 coverage gaps closed** — added test_get_current_user_optional_catches_http_exception_returns_none (auth.py lines 76-77), test_webhook_generic_exception_returns_502 (payments.py lines 53-54), test_webhook_signature_verification_failure_raises_value_error (stripe_service.py lines 75-78); 509→512 backend tests.
 - **[SESSION #215] Backend tests — PRIORITY 11 coverage gaps closed** — added test_web_push_config_returns_available_true_when_vapid_key_is_set (covers available=True branch of GET /alerts/web-push-config) and test_webhook_checkout_unknown_plan_falls_back_to_basic (covers PLAN_TIER_MAP fallback in _handle_checkout_completed); removed already-covered task 3 (unauthenticated simulator already tested); 507→509 backend tests.
 - **[SESSION #213] Backend bugfix + tests — consensus 502 error handling + 4 regression tests** — fixed markets.py missing try/except (API failure returned 500 not 502, cache could be poisoned); added test_consensus_api_error_returns_502, test_consensus_each_signal_has_required_fields, test_detect_exits_inactive_vip_not_notified, test_detect_exits_exit_event_stored_regardless_of_follower_tier; 503→507 backend tests.
 - **[SESSION #212] Backend infra — fix SQLite database-is-locked test flakiness** — switched conftest.py to sqlite:///:memory: + StaticPool; test suite went from 452-490 passed/6-20 failed (non-deterministic) to 503 passed/0 failed (deterministic).

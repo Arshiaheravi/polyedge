@@ -1,6 +1,11 @@
 # Activity Log
 *(Sessions 1-200 archived — see activity_log_archive.md)*
 
+## 2026-03-27 — TESTING (Session 216)
+DONE: Added 3 backend tests closing PRIORITY 12 coverage gaps — test_get_current_user_optional_catches_http_exception_returns_none (auth.py lines 76-77: except HTTPException branch in get_current_user_optional now covered), test_webhook_generic_exception_returns_502 (payments.py lines 53-54: generic Exception → 502 in POST /payments/webhook), test_webhook_signature_verification_failure_raises_value_error (stripe_service.py lines 75-78: SignatureVerificationError → ValueError when webhook secret is set). 509→512 tests.
+IMPACT: Every error branch in auth, payments, and Stripe service is now covered. Any future refactor that accidentally removes the except clauses or changes error types will fail the test suite before shipping.
+FILES: backend/tests/test_auth.py, backend/tests/test_payments.py, backend/tests/test_stripe_service.py
+
 ## 2026-03-27 — TESTING (Session 215)
 DONE: Added 2 backend tests for PRIORITY 11 coverage gaps — test_web_push_config_returns_available_true_when_vapid_key_is_set (patches get_settings to return non-empty VAPID key, asserts available=True and key returned) and test_webhook_checkout_unknown_plan_falls_back_to_basic (sends checkout.session.completed with plan="enterprise", asserts subscription_tier set to "basic" via PLAN_TIER_MAP fallback). Removed task 3 (already covered). Added PRIORITY 12 with 3 new coverage gaps from coverage report.
 IMPACT: The available=True branch of GET /alerts/web-push-config was the only uncovered branch in the VAPID config response path. The Stripe fallback test guards against anyone removing the default "basic" fallback from PLAN_TIER_MAP.get() without a test failure.

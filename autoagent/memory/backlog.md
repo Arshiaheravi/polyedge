@@ -53,13 +53,15 @@ Every completed task must push to https://github.com/Arshiaheravi/polyedge.git.
 
 *(All 3 tasks completed or confirmed already covered in session 215)*
 
+## PRIORITY 11.5 — Code Quality Audit (mandatory — session 216, 165 work sessions = multiple of 5)
+
+- [ ] **Code quality audit** — scan last 5 work sessions' changed files (test_alerts.py, test_stripe_service.py, test_tier_gates.py, test_scheduler.py, test_auth.py, conftest.py, routes/markets.py) for cross-file coupling, test specificity degradation, and smells introduced by agent edits.
+
+---
+
 ## PRIORITY 12 — Coverage Gaps (generated session 215 via low-water-mark check)
 
-- [ ] **`get_current_user` HTTPException branch uncovered** — `auth.py` lines 76-77: `except HTTPException: return None` is never hit by any test. Trigger: mock `db.query` to raise `HTTPException` inside `get_current_user`, assert the protected endpoint returns 401 (not 500). Grep: `grep -r "def test_.*httpexception.*current_user\|def test_.*get_current_user.*except" backend/tests/` returns nothing.
-
-- [ ] **`POST /payments/webhook` generic Exception → 502** — `payments.py` lines 53-54: the `except Exception` branch raises `HTTPException(status_code=502)`. Existing tests only cover the `ValueError → 400` path and success path. Add a test that patches `handle_webhook_event` to raise a generic `RuntimeError` and asserts the endpoint returns 502. Grep: `grep -r "def test_.*webhook.*502\|def test_.*webhook.*generic.*exc" backend/tests/` returns nothing.
-
-- [ ] **Stripe webhook signature verification failure → ValueError** — `stripe_service.py` lines 75-78: when `stripe_webhook_secret` is non-empty and `Webhook.construct_event` raises `SignatureVerificationError`, `handle_webhook_event` raises `ValueError`. No test covers this. Patch `settings.stripe_webhook_secret = "real_secret"`, mock `Webhook.construct_event` to raise `SignatureVerificationError`, assert `ValueError` is raised. Grep: `grep -r "def test_.*signature.*fail\|SignatureVerification" backend/tests/` returns nothing.
+*(All 3 tasks completed in session 216)*
 
 ---
 
