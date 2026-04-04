@@ -1,0 +1,332 @@
+"""Tests for /payments endpoints — checkout, webhook, portal (Stripe mocked)."""
+import json
+from unittest.mock import AsyncMock, MagicMock, patch
+
+
+# ── Checkout ─────────────────────────────────────────────────────────────────
+
+def test_checkout_requires_auth(client):
+    resp = client.post("/payments/checkout", json={"plan": "basic"})
+    assert resp.status_code == 403
+
+
+def test_checkout_invalid_plan(client, auth_headers):
+    resp = client.post("/payments/checkout", json={"plan": "platinum"}, headers=auth_headers)
+    assert resp.status_code == 400
+    assert "basic" in resp.json()["detail"] or "vip" in resp.json()["detail"]
+
+
+def test_checkout_basic_plan(client, auth_headers):
+    mock_url = "https://checkout.stripe.com/pay/cs_test_basic"
+    with patch("app.routes.payments.create_checkout_session",
+               new=AsyncMock(return_value=mock_url)):
+        resp = client.post("/payments/checkout", json={"plan": "basic"}, headers=auth_headers)
+    assert resp.status_code == 200
+    assert resp.json()["checkout_url"] == mock_url
+
+
+def test_checkout_vip_plan(client, auth_headers):
+    mock_url = "https://checkout.stripe.com/pay/cs_test_vip"
+    with patch("app.routes.payments.create_checkout_session",
+               new=AsyncMock(return_value=mock_url)):
+        resp = client.post("/payments/checkout", json={"plan": "vip"}, headers=auth_headers)
+    assert resp.status_code == 200
+    assert resp.json()["checkout_url"] == mock_url
+
+
+def test_checkout_stripe_error_returns_502(client, auth_headers):
+    with patch("app.routes.payments.create_checkout_session",
+               new=AsyncMock(side_effect=Exception("Stripe is down"))):
+        resp = client.post("/payments/checkout", json={"plan": "basic"}, headers=auth_headers)
+    assert resp.status_code == 502
+    assert "Stripe" in resp.json()["detail"]
+
+
+# ── Billing Portal ────────────────────────────────────────────────────────────
+
+def test_portal_requires_auth(client):
+    resp = client.get("/payments/portal")
+    assert resp.status_code == 403
+
+
+def test_portal_no_stripe_customer(client, auth_headers):
+    """User without a Stripe customer ID gets 400."""
+    resp = client.get("/payments/portal", headers=auth_headers)
+    assert resp.status_code == 400
+    assert "Subscribe first" in resp.json()["detail"]
+
+
+def test_portal_stripe_error_returns_502(client, db, auth_headers, registered_user):
+    """When Stripe raises an exception, portal must return 502."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.stripe_customer_id = "cus_test_err"
+    db.commit()
+
+    with patch("app.routes.payments.create_billing_portal_session",
+               new=AsyncMock(side_effect=Exception("Stripe is down"))):
+        resp = client.get("/payments/portal", headers=auth_headers)
+    assert resp.status_code == 502
+    assert "Stripe" in resp.json()["detail"]
+
+
+def test_portal_with_stripe_customer(client, db, auth_headers, registered_user):
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.stripe_customer_id = "cus_test123"
+    db.commit()
+
+    mock_url = "https://billing.stripe.com/session/bps_test"
+    with patch("app.routes.payments.create_billing_portal_session",
+               new=AsyncMock(return_value=mock_url)):
+        resp = client.get("/payments/portal", headers=auth_headers)
+    assert resp.status_code == 200
+    assert resp.json()["portal_url"] == mock_url
+
+
+# ── Webhook ───────────────────────────────────────────────────────────────────
+
+def test_webhook_checkout_completed_upgrades_user(client, db, auth_headers, registered_user):
+    """checkout.session.completed upgrades user to the paid tier."""
+    _, user_data = registered_user
+    user_id = user_data["id"]
+
+    event = {
+        "type": "checkout.session.completed",
+        "data": {
+            "object": {
+                "metadata": {"user_id": str(user_id), "plan": "basic"},
+                "subscription": "sub_test123",
+            }
+        }
+    }
+
+    with patch("app.routes.payments.handle_webhook_event", new=AsyncMock()) as mock_handler:
+        resp = client.post(
+            "/payments/webhook",
+            content=json.dumps(event).encode(),
+            headers={"Content-Type": "application/json"},
+        )
+    assert resp.status_code == 200
+    assert resp.json()["status"] == "ok"
+    mock_handler.assert_called_once()
+
+
+def test_webhook_invalid_signature_returns_400(client):
+    """Malformed webhook payload raises 400."""
+    with patch("app.routes.payments.handle_webhook_event",
+               new=AsyncMock(side_effect=ValueError("bad signature"))):
+        resp = client.post(
+            "/payments/webhook",
+            content=b"bad_payload",
+            headers={"Content-Type": "application/json"},
+        )
+    assert resp.status_code == 400
+
+
+def test_webhook_stripe_service_upgrades_user(client, db):
+    """Integration: handle_webhook_event directly upgrades user tier."""
+    from app.auth import hash_password
+    from app.models import User
+    from app.services.stripe_service import handle_webhook_event
+    import asyncio
+
+    user = User(email="stripe@x.com", hashed_password=hash_password("p"),
+                name="Stripe User", subscription_tier="free")
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    event = json.dumps({
+        "type": "checkout.session.completed",
+        "data": {
+            "object": {
+                "metadata": {"user_id": str(user.id), "plan": "vip"},
+                "subscription": "sub_vip_test",
+            }
+        }
+    }).encode()
+
+    asyncio.run(handle_webhook_event(payload=event, sig_header="", db=db))
+    db.refresh(user)
+    assert user.subscription_tier == "vip"
+    assert user.stripe_subscription_id == "sub_vip_test"
+
+
+def test_webhook_subscription_cancelled_downgrades_user(client, db):
+    """customer.subscription.deleted sets user back to free."""
+    from app.auth import hash_password
+    from app.models import User
+    from app.services.stripe_service import handle_webhook_event
+    import asyncio
+
+    user = User(email="cancel@x.com", hashed_password=hash_password("p"),
+                name="Cancel User", subscription_tier="basic",
+                stripe_customer_id="cus_cancel_test")
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    event = json.dumps({
+        "type": "customer.subscription.deleted",
+        "data": {
+            "object": {
+                "customer": "cus_cancel_test",
+                "status": "canceled",
+            }
+        }
+    }).encode()
+
+    asyncio.run(handle_webhook_event(payload=event, sig_header="", db=db))
+    db.refresh(user)
+    assert user.subscription_tier == "free"
+
+
+def test_checkout_response_shape_is_checkout_url_only(client, auth_headers):
+    """POST /payments/checkout response body contains exactly one key: 'checkout_url'."""
+    from unittest.mock import AsyncMock, patch
+
+    mock_url = "https://checkout.stripe.com/pay/cs_shape_test"
+    with patch("app.routes.payments.create_checkout_session",
+               new=AsyncMock(return_value=mock_url)):
+        resp = client.post("/payments/checkout", json={"plan": "basic"}, headers=auth_headers)
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert set(body.keys()) == {"checkout_url"}
+    assert body["checkout_url"] == mock_url
+
+
+def test_portal_customer_with_no_subscription_id_still_works(client, db, auth_headers, registered_user):
+    """A user who has a stripe_customer_id but no stripe_subscription_id can still access the portal.
+    The portal route only requires stripe_customer_id — stripe_subscription_id is not checked."""
+    from app.models import User
+    _, user_data = registered_user
+    user = db.query(User).filter(User.id == user_data["id"]).first()
+    user.stripe_customer_id = "cus_nosub"
+    user.stripe_subscription_id = None
+    db.commit()
+
+    mock_url = "https://billing.stripe.com/session/nosub_test"
+    with patch("app.routes.payments.create_billing_portal_session",
+               new=AsyncMock(return_value=mock_url)):
+        resp = client.get("/payments/portal", headers=auth_headers)
+
+    assert resp.status_code == 200
+    assert resp.json()["portal_url"] == mock_url
+
+
+def test_checkout_no_price_id_configured_returns_502(client, auth_headers):
+    """When STRIPE_BASIC_PRICE_ID is not set, create_checkout_session raises
+    ValueError('No Stripe price ID configured for plan: basic').
+    The route's `except Exception` handler must return 502 and include
+    'No Stripe price ID' in the detail so operators know what to configure."""
+    with patch("app.routes.payments.create_checkout_session",
+               new=AsyncMock(side_effect=ValueError("No Stripe price ID configured for plan: basic"))):
+        resp = client.post("/payments/checkout", json={"plan": "basic"}, headers=auth_headers)
+
+    assert resp.status_code == 502
+    assert "No Stripe price ID" in resp.json()["detail"]
+
+
+def test_webhook_generic_exception_returns_502(client):
+    """payments.py lines 53-54: except Exception → 502.
+    When handle_webhook_event raises a generic RuntimeError (not ValueError),
+    the route must return 502 (not 500 or 400)."""
+    from unittest.mock import AsyncMock, patch
+
+    with patch("app.routes.payments.handle_webhook_event",
+               new=AsyncMock(side_effect=RuntimeError("unexpected internal error"))):
+        resp = client.post(
+            "/payments/webhook",
+            content=b"{}",
+            headers={"Content-Type": "application/json"},
+        )
+    assert resp.status_code == 502
+    assert "unexpected internal error" in resp.json()["detail"]
+
+
+def test_webhook_unknown_event_returns_200(client):
+    """POST /payments/webhook with an unknown event type must return 200 {'status': 'ok'}.
+    The webhook handler ignores unknown event types without raising — route must not 502."""
+    with patch("app.routes.payments.handle_webhook_event", new=AsyncMock(return_value=None)):
+        resp = client.post(
+            "/payments/webhook",
+            content=json.dumps({"type": "payment_intent.created", "data": {}}).encode(),
+            headers={"Content-Type": "application/json"},
+        )
+
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "ok"}
+
+
+def test_webhook_basic_tier_upgrade_enforces_follow_limit_5(client, db):
+    """checkout.session.completed with plan=basic upgrades user free → basic,
+    and they can now add up to 5 follows (not just 1 as on free tier).
+
+    This tests the full chain: Stripe webhook → tier upgrade → tier enforcement.
+    """
+    from app.auth import hash_password
+    from app.models import User
+    from app.services.stripe_service import handle_webhook_event
+    import asyncio
+    import json as _json
+
+    user = User(
+        email="basic_upgrade@x.com",
+        hashed_password=hash_password("p"),
+        name="Basic User",
+        subscription_tier="free",
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    # Simulate the Stripe webhook upgrading them to basic
+    event = {
+        "type": "checkout.session.completed",
+        "data": {
+            "object": {
+                "metadata": {"user_id": str(user.id), "plan": "basic"},
+                "subscription": "sub_basic_test",
+            }
+        }
+    }
+    asyncio.run(handle_webhook_event(
+        payload=_json.dumps(event).encode(),
+        sig_header="",
+        db=db,
+    ))
+    db.refresh(user)
+    assert user.subscription_tier == "basic"
+
+    # Now verify they can add up to 5 follows (basic tier limit)
+    # POST /follows uses bettor_address + bettor_name fields; no external API call is made.
+    token_resp = client.post("/auth/login", json={
+        "email": "basic_upgrade@x.com", "password": "p"
+    })
+    token = token_resp.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Should be able to add 5 follows without hitting limit
+    for i in range(5):
+        resp = client.post(
+            "/follows",
+            json={"bettor_address": f"0xbasicbettor{i:04d}", "bettor_name": f"Bettor{i}"},
+            headers=headers,
+        )
+        assert resp.status_code == 201, (
+            f"Follow #{i+1} failed with {resp.status_code} — basic tier should allow 5 follows"
+        )
+
+    # 6th follow must be rejected (basic limit is 5)
+    resp = client.post(
+        "/follows",
+        json={"bettor_address": "0xbasicbettor9999", "bettor_name": "Extra"},
+        headers=headers,
+    )
+    assert resp.status_code == 403, (
+        "Basic tier allows only 5 follows — 6th must be rejected with 403"
+    )
